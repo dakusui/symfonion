@@ -14,13 +14,11 @@ import java.util.regex.Pattern;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaEventListener;
 import javax.sound.midi.MetaMessage;
-import javax.sound.midi.MidiChannel;
 import javax.sound.midi.MidiDevice;
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Sequence;
 import javax.sound.midi.Sequencer;
-import javax.sound.midi.Synthesizer;
 
 import net.sourceforge.logias.lisp.Context;
 import net.sourceforge.symfonion.core.ExceptionThrower;
@@ -92,6 +90,7 @@ public class Symfonion {
 	
 	private void startSequencers(List<String> portNames, Map<String, MidiDevice> devices, Map<String, Sequencer> sequencers) {
 		for (String portName : portNames) {
+			System.out.println("Starting " + portName + "(" + System.currentTimeMillis() + ")");
 			sequencers.get(portName).start();
 		}
 	}
@@ -256,11 +255,6 @@ public class Symfonion {
 					MidiSystem.write(seq, 1, outputFile);
 				}
 			} else {
-				Synthesizer synth = MidiSystem.getSynthesizer();
-				for (MidiChannel ch : synth.getChannels()) {
-					ch.allNotesOff();
-					ch.resetAllControllers();
-				}
 				Map<String, MidiDevice> devices = new HashMap<String, MidiDevice>();
 				for (String portName : sequences.keySet()) {
 					MidiDevice dev = getMidiOutDeviceForPortName(portName);
