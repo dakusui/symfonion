@@ -39,7 +39,7 @@
 		},
 		"setting":{
 			"$body":[
-			     {"$tempo":150, "$reverb":127, "$chorus":127},
+			     {"$tempo":160, "$reverb":127, "$chorus":127},
 			]
 		},
 		"effect1":{
@@ -58,7 +58,7 @@
 		},
 		"base-setting":{
 			"$body":[
-			    {"$program":13, "$bank":83.2 }
+			    {"$program":13, "$bank":83.2, "$tempo":160 }
 		    ]
 		},
 		"base1":{
