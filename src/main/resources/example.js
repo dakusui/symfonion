@@ -1,10 +1,10 @@
 {
 	"$parts":{
-		"vocal":{ "$channel":0 },
-		"piano":{ "$channel":1 },
-		"guitar":{ "$channel":2 },
-		"base":{ "$channel":3 },
-		"drums":{ "$channel":9 }
+		"vocal":{ "$channel":0, "$port":"port1" },
+		"piano":{ "$channel":1, "$port":"port1"  },
+		"guitar":{ "$channel":2, "$port":"port1"  },
+		"base":{ "$channel":3, "$port":"port2"  },
+		"drums":{ "$channel":9, "$port":"port2"  }
 	},
 	"$notemaps":{
 	},
