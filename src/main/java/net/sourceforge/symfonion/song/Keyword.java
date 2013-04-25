@@ -8,6 +8,7 @@ public enum Keyword {
 	$body,
 	$channel,
 	$chorus,
+	$default,
 	$device,
 	$devices,
 	$gate,
@@ -35,4 +36,5 @@ public enum Keyword {
 	$volume, 
 	$settings, 
 	$sysex, 
+	$port, 
 }

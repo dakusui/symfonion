@@ -22,6 +22,7 @@ import net.sourceforge.symfonion.core.ExceptionThrower;
 import net.sourceforge.symfonion.core.SymfonionException;
 import net.sourceforge.symfonion.core.Util;
 import net.sourceforge.symfonion.song.Bar;
+import net.sourceforge.symfonion.song.Part;
 import net.sourceforge.symfonion.song.Pattern;
 import net.sourceforge.symfonion.song.Pattern.Parameters;
 import net.sourceforge.symfonion.song.Song;
@@ -71,16 +72,24 @@ public class MidiCompiler {
 	public MidiCompiler(Context logiasContext) {
 		this.logiasContext = logiasContext;
 	}
-	public Sequence compile(Song song) throws InvalidMidiDataException, SymfonionException {
+	public Map<String, Sequence> compile(Song song) throws InvalidMidiDataException, SymfonionException {
 		System.out.println("Now compiling...");
 		int resolution = 384;
-		Sequence ret = new Sequence(Sequence.PPQ, resolution/4);
+		Map<String, Sequence> ret = new HashMap<String, Sequence>();
 		Map<String, Track> tracks = new HashMap<String, Track>(); 
 		for (String partName : song.partNames()) {
-			tracks.put(partName, ret.createTrack());
+			Part part = song.part(partName);
+			String portName = part.portName();
+			Sequence sequence = ret.get(portName); 
+			if (sequence == null) {
+				sequence = new Sequence(Sequence.PPQ, resolution/4);
+				ret.put(portName, sequence);
+			}
+			tracks.put(partName, sequence.createTrack()); 
 		}
 		
-		long position = resolution / 4;
+		// Giving the sequencer a grace period to initialize its internal state.
+		long position = resolution / 4; 
 		int barid = 0;
 		for (Bar bar : song.bars()) {
 			barStarted(barid);
