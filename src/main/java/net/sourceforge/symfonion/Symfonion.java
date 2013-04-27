@@ -19,6 +19,7 @@ import javax.sound.midi.MidiSystem;
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Sequence;
 import javax.sound.midi.Sequencer;
+import javax.sound.midi.Transmitter;
 
 import net.sourceforge.logias.lisp.Context;
 import net.sourceforge.symfonion.core.ExceptionThrower;
@@ -63,6 +64,9 @@ public class Symfonion {
 			MidiDevice dev = devices.get(portName);
 			if (dev != null) {
 				dev.open();
+				for (Transmitter tr : sequencer.getTransmitters()) {
+					tr.setReceiver(null);
+				}
 				sequencer.getTransmitter().setReceiver(dev.getReceiver());
 			}
 			sequencer.setSequence(sequences.get(portName)); 
