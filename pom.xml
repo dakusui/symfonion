@@ -5,10 +5,11 @@
   <groupId>com.github.dakusui</groupId>
   <artifactId>symfonion</artifactId>
   <version>0.2-SNAPSHOT</version>
+  <description>A JSON based music macro language processor.</description>
   <packaging>jar</packaging>
 
   <name>symfonion</name>
-  <url>http://maven.apache.org</url>
+  <url>https://github.com/dakusui/symfonion</url>
 
   <scm>
     <connection>scm:git:git://github.com/dakusui/symfonion.git</connection>
