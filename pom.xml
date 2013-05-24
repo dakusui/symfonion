@@ -3,7 +3,7 @@
 
   <groupId>com.github.dakusui</groupId>
   <artifactId>symfonion</artifactId>
-  <version>0.4-SNAPSHOT</version>
+  <version>0.4</version>
   <description>A JSON based music macro language processor.</description>
   <packaging>jar</packaging>
 
