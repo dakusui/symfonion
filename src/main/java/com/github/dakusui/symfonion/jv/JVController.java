@@ -1,4 +1,4 @@
-package net.sourceforge.symfonion.jv;
+package com.github.dakusui.symfonion.jv;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -11,7 +11,8 @@ import javax.sound.midi.Receiver;
 import javax.sound.midi.ShortMessage;
 import javax.sound.midi.SysexMessage;
 
-import net.sourceforge.symfonion.core.ExceptionThrower;
+import com.github.dakusui.symfonion.core.ExceptionThrower;
+
 
 public class JVController {
 	public synchronized void sendexeclusive() throws Exception {

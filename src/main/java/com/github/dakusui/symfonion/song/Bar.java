@@ -1,4 +1,4 @@
-package net.sourceforge.symfonion.song;
+package com.github.dakusui.symfonion.song;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -9,15 +9,15 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import com.github.dakusui.symfonion.core.ExceptionThrower;
+import com.github.dakusui.symfonion.core.Fraction;
+import com.github.dakusui.symfonion.core.JsonUtil;
+import com.github.dakusui.symfonion.core.SymfonionException;
+import com.github.dakusui.symfonion.core.Util;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import net.sourceforge.symfonion.core.ExceptionThrower;
-import net.sourceforge.symfonion.core.Fraction;
-import net.sourceforge.symfonion.core.JsonUtil;
-import net.sourceforge.symfonion.core.SymfonionException;
-import net.sourceforge.symfonion.core.Util;
 
 
 public class Bar {

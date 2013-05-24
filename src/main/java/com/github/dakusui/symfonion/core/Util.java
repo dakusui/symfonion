@@ -1,4 +1,4 @@
-package net.sourceforge.symfonion.core;
+package com.github.dakusui.symfonion.core;
 
 import java.io.BufferedInputStream;
 import java.io.File;

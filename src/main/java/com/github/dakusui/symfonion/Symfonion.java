@@ -1,4 +1,4 @@
-package net.sourceforge.symfonion;
+package com.github.dakusui.symfonion;
 
 import static java.lang.String.format;
 
@@ -21,13 +21,14 @@ import javax.sound.midi.Sequence;
 import javax.sound.midi.Sequencer;
 import javax.sound.midi.Transmitter;
 
-import net.sourceforge.logias.lisp.Context;
-import net.sourceforge.symfonion.core.ExceptionThrower;
-import net.sourceforge.symfonion.core.JsonUtil;
-import net.sourceforge.symfonion.core.SymfonionException;
-import net.sourceforge.symfonion.core.Util;
-import net.sourceforge.symfonion.song.Keyword;
-import net.sourceforge.symfonion.song.Song;
+
+import com.github.dakusui.logias.lisp.Context;
+import com.github.dakusui.symfonion.core.ExceptionThrower;
+import com.github.dakusui.symfonion.core.JsonUtil;
+import com.github.dakusui.symfonion.core.SymfonionException;
+import com.github.dakusui.symfonion.core.Util;
+import com.github.dakusui.symfonion.song.Keyword;
+import com.github.dakusui.symfonion.song.Song;
 
 public class Symfonion {
 	Context logiasContext;
