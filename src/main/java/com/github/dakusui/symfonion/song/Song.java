@@ -1,4 +1,4 @@
-package net.sourceforge.symfonion.song;
+package com.github.dakusui.symfonion.song;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -8,13 +8,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import net.sourceforge.logias.Logias;
-import net.sourceforge.logias.lisp.Context;
-import net.sourceforge.symfonion.core.ExceptionThrower;
-import net.sourceforge.symfonion.core.JsonUtil;
-import net.sourceforge.symfonion.core.SymfonionException;
-import net.sourceforge.symfonion.core.Util;
 
+import com.github.dakusui.logias.Logias;
+import com.github.dakusui.logias.lisp.Context;
+import com.github.dakusui.symfonion.core.ExceptionThrower;
+import com.github.dakusui.symfonion.core.JsonUtil;
+import com.github.dakusui.symfonion.core.SymfonionException;
+import com.github.dakusui.symfonion.core.Util;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;

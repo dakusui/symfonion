@@ -1,6 +1,6 @@
-package net.sourceforge.symfonion.song;
+package com.github.dakusui.symfonion.song;
 
-import net.sourceforge.symfonion.core.Fraction;
+import com.github.dakusui.symfonion.core.Fraction;
 
 public class Groove {
 	long pos(Fraction offset, Fraction noteLength, long resolution) {

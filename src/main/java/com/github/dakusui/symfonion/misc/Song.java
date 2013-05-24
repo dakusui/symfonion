@@ -1,4 +1,4 @@
-package net.sourceforge.symfonion.misc;
+package com.github.dakusui.symfonion.misc;
 
 
 import java.io.File;
@@ -14,13 +14,13 @@ import javax.sound.midi.Sequence;
 import javax.sound.midi.ShortMessage;
 import javax.sound.midi.Track;
 
+import com.github.dakusui.symfonion.core.Fraction;
+import com.github.dakusui.symfonion.core.JsonUtil;
+import com.github.dakusui.symfonion.core.SymfonionException;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import net.sourceforge.symfonion.core.Fraction;
-import net.sourceforge.symfonion.core.JsonUtil;
-import net.sourceforge.symfonion.core.SymfonionException;
 
 
 

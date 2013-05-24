@@ -1,4 +1,4 @@
-package net.sourceforge.symfonion;
+package com.github.dakusui.symfonion;
 
 import java.io.IOException;
 

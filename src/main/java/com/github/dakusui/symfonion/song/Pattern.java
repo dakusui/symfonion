@@ -1,15 +1,15 @@
-package net.sourceforge.symfonion.song;
+package com.github.dakusui.symfonion.song;
 
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import net.sourceforge.symfonion.core.ExceptionThrower;
-import net.sourceforge.symfonion.core.Fraction;
-import net.sourceforge.symfonion.core.JsonUtil;
-import net.sourceforge.symfonion.core.SymfonionException;
-import net.sourceforge.symfonion.core.Util;
 
+import com.github.dakusui.symfonion.core.ExceptionThrower;
+import com.github.dakusui.symfonion.core.Fraction;
+import com.github.dakusui.symfonion.core.JsonUtil;
+import com.github.dakusui.symfonion.core.SymfonionException;
+import com.github.dakusui.symfonion.core.Util;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;

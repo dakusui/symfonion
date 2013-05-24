@@ -1,4 +1,4 @@
-package net.sourceforge.symfonion.core;
+package com.github.dakusui.symfonion.core;
 
 import java.util.Arrays;
 import java.util.HashSet;

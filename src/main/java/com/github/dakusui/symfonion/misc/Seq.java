@@ -1,4 +1,4 @@
-package net.sourceforge.symfonion.misc;
+package com.github.dakusui.symfonion.misc;
 
 import java.io.File;
 

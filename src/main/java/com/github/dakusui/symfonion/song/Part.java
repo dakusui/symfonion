@@ -1,11 +1,11 @@
-package net.sourceforge.symfonion.song;
+package com.github.dakusui.symfonion.song;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import net.sourceforge.symfonion.core.JsonUtil;
-import net.sourceforge.symfonion.core.SymfonionException;
 
+import com.github.dakusui.symfonion.core.JsonUtil;
+import com.github.dakusui.symfonion.core.SymfonionException;
 import com.google.gson.JsonObject;
 
 

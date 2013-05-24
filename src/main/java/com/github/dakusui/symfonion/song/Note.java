@@ -1,4 +1,4 @@
-package net.sourceforge.symfonion.song;
+package com.github.dakusui.symfonion.song;
 
 public class Note {
 	int key;

@@ -1,4 +1,4 @@
-package net.sourceforge.symfonion.song;
+package com.github.dakusui.symfonion.song;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -8,18 +8,18 @@ import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiEvent;
 import javax.sound.midi.Track;
 
+import com.github.dakusui.symfonion.MidiCompiler;
+import com.github.dakusui.symfonion.MidiCompiler.CompilerContext;
+import com.github.dakusui.symfonion.core.ExceptionThrower;
+import com.github.dakusui.symfonion.core.Fraction;
+import com.github.dakusui.symfonion.core.JsonUtil;
+import com.github.dakusui.symfonion.core.SymfonionException;
+import com.github.dakusui.symfonion.core.Util;
+import com.github.dakusui.symfonion.song.Pattern.Parameters;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import net.sourceforge.symfonion.MidiCompiler;
-import net.sourceforge.symfonion.MidiCompiler.CompilerContext;
-import net.sourceforge.symfonion.core.ExceptionThrower;
-import net.sourceforge.symfonion.core.Fraction;
-import net.sourceforge.symfonion.core.JsonUtil;
-import net.sourceforge.symfonion.core.SymfonionException;
-import net.sourceforge.symfonion.core.Util;
-import net.sourceforge.symfonion.song.Pattern.Parameters;
 
 
 public class Stroke {

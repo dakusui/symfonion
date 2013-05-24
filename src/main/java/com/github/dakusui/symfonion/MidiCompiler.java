@@ -1,4 +1,4 @@
-package net.sourceforge.symfonion;
+package com.github.dakusui.symfonion;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -14,20 +14,20 @@ import javax.sound.midi.ShortMessage;
 import javax.sound.midi.SysexMessage;
 import javax.sound.midi.Track;
 
-import net.sourceforge.logias.Logias;
-import net.sourceforge.logias.lisp.Context;
-import net.sourceforge.logias.lisp.s.Literal;
-import net.sourceforge.logias.lisp.s.Sexp;
-import net.sourceforge.symfonion.core.ExceptionThrower;
-import net.sourceforge.symfonion.core.SymfonionException;
-import net.sourceforge.symfonion.core.Util;
-import net.sourceforge.symfonion.song.Bar;
-import net.sourceforge.symfonion.song.Part;
-import net.sourceforge.symfonion.song.Pattern;
-import net.sourceforge.symfonion.song.Pattern.Parameters;
-import net.sourceforge.symfonion.song.Song;
-import net.sourceforge.symfonion.song.Stroke;
 
+import com.github.dakusui.logias.Logias;
+import com.github.dakusui.logias.lisp.Context;
+import com.github.dakusui.logias.lisp.s.Literal;
+import com.github.dakusui.logias.lisp.s.Sexp;
+import com.github.dakusui.symfonion.core.ExceptionThrower;
+import com.github.dakusui.symfonion.core.SymfonionException;
+import com.github.dakusui.symfonion.core.Util;
+import com.github.dakusui.symfonion.song.Bar;
+import com.github.dakusui.symfonion.song.Part;
+import com.github.dakusui.symfonion.song.Pattern;
+import com.github.dakusui.symfonion.song.Song;
+import com.github.dakusui.symfonion.song.Stroke;
+import com.github.dakusui.symfonion.song.Pattern.Parameters;
 import com.google.gson.JsonArray;
 
 public class MidiCompiler {
