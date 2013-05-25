@@ -10,11 +10,31 @@
   <name>symfonion</name>
   <url>https://github.com/dakusui/symfonion</url>
 
+  <licenses>
+    <license>
+      <name>Apache License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+  
   <scm>
     <connection>scm:git:git://github.com/dakusui/symfonion.git</connection>
     <developerConnection>scm:git:git@github.com:dakusui/symfonion.git</developerConnection>
     <url>http://github.com/dakusui/symfonion</url>
   </scm>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
+  <developers>
+    <developer>
+      <id>dakusui</id>
+      <name>Hiroshi Ukai</name>
+      <email>dakusui@gmail.com</email>
+    </developer>
+  </developers>
 
   <dependencies>
   	<dependency>
@@ -47,9 +67,6 @@
 	    </dependency>
     </dependencies>
   </dependencyManagement>
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-  </properties>
 
   <build>
     <plugins>
