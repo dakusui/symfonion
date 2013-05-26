@@ -39,7 +39,7 @@
 		},
 		"setting":{
 			"$body":[
-			     {"$tempo":160, "$reverb":127, "$chorus":127},
+			     {"$tempo":120, "$reverb":127, "$chorus":127},
 			]
 		},
 		"effect1":{
@@ -58,7 +58,7 @@
 		},
 		"base-setting":{
 			"$body":[
-			    {"$program":13, "$bank":83.2, "$tempo":160 }
+			    {"$program":13, "$bank":83.2, "$tempo":120 }
 		    ]
 		},
 		"base1":{
@@ -96,12 +96,24 @@
 		}
 	},
 	"$grooves":{
-		"16beats":{
-			"$beatlength":"1/16",
-			"$beats":[
-				26, 22, 25, 23, 26, 22, 25, 23, 26, 22, 25, 23, 26, 22, 25, 23 
-			]
-		}
+		"16beats":[
+		    { "$length":"16", "$ticks":24, "$accent":0 },
+		    { "$length":"16", "$ticks":24, "$accent":0 },
+		    { "$length":"16", "$ticks":24, "$accent":0 },
+		    { "$length":"16", "$ticks":24, "$accent":0 },
+		    { "$length":"16", "$ticks":24, "$accent":0 },
+		    { "$length":"16", "$ticks":24, "$accent":0 },
+		    { "$length":"16", "$ticks":24, "$accent":0 },
+		    { "$length":"16", "$ticks":24, "$accent":0 },
+		    { "$length":"16", "$ticks":24, "$accent":0 },
+		    { "$length":"16", "$ticks":24, "$accent":0 },
+		    { "$length":"16", "$ticks":24, "$accent":0 },
+		    { "$length":"16", "$ticks":24, "$accent":0 },
+		    { "$length":"16", "$ticks":24, "$accent":0 },
+		    { "$length":"16", "$ticks":24, "$accent":0 },
+		    { "$length":"16", "$ticks":24, "$accent":0 },
+		    { "$length":"16", "$ticks":24, "$accent":0 }
+		]
 	},
 	"$sequence":[
   	    {
@@ -111,8 +123,7 @@
 				"piano":["setting"],
 				"guitar":["setting"],
 				"base":["base-setting"]
-			},
-			"$groove":"16beats"
+			}
 		},
 	    {
 			"$beats":"16/16",
@@ -122,8 +133,7 @@
 				"guitar":["melody1"],
 				"base":["base1"],
 				"drums":["rhythm1"]
-			},
-			"$groove":"16beats"
+			}
 		},
 	    {
 			"$beats":"16/16",

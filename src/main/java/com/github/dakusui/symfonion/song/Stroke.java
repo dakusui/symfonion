@@ -201,7 +201,7 @@ public class Stroke {
 		final Track track = context.getTrack();
 		final int ch = context.getChannel();
 		long position = context.getPosition();
-		long strokeLen = (long) (this.length().doubleValue() * context.getResolution());
+		long strokeLen = context.getStrokeLengthInTicks();
 		if (tempo != UNDEFINED_NUM) {
 			track.add(compiler.createTempoEvent(this.tempo, position));
 			compiler.controlEventProcessed();
@@ -266,7 +266,7 @@ public class Stroke {
 		int delta = 0;
 		for (Note note : this.notes()) {
 			int key = note.key() + transpose;
-			int velocity = Math.max(0, Math.min(127, context.getParams().velocitybase() + note.accent() * context.getParams().velocitydelta()));
+			int velocity = Math.max(0, Math.min(127, context.getParams().velocitybase() + note.accent() * context.getParams().velocitydelta() + context.getGrooveAccent()));
 			track.add(compiler.createNoteOnEvent(ch, key, velocity, position + delta));
 			track.add(compiler.createNoteOffEvent(ch, key, (long)(context.getPosition() + delta + strokeLen * this.gate())));
 			compiler.noteProcessed();
