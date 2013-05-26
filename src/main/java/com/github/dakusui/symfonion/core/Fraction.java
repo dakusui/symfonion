@@ -121,17 +121,8 @@ public class Fraction extends Object implements Cloneable, Serializable
 	}
 
 	public static int compare(Fraction f1, Fraction f2) {
-		double	delta;
-
-		if (f1.numer == f2.numer && f1.denom == f2.denom)
-			return (0);
-		delta = f1.doubleValue() - f2.doubleValue();
-		if (delta > 0)
-			return 1;
-		else if (delta < 0)
-			return -1;
-		else
-			throw new IllegalStateException();
+		Fraction sub = subtract(f1, f2);
+		return sub.numer * sub.denom;
 	}
 
 	public static Fraction max(Fraction f1, Fraction f2) {

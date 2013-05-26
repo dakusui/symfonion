@@ -1,6 +1,7 @@
 package com.github.dakusui.symfonion.song;
 
 public enum Keyword {
+	$accent, 
 	$aftertouch,
 	$arpegio, 
 	$bank,
@@ -13,6 +14,7 @@ public enum Keyword {
 	$devices,
 	$gate,
 	$groove,
+	$grooves, 
 	$length,
 	$mididevice, 
 	$modulation,
@@ -26,15 +28,16 @@ public enum Keyword {
 	$patterns,
 	$percussion,
 	$pitch,
+	$port, 
 	$program,
 	$reverb,
 	$sequence,
+	$settings, 
+	$sysex, 
 	$tempo,
 	$transpose, 
 	$velocitybase,
 	$velocitydelta,
 	$volume, 
-	$settings, 
-	$sysex, 
-	$port, 
+	$ticks, 
 }
