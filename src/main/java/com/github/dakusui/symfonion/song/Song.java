@@ -25,6 +25,7 @@ public class Song {
 	private Map<String, Part> parts = new HashMap<String, Part>();
 	private Map<String, Pattern> patterns = new HashMap<String, Pattern>();
 	private Map<String, NoteMap> noteMaps = new HashMap<String, NoteMap>();
+	private Map<String, Groove> grooves = new HashMap<String, Groove>();
 	private List<Bar> bars  = new LinkedList<Bar>();
 	private Context logiasContext;
 	
@@ -38,6 +39,7 @@ public class Song {
 		initParts();
 		initNoteMaps();
 		initPatterns();
+		initGrooves();
 		initSequence();
 	}
 
@@ -128,6 +130,16 @@ public class Song {
 		}
 	}
 
+	private void initGrooves() throws SymfonionException {
+		JsonObject groovesJSON = JsonUtil.asJsonObject(this.json, Keyword.$grooves);
+		Iterator <String> i = JsonUtil.keyIterator(groovesJSON);
+		while (i.hasNext()) {
+			String name = i.next();
+			Groove cur = Groove.createGroove(name, JsonUtil.asJsonArray(groovesJSON, name), this);
+			this.grooves.put(name, cur);
+		}
+	}
+	
 	public Pattern pattern(String patternName) {
 		return this.patterns.get(patternName);
 	}
@@ -150,5 +162,9 @@ public class Song {
 
 	public Context getLogiasContext() {
 		return this.logiasContext;
+	}
+
+	public Groove groove(String grooveName) {
+		return this.grooves.get(grooveName);
 	}
 }

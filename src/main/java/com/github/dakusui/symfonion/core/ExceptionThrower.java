@@ -38,4 +38,8 @@ public class ExceptionThrower {
 	public static void throwDeviceException(String msg, Throwable e) throws SymfonionException {
 		throw new SymfonionException(e);
 	}
+
+	public static void throwRuntimeException(String msg, Throwable e) {
+		throw new RuntimeException(msg);
+	}
 }

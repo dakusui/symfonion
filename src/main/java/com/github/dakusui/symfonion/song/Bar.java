@@ -33,6 +33,20 @@ public class Bar {
 
 	public void init(JsonObject jsonObject) throws SymfonionException {
 		this.beats = Util.parseFraction(JsonUtil.asString(jsonObject, Keyword.$beats));
+		this.groove = Groove.DEFAULT_INSTANCE;
+		if (jsonObject.has(Keyword.$groove.name())) {
+			String grooveName = JsonUtil.asString(jsonObject, Keyword.$groove.name());
+			Groove g = Groove.DEFAULT_INSTANCE;
+			if (grooveName != null) {
+				g = song.groove(grooveName);
+				if (g == null) {
+					String msg = String.format("Groove:<%s> is not defined.", grooveName);
+					ExceptionThrower.throwSyntaxException(msg, null);
+				}
+			}
+			this.groove = g;
+			this.groove = g;
+		}
 		JsonObject patternsJsonObject = JsonUtil.asJsonObject(jsonObject, Keyword.$patterns);
 		Iterator<Entry<String, JsonElement>> i = patternsJsonObject.entrySet().iterator();
 		while (i.hasNext()) {
@@ -53,7 +67,6 @@ public class Bar {
 			}
 			patternLists.put(partName, patterns);
 		}
-		this.groove = null;
 	}
 	
 	public Set<String> partNames() {
@@ -66,5 +79,9 @@ public class Bar {
 
 	public Fraction beats() {
 		return this.beats;
+	}
+	
+	public Groove groove() {
+		return this.groove;
 	}
 }

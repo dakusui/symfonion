@@ -20,9 +20,11 @@ import com.github.dakusui.logias.lisp.Context;
 import com.github.dakusui.logias.lisp.s.Literal;
 import com.github.dakusui.logias.lisp.s.Sexp;
 import com.github.dakusui.symfonion.core.ExceptionThrower;
+import com.github.dakusui.symfonion.core.Fraction;
 import com.github.dakusui.symfonion.core.SymfonionException;
 import com.github.dakusui.symfonion.core.Util;
 import com.github.dakusui.symfonion.song.Bar;
+import com.github.dakusui.symfonion.song.Groove;
 import com.github.dakusui.symfonion.song.Part;
 import com.github.dakusui.symfonion.song.Pattern;
 import com.github.dakusui.symfonion.song.Song;
@@ -36,15 +38,17 @@ public class MidiCompiler {
 		private int channel;
 		private Parameters params;
 		private long position;
-		private int resolution;
+		private int grooveAccent;
+		private long strokeLengthInTicks;
 
 		public CompilerContext(Track track, int channel, Parameters params,
-				long position, int resolution) {
+				long position, long strokeLengthInTicks, int grooveAccent) {
 			this.track = track;
 			this.channel = channel;
 			this.params = params;
 			this.position = position;
-			this.resolution = resolution;
+			this.grooveAccent = grooveAccent;
+			this.strokeLengthInTicks = strokeLengthInTicks;
 		}
 
 		public Track getTrack() {
@@ -63,8 +67,12 @@ public class MidiCompiler {
 			return position;
 		}
 
-		public int getResolution() {
-			return resolution;
+		public int getGrooveAccent() {
+			return this.grooveAccent;
+		}
+		
+		public long getStrokeLengthInTicks() {
+			return strokeLengthInTicks;
 		}
 	}
 	private Context logiasContext;
@@ -88,11 +96,14 @@ public class MidiCompiler {
 			tracks.put(partName, sequence.createTrack()); 
 		}
 		
+		////
+		// position is the offset of a bar from the beginning of the sequence.
 		// Giving the sequencer a grace period to initialize its internal state.
-		long position = resolution / 4; 
+		long positionInTicks = resolution / 4; 
 		int barid = 0;
 		for (Bar bar : song.bars()) {
 			barStarted(barid);
+			Groove groove = bar.groove();
 			for (String partName : bar.partNames()) {
 				partStarted(partName);
 				Track track = tracks.get(partName);
@@ -102,13 +113,27 @@ public class MidiCompiler {
 				int channel = song.part(partName).channel(); 
 				for (Pattern pattern : bar.part(partName)) {
 					patternStarted();
-					long positionDelta = 0;
+					////
+					// relativePosition is a relative position from the beginning 
+					// of the bar the pattern belongs to.
+					int  grooveAccent = 0;
+					Fraction relPos = Fraction.zero;
 					Parameters params = pattern.parameters();
 					for (Stroke stroke : pattern.strokes()) {
 						try {
-							stroke.compile(this, new CompilerContext(track, channel, params, position + positionDelta, resolution));
-							positionDelta += stroke.length().doubleValue() * resolution;
-							if (positionDelta >= bar.beats().doubleValue() * resolution) {
+							Groove.Unit grooveUnit = groove.resolve(relPos);  
+							long relativePositionInTicks = grooveUnit. pos();
+							grooveAccent = grooveUnit.accent();
+							
+							Fraction endingPos = Fraction.add(relPos, stroke.length());
+							long strokeLengthInTicks = Math.max(0, groove.resolve(endingPos).pos() - relativePositionInTicks);
+
+							stroke.compile(this, new CompilerContext(track, channel, params, positionInTicks + relativePositionInTicks, strokeLengthInTicks, grooveAccent));
+
+							relPos = endingPos; 
+							////
+							// Breaks if relative position goes over the length of the bar.
+							if (Fraction.compare(relPos, bar.beats()) >= 0) {
 								break;
 							}
 						} finally {
@@ -121,7 +146,7 @@ public class MidiCompiler {
 			}
 			barEnded();
 			barid++;
-			position += bar.beats().doubleValue() * resolution;
+			positionInTicks += bar.beats().doubleValue() * resolution;
 		}
 		System.out.println("Compilation finished.");
 		return ret;

@@ -31,10 +31,18 @@ public class Fraction extends Object implements Cloneable, Serializable
 		this.reduce();
 	}
 
-	public Object clone() {
-		return new Fraction(this.numer, this.denom);
+	@Override
+	public Fraction clone()
+	{
+		Fraction ret;
+	    try {
+	        ret = (Fraction) super.clone();
+	    } catch (CloneNotSupportedException e) {
+	        throw new AssertionError(e);
+	    }
+	    return ret;
 	}
-
+	
 	public int getNumerator() {
 		return this.numer;
 	}
@@ -121,17 +129,8 @@ public class Fraction extends Object implements Cloneable, Serializable
 	}
 
 	public static int compare(Fraction f1, Fraction f2) {
-		double	delta;
-
-		if (f1.numer == f2.numer && f1.denom == f2.denom)
-			return (0);
-		delta = f1.doubleValue() - f2.doubleValue();
-		if (delta > 0)
-			return 1;
-		else if (delta < 0)
-			return -1;
-		else
-			throw new IllegalStateException();
+		Fraction sub = subtract(f1, f2);
+		return sub.numer * sub.denom;
 	}
 
 	public static Fraction max(Fraction f1, Fraction f2) {
