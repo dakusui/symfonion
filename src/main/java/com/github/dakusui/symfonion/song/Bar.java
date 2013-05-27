@@ -36,11 +36,15 @@ public class Bar {
 		this.groove = Groove.DEFAULT_INSTANCE;
 		if (jsonObject.has(Keyword.$groove.name())) {
 			String grooveName = JsonUtil.asString(jsonObject, Keyword.$groove.name());
-			Groove g = song.groove(grooveName);
-			if (g == null) {
-				String msg = String.format("Groove:<%s> is not defined.", grooveName);
-				ExceptionThrower.throwSyntaxException(msg, null);
+			Groove g = Groove.DEFAULT_INSTANCE;
+			if (grooveName != null) {
+				g = song.groove(grooveName);
+				if (g == null) {
+					String msg = String.format("Groove:<%s> is not defined.", grooveName);
+					ExceptionThrower.throwSyntaxException(msg, null);
+				}
 			}
+			this.groove = g;
 			this.groove = g;
 		}
 		JsonObject patternsJsonObject = JsonUtil.asJsonObject(jsonObject, Keyword.$patterns);

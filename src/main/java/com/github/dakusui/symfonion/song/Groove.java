@@ -55,44 +55,29 @@ public class Groove {
 	public Unit resolve(Fraction offset) {
 		Unit ret = new Unit();
 		long pos = 0;
-		int accentDelta = 0;
-		if (Fraction.compare(Fraction.zero, offset) < 0) {
-			
-		}
-		if (Fraction.compare(Fraction.zero, offset) == 0) {
-			if (beats.size() > 0) {
-				ret.accentDelta = this.beats.get(0).accent;
-			} else {
-				ret.accentDelta = 0;
-			}
-			return ret;
-		}
-		Fraction rest = (Fraction) offset.clone();
-		for (Beat u : this.beats) {
-			System.out.print(rest);
-			if (Fraction.compare(rest, Fraction.zero) > 0) {
-				System.out.print(".");
-				pos += u.ticks;
-			} else {
-				System.out.println("*");
-				Fraction modulo = Fraction.subtract(Fraction.zero, rest);
-				System.out.print("modulo:" + modulo + ",coeff:" + Fraction.div(modulo, u.length).doubleValue() + ",u.ticks:" + u.ticks + "|");
-				pos += Fraction.div(modulo, u.length).doubleValue() * u.ticks;
-				System.out.println("pos:" + pos);
-				if (Fraction.compare(Fraction.zero, modulo) == 0) {
-					accentDelta = u.accent;
-				}
+		
+		Fraction rest = offset.clone();
+		int i = 0;
+		while (Fraction.compare(rest, Fraction.zero) > 0) {
+			if (i >= this.beats.size()) {
 				break;
 			}
-			rest = Fraction.subtract(rest, u.length);
+			Beat beat = this.beats.get(i);
+			rest = Fraction.subtract(rest, beat.length);
+			pos += beat.ticks;
+			i++;
 		}
-		if (Fraction.compare(rest, Fraction.zero) > 0) {
-			System.out.println(";");
-			pos += this.resolution * rest.doubleValue();
+		if (Fraction.compare(rest, Fraction.zero) < 0) {
+			Beat beat = this.beats.get(i - 1);
+			ret.pos = (long) (pos + Fraction.div(rest, beat.length).doubleValue() * beat.ticks); 
+		} else if (Fraction.compare(rest, Fraction.zero) == 0) {
+			if (i < this.beats.size()) {
+				ret.accentDelta = this.beats.get(i).accent;
+			}
+			ret.pos = pos;
+		} else {
+			ret.pos = (long) (pos + (long)(rest.doubleValue() * this.resolution));
 		}
-
-		ret.pos = pos;
-		ret.accentDelta = accentDelta;
 		return ret;
 	}
 	
