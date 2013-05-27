@@ -21,7 +21,6 @@ public class GrooveTest {
 		assertEquals(1, unit.accentDelta);
 	}
 	
-	@Test
 	public void test_A02() throws SymfonionException {
 		Groove groove = testGrooveA();
 		Groove.Unit unit;
@@ -31,7 +30,6 @@ public class GrooveTest {
 		assertEquals(0, unit.accentDelta);
 	}
 	
-	@Test
 	public void test_A03() throws SymfonionException {
 		Groove groove = testGrooveA();
 		Groove.Unit unit;
@@ -40,7 +38,6 @@ public class GrooveTest {
 		assertEquals(48, unit.pos);
 		assertEquals(3, unit.accentDelta);
 	}
-	@Test
 	public void test_A04() throws SymfonionException {
 		Groove groove = testGrooveA();
 		Groove.Unit unit;
@@ -50,7 +47,6 @@ public class GrooveTest {
 		assertEquals(1, unit.accentDelta);
 	}
 	
-	@Test
 	public void test_A05() throws SymfonionException {
 		Groove groove = testGrooveA();
 		Groove.Unit unit;
@@ -60,7 +56,6 @@ public class GrooveTest {
 		assertEquals(1, unit.accentDelta);
 	}
 	
-	@Test
 	public void test_A06() throws SymfonionException {
 		Groove groove = testGrooveA();
 		Groove.Unit unit;
