@@ -141,9 +141,9 @@ public class Symfonion {
 		MidiDevice ret = null;
 		MidiDevice.Info[] infoItems = MidiSystem.getMidiDeviceInfo();
 		Pattern p = Pattern.compile(deviceNamePattern == null ? ".*" : deviceNamePattern);
-		System.out.println("Device name pattern=<" + deviceNamePattern + ">");
+		System.out.println("\"Device name pattern\":\"" + deviceNamePattern + "\"");
 		for (MidiDevice.Info info : infoItems) {
-			System.out.println("   <" + info + ">: vendor:(" + info.getVendor() + "), name:(" + info.getName() + ") , desc:(" + info.getDescription() + ")");
+			System.out.println("   \"" + info + "\":{ \"vendor\":\"" + info.getVendor() + "\", \"name\":\"" + info.getName() + "\" , \"desc\":\"" + info.getDescription() + "\"}");
 			Matcher m = p.matcher(info.getName());
 			if (m.find()) {
 				Object tmp = null;
@@ -172,11 +172,11 @@ public class Symfonion {
 	public static MidiDevice getMidiOutDevice(String deviceNamePattern) {
 		MidiDevice ret = null;
 		MidiDevice.Info[] infoItems = MidiSystem.getMidiDeviceInfo();
-		System.out.println("Device name pattern=<" + deviceNamePattern + ">");
+		System.out.println("\"Device name pattern\":\"" + deviceNamePattern + "\"");
 		Pattern p = Pattern.compile(deviceNamePattern == null ? ".*" : deviceNamePattern);
 		for (MidiDevice.Info info : infoItems) {
-			System.out.println("   <" + info + ">: vendor:(" + info.getVendor() + "), name:(" + info.getName() + ") , desc:(" + info.getDescription() + ")");
 			Matcher m = p.matcher(info.getName());
+			String msg = "\"" + info + "\":{ \"vendor\":\"" + info.getVendor() + "\", \"name\":\"" + info.getName() + "\", \"desc\":\"" + info.getDescription() + "\" }";
 			if (m.find()) {
 				Object tmp = null;
 				MidiDevice dev = null;
@@ -190,19 +190,17 @@ public class Symfonion {
 					}
 				} catch (Exception e) {
 				}
-				System.out.println("    ..." + tmp);
 				if (tmp != null) {
 					ret = dev;
+					System.out.println("=>" + msg);
 					break;
 				}
+			} else {
+				System.out.println("  " + msg);
 			}
 		}
-		if (ret != null) {
-			String name = ret.getDeviceInfo().getName();
-			String desc = ret.getDeviceInfo().getDescription();
-			System.out.println(format("<%s, %s> is chosen for MIDI out device.", name, desc));
-		} else {
-			System.out.println(String.format("No matching device is found for <%s>.", p));
+		if (ret == null) {
+			System.err.println(String.format("No matching device is found for <%s>.", p));
 		}
 		return ret;
 	}
@@ -223,7 +221,7 @@ public class Symfonion {
 			} catch (Exception e) {
 			}
 			if (tmp != null) {
-				System.out.println(format("name=<%s>, vendor=<%s>, version=<%s>, description=<%s>", info.getName(), info.getVendor(), info.getVersion(), info.getDescription()));
+				System.out.println(format("{ \"name\":\"%s\", \"vendor\":\"%s\", \"version\":\"%s\", \"description\":\"%s\" }", info.getName(), info.getVendor(), info.getVersion(), info.getDescription()));
 			}
 		}
 	}
