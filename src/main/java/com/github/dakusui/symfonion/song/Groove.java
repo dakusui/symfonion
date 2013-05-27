@@ -53,6 +53,14 @@ public class Groove {
 	}
 	
 	public Unit resolve(Fraction offset) {
+		if (offset == null) {
+			String msg = "offset cannot be null. (Groove#resolve)";
+			ExceptionThrower.throwRuntimeException(msg, null);
+		}
+		if (Fraction.compare(offset, Fraction.zero) < 0) {
+			String msg = "offset cannot be negative. (Groove#resolve)";
+			ExceptionThrower.throwRuntimeException(msg, null);
+		}
 		Unit ret = new Unit();
 		long pos = 0;
 		
