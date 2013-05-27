@@ -31,10 +31,18 @@ public class Fraction extends Object implements Cloneable, Serializable
 		this.reduce();
 	}
 
-	public Object clone() {
-		return new Fraction(this.numer, this.denom);
+	@Override
+	public Fraction clone()
+	{
+		Fraction ret;
+	    try {
+	        ret = (Fraction) super.clone();
+	    } catch (CloneNotSupportedException e) {
+	        throw new AssertionError(e);
+	    }
+	    return ret;
 	}
-
+	
 	public int getNumerator() {
 		return this.numer;
 	}
