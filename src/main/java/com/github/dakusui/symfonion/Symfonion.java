@@ -95,7 +95,7 @@ public class Symfonion {
 	
 	private void startSequencers(List<String> portNames, Map<String, MidiDevice> devices, Map<String, Sequencer> sequencers) {
 		for (String portName : portNames) {
-			System.out.println("Starting " + portName + "(" + System.currentTimeMillis() + ")");
+			System.out.println("Start playing on " + portName + "(" + System.currentTimeMillis() + ")");
 			sequencers.get(portName).start();
 		}
 	}
@@ -126,6 +126,7 @@ public class Symfonion {
 				startSequencers(portNames, devices, sequencers);
 				this.wait();
 			} finally {
+				System.out.println("Finished playing.");
 				cleanUpSequencers(portNames, devices, sequencers);
 			}
 		} catch (MidiUnavailableException e) {
@@ -141,9 +142,9 @@ public class Symfonion {
 		MidiDevice ret = null;
 		MidiDevice.Info[] infoItems = MidiSystem.getMidiDeviceInfo();
 		Pattern p = Pattern.compile(deviceNamePattern == null ? ".*" : deviceNamePattern);
-		System.out.println("\"Device name pattern\":\"" + deviceNamePattern + "\"");
+		System.out.println("\"Now choosing MIDI devices(device name pattern\":\"" + deviceNamePattern + "\")...");
 		for (MidiDevice.Info info : infoItems) {
-			System.out.println("   \"" + info + "\":{ \"vendor\":\"" + info.getVendor() + "\", \"name\":\"" + info.getName() + "\" , \"desc\":\"" + info.getDescription() + "\"}");
+			String msg = "\"" + info + "\":{ \"vendor\":\"" + info.getVendor() + "\", \"name\":\"" + info.getName() + "\" , \"desc\":\"" + info.getDescription() + "\"}";
 			Matcher m = p.matcher(info.getName());
 			if (m.find()) {
 				Object tmp = null;
@@ -158,21 +159,22 @@ public class Symfonion {
 					}
 				} catch (Exception e) {
 				}
-				System.out.println("    ..." + tmp);
 				if (tmp != null) {
 					ret = dev;
+					System.out.println("=>" + msg);
 					break;
 				}
+			} else {
+				System.out.println("  " + msg);
 			}
 		}
-		System.out.println(format("<%s> is chosen for MIDI-in device.", ret.getDeviceInfo().getName()));		
 		return ret;
 	}
 	
 	public static MidiDevice getMidiOutDevice(String deviceNamePattern) {
 		MidiDevice ret = null;
 		MidiDevice.Info[] infoItems = MidiSystem.getMidiDeviceInfo();
-		System.out.println("\"Device name pattern\":\"" + deviceNamePattern + "\"");
+		System.out.println("\"Now choosing MIDI devices (device name pattern\":\"" + deviceNamePattern + "\")...");
 		Pattern p = Pattern.compile(deviceNamePattern == null ? ".*" : deviceNamePattern);
 		for (MidiDevice.Info info : infoItems) {
 			Matcher m = p.matcher(info.getName());
@@ -260,9 +262,11 @@ public class Symfonion {
 			} else {
 				Map<String, MidiDevice> devices = new HashMap<String, MidiDevice>();
 				for (String portName : sequences.keySet()) {
+					System.out.println();
 					MidiDevice dev = getMidiOutDeviceForPortName(portName);
 					devices.put(portName, dev);
 				}
+				System.out.println();
 				symfonion.play(devices, sequences);
 			}
 		} else {
