@@ -83,7 +83,7 @@
           </descriptorRefs>
           <archive>
             <manifest>
-              <mainClass>net.sourceforge.symfonion.Symfonion</mainClass>
+              <mainClass>com.github.dakusui.symfonion.Symfonion</mainClass>
             </manifest>
           </archive>
         </configuration>
