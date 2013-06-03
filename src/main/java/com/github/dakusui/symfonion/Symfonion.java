@@ -1,8 +1,7 @@
 package com.github.dakusui.symfonion;
 
-import static java.lang.String.format;
-
 import java.io.File;
+import java.io.PrintStream;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -20,7 +19,6 @@ import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Sequence;
 import javax.sound.midi.Sequencer;
 import javax.sound.midi.Transmitter;
-
 
 import com.github.dakusui.logias.lisp.Context;
 import com.github.dakusui.symfonion.core.ExceptionThrower;
@@ -202,12 +200,27 @@ public class Symfonion {
 			}
 		}
 		if (ret == null) {
-			System.err.println(String.format("No matching device is found for <%s>.", p));
+			System.out.println(String.format("No matching device is found for <%s>.", p));
 		}
 		return ret;
 	}
 
-	private static void printMidiOutDevices() {
+	private static String formatDevice(PrintStream ps, MidiDevice.Info info, boolean enabled) {
+		String flag = enabled ? "*" : " ";
+		return String.format(
+				"%1s %-20s %-15s %-35s",
+				flag,
+				info == null ? "name" : info.getName(), 
+				info == null ? "version" : info.getVersion(), 
+				info == null ? "vendor" : info.getVendor() 
+				);		
+	}
+	
+	static void printMidiOutDevices(PrintStream ps) {
+		ps.println("  MIDI-out devices");
+		ps.println(formatDevice(ps, null, false));
+		ps.println("---------------------------------------------------------------------------");
+
 		MidiDevice.Info[] infoItems = MidiSystem.getMidiDeviceInfo();
 		for (MidiDevice.Info info : infoItems) {
 			MidiDevice dev = null;
@@ -223,7 +236,32 @@ public class Symfonion {
 			} catch (Exception e) {
 			}
 			if (tmp != null) {
-				System.out.println(format("{ \"name\":\"%s\", \"vendor\":\"%s\", \"version\":\"%s\", \"description\":\"%s\" }", info.getName(), info.getVendor(), info.getVersion(), info.getDescription()));
+				ps.println(formatDevice(ps, dev.getDeviceInfo(), false));
+			}
+		}
+	}
+
+	static void printMidiInDevices(PrintStream ps) {
+		ps.println("  MIDI-in devices");
+		ps.println(formatDevice(ps, null, false));
+		ps.println("---------------------------------------------------------------------------");
+
+		MidiDevice.Info[] infoItems = MidiSystem.getMidiDeviceInfo();
+		for (MidiDevice.Info info : infoItems) {
+			MidiDevice dev = null;
+			Object tmp = null;
+			try {
+				dev = MidiSystem.getMidiDevice(info);
+				dev.open();
+				try {
+					tmp = dev.getTransmitter();
+				} finally {
+					dev.close();
+				}
+			} catch (Exception e) {
+			}
+			if (tmp != null) {
+				ps.println(formatDevice(ps, info, false));
 			}
 		}
 	}
@@ -244,7 +282,10 @@ public class Symfonion {
 	
 	public static void main(String[] args) throws Exception {
 		if (args.length > 0 && "--list".equals(args[0])) {
-			printMidiOutDevices();
+			PrintStream ps = System.out;
+			printMidiOutDevices(ps);
+			ps.println();
+			printMidiInDevices(ps);
 			System.exit(0);
 		}
 		if (args.length == 2 || args.length == 1) {
