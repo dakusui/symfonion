@@ -169,7 +169,7 @@ public class Symfonion {
 		return ret;
 	}
 	
-	public static MidiDevice getMidiOutDevice(String deviceNamePattern) {
+	static MidiDevice getMidiOutDevice(String deviceNamePattern) {
 		MidiDevice ret = null;
 		MidiDevice.Info[] infoItems = MidiSystem.getMidiDeviceInfo();
 		System.out.println("\"Now choosing MIDI devices (device name pattern\":\"" + deviceNamePattern + "\")...");
@@ -215,7 +215,7 @@ public class Symfonion {
 				info == null ? "vendor" : info.getVendor() 
 				);		
 	}
-	
+
 	static void printMidiOutDevices(PrintStream ps) {
 		ps.println("  MIDI-out devices");
 		ps.println(formatDevice(ps, null, false));
