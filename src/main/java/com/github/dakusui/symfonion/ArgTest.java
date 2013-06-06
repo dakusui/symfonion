@@ -35,12 +35,13 @@ public class ArgTest {
 	public static void main(String... args) throws ParseException {
 		Option opt = new Option("T", true, "example");
 		opt.setOptionalArg(true);
+		opt.setValueSeparator('=');
 		opt.setArgs(2);
 		
 		Options options = new Options();
 		options.addOption(opt);
 		CommandLineParser parser = new PosixParser(); 
-		CommandLine cmd = parser.parse(options, new String[]{"-T"});
+		CommandLine cmd = parser.parse(options, new String[]{"-Tk", "-Tt"});
 		
 		////
 		//
