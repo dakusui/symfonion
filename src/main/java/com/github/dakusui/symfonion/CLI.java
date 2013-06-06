@@ -51,9 +51,7 @@ public class CLI {
         LIST {
 			@Override
 			public void invoke(CLI cli, PrintStream ps) {
-				Symfonion.printMidiOutDevices(ps);
-				ps.println();
-				Symfonion.printMidiInDevices(ps);
+				MidiDeviceScanner.listAllDevices(System.out).scan();
 			}
 		},
         PLAY {
@@ -63,8 +61,9 @@ public class CLI {
 
 				Song song = symfonion.load(cli.getSourceFile().getAbsolutePath());
 				Map<String, Sequence> sequences = symfonion.compile(song); 
+				ps.println();
 				Map<String, MidiDevice> devices = cli.prepareMidiOutDevices(ps);
-
+				ps.println();
 				symfonion.play(devices, sequences);
 			}
 		},
@@ -116,6 +115,8 @@ public class CLI {
 					throw new CLIException(msg);
 				}
 
+				ps.println();
+				
 				Map<String, Pattern> outDefs = cli.getMidiOutDefinitions();
 				if (!outDefs.containsKey(outPortName)) {
 					String msg = cli.composeErrMsg(
@@ -124,7 +125,7 @@ public class CLI {
 									inPortName
 									), 
 									"r", 
-									"--route"
+									"route"
 							);
 					throw new CLIException(msg);
 				}
@@ -140,7 +141,8 @@ public class CLI {
 							);
 					throw new CLIException(msg);
 				}
-				patchbay(matchedInDevices[0], matchedInDevices[0]);
+				ps.println();
+				patchbay(matchedInDevices[0], matchedOutDevices[0]);
 			}
 				
 			void patchbay(MidiDevice.Info in, MidiDevice.Info out) throws CLIException {
@@ -165,6 +167,7 @@ public class CLI {
 							Transmitter t = midiin.getTransmitter();
 							try {
 								t.setReceiver(r);
+								System.out.println("Now in MIDI patch-bay mode. Hit enter to quit.");
 								System.in.read();
 							} catch (IOException e) {
 								System.out.println("quitting due to an error.");
@@ -384,7 +387,7 @@ public class CLI {
             this.mode = Mode.ROUTE;
             Properties props = cmd.getOptionProperties("r");
             if (props.size() != 1) {
-            	String msg = composeErrMsg("Route information is not given or specified multiple times.", "r", "--route");
+            	String msg = composeErrMsg("Route information is not given or specified multiple times.", "r", "route");
             	throw new CLIException(msg);
             }
             
@@ -464,13 +467,15 @@ public class CLI {
 
 	private String version() {
 		String path = "/META-INF/maven/com.github.dakusui/symfonion/pom.properties";
-		InputStream stream = getClass().getResourceAsStream(path);
 		Properties props = new Properties();
 		String version = "(N/A)";
-		try {
-			props.load(stream);
-			version = props.getProperty("version");
-		} catch (IOException e) {
+		InputStream stream = getClass().getResourceAsStream(path);
+		if (stream != null) {
+			try {
+				props.load(stream);
+				version = props.getProperty("version");
+			} catch (IOException e) {
+			}
 		}
 		return version;
 	}
@@ -502,7 +507,7 @@ public class CLI {
     		cli.mode.invoke(cli, System.out);
     		exitCode = 0; 
     	} catch (Exception e) {
-    		
+    		e.printStackTrace();
     	} finally {
     		System.exit(exitCode);
     	}
