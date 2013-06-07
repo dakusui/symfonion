@@ -1,0 +1,3 @@
+#!/bin/sh
+
+java -jar /usr/share/lib/symfonion/symfonion.jar $@
