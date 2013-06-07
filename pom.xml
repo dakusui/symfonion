@@ -3,7 +3,7 @@
 
   <groupId>com.github.dakusui</groupId>
   <artifactId>symfonion</artifactId>
-  <version>0.8.1-SNAPSHOT</version>
+  <version>0.8.1</version>
   <description>A JSON based music macro language processor.</description>
   <packaging>jar</packaging>
 
@@ -160,11 +160,11 @@
               <target>
                 <chmod perm="ugo+x">
                   <fileset dir="${basedir}/target/deb">
-                    <include name="**/lib/symfonion-*.jar"/>
-                    <include name="**/bin/**"/>
-                    <include name="**/sbin/**"/>
-                    <include name="DEBIAN/post*"/>
-                    <include name="DEBIAN/pre*"/>
+                    <include name="**/lib/symfonion-*.jar" />
+                    <include name="**/bin/**" />
+                    <include name="**/sbin/**" />
+                    <include name="DEBIAN/post*" />
+                    <include name="DEBIAN/pre*" />
                   </fileset>
                 </chmod>
               </target>
