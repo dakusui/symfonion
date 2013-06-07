@@ -93,7 +93,7 @@
           </archive>
         </configuration>
       </plugin>
-      
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
@@ -115,6 +115,78 @@
         </executions>
       </plugin>
       
+      <plugin>
+        <!--
+          This plugin's configuration must come *before* the Debian Maven
+          Plugin.
+        -->
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>2.6</version>
+        <executions>
+          <execution>
+            <id>copy-deb-resources</id>
+            <phase>process-resources</phase>
+            <goals><goal>copy-resources</goal></goals>
+            <configuration>
+              <overwrite>true</overwrite>
+              <outputDirectory>${basedir}/target/deb</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>src/deb/resources</directory>
+                  <!-- Uncomment the following line to enable Velocity filtering. -->
+                  <!--
+                  <filtering>true</filtering>
+                  -->
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    
+      <plugin>
+        <!--
+          This plugin's configuration must come *after* the Maven Resources
+          Plugin, and *before* the Debian Maven Plugin.
+        -->
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>1.6</version>
+        <executions>
+          <execution>
+            <id>fix-permissions</id>
+            <phase>package</phase>
+            <configuration>
+              <target>
+                <chmod perm="ugo+x">
+                  <fileset dir="${basedir}/target/deb">
+                    <include name="**/lib/symfonion-*.jar"/>
+                    <include name="**/bin/**"/>
+                    <include name="**/sbin/**"/>
+                    <include name="DEBIAN/post*"/>
+                    <include name="DEBIAN/pre*"/>
+                  </fileset>
+                </chmod>
+              </target>
+            </configuration>
+            <goals><goal>run</goal></goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>net.sf.debian-maven</groupId>
+        <artifactId>debian-maven-plugin</artifactId>
+        <version>1.0.5</version>
+        <configuration>
+          <!--
+          <packageName>my-package</packageName>
+          <packageVersion>1.0.0</packageVersion>
+          ...
+          -->
+        </configuration>
+      </plugin>
+            
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -139,7 +211,7 @@
           </execution>
         </executions>
       </plugin>
-
+	    
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-release-plugin</artifactId>
