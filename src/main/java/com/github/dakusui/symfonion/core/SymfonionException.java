@@ -22,4 +22,8 @@ public class SymfonionException extends Exception {
 	public SymfonionException(Throwable cause) {
 		super(cause);
 	}
+	
+	public static void main(String[] args) {
+		System.out.println(String.format("%s%s", "hello"));
+	}
 }

@@ -1,5 +1,8 @@
 package com.github.dakusui.symfonion.song;
 
+import static com.github.dakusui.symfonion.core.SymfonionTypeMismatchException.ARRAY;
+import static com.github.dakusui.symfonion.core.SymfonionTypeMismatchException.OBJECT;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -7,7 +10,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 
 import com.github.dakusui.logias.Logias;
 import com.github.dakusui.logias.lisp.Context;
@@ -18,7 +20,6 @@ import com.github.dakusui.symfonion.core.Util;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-
 
 public class Song {
 	private JsonObject json;
@@ -47,7 +48,7 @@ public class Song {
 		JsonElement tmp = JsonUtil.asJson(this.json, Keyword.$settings);
 		if (tmp != null) {
 			if (!tmp.isJsonObject()) {
-				ExceptionThrower.throwSyntaxException("This element is assumed to be an array not an object.", null);
+				ExceptionThrower.throwTypeMismatchException(tmp, OBJECT);
 			}
 			String profileName = JsonUtil.asString(tmp.getAsJsonObject(), Keyword.$mididevice);
 			Context context = logiasContext;
@@ -65,33 +66,16 @@ public class Song {
 	}
 
 	private void initSequence() throws SymfonionException {
-		/*
-		"$sequence":{
-			"$bars":[
-			    {
-					"$beats":"16/16",
-					"$patterns":{ 
-						"vocal":["melody1", "effect1"],
-						"piano":["melody1"],
-						"guitar":["melody1"],
-						"base":["melody1"],
-						"drums":["melody1"],
-					},
-					"$groove":null,
-				},
-			]
-		},
-		 */
 		JsonElement tmp = JsonUtil.asJson(this.json, Keyword.$sequence);
 		if (!tmp.isJsonArray()) {
-			ExceptionThrower.throwSyntaxException("This element is assumed to be an array not an object.", null);
+			ExceptionThrower.throwTypeMismatchException(tmp, ARRAY);
 		}
 		JsonArray seqJson = tmp.getAsJsonArray(); 
 		int len = seqJson.getAsJsonArray().size();
 		for (int i = 0; i < len; i++) {
 			JsonElement barJson = seqJson.get(i);
 			if (!barJson.isJsonObject()) {
-				ExceptionThrower.throwSyntaxException("This element is assumed to be an object", null);
+				ExceptionThrower.throwTypeMismatchException(barJson, OBJECT);
 			}
 			Bar bar = new Bar(barJson.getAsJsonObject(), this);
 			bars.add(bar);
@@ -100,6 +84,7 @@ public class Song {
 
 	private void initNoteMaps() throws SymfonionException {
 		final JsonObject noteMapsJSON = JsonUtil.asJsonObject(this.json, Keyword.$notemaps);
+		
 		Iterator<String> i = JsonUtil.keyIterator(noteMapsJSON);
 		noteMaps.put(Keyword.$normal.toString(), NoteMap.defaultNoteMap);
 		noteMaps.put(Keyword.$percussion.toString(), NoteMap.defaultPercussionMap);
@@ -112,6 +97,7 @@ public class Song {
 
 	private void initPatterns() throws SymfonionException {
 		JsonObject patternsJSON = JsonUtil.asJsonObject(this.json, Keyword.$patterns);
+		
 		Iterator<String> i = JsonUtil.keyIterator(patternsJSON);
 		while (i.hasNext()) {
 			String name = i.next();
@@ -122,6 +108,7 @@ public class Song {
 
 	private void initParts() throws SymfonionException {
 		JsonObject instrumentsJSON = JsonUtil.asJsonObject(this.json, Keyword.$parts);
+		
 		Iterator<String> i = JsonUtil.keyIterator(instrumentsJSON);
 		while (i.hasNext()) {
 			String name = i.next();
@@ -132,12 +119,14 @@ public class Song {
 
 	private void initGrooves() throws SymfonionException {
 		JsonObject groovesJSON = JsonUtil.asJsonObject(this.json, Keyword.$grooves);
+		
 		Iterator <String> i = JsonUtil.keyIterator(groovesJSON);
 		while (i.hasNext()) {
 			String name = i.next();
 			Groove cur = Groove.createGroove(name, JsonUtil.asJsonArray(groovesJSON, name), this);
 			this.grooves.put(name, cur);
 		}
+		
 	}
 	
 	public Pattern pattern(String patternName) {

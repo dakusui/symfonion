@@ -1,5 +1,8 @@
 package com.github.dakusui.symfonion.song;
 
+import static com.github.dakusui.symfonion.core.SymfonionIllegalFormatException.NOTELENGTH_EXAMPLE;
+import static com.github.dakusui.symfonion.core.SymfonionTypeMismatchException.OBJECT;
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -101,15 +104,19 @@ public class Groove {
 		Groove ret = new Groove();
 		for (JsonElement elem : grooveDef) {
 			if (!elem.isJsonObject()) {
-				String msg = "";
-				ExceptionThrower.throwSyntaxException(msg, null);
+				ExceptionThrower.throwTypeMismatchException(elem, OBJECT);
 			}
 			JsonObject cur = elem.getAsJsonObject();
-			String len = JsonUtil.asString(cur, Keyword.$length);
+			JsonElement lenJson = JsonUtil.asJson(cur, Keyword.$length); 
+			String len = lenJson.getAsString();
 			long   ticks = JsonUtil.asLong(cur, Keyword.$ticks);
 			int    accent = JsonUtil.asInt(cur, Keyword.$accent);
 			
-			ret.add(Util.parseNoteLength(len), ticks, accent);
+			Fraction f = Util.parseNoteLength(len);
+			if (f == null) {
+				ExceptionThrower.throwIllegalFormatException(lenJson, NOTELENGTH_EXAMPLE);
+			}
+			ret.add(f, ticks, accent);
 		}
 		return ret;
 	}

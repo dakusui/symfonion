@@ -1,5 +1,8 @@
 package com.github.dakusui.symfonion.song;
 
+import static com.github.dakusui.symfonion.core.SymfonionIllegalFormatException.NOTELENGTH_EXAMPLE;
+import static com.github.dakusui.symfonion.core.SymfonionTypeMismatchException.PRIMITIVE;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -40,7 +43,7 @@ public class Stroke {
 	private int tempo = UNDEFINED_NUM;
 	private JsonArray sysex;
 	private int[] aftertouch;
-	
+	private JsonElement strokeJson;
 	public Stroke(
 			JsonElement cur,
 			Parameters params,
@@ -58,6 +61,9 @@ public class Stroke {
 				notes = arr.get(0).getAsString();
 				if (elems > 1) {
 					len = Util.parseNoteLength(arr.get(1).getAsString());
+					if (len == null) {
+						ExceptionThrower.throwIllegalFormatException(arr.get(1), NOTELENGTH_EXAMPLE);
+					}
 				}
 			}
 		} else if (cur.isJsonObject()) {
@@ -67,8 +73,11 @@ public class Stroke {
 				JsonElement lenJSON = JsonUtil.asJson(obj, Keyword.$length);
 				if (lenJSON.isJsonPrimitive()) {
 					len = Util.parseNoteLength(lenJSON.getAsString());
+					if (len == null) {
+						ExceptionThrower.throwIllegalFormatException(lenJSON, NOTELENGTH_EXAMPLE);
+					}
 				} else {
-					ExceptionThrower.throwSyntaxException("The element:<" + lenJSON + "> is not appropriate for note length", null);
+					ExceptionThrower.throwTypeMismatchException(lenJSON, PRIMITIVE);
 				}
 			}
 			if (JsonUtil.hasPath(obj, Keyword.$gate)) {
@@ -169,7 +178,7 @@ public class Stroke {
 				throw new SymfonionException("Error:" + s.substring(0, i) + "[" + s.substring(i, m.start()) + "]" + s.substring(m.start()));
 			}
 			int n = 
-				this.noteMap.note(m.group(1)) + 
+				this.noteMap.note(m.group(1), this.strokeJson) + 
 				Util.count('#', m.group(2)) - Util.count('b', m.group(2)) +
 				Util.count('>', m.group(3)) * 12 - Util.count('<', m.group(3)) *12;
 			int a = Util.count('+', m.group(4)) - Util.count('-', m.group(4));

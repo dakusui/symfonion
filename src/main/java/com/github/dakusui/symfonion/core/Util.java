@@ -3,6 +3,7 @@ package com.github.dakusui.symfonion.core;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -27,11 +28,11 @@ public class Util {
 
 	public static Fraction parseFraction(String str) throws SymfonionException {
 		if (str == null ) {
-			ExceptionThrower.throwSyntaxException("Given string:<" + str + "> is not a fraction representation.", null);
+			return null;
 		}
 		Matcher m = fractionPattern.matcher(str);
 		if (!m.matches()) {
-			ExceptionThrower.throwSyntaxException("Given string:<" + str + "> is not a fraction representation.", null);
+			return null;
 		}
 		Fraction ret = new Fraction(
 							   Integer.parseInt(m.group(1)), 
@@ -46,7 +47,7 @@ public class Util {
 			InputStream is = new BufferedInputStream(ClassLoader.getSystemResourceAsStream(resourceName));
 			loadFromInputStream(b, is);
 		} catch (IOException e) {
-			ExceptionThrower.throwLoadException("Failed to load data from <" + resourceName + ">", e);
+			ExceptionThrower.throwLoadResourceException(resourceName, e);
 		}
 		return b.toString();
 	}
@@ -58,8 +59,10 @@ public class Util {
 			
 			InputStream is = new BufferedInputStream(new FileInputStream(f));
 			loadFromInputStream(b, is);
+		} catch (FileNotFoundException e) {
+			ExceptionThrower.throwFileNotFoundException(f, e);
 		} catch (IOException e) {
-			ExceptionThrower.throwLoadException("Failed to load data from <" + f.getAbsolutePath().toString() + ">", e);
+			ExceptionThrower.throwLoadFileException(f, e);
 		}
 		return b.toString();
 	}
@@ -87,7 +90,7 @@ public class Util {
 		} else if ("0".equals(length)) {
 			ret = new Fraction(0, 1);
 		} else {
-			ExceptionThrower.throwSyntaxException("The string <" + length + "> does not comply with note length format.", null);
+			ret = null;
 		}
 		return ret;
 	}
@@ -118,5 +121,4 @@ public class Util {
 		}
 		return Integer.parseInt(o.toString());
 	}
-
 }
