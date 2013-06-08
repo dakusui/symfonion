@@ -402,6 +402,7 @@ public class CLI {
                 this.mode = Mode.HELP;
             } else if (leftovers.size() == 1) {
                 this.mode = Mode.PLAY;
+                this.source = new File(leftovers.get(0));
             } else {
             	String msg = composeErrMsg(String.format("Unrecognized arguments:%s", leftovers.subList(2, leftovers.size())), "-", null);
             	throw new CLIException(msg);
@@ -501,15 +502,29 @@ public class CLI {
     }
     
     public static void main(String[] args) throws ParseException, CLIException {
-    	CLI cli = new CLI(args);
     	int exitCode = 255;
     	try {
+        	CLI cli = new CLI(args);
     		cli.mode.invoke(cli, System.out);
-    		exitCode = 0; 
+    		exitCode = 0;
+    	} catch (ParseException e) {
+    		printError(System.err, e);
+    		exitCode = 1;
+    	} catch (CLIException e) {
+    		printError(System.err, e);
+    		exitCode = 2;
+    	} catch (SymfonionException e) {
+    		printError(System.err, e);
+    		exitCode = 3;
     	} catch (Exception e) {
+    		printError(System.err, e);
     		e.printStackTrace();
     	} finally {
     		System.exit(exitCode);
     	}
+    }
+    
+    private static void printError(PrintStream ps, Throwable t) {
+    	ps.println(String.format("symfonion: %s", t.getMessage()));
     }
 }
