@@ -14,7 +14,6 @@ import javax.sound.midi.ShortMessage;
 import javax.sound.midi.SysexMessage;
 import javax.sound.midi.Track;
 
-
 import com.github.dakusui.logias.Logias;
 import com.github.dakusui.logias.lisp.Context;
 import com.github.dakusui.logias.lisp.s.Literal;
@@ -27,9 +26,9 @@ import com.github.dakusui.symfonion.song.Bar;
 import com.github.dakusui.symfonion.song.Groove;
 import com.github.dakusui.symfonion.song.Part;
 import com.github.dakusui.symfonion.song.Pattern;
+import com.github.dakusui.symfonion.song.Pattern.Parameters;
 import com.github.dakusui.symfonion.song.Song;
 import com.github.dakusui.symfonion.song.Stroke;
-import com.github.dakusui.symfonion.song.Pattern.Parameters;
 import com.google.gson.JsonArray;
 
 public class MidiCompiler {
@@ -74,12 +73,15 @@ public class MidiCompiler {
 		public long getStrokeLengthInTicks() {
 			return strokeLengthInTicks;
 		}
+		
+		
 	}
 	private Context logiasContext;
 
 	public MidiCompiler(Context logiasContext) {
 		this.logiasContext = logiasContext;
 	}
+	
 	public Map<String, Sequence> compile(Song song) throws InvalidMidiDataException, SymfonionException {
 		System.out.println("Now compiling...");
 		int resolution = 384;
@@ -108,7 +110,7 @@ public class MidiCompiler {
 				partStarted(partName);
 				Track track = tracks.get(partName);
 				if (track == null) {
-					ExceptionThrower.throwInstrumentNotFound("Instrument:<" + partName + "> is not found.", null);
+					ExceptionThrower.throwPartNotFound(bar.location(partName), partName);
 				}
 				int channel = song.part(partName).channel(); 
 				for (Pattern pattern : bar.part(partName)) {
@@ -288,14 +290,18 @@ public class MidiCompiler {
 	public void barStarted(int barid) {
 		System.out.println("bar:<" + barid + "> ");
 	}
+	
 	public void patternStarted() {
 		System.out.print("[");
 	}
+	
 	public void patternEnded() {
 		System.out.print("]");
 	}
+	
 	public void barEnded() {
 	}
+	
 	public void partStarted(String partName) {
 		System.out.print("    part:<" + partName + ">");
 	}

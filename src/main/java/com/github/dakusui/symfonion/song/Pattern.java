@@ -1,9 +1,10 @@
 package com.github.dakusui.symfonion.song;
 
+import static com.github.dakusui.symfonion.core.SymfonionIllegalFormatException.NOTELENGTH_EXAMPLE;
+
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-
 
 import com.github.dakusui.symfonion.core.ExceptionThrower;
 import com.github.dakusui.symfonion.core.Fraction;
@@ -38,6 +39,12 @@ public class Pattern {
 			this.velocitydelta = JsonUtil.asIntWithDefault(json, 5, Keyword.$velocitydelta);
 			this.gate = JsonUtil.asDoubleWithDefault(json, 0.8, Keyword.$gate);
 			this.length = Util.parseNoteLength(JsonUtil.asStringWithDefault(json, "4", Keyword.$length));
+			if (this.length == null) {
+				ExceptionThrower.throwIllegalFormatException(
+						JsonUtil.asJson(json, Keyword.$length), 
+						NOTELENGTH_EXAMPLE
+				);
+			}
 			this.transpose = JsonUtil.asIntWithDefault(json, 0, Keyword.$transpose);
 			this.arpegio = JsonUtil.asIntWithDefault(json, 0, Keyword.$arpegio);
 		}
@@ -64,7 +71,10 @@ public class Pattern {
 		if (noteMapName != null) {
 			noteMap = song.noteMap(noteMapName);
 			if (noteMap == null) {
-				ExceptionThrower.throwNoteMapNotFoundException("Notemap:<" + noteMapName + "> is not found.", null);
+				ExceptionThrower.throwNoteMapNotFoundException(
+						JsonUtil.asJson(json, Keyword.$notemap), 
+						noteMapName
+						);
 			}
 		}
 		Pattern ret = new Pattern(noteMap);

@@ -8,6 +8,7 @@ import java.util.Map;
 import com.github.dakusui.symfonion.core.ExceptionThrower;
 import com.github.dakusui.symfonion.core.JsonUtil;
 import com.github.dakusui.symfonion.core.SymfonionException;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 
@@ -42,12 +43,14 @@ public class NoteMap {
 			this.map.put(cur, v);
 		}
 	}
-	public int note(String notename) throws SymfonionException {
+	
+	public int note(String notename, JsonElement location) throws SymfonionException {
 		if (!this.map.containsKey(notename)) {
-			ExceptionThrower.throwNoteNotDefinedException("Note name:<" + notename + "> is not defined for notemap:<" + this.name + ">");
+			ExceptionThrower.throwNoteNotDefinedException(location, notename, this.name);
 		}
 		return this.map.get(notename);
 	}
+	
 	public String name() {
 		return this.name;
 	}

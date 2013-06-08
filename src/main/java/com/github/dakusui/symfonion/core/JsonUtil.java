@@ -1,9 +1,12 @@
 package com.github.dakusui.symfonion.core;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -79,7 +82,7 @@ public class JsonUtil {
 			return ret;
 		}
 		if (ret.isJsonObject() || ret.isJsonArray()) {
-			JsonElement head = ret.getAsJsonObject();
+			JsonElement head = ret;
 			return asJson(head, Arrays.copyOfRange(path, 1, path.length));
 		}
 		return null;
@@ -244,9 +247,72 @@ public class JsonUtil {
 		System.out.println(JsonNull.INSTANCE == null);
 		
 		System.out.println(JsonUtil.toJson("hello"));
+		JsonObject jsonObj = JsonUtil.toJson("{hello:{world:[1, 2, 3]}}").getAsJsonObject();
+		System.out.println(buildPathInfo(jsonObj).get(JsonUtil.asJson(jsonObj, "hello", "world")));
+		System.out.println(buildPathInfo(jsonObj).get(JsonUtil.asJson(jsonObj, "hello", "world", 0)));
+		System.out.println(buildPathInfo(jsonObj).get(JsonUtil.asJson(jsonObj, "hello")));
 	}
 
 	public static JsonElement toJson(String str) {
 		return jsonParser().parse(str);
 	}
+	
+	public static Map<JsonElement, String> buildPathInfo(JsonObject root) {
+		Map<JsonElement, String> ret = new HashMap<JsonElement, String>();
+		List<Object> path = new LinkedList<Object>();
+		buildPathInfo(ret, path, root);
+		return ret;
+	}
+
+	private static void buildPathInfo(Map<JsonElement, String> map,
+			List<Object> path, JsonElement elem) {
+		if (!elem.isJsonNull()) {
+			if (elem.isJsonArray()) {
+				buildPathInfo(map, path, elem.getAsJsonArray());
+			} else if (elem.isJsonObject()) {
+				buildPathInfo(map, path, elem.getAsJsonObject());
+			}
+			map.put(elem, jsonpath(path));
+		}
+	}
+
+	public static void buildPathInfo(Map<JsonElement, String> map, List<Object> path, JsonArray arr) {
+		int len = arr.size();
+		for (int i = 0; i < len; i++) {
+			path.add(i);
+			buildPathInfo(map, path, arr.get(i));
+			path.remove(path.size() - 1);
+		}
+	}
+	
+	public static void buildPathInfo(Map<JsonElement, String> map, List<Object> path, JsonObject obj) {
+		for (Entry<String, JsonElement> ent : obj.entrySet()) {
+			String k = ent.getKey();
+			JsonElement elem = ent.getValue();
+			path.add(k);
+			buildPathInfo(map, path, elem);
+			path.remove(path.size() - 1);
+		}
+	}
+	
+	private static String jsonpath(List<Object> path) {
+		StringBuffer buf = new StringBuffer();
+		boolean firstTime = true;
+		for (Object obj : path) {
+			if (obj instanceof Number) {
+				buf.append("[");
+				buf.append(obj);
+				buf.append("]");
+			} else {
+				if (!firstTime) {
+					buf.append(".");
+				}
+				buf.append(obj);
+			}
+			firstTime = false;
+		}
+		return buf.toString();
+	}
+
+
 }
