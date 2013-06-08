@@ -501,30 +501,34 @@ public class CLI {
     	return this.route;
     }
     
-    public static void main(String[] args) throws ParseException, CLIException {
-    	int exitCode = 255;
-    	try {
-        	CLI cli = new CLI(args);
-    		cli.mode.invoke(cli, System.out);
-    		exitCode = 0;
-    	} catch (ParseException e) {
-    		printError(System.err, e);
-    		exitCode = 1;
-    	} catch (CLIException e) {
-    		printError(System.err, e);
-    		exitCode = 2;
-    	} catch (SymfonionException e) {
-    		printError(System.err, e);
-    		exitCode = 3;
-    	} catch (Exception e) {
-    		printError(System.err, e);
-    		e.printStackTrace();
-    	} finally {
-    		System.exit(exitCode);
-    	}
+    public static void main(String... args) {
+    	int exitCode = invoke(System.out, System.err, args);
+    	System.exit(exitCode);
     }
     
-    private static void printError(PrintStream ps, Throwable t) {
+    public static int invoke(PrintStream stdout, PrintStream stderr, String... args) {
+    	int ret = 255;
+    	try {
+        	CLI cli = new CLI(args);
+    		cli.mode.invoke(cli, stdout);
+    		ret = 0;
+    	} catch (ParseException e) {
+    		printError(stderr, e);
+    		ret = 1;
+    	} catch (CLIException e) {
+    		printError(stderr, e);
+    		ret = 2;
+    	} catch (SymfonionException e) {
+    		printError(stderr, e);
+    		ret = 3;
+    	} catch (IOException e) {
+    		e.printStackTrace(stderr);
+    		ret = 4;
+    	}
+    	return ret;
+    }
+
+	private static void printError(PrintStream ps, Throwable t) {
     	ps.println(String.format("symfonion: %s", t.getMessage()));
     }
 }

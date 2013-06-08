@@ -4,8 +4,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 public class SymfonionIllegalFormatException extends SymfonionSyntaxException {
-	public static final String FRACTION_EXAMPLE = "";
-	public static final String NOTELENGTH_EXAMPLE = "This value must be a note length";
+	public static final String FRACTION_EXAMPLE = "This value must be a fraction. e.g. '1/2', '1/4', and so on.";
+	public static final String NOTELENGTH_EXAMPLE = "This value must be a note length. e.g. '4', '8.', '16'";
 	
 	/**
 	 * Serial version UID

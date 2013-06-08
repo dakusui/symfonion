@@ -1,5 +1,6 @@
 package com.github.dakusui.symfonion;
 
+import java.io.File;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -22,6 +23,7 @@ import com.github.dakusui.symfonion.core.JsonUtil;
 import com.github.dakusui.symfonion.core.SymfonionException;
 import com.github.dakusui.symfonion.core.Util;
 import com.github.dakusui.symfonion.song.Song;
+import com.google.gson.JsonSyntaxException;
 
 public class Symfonion {
 	Context logiasContext;
@@ -31,8 +33,20 @@ public class Symfonion {
 	}
 	
 	public Song load(String fileName) throws SymfonionException {
-		Song ret = new Song(logiasContext, JsonUtil.toJson(Util.loadFile(fileName)).getAsJsonObject());
-		ret.init();
+		Song ret = null;
+		try {
+			try {
+				ret = new Song(logiasContext, JsonUtil.toJson(Util.loadFile(fileName)).getAsJsonObject());
+				ret.init();
+			} catch (JsonSyntaxException e) {
+				ExceptionThrower.throwLoadFileException(new File(fileName), e.getCause());
+			} catch (IllegalStateException e) {
+				ExceptionThrower.throwLoadFileException(new File(fileName), e);
+			}
+		} catch (SymfonionException e) {
+			e.setSourceFile(new File(fileName));
+			throw e;
+		}
 		return ret;
 	}
 	

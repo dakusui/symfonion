@@ -1,5 +1,6 @@
 package com.github.dakusui.symfonion.song;
 
+import static com.github.dakusui.symfonion.core.SymfonionIllegalFormatException.FRACTION_EXAMPLE;
 import static com.github.dakusui.symfonion.core.SymfonionTypeMismatchException.ARRAY;
 import static com.github.dakusui.symfonion.core.SymfonionTypeMismatchException.PRIMITIVE;
 
@@ -40,7 +41,7 @@ public class Bar {
 		}
 		this.beats = Util.parseFraction(fractionJson.getAsString());
 		if (this.beats == null) {
-			ExceptionThrower.throwIllegalFormatException(fractionJson, "This value must be a fraction. e.g. '1/2', '1/4', and so on.");
+			ExceptionThrower.throwIllegalFormatException(fractionJson, FRACTION_EXAMPLE);
 		}
 		this.groove = Groove.DEFAULT_INSTANCE;
 		if (jsonObject.has(Keyword.$groove.name())) {

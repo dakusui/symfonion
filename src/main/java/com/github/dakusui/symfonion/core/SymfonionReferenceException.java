@@ -15,7 +15,7 @@ public class SymfonionReferenceException extends SymfonionSyntaxException {
 	
 	
 	protected static String formatMessage(String missingReference, String type) {
-		String ret = String.format("%s undefined %s symbol", missingReference, type);
+		String ret = String.format("'%s' undefined %s symbol", missingReference, type);
 		return ret;
 	}
 	
