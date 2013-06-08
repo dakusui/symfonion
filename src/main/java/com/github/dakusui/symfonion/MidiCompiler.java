@@ -110,6 +110,7 @@ public class MidiCompiler {
 				partStarted(partName);
 				Track track = tracks.get(partName);
 				if (track == null) {
+					aborted();
 					ExceptionThrower.throwPartNotFound(bar.location(partName), partName);
 				}
 				int channel = song.part(partName).channel(); 
@@ -312,5 +313,9 @@ public class MidiCompiler {
 
 	public void partEnded() {
 		System.out.println();
+	}
+	
+	public void aborted() {
+		System.out.println("aborted.");
 	}
 }

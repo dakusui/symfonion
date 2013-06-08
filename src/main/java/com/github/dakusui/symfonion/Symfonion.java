@@ -21,12 +21,16 @@ import com.github.dakusui.logias.lisp.Context;
 import com.github.dakusui.symfonion.core.ExceptionThrower;
 import com.github.dakusui.symfonion.core.JsonUtil;
 import com.github.dakusui.symfonion.core.SymfonionException;
+import com.github.dakusui.symfonion.core.SymfonionSyntaxException;
 import com.github.dakusui.symfonion.core.Util;
 import com.github.dakusui.symfonion.song.Song;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 
 public class Symfonion {
 	Context logiasContext;
+	private String fileName;
+	private JsonObject json;
 	
 	public Symfonion(Context logiasContext) {
 		this.logiasContext = logiasContext;
@@ -34,17 +38,24 @@ public class Symfonion {
 	
 	public Song load(String fileName) throws SymfonionException {
 		Song ret = null;
+		this.fileName = fileName;
 		try {
 			try {
-				ret = new Song(logiasContext, JsonUtil.toJson(Util.loadFile(fileName)).getAsJsonObject());
+				this.json = JsonUtil.toJson(Util.loadFile(fileName)).getAsJsonObject();
+				ret = new Song(logiasContext, json);
 				ret.init();
 			} catch (JsonSyntaxException e) {
 				ExceptionThrower.throwLoadFileException(new File(fileName), e.getCause());
 			} catch (IllegalStateException e) {
 				ExceptionThrower.throwLoadFileException(new File(fileName), e);
 			}
+		} catch (SymfonionSyntaxException e) {
+			e.setSourceFile(new File(this.fileName));
+			String path = JsonUtil.buildPathInfo(this.json).get(e.getLocation());
+			e.setJsonPath(path);
+			throw e;
 		} catch (SymfonionException e) {
-			e.setSourceFile(new File(fileName));
+			e.setSourceFile(new File(this.fileName));
 			throw e;
 		}
 		return ret;
@@ -55,6 +66,14 @@ public class Symfonion {
 		Map<String, Sequence> ret = null;
 		try {
 			ret = compiler.compile(song);
+		} catch (SymfonionSyntaxException e) {
+			e.setSourceFile(new File(this.fileName));
+			String path = JsonUtil.buildPathInfo(this.json).get(e.getLocation());
+			e.setJsonPath(path);
+			throw e;
+		} catch (SymfonionException e) {
+			e.setSourceFile(new File(this.fileName));
+			throw e;
 		} catch (InvalidMidiDataException e) {
 			ExceptionThrower.throwCompilationException("Failed to compile a song.", e);
 		}
