@@ -56,7 +56,7 @@
 	    {
 			"$beats":"16/16",
 			"$patterns":{
-				"vocal":["melody1_notfound"]
+				"vocal_notfound":["melody1"]
 			},
 			"$groove":"16beats"
 		}
