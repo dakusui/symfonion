@@ -28,9 +28,11 @@ public class Bar {
 	Map<String, JsonElement> locations = new HashMap<String, JsonElement>();
 	Groove groove;
 	private Song song;
+	private JsonObject json = null;
 	
 	public Bar(JsonObject jsonObject, Song song) throws SymfonionException {
 		this.song = song;
+		this.json = jsonObject;
 		init(jsonObject);
 	}
 
@@ -97,6 +99,6 @@ public class Bar {
 	}
 
 	public JsonElement location(String partName) {
-		return null;
+		return JsonUtil.asJson(this.json, Keyword.$patterns, partName);
 	}
 }

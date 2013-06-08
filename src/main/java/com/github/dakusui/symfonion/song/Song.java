@@ -16,7 +16,6 @@ import com.github.dakusui.logias.lisp.Context;
 import com.github.dakusui.symfonion.core.ExceptionThrower;
 import com.github.dakusui.symfonion.core.JsonUtil;
 import com.github.dakusui.symfonion.core.SymfonionException;
-import com.github.dakusui.symfonion.core.SymfonionSyntaxException;
 import com.github.dakusui.symfonion.core.Util;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -37,18 +36,12 @@ public class Song {
 	}
 	
 	public void init() throws SymfonionException {
-		try {
-			initSettings();
-			initParts();
-			initNoteMaps();
-			initPatterns();
-			initGrooves();
-			initSequence();
-		} catch (SymfonionSyntaxException e) {
-			String path = JsonUtil.buildPathInfo(this.json).get(e.getLocation());
-			e.setJsonPath(path);
-			throw e;
-		}
+		initSettings();
+		initParts();
+		initNoteMaps();
+		initPatterns();
+		initGrooves();
+		initSequence();
 	}
 
 	private void initSettings() throws SymfonionException {

@@ -71,10 +71,6 @@ public class ErrorTest {
 				);
 	}
 
-	private String fmt(String fmt) {
-		return String.format(fmt, getWorkFile());
-	}
-
 	@Test
 	public void illegalfraction() throws IOException, SymfonionException, ParseException {
 		String resourceName = "illegalvalues/01_illegalfraction.js";
@@ -141,7 +137,7 @@ public class ErrorTest {
 	public void missingpart() throws IOException, SymfonionException, ParseException {
 		String resourceName = "missingreferences/04_partnotfound.js";
 		assertEquals(
-				fmt("symfonion: %s: jsonpath: $sequence[1].$patterns.vocal[0]: error: 'melody1_notfound' undefined pattern symbol\n"),
+				fmt("symfonion: %s: jsonpath: $sequence[1].$patterns.vocal_notfound: error: 'vocal_notfound' undefined part symbol\n"),
 				invokeWithResource(resourceName)
 				);
 	}
@@ -163,7 +159,11 @@ public class ErrorTest {
 		CLI.invoke(ps, ps, "-c", workFile.getAbsolutePath());
 		return baos.toString();
 	}
-	
+
+	private String fmt(String fmt) {
+		return String.format(fmt, getWorkFile());
+	}
+
 	public File getWorkFile() {
 		return this.workFile;
 	}
