@@ -7,10 +7,6 @@ import com.google.gson.JsonElement;
 
 public class ExceptionThrower {
 
-	public static void throwSyntaxException(String msg, Throwable t) throws SymfonionException {
-		throw new SymfonionException(msg, t);
-	}
-
 	public static void throwCompilationException(String msg, Throwable e) throws SymfonionException {
 		throw new SymfonionException(msg, e);
 	}
@@ -20,7 +16,7 @@ public class ExceptionThrower {
 	}
 
 	public static void throwLoadFileException(File file, Throwable e) throws SymfonionException {
-		throw new SymfonionException(String.format("%s: Failed to read file", file, e.getMessage()));
+		throw new SymfonionException(String.format("%s: %s", file, e.getMessage()));
 	}
 
 	public static void throwLoadResourceException(String resourceName, Throwable e) throws SymfonionException {
@@ -53,6 +49,10 @@ public class ExceptionThrower {
 
 	public static void throwIllegalFormatException(JsonElement actualJSON, String acceptableExample) throws SymfonionIllegalFormatException {
 		throw new SymfonionIllegalFormatException(actualJSON, acceptableExample);
+	}
+	
+	public static void throwRequiredElementMissingException(JsonElement actualJSON, Object relPath) throws SymfonionMissingElementException {
+		throw new SymfonionMissingElementException(actualJSON, relPath);
 	}
 	
 	public static void throwDeviceException(String msg, Throwable e) throws SymfonionException {

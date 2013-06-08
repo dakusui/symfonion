@@ -52,6 +52,7 @@ public class Stroke {
 		String notes = null;
 		Fraction len = params.length();
 		double gate = params.gate();
+		this.strokeJson = cur;
 		if (cur.isJsonPrimitive()) {
 			notes = cur.getAsString();
 		} else if (cur.isJsonArray()) {

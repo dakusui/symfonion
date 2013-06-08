@@ -1,5 +1,7 @@
 package com.github.dakusui.symfonion.core;
 
+import java.io.File;
+
 import com.google.gson.JsonElement;
 
 public class SymfonionSyntaxException extends SymfonionException {
@@ -26,6 +28,7 @@ public class SymfonionSyntaxException extends SymfonionException {
 	}
 
 	private JsonElement location;
+	private String jsonpath;
 	
 	public SymfonionSyntaxException(String message, JsonElement location) {
 		super(message);
@@ -34,5 +37,26 @@ public class SymfonionSyntaxException extends SymfonionException {
 	
 	public JsonElement getLocation() {
 		return this.location;
+	}
+
+	public void setJsonPath(String path) {
+		this.jsonpath = path;
+	}
+	
+	public String getJsonPath() {
+		if (this.jsonpath == null) {
+			return "n/a";
+		}
+		return this.jsonpath;
+	}
+	
+	@Override
+	public String getMessage() {
+		String msg = "jsonpath: " + this.getJsonPath() + ": error: " + super.getMessage();
+		File src = this.getSourceFile();
+		if (src != null) {
+			msg = src.getPath() + ": " + msg;
+		}
+		return msg;
 	}
 }

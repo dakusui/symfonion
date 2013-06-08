@@ -259,6 +259,7 @@ public class JsonUtil {
 	
 	public static Map<JsonElement, String> buildPathInfo(JsonObject root) {
 		Map<JsonElement, String> ret = new HashMap<JsonElement, String>();
+		ret.put(root, "/");
 		List<Object> path = new LinkedList<Object>();
 		buildPathInfo(ret, path, root);
 		return ret;
@@ -276,7 +277,7 @@ public class JsonUtil {
 		}
 	}
 
-	public static void buildPathInfo(Map<JsonElement, String> map, List<Object> path, JsonArray arr) {
+	private static void buildPathInfo(Map<JsonElement, String> map, List<Object> path, JsonArray arr) {
 		int len = arr.size();
 		for (int i = 0; i < len; i++) {
 			path.add(i);
@@ -285,7 +286,7 @@ public class JsonUtil {
 		}
 	}
 	
-	public static void buildPathInfo(Map<JsonElement, String> map, List<Object> path, JsonObject obj) {
+	private static void buildPathInfo(Map<JsonElement, String> map, List<Object> path, JsonObject obj) {
 		for (Entry<String, JsonElement> ent : obj.entrySet()) {
 			String k = ent.getKey();
 			JsonElement elem = ent.getValue();
