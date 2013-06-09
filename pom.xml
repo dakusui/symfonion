@@ -179,6 +179,9 @@
         <artifactId>debian-maven-plugin</artifactId>
         <version>1.0.5</version>
         <configuration>
+	      <packageDependencies>
+	        <packageDependency>openjdk-6-jre-headless</packageDependency>
+	      </packageDependencies>
           <!--
           <packageName>my-package</packageName>
           <packageVersion>1.0.0</packageVersion>
