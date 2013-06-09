@@ -38,8 +38,7 @@ $ java -jar  symfonion-VERSION.jar infile
 "infile" is a SyMFONION file and the syntax of it is described here 
 [Syntax](https://github.com/dakusui/symfonion/wiki/Syntax)
 
-For the detail of the command line options, please refer to
-
+For the detail of the command line options, please refer to 
 [Command line manual](https://github.com/dakusui/symfonion/wiki/Command-line-manual)
 
 # Copyright and license #
