@@ -28,7 +28,7 @@ import com.google.gson.JsonObject;
 public class Stroke {
 	private static final int UNDEFINED_NUM = -1;
 	private Fraction length;
-	static java.util.regex.Pattern notesPattern = java.util.regex.Pattern.compile("([A-Zac-z])([#b]*)([><]*)([\\+\\-]*)");
+	static java.util.regex.Pattern notesPattern = java.util.regex.Pattern.compile("([A-Zac-z])([#b]*)([><]*)([\\+\\-]*)?");
 	List<Note> notes = new LinkedList<Note>();
 	private double gate;
 	private NoteMap noteMap;
@@ -102,13 +102,15 @@ public class Stroke {
 		} else {
 			// unsupported
 		}
-		this.length = len;
 		this.noteMap = noteMap;
 		this.gate = gate;
-		if (notes != null) {
-			parseNotes(notes, this.notes);
-		}	
-	}
+		String l;
+		if (notes != null && (l = parseNotes(notes, this.notes)) != null) {
+			this.length = Util.parseNoteLength(l);
+		} else {
+			this.length = len;
+		}
+	} 
 	
 	private int[] getIntArray(JsonObject cur, Keyword kw) throws SymfonionException {
 		int[] ret = null;
@@ -169,27 +171,39 @@ public class Stroke {
 	public List<Note> notes() {
 		return this.notes;
 	}
-
-	private void parseNotes(String s, List<Note> notes) throws SymfonionException {
+	
+	/*
+	 * Returns the 'length' portion of the string <code>s</code>.
+	 */
+	private String parseNotes(String s, List<Note> notes) throws SymfonionException {
 		Matcher m = notesPattern.matcher(s);
 		int i;
 		for (i = 0; m.find(i); i = m.end()) {
-			//int gc = m.groupCount();
 			if (i != m.start()) {
 				throw new SymfonionException("Error:" + s.substring(0, i) + "[" + s.substring(i, m.start()) + "]" + s.substring(m.start()));
 			}
-			int n = 
-				this.noteMap.note(m.group(1), this.strokeJson) + 
-				Util.count('#', m.group(2)) - Util.count('b', m.group(2)) +
-				Util.count('>', m.group(3)) * 12 - Util.count('<', m.group(3)) *12;
-			int a = Util.count('+', m.group(4)) - Util.count('-', m.group(4));
-			Note nn = new Note(n, a);
-			notes.add(nn);
+			int n_ = this.noteMap.note(m.group(1), this.strokeJson); 
+			if (n_ >= 0) {
+				int n = 
+						n_ + 
+						Util.count('#', m.group(2)) - Util.count('b', m.group(2)) +
+						Util.count('>', m.group(3)) * 12 - Util.count('<', m.group(3)) *12;
+				int a = Util.count('+', m.group(4)) - Util.count('-', m.group(4));
+				Note nn = new Note(n, a);
+				notes.add(nn);
+			}
+		}
+		Matcher n = Util.lengthPattern.matcher(s);
+		String ret = null;
+		if (n.find(i)) {
+			ret = s.substring(n.start(), n.end());
+			i = n.end();
 		}
 		if (i != s.length()) {
-			String msg = "Error:" + s.substring(0, i) + "[" + s.substring(i) + "]";
-			throw new SymfonionException(msg);
+			String msg = s.substring(0, i) + "`" + s.substring(i) + "' isn't a valid note expression. Notes must be like 'C', 'CEG8.', and so on.";
+			ExceptionThrower.throwIllegalFormatException(this.strokeJson, msg);
 		}
+		return ret;
 	}
 	
 	static interface EventCreator {

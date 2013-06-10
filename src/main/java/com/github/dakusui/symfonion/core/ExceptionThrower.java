@@ -42,7 +42,6 @@ public class ExceptionThrower {
 	public static void throwPatternNotFound(JsonElement location, String missingReference) throws SymfonionException {
 		throw new SymfonionReferenceException(missingReference, "pattern", location);
 	}
-	
 	public static void throwTypeMismatchException(JsonElement actualJSON, String... expectedTypes) throws SymfonionSyntaxException {
 		throw new SymfonionTypeMismatchException(expectedTypes, actualJSON, actualJSON);
 	}
@@ -62,4 +61,5 @@ public class ExceptionThrower {
 	public static void throwRuntimeException(String msg, Throwable e) {
 		throw new RuntimeException(msg);
 	}
+
 }

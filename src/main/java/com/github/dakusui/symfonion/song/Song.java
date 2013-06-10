@@ -78,7 +78,7 @@ public class Song {
 		for (int i = 0; i < len; i++) {
 			JsonElement barJson = seqJson.get(i);
 			if (!barJson.isJsonObject()) {
-				ExceptionThrower.throwTypeMismatchException(barJson, OBJECT);
+				ExceptionThrower.throwTypeMismatchException(seqJson, OBJECT);
 			}
 			Bar bar = new Bar(barJson.getAsJsonObject(), this);
 			bars.add(bar);

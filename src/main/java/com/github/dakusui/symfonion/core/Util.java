@@ -15,8 +15,8 @@ import java.util.regex.Pattern;
 
 
 public class Util {
-	static final Pattern fractionPattern = Pattern.compile("([0-9]+)/([1-9][0-9]*)");
-	static java.util.regex.Pattern lengthPattern = java.util.regex.Pattern.compile("([1-9][0-9]*)(\\.*)");	
+	public static final Pattern fractionPattern = Pattern.compile("([0-9]+)/([1-9][0-9]*)");
+	public static final java.util.regex.Pattern lengthPattern = java.util.regex.Pattern.compile("([1-9][0-9]*)(\\.*)");	
 
 	public static int count(char ch, String s) {
 		int ret = 0;
