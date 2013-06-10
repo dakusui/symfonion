@@ -92,7 +92,7 @@ public class Pattern {
 	protected void init(JsonObject json) throws SymfonionException {
 		// Initialize 'body'.
 		this.body = new LinkedList<Stroke>();
-		this.params = new Parameters(JsonUtil.asJsonObject(json));
+		this.params = new Parameters(JsonUtil.asJsonObject(json, Keyword.$parameters));
 		JsonArray bodyJSON = JsonUtil.asJsonArray(json, Keyword.$body);
 		int len = bodyJSON.size();
 		for (int i = 0; i < len; i++) {
