@@ -38,6 +38,9 @@ public class Bar {
 
 	public void init(JsonObject jsonObject) throws SymfonionException {
 		JsonElement fractionJson = JsonUtil.asJson(jsonObject, Keyword.$beats);
+		if (fractionJson == null) {
+			ExceptionThrower.throwRequiredElementMissingException(jsonObject, Keyword.$beats);
+		}
 		if (!fractionJson.isJsonPrimitive()) {
 			ExceptionThrower.throwTypeMismatchException(fractionJson, PRIMITIVE);
 		}
@@ -59,6 +62,9 @@ public class Bar {
 			this.groove = g;
 		}
 		JsonObject patternsJsonObject = JsonUtil.asJsonObject(jsonObject, Keyword.$patterns);
+		if (patternsJsonObject == null) {
+			ExceptionThrower.throwRequiredElementMissingException(jsonObject, Keyword.$patterns);
+		}
 		Iterator<Entry<String, JsonElement>> i = patternsJsonObject.entrySet().iterator();
 		while (i.hasNext()) {
 			String partName = i.next().getKey();

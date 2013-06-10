@@ -45,6 +45,9 @@ public class NoteMap {
 	}
 	
 	public int note(String notename, JsonElement location) throws SymfonionException {
+		if ("r".equals(notename)) {
+			return -1;
+		}
 		if (!this.map.containsKey(notename)) {
 			ExceptionThrower.throwNoteNotDefinedException(location, notename, this.name);
 		}
