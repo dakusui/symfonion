@@ -29,7 +29,7 @@ public class Stroke {
 	private static final int UNDEFINED_NUM = -1;
 	private Fraction length;
 	static java.util.regex.Pattern notesPattern = java.util.regex.Pattern.compile("([A-Zac-z])([#b]*)([><]*)([\\+\\-]*)?");
-	List<Note> notes = new LinkedList<Note>();
+	List<NoteSet> notes = new LinkedList<NoteSet>();
 	private double gate;
 	private NoteMap noteMap;
 	private int[] volume = null;
@@ -104,12 +104,25 @@ public class Stroke {
 		}
 		this.noteMap = noteMap;
 		this.gate = gate;
-		String l;
-		if (notes != null && (l = parseNotes(notes, this.notes)) != null) {
-			this.length = Util.parseNoteLength(l);
-		} else {
-			this.length = len;
+		Fraction strokeLen = Fraction.zero;
+		if (notes != null) {
+			for (String nn : notes.split(";")) {
+				NoteSet ns = new NoteSet();
+				Fraction nsLen = null;
+				String l;
+				if ((l = parseNotes(nn, ns /*this.notes*/)) != null) {
+					nsLen = Util.parseNoteLength(l);
+				} else {
+					nsLen = len;
+				}
+				ns.setLength(nsLen);
+				strokeLen = Fraction.add(strokeLen, nsLen);
+			}
 		}
+		if (Fraction.zero.equals(strokeLen)) {
+			strokeLen = len;
+		}
+		this.length = strokeLen;
 	} 
 	
 	private int[] getIntArray(JsonObject cur, Keyword kw) throws SymfonionException {
@@ -168,7 +181,7 @@ public class Stroke {
 		return this.gate;
 	}
 
-	public List<Note> notes() {
+	public List<NoteSet> notes() {
 		return this.notes;
 	}
 	
@@ -221,66 +234,73 @@ public class Stroke {
 		}
 	}
 	
+	/**
+	 * 
+	 * @param compiler
+	 * @param context
+	 * @return
+	 * @throws InvalidMidiDataException
+	 */
 	public void compile(final MidiCompiler compiler, CompilerContext context) throws InvalidMidiDataException {
 		final Track track = context.getTrack();
 		final int ch = context.getChannel();
-		long position = context.getPosition();
-		long strokeLen = context.getStrokeLengthInTicks();
+		long absolutePosition = context.convertRelativePositionInStrokeToAbsolutePosition(Fraction.zero);
+		long strokeLen = context.getStrokeLengthInTicks(this);
 		if (tempo != UNDEFINED_NUM) {
-			track.add(compiler.createTempoEvent(this.tempo, position));
+			track.add(compiler.createTempoEvent(this.tempo, absolutePosition));
 			compiler.controlEventProcessed();
 		}
 		if (bkno != null) {
 			int msb = Integer.parseInt(bkno.substring(0, this.bkno.indexOf('.')));
-			track.add(compiler.createBankSelectMSBEvent(ch, msb, position));
+			track.add(compiler.createBankSelectMSBEvent(ch, msb, absolutePosition));
 			if (this.bkno.indexOf('.') != -1) {
 				int lsb = Integer.parseInt(bkno.substring(this.bkno.indexOf('.') + 1));
-				track.add(compiler.createBankSelectLSBEvent(ch, lsb, position));
+				track.add(compiler.createBankSelectLSBEvent(ch, lsb, absolutePosition));
 			}
 			compiler.controlEventProcessed();
 		}
 		if (pgno != UNDEFINED_NUM) {
-			track.add(compiler.createProgramChangeEvent(ch, this.pgno, position));
+			track.add(compiler.createProgramChangeEvent(ch, this.pgno, absolutePosition));
 			compiler.controlEventProcessed();
 		}
 		if (sysex != null) {
-			MidiEvent ev = compiler.createSysexEvent(ch, sysex, position);
+			MidiEvent ev = compiler.createSysexEvent(ch, sysex, absolutePosition);
 			if (ev != null) {
 				track.add(ev);
 				compiler.sysexEventProcessed();
 			}
 		}
-		renderValues(volume, position, strokeLen, compiler, new EventCreator() {
+		renderValues(volume, absolutePosition, strokeLen, compiler, new EventCreator() {
 			@Override public void createEvent(int v, long pos) throws InvalidMidiDataException {
 				track.add(compiler.createVolumeChangeEvent(ch, v, pos));
 			}
 		});
-		renderValues(pan, position, strokeLen, compiler, new EventCreator() {
+		renderValues(pan, absolutePosition, strokeLen, compiler, new EventCreator() {
 			@Override public void createEvent(int v, long pos) throws InvalidMidiDataException {
 				track.add(compiler.createPanChangeEvent(ch, v, pos));
 			}
 		});
-		renderValues(reverb, position, strokeLen, compiler, new EventCreator() {
+		renderValues(reverb, absolutePosition, strokeLen, compiler, new EventCreator() {
 			@Override public void createEvent(int v, long pos) throws InvalidMidiDataException {
 				track.add(compiler.createReverbEvent(ch, v, pos));
 			}
 		});
-		renderValues(chorus, position, strokeLen, compiler, new EventCreator() {
+		renderValues(chorus, absolutePosition, strokeLen, compiler, new EventCreator() {
 			@Override public void createEvent(int v, long pos) throws InvalidMidiDataException {
 				track.add(compiler.createChorusEvent(ch, v, pos));
 			}
 		});
-		renderValues(pitch, position, strokeLen, compiler, new EventCreator() {
+		renderValues(pitch, absolutePosition, strokeLen, compiler, new EventCreator() {
 			@Override public void createEvent(int v, long pos) throws InvalidMidiDataException {
 				track.add(compiler.createPitchBendEvent(ch, v, pos));
 			}
 		});
-		renderValues(modulation, position, strokeLen, compiler, new EventCreator() {
+		renderValues(modulation, absolutePosition, strokeLen, compiler, new EventCreator() {
 			@Override public void createEvent(int v, long pos) throws InvalidMidiDataException {
 				track.add(compiler.createModulationEvent(ch, v, pos));
 			}
 		});
-		renderValues(aftertouch, position, strokeLen, compiler, new EventCreator() {
+		renderValues(aftertouch, absolutePosition, strokeLen, compiler, new EventCreator() {
 			@Override public void createEvent(int v, long pos) throws InvalidMidiDataException {
 				track.add(compiler.createAfterTouchChangeEvent(ch, v, pos));
 			}
@@ -288,13 +308,26 @@ public class Stroke {
 		int transpose = context.getParams().transpose();
 		int arpegiodelay = context.getParams().arpegio();
 		int delta = 0;
-		for (Note note : this.notes()) {
-			int key = note.key() + transpose;
-			int velocity = Math.max(0, Math.min(127, context.getParams().velocitybase() + note.accent() * context.getParams().velocitydelta() + context.getGrooveAccent()));
-			track.add(compiler.createNoteOnEvent(ch, key, velocity, position + delta));
-			track.add(compiler.createNoteOffEvent(ch, key, (long)(context.getPosition() + delta + strokeLen * this.gate())));
-			compiler.noteProcessed();
-			delta += arpegiodelay;
+		Fraction relPosInStroke = Fraction.zero;
+		for (NoteSet noteSet : this.notes()) {
+			for (Note note : noteSet) {
+				absolutePosition = context.convertRelativePositionInStrokeToAbsolutePosition(relPosInStroke);
+				int key = note.key() + transpose;
+				int velocity = Math.max(
+						0, 
+						Math.min(
+								127, 
+								context.getParams().velocitybase() + 
+								note.accent() * context.getParams().velocitydelta() + 
+								context.getGrooveAccent(relPosInStroke)
+								)
+						);
+				track.add(compiler.createNoteOnEvent(ch, key, velocity, absolutePosition + delta));
+				track.add(compiler.createNoteOffEvent(ch, key, (long)(absolutePosition + delta + strokeLen * this.gate())));
+				compiler.noteProcessed();
+				delta += arpegiodelay;
+			}
+			relPosInStroke = Fraction.add(relPosInStroke, noteSet.getLength());
 		}
 	}
 }
