@@ -36,7 +36,7 @@ public class InvalidDataErrorTest extends ErrorTest {
 			SymfonionException, ParseException {
 				String resourceName = "illegalvalues/03_illegalnotelength_pattern.js";
 				assertEquals(
-						fmt("symfonion: %s: jsonpath: $patterns.melody1.$parameters.$length: error: 1/7(primitive) is invalid. (This value must be a note length. e.g. '4', '8.', '16')\n"),
+						fmt("symfonion: %s: jsonpath: $patterns.melody1.$length: error: 1/7(primitive) is invalid. (This value must be a note length. e.g. '4', '8.', '16')\n"),
 						invokeWithResource(resourceName)
 						);
 			}

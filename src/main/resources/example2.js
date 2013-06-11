@@ -11,9 +11,7 @@
 					    {"$notes":"C", "$length":"2", "$pan":127, "$program":2},
 					    {"$notes":"C", "$length":"2", "$pan":0}
 			],
-			"$parameters":{
-				"$length":"8"
-			}
+			"$length":"8"
 		}
 	},
 	"$sequence":[

@@ -74,6 +74,9 @@ public class JsonUtil {
 	}
 	
 	public static JsonElement asJson(JsonElement json, Object... path) {
+		if (path.length == 0) {
+			return json;
+		}
 		JsonElement ret = get(json, path[0].toString());
 		if (path.length == 1) {
 			if (JsonNull.INSTANCE.equals(ret)) {
