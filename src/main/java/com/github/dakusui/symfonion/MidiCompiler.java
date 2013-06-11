@@ -36,18 +36,43 @@ public class MidiCompiler {
 		private Track track;
 		private int channel;
 		private Parameters params;
-		private long position;
-		private int grooveAccent;
-		private long strokeLengthInTicks;
+//		private long strokePosition;
+//		private int grooveAccent;
+//		private long strokeLengthInTicks;
+		private Fraction relativeStrokePositionInBar;
+		private long barPositionInTicks;
+		private Groove groove;
 
-		public CompilerContext(Track track, int channel, Parameters params,
-				long position, long strokeLengthInTicks, int grooveAccent) {
+		public Fraction getRelativeStrokePositionInBar() {
+			return relativeStrokePositionInBar;
+		}
+
+		public long getBarPositionInTicks() {
+			return barPositionInTicks;
+		}
+
+		public Groove getGroove() {
+			return groove;
+		}
+
+		public CompilerContext(
+				Track track, 
+				int channel, 
+				Parameters params,
+				Fraction relativeStrokePositionInBar,
+				long barPositionInTicks,
+				/*long position, */ 
+				Groove groove
+				/*long strokeLengthInTicks, int grooveAccent*/) {
 			this.track = track;
 			this.channel = channel;
 			this.params = params;
-			this.position = position;
-			this.grooveAccent = grooveAccent;
-			this.strokeLengthInTicks = strokeLengthInTicks;
+			this.relativeStrokePositionInBar = relativeStrokePositionInBar;
+			this.barPositionInTicks = barPositionInTicks;
+			this.groove = groove;
+			//this.position = position;
+			//this.grooveAccent = grooveAccent;
+			//this.strokeLengthInTicks = strokeLengthInTicks;
 		}
 
 		public Track getTrack() {
@@ -62,6 +87,33 @@ public class MidiCompiler {
 			return params;
 		}
 
+		public long getStrokeLengthInTicks(Stroke stroke) {
+			return convertRelativePositionInStrokeToAbsolutePosition(stroke.length());
+		}
+
+		public long convertRelativePositionInStrokeToAbsolutePosition(Fraction relativePositionInStroke) {
+			Groove.Unit unit = resolveRelativePositionInStroke(relativePositionInStroke);
+			long relativePositionInBarInTicks = unit.pos();
+			return barPositionInTicks + relativePositionInBarInTicks;
+		}
+
+		public int getGrooveAccent(Fraction relPosInStroke) {
+			Groove.Unit unit = resolveRelativePositionInStroke(relPosInStroke);
+			return unit.accent();
+		}
+
+		private Groove.Unit resolveRelativePositionInStroke(
+				Fraction relativePositionInStroke) {
+			Groove.Unit unit = this.groove.resolve(
+					Fraction.add(
+							this.relativeStrokePositionInBar, 
+							relativePositionInStroke
+							)
+					);
+			return unit;
+		}
+
+		/*
 		public long getPosition() {
 			return position;
 		}
@@ -73,9 +125,9 @@ public class MidiCompiler {
 		public long getStrokeLengthInTicks() {
 			return strokeLengthInTicks;
 		}
-		
-		
+		*/
 	}
+	
 	private Context logiasContext;
 
 	public MidiCompiler(Context logiasContext) {
@@ -101,7 +153,7 @@ public class MidiCompiler {
 		////
 		// position is the offset of a bar from the beginning of the sequence.
 		// Giving the sequencer a grace period to initialize its internal state.
-		long positionInTicks = resolution / 4; 
+		long barPositionInTicks = resolution / 4; 
 		int barid = 0;
 		for (Bar bar : song.bars()) {
 			barStarted(barid);
@@ -119,24 +171,36 @@ public class MidiCompiler {
 					////
 					// relativePosition is a relative position from the beginning 
 					// of the bar the pattern belongs to.
-					int  grooveAccent = 0;
-					Fraction relPos = Fraction.zero;
+					// int  grooveAccent = 0; //TODO should goto midi compiler context
+					Fraction relPosInBar = Fraction.zero;
 					Parameters params = pattern.parameters();
 					for (Stroke stroke : pattern.strokes()) {
 						try {
-							Groove.Unit grooveUnit = groove.resolve(relPos);  
-							long relativePositionInTicks = grooveUnit. pos();
-							grooveAccent = grooveUnit.accent();
+							// Groove.Unit grooveUnit = groove.resolve(relPosInBar); // TO DO should go to midi compiler context  
+							// TODO should goto midi compiler context
+							// long relativeStrokePositionInTicks = grooveUnit. pos(); 
+							// grooveAccent = grooveUnit.accent(); TODO
 							
-							Fraction endingPos = Fraction.add(relPos, stroke.length());
-							long strokeLengthInTicks = Math.max(0, groove.resolve(endingPos).pos() - relativePositionInTicks);
+							Fraction endingPos = Fraction.add(relPosInBar, stroke.length());
+							//long strokeLengthInTicks = Math.max(0, groove.resolve(endingPos).pos() - relativePositionInTicks);
 
-							stroke.compile(this, new CompilerContext(track, channel, params, positionInTicks + relativePositionInTicks, strokeLengthInTicks, grooveAccent));
+							stroke.compile(
+									this, 
+									new CompilerContext(
+											track, 
+											channel, 
+											params, 
+											/*barPositionInTicks + relativeStrokePositionInTicks,*/ 
+											relPosInBar,
+											barPositionInTicks,
+											groove
+									)
+							);
 
-							relPos = endingPos; 
+							relPosInBar = endingPos; 
 							////
 							// Breaks if relative position goes over the length of the bar.
-							if (Fraction.compare(relPos, bar.beats()) >= 0) {
+							if (Fraction.compare(relPosInBar, bar.beats()) >= 0) {
 								break;
 							}
 						} finally {
@@ -149,7 +213,7 @@ public class MidiCompiler {
 			}
 			barEnded();
 			barid++;
-			positionInTicks += bar.beats().doubleValue() * resolution;
+			barPositionInTicks += bar.beats().doubleValue() * resolution;
 		}
 		System.out.println("Compilation finished.");
 		return ret;
