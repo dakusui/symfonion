@@ -12,18 +12,14 @@
 					    {"$notes":"C", "$length":"2", "$pan":0 },
 					    {"$notes":"C", "$length":"2", "$pan":0 }
 			],
-			"$parameters":{
-				"$length":"8"
-			}
+			"$length":"8"
 		},
 		"test2":{
 			"$body":[
 			         {"$notes":"C", "$length":"2", "$pan":127 },
 			         {"$notes":"C", "$length":"2", "$pan":127 }
 			 ],
-			"$parameters":{
-				"$length":"8"
-			}
+			"$length":"8"
 	}
 	},
 	"$sequence":[

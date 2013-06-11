@@ -11,13 +11,11 @@
 		             "C", "D", "E", "F", "C", "D", "E","F",
 		             "C", "D", "E", "F", "C", "D", "E","F"
 		    ],
-		    "$parameters":{
-		        "$velocitybase":106,
-		        "$velocitydelta":10,
-		        "$gate":0.8,
-		        "$length":"16",
-		        "$transpose":0
-		    }
+	        "$velocitybase":106,
+	        "$velocitydelta":10,
+	        "$gate":0.8,
+	        "$length":"16",
+	        "$transpose":0
 		},
 		"setting":{
 			"$body":[

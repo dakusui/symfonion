@@ -21,21 +21,17 @@
 		        	"$length":"8"
 		        }
 		    ],
-		    "$parameters":{
-		        "$velocitybase":106,
-		        "$velocitydelta":10,
-		        "$gate":0.8,
-		        "$length":"4",
-		        "$transpose":0
-		    }
+	        "$velocitybase":106,
+	        "$velocitydelta":10,
+	        "$gate":0.8,
+	        "$length":"4",
+	        "$transpose":0
 		},
 		"melody2":{
 			"$body":[
 				"B>>>","B>>>","B>>>","B>>>","B>>>","B>>>","B>>>","B>>>","B>>>","B>>>","B>>>","B>>>","B>>>","B>>>","B>>>","B>>>",
 			],
-			"$parameters":{
-				"$length":"16"
-			}
+			"$length":"16"
 		},
 		"setting":{
 			"$body":[
@@ -52,9 +48,7 @@
 			"$body":[
 				{ "$volume":[106,,,,,,,,127] }
 			],
-			"$parameters":{
-				"$length":"1"
-			}
+			"$length":"1"
 		},
 		"base-setting":{
 			"$body":[
@@ -72,10 +66,8 @@
 					{  "$notes":"B<<" },
 					{  "$notes":"B<", "$length":16}, {  "$notes":"B<", "$length":"16"},
 			],
-			"$parameters":{
-				"$length":"8",
-		        "$velocitybase":106
-			}
+			"$length":"8",
+	        "$velocitybase":106
 		},
 		"rhythm1":{
 			"$notemap":"$percussion",
@@ -85,13 +77,11 @@
 				"B+H",   "H-", "O", "H--",
 				"BS+H",  "H-", "O", ""
 			],
-			"$parameters":{
-		        "$velocitybase":106,
-		        "$velocitydelta":10,
-		        "$gate":0.8,
-		        "$length":"16",
-		        "$transpose":0 // does not make sense for rhythm patterns
-			},
+	        "$velocitybase":106,
+	        "$velocitydelta":10,
+	        "$gate":0.8,
+	        "$length":"16",
+	        "$transpose":0 // does not make sense for rhythm patterns
 			"$percussionkit":null
 		}
 	},

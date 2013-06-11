@@ -38,9 +38,7 @@
 			         { "$sysex":["$set-perfcommon-tempo", "$currentperf", 100] },
 			         { "$sysex":["$jv-refresh-currentperf"] },
 			],
-			"$parameters":{
-				"$length":0
-			}
+			"$length":0
 		},
 		"sysextest2":{
 			"$body":[
@@ -56,17 +54,13 @@
 			         { "$sysex":["$set-perfcommon-tempo", "$currentperf", 32] },
 			         { "$sysex":["$jv-refresh-currentperf"] },
 			],
-			"$parameters":{
-				"$length":0
-			}
+			"$length":0
 		},
 		"sysextest3":{
 			"$body":[
 			    { "$sysex":["$jv-set-patchnum-xp-techno", 0] }
 			],
-			"$parameters":{
-				"$length":0
-			}
+			"$length":0
 		},
 		"test1":{
 			"$body":[
