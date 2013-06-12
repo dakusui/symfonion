@@ -110,12 +110,13 @@ public class Stroke {
 				NoteSet ns = new NoteSet();
 				Fraction nsLen = null;
 				String l;
-				if ((l = parseNotes(nn, ns /*this.notes*/)) != null) {
+				if ((l = parseNotes(nn, ns)) != null) {
 					nsLen = Util.parseNoteLength(l);
 				} else {
 					nsLen = len;
 				}
 				ns.setLength(nsLen);
+				this.notes.add(ns);
 				strokeLen = Fraction.add(strokeLen, nsLen);
 			}
 		}
