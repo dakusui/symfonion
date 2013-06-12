@@ -182,7 +182,7 @@ public class Stroke {
 		return this.gate;
 	}
 
-	public List<NoteSet> notes() {
+	public List<NoteSet> noteSets() {
 		return this.notes;
 	}
 	
@@ -310,9 +310,16 @@ public class Stroke {
 		int arpegiodelay = context.getParams().arpegio();
 		int delta = 0;
 		Fraction relPosInStroke = Fraction.zero;
-		for (NoteSet noteSet : this.notes()) {
+		for (NoteSet noteSet : this.noteSets()) {
+			absolutePosition = context.convertRelativePositionInStrokeToAbsolutePosition(relPosInStroke);
+			long absolutePositionWhereNoteFinishes = context.convertRelativePositionInStrokeToAbsolutePosition(
+					Fraction.add(
+							relPosInStroke,
+							noteSet.getLength()
+							)
+					); 
+			long noteLengthInTicks = absolutePositionWhereNoteFinishes - absolutePosition;
 			for (Note note : noteSet) {
-				absolutePosition = context.convertRelativePositionInStrokeToAbsolutePosition(relPosInStroke);
 				int key = note.key() + transpose;
 				int velocity = Math.max(
 						0, 
@@ -324,10 +331,11 @@ public class Stroke {
 								)
 						);
 				track.add(compiler.createNoteOnEvent(ch, key, velocity, absolutePosition + delta));
-				track.add(compiler.createNoteOffEvent(ch, key, (long)(absolutePosition + delta + strokeLen * this.gate())));
+				track.add(compiler.createNoteOffEvent(ch, key, (long)(absolutePosition + delta + noteLengthInTicks * this.gate())));
 				compiler.noteProcessed();
 				delta += arpegiodelay;
 			}
+			compiler.noteSetProcessed();
 			relPosInStroke = Fraction.add(relPosInStroke, noteSet.getLength());
 		}
 	}

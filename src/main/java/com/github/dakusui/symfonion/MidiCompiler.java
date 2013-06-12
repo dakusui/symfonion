@@ -36,9 +36,6 @@ public class MidiCompiler {
 		private Track track;
 		private int channel;
 		private Parameters params;
-//		private long strokePosition;
-//		private int grooveAccent;
-//		private long strokeLengthInTicks;
 		private Fraction relativeStrokePositionInBar;
 		private long barPositionInTicks;
 		private Groove groove;
@@ -61,9 +58,8 @@ public class MidiCompiler {
 				Parameters params,
 				Fraction relativeStrokePositionInBar,
 				long barPositionInTicks,
-				/*long position, */ 
 				Groove groove
-				/*long strokeLengthInTicks, int grooveAccent*/) {
+				) {
 			this.track = track;
 			this.channel = channel;
 			this.params = params;
@@ -171,18 +167,11 @@ public class MidiCompiler {
 					////
 					// relativePosition is a relative position from the beginning 
 					// of the bar the pattern belongs to.
-					// int  grooveAccent = 0; //TODO should goto midi compiler context
 					Fraction relPosInBar = Fraction.zero;
 					Parameters params = pattern.parameters();
 					for (Stroke stroke : pattern.strokes()) {
 						try {
-							// Groove.Unit grooveUnit = groove.resolve(relPosInBar); // TO DO should go to midi compiler context  
-							// TODO should goto midi compiler context
-							// long relativeStrokePositionInTicks = grooveUnit. pos(); 
-							// grooveAccent = grooveUnit.accent(); TODO
-							
 							Fraction endingPos = Fraction.add(relPosInBar, stroke.length());
-							//long strokeLengthInTicks = Math.max(0, groove.resolve(endingPos).pos() - relativePositionInTicks);
 
 							stroke.compile(
 									this, 
@@ -353,7 +342,7 @@ public class MidiCompiler {
 	}
 	
 	public void barStarted(int barid) {
-		System.out.println("bar:<" + barid + "> ");
+		System.out.println("bar[" + barid + "]");
 	}
 	
 	public void patternStarted() {
@@ -368,7 +357,7 @@ public class MidiCompiler {
 	}
 	
 	public void partStarted(String partName) {
-		System.out.print("    part:<" + partName + ">");
+		System.out.print("    " + partName + ":");
 	}
 	
 	public void strokeEnded() {
@@ -381,5 +370,9 @@ public class MidiCompiler {
 	
 	public void aborted() {
 		System.out.println("aborted.");
+	}
+
+	public void noteSetProcessed() {
+		System.out.print(";");
 	}
 }
