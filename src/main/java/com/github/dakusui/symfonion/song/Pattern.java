@@ -93,7 +93,13 @@ public class Pattern {
 		// Initialize 'body'.
 		this.body = new LinkedList<Stroke>();
 		this.params = new Parameters(json);
-		JsonArray bodyJSON = JsonUtil.asJsonArray(json, Keyword.$body);
+		JsonArray bodyJSON;
+		if (JsonUtil.asJson(json, Keyword.$body).isJsonPrimitive()) {
+			bodyJSON = new JsonArray();
+			bodyJSON.add(JsonUtil.asJson(json, Keyword.$body));
+		} else {
+			bodyJSON = JsonUtil.asJsonArray(json, Keyword.$body);
+		}
 		int len = bodyJSON.size();
 		for (int i = 0; i < len; i++) {
 			JsonElement cur = bodyJSON.get(i);
