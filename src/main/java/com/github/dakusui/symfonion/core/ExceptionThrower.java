@@ -62,4 +62,8 @@ public class ExceptionThrower {
 		throw new RuntimeException(msg);
 	}
 
+	public static void throwFractionFormatException(String fraction) throws FractionFormatException {
+		throw new FractionFormatException(fraction);
+	}
+
 }

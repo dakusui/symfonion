@@ -179,7 +179,6 @@ public class MidiCompiler {
 											track, 
 											channel, 
 											params, 
-											/*barPositionInTicks + relativeStrokePositionInTicks,*/ 
 											relPosInBar,
 											barPositionInTicks,
 											groove

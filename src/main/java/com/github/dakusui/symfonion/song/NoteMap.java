@@ -4,9 +4,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-
+import com.github.dakusui.json.JsonUtil;
 import com.github.dakusui.symfonion.core.ExceptionThrower;
-import com.github.dakusui.symfonion.core.JsonUtil;
 import com.github.dakusui.symfonion.core.SymfonionException;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
