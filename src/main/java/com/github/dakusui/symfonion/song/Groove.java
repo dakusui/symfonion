@@ -8,7 +8,11 @@ import java.util.List;
 
 import com.github.dakusui.symfonion.core.ExceptionThrower;
 import com.github.dakusui.symfonion.core.Fraction;
-import com.github.dakusui.symfonion.core.JsonUtil;
+import com.github.dakusui.json.JsonFormatException;
+import com.github.dakusui.json.JsonInvalidPathException;
+import com.github.dakusui.json.JsonPathNotFoundException;
+import com.github.dakusui.json.JsonTypeMismatchException;
+import com.github.dakusui.json.JsonUtil;
 import com.github.dakusui.symfonion.core.SymfonionException;
 import com.github.dakusui.symfonion.core.Util;
 import com.google.gson.JsonArray;
@@ -100,21 +104,22 @@ public class Groove {
 	}
 
 	public static Groove createGroove(String grooveName, JsonArray grooveDef,
-			Song song) throws SymfonionException {
+			Song song) throws SymfonionException, JsonPathNotFoundException, JsonTypeMismatchException, JsonInvalidPathException, JsonFormatException {
 		Groove ret = new Groove();
 		for (JsonElement elem : grooveDef) {
 			if (!elem.isJsonObject()) {
 				ExceptionThrower.throwTypeMismatchException(elem, OBJECT);
 			}
 			JsonObject cur = elem.getAsJsonObject();
-			JsonElement lenJson = JsonUtil.asJson(cur, Keyword.$length); 
-			String len = lenJson.getAsString();
+			String len = JsonUtil.asString(cur, Keyword.$length); 
 			long   ticks = JsonUtil.asLong(cur, Keyword.$ticks);
 			int    accent = JsonUtil.asInt(cur, Keyword.$accent);
 			
 			Fraction f = Util.parseNoteLength(len);
 			if (f == null) {
-				ExceptionThrower.throwIllegalFormatException(lenJson, NOTELENGTH_EXAMPLE);
+				ExceptionThrower.throwIllegalFormatException(
+						JsonUtil.asJsonElement(cur, Keyword.$length), 
+						NOTELENGTH_EXAMPLE);
 			}
 			ret.add(f, ticks, accent);
 		}

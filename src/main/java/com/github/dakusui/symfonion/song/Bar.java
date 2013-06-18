@@ -1,8 +1,6 @@
 package com.github.dakusui.symfonion.song;
 
-import static com.github.dakusui.symfonion.core.SymfonionIllegalFormatException.FRACTION_EXAMPLE;
 import static com.github.dakusui.symfonion.core.SymfonionTypeMismatchException.ARRAY;
-import static com.github.dakusui.symfonion.core.SymfonionTypeMismatchException.PRIMITIVE;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -13,10 +11,15 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import com.github.dakusui.json.JsonInvalidPathException;
+import com.github.dakusui.json.JsonPathNotFoundException;
+import com.github.dakusui.json.JsonTypeMismatchException;
+import com.github.dakusui.json.JsonUtil;
 import com.github.dakusui.symfonion.core.ExceptionThrower;
 import com.github.dakusui.symfonion.core.Fraction;
-import com.github.dakusui.symfonion.core.JsonUtil;
+import com.github.dakusui.symfonion.core.FractionFormatException;
 import com.github.dakusui.symfonion.core.SymfonionException;
+import com.github.dakusui.symfonion.core.SymfonionIllegalFormatException;
 import com.github.dakusui.symfonion.core.Util;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -30,37 +33,35 @@ public class Bar {
 	private Song song;
 	private JsonObject json = null;
 	
-	public Bar(JsonObject jsonObject, Song song) throws SymfonionException {
+
+	public Bar(JsonObject jsonObject, Song song) throws SymfonionException, JsonPathNotFoundException, JsonTypeMismatchException, JsonInvalidPathException {
 		this.song = song;
 		this.json = jsonObject;
 		init(jsonObject);
 	}
 
-	public void init(JsonObject jsonObject) throws SymfonionException {
-		JsonElement fractionJson = JsonUtil.asJson(jsonObject, Keyword.$beats);
-		if (fractionJson == null) {
-			ExceptionThrower.throwRequiredElementMissingException(jsonObject, Keyword.$beats);
+	public void init(JsonObject jsonObject) throws SymfonionException, JsonPathNotFoundException, JsonTypeMismatchException, JsonInvalidPathException {
+		try {
+			this.beats = Util.parseFraction(JsonUtil.asString(jsonObject, Keyword.$beats));
+		} catch (FractionFormatException e) {
+			ExceptionThrower.throwIllegalFormatException(
+					JsonUtil.asJsonElement(jsonObject, Keyword.$beats),
+					SymfonionIllegalFormatException.FRACTION_EXAMPLE);
 		}
-		if (!fractionJson.isJsonPrimitive()) {
-			ExceptionThrower.throwTypeMismatchException(fractionJson, PRIMITIVE);
-		}
-		this.beats = Util.parseFraction(fractionJson.getAsString());
-		if (this.beats == null) {
-			ExceptionThrower.throwIllegalFormatException(fractionJson, FRACTION_EXAMPLE);
-		}
+		this.beats = this.beats == null ? Fraction.one : this.beats;
 		this.groove = Groove.DEFAULT_INSTANCE;
-		if (jsonObject.has(Keyword.$groove.name())) {
-			JsonElement grooveJson = JsonUtil.asJson(jsonObject, Keyword.$groove.name());
-			String grooveName = grooveJson.getAsString();
-			Groove g = Groove.DEFAULT_INSTANCE;
-			if (grooveName != null) {
-				g = song.groove(grooveName);
-				if (g == null) {
-					ExceptionThrower.throwGrooveNotDefinedException(grooveJson, grooveName);
-				}
+		Groove g = Groove.DEFAULT_INSTANCE;
+		if (JsonUtil.hasPath(jsonObject, Keyword.$groove)) {
+			String grooveName = JsonUtil.asString(jsonObject, Keyword.$groove.name());
+			g = song.groove(grooveName);
+			if (g == null) {
+				ExceptionThrower.throwGrooveNotDefinedException(
+						JsonUtil.asJsonElement(jsonObject, Keyword.$groove),
+						grooveName
+						);			
 			}
-			this.groove = g;
 		}
+		this.groove = g;
 		JsonObject patternsJsonObject = JsonUtil.asJsonObject(jsonObject, Keyword.$patterns);
 		if (patternsJsonObject == null) {
 			ExceptionThrower.throwRequiredElementMissingException(jsonObject, Keyword.$patterns);
@@ -105,6 +106,12 @@ public class Bar {
 	}
 
 	public JsonElement location(String partName) {
-		return JsonUtil.asJson(this.json, Keyword.$patterns, partName);
+		try {
+			return JsonUtil.asJsonElement(this.json, Keyword.$patterns, partName);
+		} catch (JsonPathNotFoundException e) {
+			return null;
+		} catch (JsonInvalidPathException e) {
+			return null;
+		}
 	}
 }

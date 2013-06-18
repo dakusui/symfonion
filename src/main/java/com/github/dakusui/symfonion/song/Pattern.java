@@ -6,9 +6,10 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.github.dakusui.json.JsonException;
+import com.github.dakusui.json.JsonUtil;
 import com.github.dakusui.symfonion.core.ExceptionThrower;
 import com.github.dakusui.symfonion.core.Fraction;
-import com.github.dakusui.symfonion.core.JsonUtil;
 import com.github.dakusui.symfonion.core.SymfonionException;
 import com.github.dakusui.symfonion.core.Util;
 import com.google.gson.JsonArray;
@@ -25,13 +26,13 @@ public class Pattern {
 		int velocitybase  = 64;
 		int velocitydelta = 10;
 		int arpegio;
-		public Parameters(JsonObject json) throws SymfonionException {
+		public Parameters(JsonObject json) throws SymfonionException, JsonException {
 			init(json);
 		}
 		public double gate() {
 			return this.gate;
 		}
-		public void init(JsonObject json) throws SymfonionException {
+		public void init(JsonObject json) throws SymfonionException, JsonException {
 			if (json == null) {
 				json = JsonUtil.toJson("{}").getAsJsonObject();
 			}
@@ -41,7 +42,7 @@ public class Pattern {
 			this.length = Util.parseNoteLength(JsonUtil.asStringWithDefault(json, "4", Keyword.$length));
 			if (this.length == null) {
 				ExceptionThrower.throwIllegalFormatException(
-						JsonUtil.asJson(json, Keyword.$length), 
+						JsonUtil.asJsonElement(json, Keyword.$length), 
 						NOTELENGTH_EXAMPLE
 				);
 			}
@@ -65,14 +66,14 @@ public class Pattern {
 		}
 	}
 
-	public static Pattern createPattern(String name, JsonObject json, Song song) throws SymfonionException {
-		String noteMapName = JsonUtil.asString(json, Keyword.$notemap);
+	public static Pattern createPattern(String name, JsonObject json, Song song) throws SymfonionException, JsonException {
 		NoteMap noteMap = NoteMap.defaultNoteMap;
-		if (noteMapName != null) {
+		if (JsonUtil.hasPath(json, Keyword.$notemap)) {
+			String noteMapName = JsonUtil.asString(json, Keyword.$notemap);
 			noteMap = song.noteMap(noteMapName);
 			if (noteMap == null) {
 				ExceptionThrower.throwNoteMapNotFoundException(
-						JsonUtil.asJson(json, Keyword.$notemap), 
+						JsonUtil.asJsonElement(json, Keyword.$notemap), 
 						noteMapName
 						);
 			}
@@ -89,14 +90,14 @@ public class Pattern {
 		this.noteMap = noteMap;
 	}
 
-	protected void init(JsonObject json) throws SymfonionException {
+	protected void init(JsonObject json) throws SymfonionException, JsonException {
 		// Initialize 'body'.
 		this.body = new LinkedList<Stroke>();
 		this.params = new Parameters(json);
 		JsonArray bodyJSON;
-		if (JsonUtil.asJson(json, Keyword.$body).isJsonPrimitive()) {
+		if (JsonUtil.asJsonElement(json, Keyword.$body).isJsonPrimitive()) {
 			bodyJSON = new JsonArray();
-			bodyJSON.add(JsonUtil.asJson(json, Keyword.$body));
+			bodyJSON.add(JsonUtil.asJsonElement(json, Keyword.$body));
 		} else {
 			bodyJSON = JsonUtil.asJsonArray(json, Keyword.$body);
 		}

@@ -26,13 +26,13 @@ public class Util {
 		return ret;
 	}
 
-	public static Fraction parseFraction(String str) throws SymfonionException {
+	public static Fraction parseFraction(String str) throws FractionFormatException {
 		if (str == null ) {
 			return null;
 		}
 		Matcher m = fractionPattern.matcher(str);
 		if (!m.matches()) {
-			return null;
+			ExceptionThrower.throwFractionFormatException(str);
 		}
 		Fraction ret = new Fraction(
 							   Integer.parseInt(m.group(1)), 

@@ -3,8 +3,11 @@ package com.github.dakusui.symfonion.song;
 import java.util.HashMap;
 import java.util.Map;
 
-
-import com.github.dakusui.symfonion.core.JsonUtil;
+import com.github.dakusui.json.JsonFormatException;
+import com.github.dakusui.json.JsonInvalidPathException;
+import com.github.dakusui.json.JsonPathNotFoundException;
+import com.github.dakusui.json.JsonTypeMismatchException;
+import com.github.dakusui.json.JsonUtil;
 import com.github.dakusui.symfonion.core.SymfonionException;
 import com.google.gson.JsonObject;
 
@@ -26,10 +29,10 @@ public class Part {
 		defaultNoteMap.put("B", 71);
 	}
 	
-	public Part(String name, JsonObject json, Song song) throws SymfonionException {
+	public Part(String name, JsonObject json, Song song) throws SymfonionException, JsonPathNotFoundException, JsonTypeMismatchException, JsonFormatException, JsonInvalidPathException {
 		this.name = name;
 		this.channel = JsonUtil.asInt(json, Keyword.$channel);
-		this.portName = JsonUtil.asString(json, Keyword.$port);
+		this.portName = JsonUtil.asStringWithDefault(json, null, Keyword.$port);
 	}
 
 	public String name() {

@@ -17,9 +17,11 @@ import javax.sound.midi.Sequence;
 import javax.sound.midi.Sequencer;
 import javax.sound.midi.Transmitter;
 
+import com.github.dakusui.json.JsonException;
+import com.github.dakusui.json.JsonPathNotFoundException;
+import com.github.dakusui.json.JsonUtil;
 import com.github.dakusui.logias.lisp.Context;
 import com.github.dakusui.symfonion.core.ExceptionThrower;
-import com.github.dakusui.symfonion.core.JsonUtil;
 import com.github.dakusui.symfonion.core.SymfonionException;
 import com.github.dakusui.symfonion.core.SymfonionSyntaxException;
 import com.github.dakusui.symfonion.core.Util;
@@ -48,6 +50,10 @@ public class Symfonion {
 				ExceptionThrower.throwLoadFileException(new File(fileName), e.getCause());
 			} catch (IllegalStateException e) {
 				ExceptionThrower.throwLoadFileException(new File(fileName), e);
+			} catch (JsonPathNotFoundException e) {
+				ExceptionThrower.throwRequiredElementMissingException(e.getLocation(), JsonUtil.formatPath(e.getPath()));
+			} catch (JsonException e) {
+				throw new RuntimeException(e.getMessage(), e);
 			}
 		} catch (SymfonionSyntaxException e) {
 			e.setSourceFile(new File(this.fileName));
