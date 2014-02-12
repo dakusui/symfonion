@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Symfonion : " />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Symfonion</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/dakusui/symfonion">View on GitHub</a>
+
+          <h1 id="project_title">Symfonion</h1>
+          <h2 id="project_tagline"></h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/dakusui/symfonion/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/dakusui/symfonion/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>
+<a name="what-is-symfonion" class="anchor" href="#what-is-symfonion"><span class="octicon octicon-link"></span></a>What is SyMFONION</h1>
+
+<p>SyMFONION is a modern music macro language processor.</p>
+
+<h1>
+<a name="installing-symfonion" class="anchor" href="#installing-symfonion"><span class="octicon octicon-link"></span></a>Installing SyMFONION</h1>
+
+<h2>
+<a name="debian-and-ubuntu-users" class="anchor" href="#debian-and-ubuntu-users"><span class="octicon octicon-link"></span></a>Debian and Ubuntu users</h2>
+
+<p>Please download a .deb file from <a href="https://s3-ap-northeast-1.amazonaws.com/symfonion/symfonion_0.8.10-1_all.deb">here</a></p>
+
+<p>And type the command below.</p>
+
+<pre><code>$ sudo dpkg -i symfonion_VERSION_all.deb
+</code></pre>
+
+<p>You will be able to run SyMFONITON by just typing 'symfonion' command from a shell.</p>
+
+<h2>
+<a name="other-users" class="anchor" href="#other-users"><span class="octicon octicon-link"></span></a>Other users</h2>
+
+<p>Please download a .jar file from <a href="https://s3-ap-northeast-1.amazonaws.com/symfonion/symfonion-0.8.10.jar">here</a></p>
+
+<p>You will be able to run SyMFONION by using java command from a shell.</p>
+
+<pre><code>$ java -jar symfonion-VERSION.jar infile
+</code></pre>
+
+<h1>
+<a name="how-to-run-symfonion" class="anchor" href="#how-to-run-symfonion"><span class="octicon octicon-link"></span></a>How to run SyMFONION</h1>
+
+<p>By typing a command line below, symfonion will compile the given JSON file and play it.</p>
+
+<pre><code>$ symfonion infile
+</code></pre>
+
+<p>or</p>
+
+<pre><code>$ java -jar  symfonion-VERSION.jar infile
+</code></pre>
+
+<p>"infile" is a SyMFONION file and it will look like this.</p>
+
+<div class="highlight highlight-javascript"><pre><span class="p">{</span>
+    <span class="s2">"$parts"</span><span class="o">:</span><span class="p">{</span> <span class="s2">"pianor"</span><span class="o">:</span> <span class="p">{</span><span class="s2">"$channel"</span><span class="o">:</span><span class="mi">0</span><span class="p">}</span> <span class="p">},</span>
+    <span class="s2">"$patterns"</span><span class="o">:</span><span class="p">{</span>
+        <span class="s2">"01r"</span><span class="o">:</span><span class="p">{</span>
+            <span class="s2">"$body"</span><span class="o">:</span><span class="p">[</span><span class="s2">"r4"</span><span class="p">,</span><span class="s2">"B"</span><span class="p">,</span><span class="s2">"A"</span><span class="p">,</span><span class="s2">"G#"</span><span class="p">,</span><span class="s2">"A"</span><span class="p">],</span>
+            <span class="s2">"$parameters"</span><span class="o">:</span><span class="p">{</span> <span class="s2">"$length"</span><span class="o">:</span><span class="mi">16</span> <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="s2">"02r"</span><span class="o">:</span><span class="p">{</span>
+            <span class="s2">"$body"</span><span class="o">:</span><span class="p">[</span><span class="s2">"C&gt;8"</span><span class="p">,</span><span class="s2">"r8"</span><span class="p">,</span><span class="s2">"D&gt;"</span><span class="p">,</span><span class="s2">"C&gt;"</span><span class="p">,</span><span class="s2">"B"</span><span class="p">,</span><span class="s2">"C&gt;"</span><span class="p">,</span> <span class="s2">"E&gt;8"</span><span class="p">,</span><span class="s2">"r8"</span><span class="p">,</span><span class="s2">"F&gt;"</span><span class="p">,</span><span class="s2">"E&gt;"</span><span class="p">,</span><span class="s2">"D#&gt;"</span><span class="p">,</span><span class="s2">"E&gt;"</span><span class="p">],</span>
+            <span class="s2">"$parameters"</span><span class="o">:</span><span class="p">{</span> <span class="s2">"$length"</span><span class="o">:</span><span class="mi">16</span> <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="s2">"04r"</span><span class="o">:</span><span class="p">{</span>
+            <span class="s2">"$body"</span><span class="o">:</span><span class="p">[</span><span class="s2">"B&gt;"</span><span class="p">,</span><span class="s2">"A&gt;"</span><span class="p">,</span><span class="s2">"G#&gt;"</span><span class="p">,</span><span class="s2">"A&gt;"</span><span class="p">,</span><span class="s2">"B&gt;"</span><span class="p">,</span><span class="s2">"A&gt;"</span><span class="p">,</span><span class="s2">"G#&gt;"</span><span class="p">,</span><span class="s2">"A&gt;"</span><span class="p">,</span> <span class="s2">"C&gt;&gt;4"</span><span class="p">,</span><span class="s2">"A&gt;8"</span><span class="p">,</span><span class="s2">"C&gt;&gt;8"</span><span class="p">],</span>
+            <span class="s2">"$parameters"</span><span class="o">:</span><span class="p">{</span><span class="s2">"$length"</span><span class="o">:</span><span class="mi">16</span><span class="p">}</span>
+        <span class="p">},</span>
+        <span class="s2">"06r"</span><span class="o">:</span><span class="p">{</span>
+            <span class="s2">"$body"</span><span class="o">:</span><span class="p">[</span> <span class="s2">"B&gt;"</span><span class="p">,</span>  <span class="s2">"F#A&gt;"</span><span class="p">,</span> <span class="s2">"EG&gt;"</span><span class="p">,</span> <span class="s2">"F#A&gt;"</span><span class="p">,</span> <span class="s2">"B&gt;"</span><span class="p">,</span>  <span class="s2">"F#A&gt;"</span><span class="p">,</span> <span class="s2">"EG&gt;"</span><span class="p">,</span> <span class="s2">"F#A&gt;"</span> <span class="p">],</span>
+            <span class="s2">"$parameters"</span><span class="o">:</span><span class="p">{</span> <span class="s2">"$length"</span><span class="o">:</span><span class="mi">8</span><span class="p">,</span> <span class="s2">"$gate"</span><span class="o">:</span><span class="mf">0.3</span> <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="s2">"08r"</span><span class="o">:</span><span class="p">{</span>
+            <span class="s2">"$body"</span><span class="o">:</span><span class="p">[</span><span class="s2">"B&gt;"</span><span class="p">,</span><span class="s2">"F#A&gt;"</span><span class="p">,</span><span class="s2">"EG&gt;"</span><span class="p">,</span><span class="s2">"D#F#&gt;"</span><span class="p">,</span> <span class="s2">"E4"</span><span class="p">,</span> <span class="s2">"r4"</span> <span class="p">],</span>
+            <span class="s2">"$parameters"</span><span class="o">:</span><span class="p">{</span> <span class="s2">"$length"</span><span class="o">:</span><span class="mi">8</span><span class="p">,</span> <span class="s2">"$gate"</span><span class="o">:</span><span class="mf">0.3</span> <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="s2">"$sequence"</span><span class="o">:</span><span class="p">[</span>
+        <span class="p">{</span> <span class="s2">"$patterns"</span><span class="o">:</span><span class="p">{</span><span class="s2">"pianor"</span><span class="o">:</span><span class="p">[</span><span class="s2">"01r"</span><span class="p">]},</span>   <span class="s2">"$beats"</span><span class="o">:</span><span class="s2">"2/4"</span> <span class="p">},</span>
+        <span class="p">{</span> <span class="s2">"$patterns"</span><span class="o">:</span><span class="p">{</span><span class="s2">"pianor"</span><span class="o">:</span><span class="p">[</span><span class="s2">"02r"</span><span class="p">]},</span>   <span class="s2">"$beats"</span><span class="o">:</span><span class="s2">"4/4"</span> <span class="p">},</span>
+        <span class="p">{</span> <span class="s2">"$patterns"</span><span class="o">:</span><span class="p">{</span><span class="s2">"pianor"</span><span class="o">:</span><span class="p">[</span><span class="s2">"04r"</span><span class="p">]},</span>   <span class="s2">"$beats"</span><span class="o">:</span><span class="s2">"4/4"</span> <span class="p">},</span>
+        <span class="p">{</span> <span class="s2">"$patterns"</span><span class="o">:</span><span class="p">{</span><span class="s2">"pianor"</span><span class="o">:</span><span class="p">[</span><span class="s2">"06r"</span><span class="p">]},</span>   <span class="s2">"$beats"</span><span class="o">:</span><span class="s2">"4/4"</span> <span class="p">},</span>
+        <span class="p">{</span> <span class="s2">"$patterns"</span><span class="o">:</span><span class="p">{</span><span class="s2">"pianor"</span><span class="o">:</span><span class="p">[</span><span class="s2">"08r"</span><span class="p">]},</span>   <span class="s2">"$beats"</span><span class="o">:</span><span class="s2">"4/4"</span> <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>(W.A. Mozart, K.311)</p>
+
+<p>The syntax of it is described here 
+<a href="https://github.com/dakusui/symfonion/wiki/Syntax">Syntax</a></p>
+
+<p>For the detail of the command line options, please refer to 
+<a href="https://github.com/dakusui/symfonion/wiki/Command-line-manual">Command line manual</a></p>
+
+<h1>
+<a name="copyright-and-license" class="anchor" href="#copyright-and-license"><span class="octicon octicon-link"></span></a>Copyright and license</h1>
+
+<p>Copyright 2013 Hiroshi Ukai.</p>
+
+<p>Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this work except in compliance with the License.
+You may obtain a copy of the License in the LICENSE file, or at:</p>
+
+<p><a href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a></p>
+
+<p>Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.</p>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Symfonion maintained by <a href="https://github.com/dakusui">dakusui</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
