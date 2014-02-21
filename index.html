@@ -1,36 +1,43 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-
   <head>
-    <meta charset='utf-8' />
-    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
-    <meta name="description" content="Symfonion : " />
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Symfonion by dakusui</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="javascripts/respond.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <!--[if lt IE 8]>
+    <link rel="stylesheet" href="stylesheets/ie.css">
+    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 
-    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
-
-    <title>Symfonion</title>
   </head>
-
   <body>
+      <div id="header">
+        <nav>
+          <li class="fork"><a href="https://github.com/dakusui/symfonion">View On GitHub</a></li>
+          <li class="downloads"><a href="https://github.com/dakusui/symfonion/zipball/master">ZIP</a></li>
+          <li class="downloads"><a href="https://github.com/dakusui/symfonion/tarball/master">TAR</a></li>
+          <li class="title">DOWNLOADS</li>
+        </nav>
+      </div><!-- end header -->
 
-    <!-- HEADER -->
-    <div id="header_wrap" class="outer">
-        <header class="inner">
-          <a id="forkme_banner" href="https://github.com/dakusui/symfonion">View on GitHub</a>
+    <div class="wrapper">
 
-          <h1 id="project_title">Symfonion</h1>
-          <h2 id="project_tagline"></h2>
+      <section>
+        <div id="title">
+          <h1>Symfonion</h1>
+          <p>A modern, structured, simple, and JSON based music macro language </p>
+          <hr>
+          <span class="credits left">Project maintained by <a href="https://github.com/dakusui">dakusui</a></span>
+          <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="https://twitter.com/michigangraham">mattgraham</a></span>
+        </div>
 
-            <section id="downloads">
-              <a class="zip_download_link" href="https://github.com/dakusui/symfonion/zipball/master">Download this project as a .zip file</a>
-              <a class="tar_download_link" href="https://github.com/dakusui/symfonion/tarball/master">Download this project as a tar.gz file</a>
-            </section>
-        </header>
-    </div>
-
-    <!-- MAIN CONTENT -->
-    <div id="main_content_wrap" class="outer">
-      <section id="main_content" class="inner">
         <h1>
 <a name="what-is-symfonion" class="anchor" href="#what-is-symfonion"><span class="octicon octicon-link"></span></a>What is SyMFONION</h1>
 
@@ -81,23 +88,23 @@
     <span class="s2">"$patterns"</span><span class="o">:</span><span class="p">{</span>
         <span class="s2">"01r"</span><span class="o">:</span><span class="p">{</span>
             <span class="s2">"$body"</span><span class="o">:</span><span class="p">[</span><span class="s2">"r4"</span><span class="p">,</span><span class="s2">"B"</span><span class="p">,</span><span class="s2">"A"</span><span class="p">,</span><span class="s2">"G#"</span><span class="p">,</span><span class="s2">"A"</span><span class="p">],</span>
-            <span class="s2">"$parameters"</span><span class="o">:</span><span class="p">{</span> <span class="s2">"$length"</span><span class="o">:</span><span class="mi">16</span> <span class="p">}</span>
+            <span class="s2">"$length"</span><span class="o">:</span><span class="mi">16</span> 
         <span class="p">},</span>
         <span class="s2">"02r"</span><span class="o">:</span><span class="p">{</span>
             <span class="s2">"$body"</span><span class="o">:</span><span class="p">[</span><span class="s2">"C&gt;8"</span><span class="p">,</span><span class="s2">"r8"</span><span class="p">,</span><span class="s2">"D&gt;"</span><span class="p">,</span><span class="s2">"C&gt;"</span><span class="p">,</span><span class="s2">"B"</span><span class="p">,</span><span class="s2">"C&gt;"</span><span class="p">,</span> <span class="s2">"E&gt;8"</span><span class="p">,</span><span class="s2">"r8"</span><span class="p">,</span><span class="s2">"F&gt;"</span><span class="p">,</span><span class="s2">"E&gt;"</span><span class="p">,</span><span class="s2">"D#&gt;"</span><span class="p">,</span><span class="s2">"E&gt;"</span><span class="p">],</span>
-            <span class="s2">"$parameters"</span><span class="o">:</span><span class="p">{</span> <span class="s2">"$length"</span><span class="o">:</span><span class="mi">16</span> <span class="p">}</span>
+            <span class="s2">"$length"</span><span class="o">:</span><span class="mi">16</span> 
         <span class="p">},</span>
         <span class="s2">"04r"</span><span class="o">:</span><span class="p">{</span>
             <span class="s2">"$body"</span><span class="o">:</span><span class="p">[</span><span class="s2">"B&gt;"</span><span class="p">,</span><span class="s2">"A&gt;"</span><span class="p">,</span><span class="s2">"G#&gt;"</span><span class="p">,</span><span class="s2">"A&gt;"</span><span class="p">,</span><span class="s2">"B&gt;"</span><span class="p">,</span><span class="s2">"A&gt;"</span><span class="p">,</span><span class="s2">"G#&gt;"</span><span class="p">,</span><span class="s2">"A&gt;"</span><span class="p">,</span> <span class="s2">"C&gt;&gt;4"</span><span class="p">,</span><span class="s2">"A&gt;8"</span><span class="p">,</span><span class="s2">"C&gt;&gt;8"</span><span class="p">],</span>
-            <span class="s2">"$parameters"</span><span class="o">:</span><span class="p">{</span><span class="s2">"$length"</span><span class="o">:</span><span class="mi">16</span><span class="p">}</span>
+            <span class="s2">"$length"</span><span class="o">:</span><span class="mi">16</span>
         <span class="p">},</span>
         <span class="s2">"06r"</span><span class="o">:</span><span class="p">{</span>
             <span class="s2">"$body"</span><span class="o">:</span><span class="p">[</span> <span class="s2">"B&gt;"</span><span class="p">,</span>  <span class="s2">"F#A&gt;"</span><span class="p">,</span> <span class="s2">"EG&gt;"</span><span class="p">,</span> <span class="s2">"F#A&gt;"</span><span class="p">,</span> <span class="s2">"B&gt;"</span><span class="p">,</span>  <span class="s2">"F#A&gt;"</span><span class="p">,</span> <span class="s2">"EG&gt;"</span><span class="p">,</span> <span class="s2">"F#A&gt;"</span> <span class="p">],</span>
-            <span class="s2">"$parameters"</span><span class="o">:</span><span class="p">{</span> <span class="s2">"$length"</span><span class="o">:</span><span class="mi">8</span><span class="p">,</span> <span class="s2">"$gate"</span><span class="o">:</span><span class="mf">0.3</span> <span class="p">}</span>
+            <span class="s2">"$length"</span><span class="o">:</span><span class="mi">8</span><span class="p">,</span> <span class="s2">"$gate"</span><span class="o">:</span><span class="mf">0.3</span>
         <span class="p">},</span>
         <span class="s2">"08r"</span><span class="o">:</span><span class="p">{</span>
             <span class="s2">"$body"</span><span class="o">:</span><span class="p">[</span><span class="s2">"B&gt;"</span><span class="p">,</span><span class="s2">"F#A&gt;"</span><span class="p">,</span><span class="s2">"EG&gt;"</span><span class="p">,</span><span class="s2">"D#F#&gt;"</span><span class="p">,</span> <span class="s2">"E4"</span><span class="p">,</span> <span class="s2">"r4"</span> <span class="p">],</span>
-            <span class="s2">"$parameters"</span><span class="o">:</span><span class="p">{</span> <span class="s2">"$length"</span><span class="o">:</span><span class="mi">8</span><span class="p">,</span> <span class="s2">"$gate"</span><span class="o">:</span><span class="mf">0.3</span> <span class="p">}</span>
+            <span class="s2">"$length"</span><span class="o">:</span><span class="mi">8</span><span class="p">,</span> <span class="s2">"$gate"</span><span class="o">:</span><span class="mf">0.3</span> 
         <span class="p">}</span>
     <span class="p">},</span>
     <span class="s2">"$sequence"</span><span class="o">:</span><span class="p">[</span>
@@ -118,6 +125,9 @@
 <p>For the detail of the command line options, please refer to 
 <a href="https://github.com/dakusui/symfonion/wiki/Command-line-manual">Command line manual</a></p>
 
+<p>For the updates, best practices, howtos, examples, and so on, please visit
+<a href="http://symfonion.hatenadiary.jp/">Symfonion Blog</a></p>
+
 <h1>
 <a name="copyright-and-license" class="anchor" href="#copyright-and-license"><span class="octicon octicon-link"></span></a>Copyright and license</h1>
 
@@ -135,17 +145,9 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.</p>
       </section>
-    </div>
 
-    <!-- FOOTER  -->
-    <div id="footer_wrap" class="outer">
-      <footer class="inner">
-        <p class="copyright">Symfonion maintained by <a href="https://github.com/dakusui">dakusui</a></p>
-        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
-      </footer>
     </div>
-
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
     
-
   </body>
 </html>
