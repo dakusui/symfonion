@@ -3,8 +3,7 @@ SyMFONION is a modern music macro language processor.
 
 # Installing SyMFONION #
 ## Debian and Ubuntu users ##
-Please download a .deb file from here
-[.deb file](https://s3-ap-northeast-1.amazonaws.com/symfonion/symfonion_0.8.9-1_all.deb)
+Please download a .deb file from [here](https://s3-ap-northeast-1.amazonaws.com/symfonion/symfonion_0.8.10-1_all.deb)
 
 And type the command below.
 ```
@@ -13,8 +12,7 @@ $ sudo dpkg -i symfonion_VERSION_all.deb
 You will be able to run SyMFONITON by just typing 'symfonion' command from a shell.
 
 ## Other users ##
-Please download a .jar file from here
-[executable jar file](https://s3-ap-northeast-1.amazonaws.com/symfonion/symfonion-0.8.9.jar)
+Please download a .jar file from [here](https://s3-ap-northeast-1.amazonaws.com/symfonion/symfonion-0.8.10.jar)
 
 You will be able to run SyMFONION by using java command from a shell.
 
@@ -35,11 +33,51 @@ or
 $ java -jar  symfonion-VERSION.jar infile
 ```
 
-"infile" is a SyMFONION file and the syntax of it is described here 
+"infile" is a SyMFONION file and it will look like this.
+```javascript
+{
+    "$parts":{ "pianor": {"$channel":0} },
+    "$patterns":{
+        "01r":{
+            "$body":["r4","B","A","G#","A"],
+            "$length":16 
+        },
+        "02r":{
+            "$body":["C>8","r8","D>","C>","B","C>", "E>8","r8","F>","E>","D#>","E>"],
+            "$length":16 
+        },
+        "04r":{
+            "$body":["B>","A>","G#>","A>","B>","A>","G#>","A>", "C>>4","A>8","C>>8"],
+            "$length":16
+        },
+        "06r":{
+            "$body":[ "B>",  "F#A>", "EG>", "F#A>", "B>",  "F#A>", "EG>", "F#A>" ],
+            "$length":8, "$gate":0.3
+        },
+        "08r":{
+            "$body":["B>","F#A>","EG>","D#F#>", "E4", "r4" ],
+            "$length":8, "$gate":0.3 
+        }
+    },
+    "$sequence":[
+        { "$patterns":{"pianor":["01r"]},   "$beats":"2/4" },
+        { "$patterns":{"pianor":["02r"]},   "$beats":"4/4" },
+        { "$patterns":{"pianor":["04r"]},   "$beats":"4/4" },
+        { "$patterns":{"pianor":["06r"]},   "$beats":"4/4" },
+        { "$patterns":{"pianor":["08r"]},   "$beats":"4/4" }
+    ]
+}
+```
+(W.A. Mozart, K.311)
+
+The syntax of it is described here 
 [Syntax](https://github.com/dakusui/symfonion/wiki/Syntax)
 
 For the detail of the command line options, please refer to 
 [Command line manual](https://github.com/dakusui/symfonion/wiki/Command-line-manual)
+
+For the updates, best practices, howtos, examples, and so on, please visit
+[Symfonion Blog](http://symfonion.hatenadiary.jp/)
 
 # Copyright and license #
 
