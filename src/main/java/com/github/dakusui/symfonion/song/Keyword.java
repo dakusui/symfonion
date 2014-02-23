@@ -23,7 +23,6 @@ public enum Keyword {
 	$notemaps, 
 	$notes,
 	$pan, 
-	$parameters,
 	$parts,
 	$patterns,
 	$percussion,
