@@ -15,9 +15,7 @@ Here is an example of a piece of music written in SyMFONION.
             {"$notes":"C", "$length":"2", "$pan":127, "$program":2},
             {"$notes":"C", "$length":"2", "$pan":0}
           ],
-          "$parameters":{
-            "$length":"8"
-          }
+          "$length":"8"
         }
       },
       "$sequence":[
@@ -39,7 +37,7 @@ Here is an example of a piece of music written in SyMFONION.
 
 Basically, a SyMFONION program is a JSON object and its three most important elements are, "$parts", "$patterns", and "$sequence".
 
-A value for "$parts" is a dictionary which describes 'parts' in music score (like 'piano part', 'guitar part', and so on. "$patterns" holds a set of patterns which are melodies, rhythm patterns, effect patters, and so on. And "$sequence" organizes how each pattern should be played. For instance, a pattern "test1" is played twice on a part "testviolin" in the example above.
+A value for "$parts" is a dictionary which describes 'parts' in music score (like 'piano part', 'guitar part', and so on). "$patterns" holds a set of patterns which are melodies, rhythm patterns, effect patters, and so on. And "$sequence" organises how each pattern should be played. For instance, a pattern "test1" is played twice on a part "testviolin" in the example above.
 
 # Parts #
 By using 'parts' element you can specify which part uses which midi channel. In the example below, the part 'test' will use the midi channel '0'. Note that in symfonion language, A channel number is 0 origin.
@@ -73,17 +71,16 @@ Part names must be defined through system properties. For more detail, please re
       "test1":{
         "$body":[
           {"$notes":"C", "$length":"2", "$pan":127, "$program":2},
-          {"$notes":"C", "$length":"2", "$pan":0},
+          {"$notes":"C", "$length":"2", "$pan":0}
         ],
-        "$parameters":{
-          "$length":"8",
-        }
+        "$length":"8"
       }
     },
 ```
 
-Each key of this dictionary has a dictionary as its corresponding value. And the dictionary for a key has three keys, which are "$notemap", "$body", and "$parameters".
+Each key of this dictionary is a name of a pattern. And the key is associated with a dictionary which describes the pattern. Generally speaking a pattern is a sequence of notes, which defines something like melodies, short rhythms, and so on. 
 
+A pattern dictionary can have some keys, which are "$notemap", "$body", and base parameters like "$length", "$velocitybase", "$velocitydelta", "$length", and so on.
 
 ## Notemap ##
 
@@ -398,14 +395,15 @@ Users can transpose the notes by using this feature.
 The example above will be played as note 61 (=C3 +1 = C3#)
 Negative values are also allowed.
 
-This parameter is not very useful when you use this with notes. This parameter should be typically used in "$parameters" dictionary which is discussed later and defines default parameters for notes in a pattern.
+This parameter is not very useful when you use this with notes. This parameter should be typically used directly under a pattern definition dictionary which is discussed later.
 
 the default value is 0.
 
+## Defining default values within a pattern ##
 
-## Parameters ##
+Since it is painful to write $gate or $velocitybase every time for each note, users can define the default values in a pattern. Of course these default values can be overridden by each note.
 
-Since it is painful to write $gate or $velocitybase every time for notes, users can override the default values in a pattern.
+As discussed so far, users can write a symfonion file like below.
 
 ```javascript
     "patternexample":{
@@ -413,22 +411,21 @@ Since it is painful to write $gate or $velocitybase every time for notes, users 
             {
               "$notes":"CEG",
               "$length":"8",
-              "$gate":"0.5",
+              "$gate":"0.5"
             },
             {
               "$notes":"CEG",
               "$length":"8",
-              "$gate":"0.5",
+              "$gate":"0.5"
             },
                      :
                      :
             {
               "$notes":"CEG",
               "$length":"8",
-              "$gate":"0.5",
-            },
-
-        ],
+              "$gate":"0.5"
+            }
+        ]
     }
 ```
 
@@ -437,20 +434,18 @@ By using this feature, the pattern above can be rewritten like this,
 ```javascript
     "patternexample":{
         "$body":[
-            { "$notes":"CEG",},
-            { "$notes":"CEG",},
+            { "$notes":"CEG" },
+            { "$notes":"CEG" },
                      :
                      :
-            { "$notes":"CEG",}
+            { "$notes":"CEG" }
         ],
-        "$parameters":{
-              "$length":"8",
-              "$gate":"0.5",
-        }
+        "$length":"8",
+        "$gate":"0.5"
     }
 ```
 
-Users can write note parameters in "$parameters" and they are in effect all the notes under "$body" which is in the same pattern.
+Users can write note parameters directly under "pattern definitions" (in the case above "pattern example" is a "pattern definition, for example) and they are in effect all the notes in "$body" attribute which is in the same pattern.
 
 # Groove #
 In real musical works, all the sixteenth notes have neither the same length nor the same strength. One comes at the beginning of a bar usually longer and stronger than the others usually. And if there are 4 forth notes in a bar, second and forth ones are shorter and weaker than the others. These fluctuations are called 'grooves' in DTM world.
