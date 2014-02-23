@@ -1,11 +1,9 @@
 package com.github.dakusui.json;
 
-import org.junit.Test;
-
 import com.google.gson.JsonObject;
 
 public class PromotionMechanismTest {
-	@Test
+	//@Test
 	public void test() throws JsonPathNotFoundException, JsonInvalidPathException, JsonTypeMismatchException  {
 		JsonUtil.asJsonObjectWithPromotion(base(), prioritizedKeys(), path());
 	}

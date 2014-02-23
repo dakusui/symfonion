@@ -144,7 +144,9 @@ public class JsonUtilTest {
 		Assert.assertEquals(expected, JsonUtil.asJsonObjectWithDefault(this.obj, defaultValue, "key0"));
 	}
 
-	@Test
+	/*
+	 @Test Disable due to spec change
+	*/
 	public void obj_N03d() throws JsonPathNotFoundException, JsonTypeMismatchException, JsonInvalidPathException {
 		JsonObject defaultValue = new JsonObject(); 
 		defaultValue.addProperty("key72", "val72def");
@@ -161,7 +163,9 @@ public class JsonUtilTest {
 				);
 	}
 
-	@Test
+	/*
+	 @Test Disable due to spec change
+	*/
 	public void obj_N03e() throws JsonPathNotFoundException, JsonTypeMismatchException, JsonInvalidPathException {
 		JsonObject defaultValue = new JsonObject(); 
 		defaultValue.addProperty("key72", "val72def");
@@ -178,7 +182,9 @@ public class JsonUtilTest {
 				);
 	}
 	
-	@Test
+	/*
+	 @Test Disable due to spec change
+	*/
 	public void obj_N03f() throws JsonPathNotFoundException, JsonTypeMismatchException, JsonInvalidPathException {
 		JsonObject defaultValue = new JsonObject(); 
 		defaultValue.addProperty("key72", "val72def");
