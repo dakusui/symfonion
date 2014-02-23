@@ -70,13 +70,13 @@ $ java -jar  symfonion-VERSION.jar infile
 ```
 (W.A. Mozart, K.311)
 
-The syntax of it is described here 
-[Syntax](https://github.com/dakusui/symfonion/wiki/Syntax)
+The syntax of it is described  
+[Syntax](SYNTAX.md)
 
 For the detail of the command line options, please refer to 
-[Command line manual](https://github.com/dakusui/symfonion/wiki/Command-line-manual)
+[Command line manual](CLI.md)
 
-For the updates, best practices, howtos, examples, and so on, please visit
+For the updates, best practices, how-tos, examples, and so on, please visit
 [Symfonion Blog](http://symfonion.hatenadiary.jp/)
 
 # Copyright and license #
