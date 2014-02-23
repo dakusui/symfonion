@@ -24,7 +24,7 @@ public class JsonUtil {
 			@Override
 			JsonObject _validate(JsonElement value) throws JsonTypeMismatchException {
 				if (!value.isJsonObject()) {
-					throw new JsonTypeMismatchException(value, this.name());
+					throw new JsonTypeMismatchException(value, this);
 				}
 				return value.getAsJsonObject();
 			}
@@ -33,7 +33,7 @@ public class JsonUtil {
 			@Override
 			JsonArray _validate(JsonElement value) throws JsonTypeMismatchException {
 				if (!value.isJsonArray()) {
-					throw new JsonTypeMismatchException(value, this.name());
+					throw new JsonTypeMismatchException(value, this);
 				}
 				return value.getAsJsonArray();
 			}
@@ -43,7 +43,7 @@ public class JsonUtil {
 			@Override
 			JsonPrimitive _validate(JsonElement value) throws JsonTypeMismatchException {
 				if (!value.isJsonPrimitive()) {
-					throw new JsonTypeMismatchException(value, this.name());
+					throw new JsonTypeMismatchException(value, this);
 				}
 				return value.getAsJsonPrimitive();
 			}
@@ -52,7 +52,7 @@ public class JsonUtil {
 			@Override
 			JsonNull _validate(JsonElement value) throws JsonTypeMismatchException {
 				if (!value.isJsonNull()) {
-					throw new JsonTypeMismatchException(value, this.name());
+					throw new JsonTypeMismatchException(value, this);
 				}
 				return value.getAsJsonNull();
 			}
@@ -150,24 +150,6 @@ public class JsonUtil {
 		}
 	}
 
-	public static JsonObject asJsonObjectWithPromotion(
-			JsonObject base, 
-			String[] arrayElementsPromoteTo, 
-			JsonObject defaultValue, 
-			Object... path
-			) throws JsonTypeMismatchException, JsonPathNotFoundException, JsonInvalidPathException {
-		try {
-			return asJsonObjectWithDefault(base, defaultValue, path);
-		} catch (JsonTypeMismatchException e) {
-			JsonObject ret = new JsonObject();
-			JsonArray arr = asJsonArrayWithPromotion(base, null, path);
-			for (int i = 0; i < arrayElementsPromoteTo.length && i < arr.size(); i++) {
-				ret.add(arrayElementsPromoteTo[i], arr.get(i));
-			}
-			return ret;
-		}
-	}
-	
 	public static JsonObject asJsonObjectWithDefault(JsonObject base,
 			JsonObject defaultValue, Object... path) throws JsonTypeMismatchException, JsonPathNotFoundException, JsonInvalidPathException {
 		return (JsonObject)JsonTypes.Object.validate(asJsonElementWithDefault(base, defaultValue, path));
@@ -176,17 +158,51 @@ public class JsonUtil {
 	public static JsonObject asJsonObject(JsonObject base, Object... path) throws JsonPathNotFoundException, JsonTypeMismatchException, JsonInvalidPathException {
 		return asJsonObjectWithDefault(base, null, path);
 	}
+
+	public static JsonObject asJsonObjectWithPromotion(
+			JsonElement base,
+			String[] prioritizedKeys,
+			Object... path
+			) throws JsonPathNotFoundException, JsonInvalidPathException, JsonTypeMismatchException {
+		JsonObject ret = null;
+		JsonElement elem = asJsonElement(base, path);
+		if (elem.isJsonObject()) {
+			ret = elem.getAsJsonObject();
+		} else {
+			JsonArray arr = asJsonArrayWithPromotion(base, path);
+			ret = new JsonObject();
+			int i = 0;
+			for (JsonElement item : arr) {
+				if (i >= prioritizedKeys.length) {
+					throw new JsonTypeMismatchException(
+							elem, 
+							String.format("The lenghth must be less than or equal to%d", prioritizedKeys.length)
+					);
+				}
+				String key = prioritizedKeys[i];
+				ret.add(key, item);
+				i++;
+			}
+		}
+		return ret;
+	}
 	
 	public static JsonArray asJsonArrayWithPromotion(
-			JsonElement base, 
-			JsonArray defaultValue, Object... path) throws JsonPathNotFoundException, JsonInvalidPathException  {
-		try {
-			return asJsonArrayWithDefault(base, defaultValue, path);
-		} catch (JsonTypeMismatchException e) {
-			JsonArray ret = new JsonArray();
-			ret.add(asJsonElementWithDefault(base, null, path));
-			return ret;
+			JsonElement base,
+			Object... path
+			) throws JsonPathNotFoundException, JsonInvalidPathException, JsonTypeMismatchException {
+		JsonArray ret = null;
+		JsonElement elem = asJsonElement(base, path);
+		if (elem.isJsonObject()) {
+			throw new JsonTypeMismatchException(elem, JsonTypes.Array, JsonTypes.Null, JsonTypes.Primitive);
 		}
+		if (elem.isJsonArray()) {
+			ret = elem.getAsJsonArray();
+		} else {
+			ret = new JsonArray();
+			ret.add(elem);
+		}
+		return ret;
 	}
 	
 	public static JsonArray asJsonArray(JsonElement base, Object... path) throws JsonTypeMismatchException, JsonPathNotFoundException, JsonInvalidPathException {
