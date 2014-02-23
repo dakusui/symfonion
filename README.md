@@ -1,7 +1,7 @@
-# What is SyMFONION #
-SyMFONION is a modern music macro language processor.
+# What is Symfonion #
+Symfonion is a modern music macro language processor.
 
-# Installing SyMFONION #
+# Installing Symfonion #
 ## Debian and Ubuntu users ##
 Please download a .deb file from [here](https://s3-ap-northeast-1.amazonaws.com/symfonion/symfonion_0.8.10-1_all.deb)
 
@@ -9,19 +9,19 @@ And type the command below.
 ```
 $ sudo dpkg -i symfonion_VERSION_all.deb
 ```
-You will be able to run SyMFONITON by just typing 'symfonion' command from a shell.
+You will be able to run SyMFONITON by just typing ```symfonion``` command from a shell.
 
 ## Other users ##
 Please download a .jar file from [here](https://s3-ap-northeast-1.amazonaws.com/symfonion/symfonion-0.8.10.jar)
 
-You will be able to run SyMFONION by using java command from a shell.
+You will be able to run ```symfonion``` by using java command from a shell.
 
 ```
 $ java -jar symfonion-VERSION.jar infile
 ```
 
-# How to run SyMFONION #
-By typing a command line below, symfonion will compile the given JSON file and play it.
+# How to run Symfonion #
+By typing a command line below, ```symfonion``` will compile the given JSON file and play it.
 
 ```
 $ symfonion infile
@@ -33,7 +33,7 @@ or
 $ java -jar  symfonion-VERSION.jar infile
 ```
 
-"infile" is a SyMFONION file and it will look like this.
+"infile" is a ```symfonion``` file and it will look like this.
 ```javascript
 {
     "$parts":{ "pianor": {"$channel":0} },
