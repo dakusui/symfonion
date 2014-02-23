@@ -25,7 +25,7 @@ public abstract class MidiDeviceScanner {
 			PrintStream ps = getPrintStream();
 			ps.println("     " + getHeader());
 			ps.println(String.format("  io %s", format(null)));
-			ps.println("---------------------------------------------------------------------------");
+			ps.println("--------------------------------------------------------------------------------");
 		}
 
 		protected abstract String getHeader();
@@ -132,7 +132,7 @@ public abstract class MidiDeviceScanner {
 	
 	protected String format(MidiDevice.Info info) {
 		return String.format(
-				"%-20s %-15s %-35s",
+				"%-25s %-15s %-35s",
 				info == null ? "name" : info.getName(), 
 				info == null ? "version" : info.getVersion(), 
 				info == null ? "vendor" : info.getVendor() 
