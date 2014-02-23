@@ -1,0 +1,94 @@
+symfonion - creates and plays music pieces.
+
+# Synopsys
+```
+symfonion -V|--version
+symfonion -h|--help
+symfonion --list
+symfonion -p|--play {infile} [-O{midioutport}={regex}]... 
+symfonion -c|--compile {infile} [-o {outfile}] 
+symfonion -r|--route {midioutport}={midiinport} [-O{midioutport}={regex}] [-I{midiinport}={regex}]
+```
+
+# Description
+SyMFONION is a music macro language processor whose syntax is based on JSON. It provides a way to describe music works in a structured and object oriented way.
+
+When invoked without specifying any output files, it simply plays the input file(s).
+
+This page documents the command-line arguments for the SyMFONION processor.
+
+# Options
+## -V or --version
+Prints the version and the license of this command.
+(t.b.d.)
+
+## -h or --help
+Prints the help of this command.
+
+## --list or -l
+Lists the available MIDI input and output devices.
+
+## --play or -p
+Plays the specified file.
+See also '-O' option.
+
+## --compile or -c
+Compiles the specified file to a standard MIDI file.
+The example command line below compiles the input file 'example2.js' and output the compiled midi file to 'test.mid'.
+
+```console
+user@host:~/work $ symfonion -c example2.js -o test.mid
+Now compiling...
+bar:<0> 
+    part:<test>[**.|*.|]
+bar:<1> 
+    part:<test>[**.|*.|]
+Compilation finished.
+user@host:~/work $
+```
+see also -o option.
+
+## --route or -r {midioutport}={midiinport}
+Users can use this option in order to debug regular expressions that are used with -p option.
+This command will behave like a MIDI patch bay when it is invoked with this option.
+MIDI devices associated with midioutport and midiinport must be defined by -O and -I options.
+
+## -o {output filename}
+Unless port names are not defined in the '$parts' section of the input file, compiled midi file is output to the file specified this options.
+If defined,  a '.' followed by a port name will be inserted before the last '.' in the output file name. And if there are more than one ports are used, each port generates its corresponding output file in the same manner.
+
+If this option is not given, this command behave as if a filename 'a.midi' is given. 
+
+## -O {midioutport}={regex}
+This option is used with -p (play) and -r (route) option and assigns the MIDI device to the MIDI-out port name. 
+Port name is defined by "$port" attribute in "$parts" section or by -r option. 
+
+## -I {midiinport}={regex}
+This option is used with -r (route) option and assigns the MIDI device to the MIDI-in port name. MIDI-in port name is defined by -r option.
+
+# Reporting bugs
+Issue tracker: https://github.com/dakusui/symfonion/issues
+
+# Author
+Written by Hiroshi Ukai
+
+# See also
+* Syntax of SyMFONION: https://github.com/dakusui/symfonion/wiki/Syntax
+* JSON : http://www.json.org/
+* MIDI standard: http://www.midi.org/aboutmidi/ , http://en.wikipedia.org/wiki/MIDI
+* Standard MIDI files: http://en.wikipedia.org/wiki/MIDI#Standard_MIDI_files
+
+# Copyright
+Copyright 2013 Hiroshi Ukai.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this work except in compliance with the License.
+You may obtain a copy of the License in the LICENSE file, or at:
+
+  [http://www.apache.org/licenses/LICENSE-2.0](http://www.apache.org/licenses/LICENSE-2.0)
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
