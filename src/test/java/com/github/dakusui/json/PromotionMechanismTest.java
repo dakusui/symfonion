@@ -1,5 +1,11 @@
 package com.github.dakusui.json;
 
+import org.apache.commons.lang3.ArrayUtils;
+import org.junit.ClassRule;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
 import com.github.dakusui.jcunit.core.BasicSummarizer;
 import com.github.dakusui.jcunit.core.DefaultRuleSetBuilder;
 import com.github.dakusui.jcunit.core.Generator;
@@ -9,26 +15,28 @@ import com.github.dakusui.jcunit.core.JCUnit;
 import com.github.dakusui.jcunit.core.Out;
 import com.github.dakusui.jcunit.core.RuleSet;
 import com.github.dakusui.jcunit.core.Summarizer;
-import com.github.dakusui.jcunit.generators.PairwiseTestArrayGenerator;
+import com.github.dakusui.jcunit.core.SystemProperties;
+import com.github.dakusui.jcunit.generators.SimpleTestArrayGenerator;
 import com.github.dakusui.symfonion.core.SymfonionException;
 import com.github.dakusui.symfonion.core.Util;
 import com.google.gson.JsonObject;
 
-import org.apache.commons.lang3.ArrayUtils;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
 @RunWith(JCUnit.class)
-@Generator(PairwiseTestArrayGenerator.class)
+@Generator(SimpleTestArrayGenerator.class)
 public class PromotionMechanismTest {
+	static {
+		SystemProperties.jcunitBaseDir("src/test/resources/jcunit");
+	}
+	
 	@Rule
 	public RuleSet rules = new DefaultRuleSetBuilder().autoRuleSet(this).summarizer(summarizer);
 
 	@ClassRule
 	public static Summarizer summarizer = new BasicSummarizer();
 
+	@In(domain = Domain.Method)
+	public JsonObject base;
+	
 	@In(domain = Domain.Method)
 	public Object[] pathToParent;
 
@@ -81,21 +89,26 @@ public class PromotionMechanismTest {
 		};
 	}
 
-	private static JsonObject base() throws SymfonionException {
-		JsonObject obj = JsonUtil.toJson(
-				Util.loadResource(PromotionMechanismTest.class.getCanonicalName().replaceAll("\\.", "/") + ".js")
-				).getAsJsonObject();
-		return obj;
+	
+	public static JsonObject[] base() {
+		try {
+			JsonObject obj = JsonUtil.toJson(
+					Util.loadResource(PromotionMechanismTest.class.getCanonicalName().replaceAll("\\.", "/") + ".js")
+					).getAsJsonObject();
+			return new JsonObject[]{obj};
+		} catch (SymfonionException e) {
+			throw new RuntimeException(e.getMessage(), e);
+		}
 	}
 
 	@Test
 	public void test() throws Exception {
 		this.obj = null;
 		try {
-			this.obj = JsonUtil.asJsonObjectWithPromotion(base(), prioritizedKeys, path(pathToParent, key));
+			this.obj = JsonUtil.asJsonObjectWithPromotion(base, prioritizedKeys, path(pathToParent, key));
 		} catch (RuntimeException e) {
 			throw e;
-		} catch (Exception e) {
+		} catch (JsonException e) {
 			this.exceptionClass = e.getClass();
 			this.exceptionMessage = e.getMessage();
 		}
