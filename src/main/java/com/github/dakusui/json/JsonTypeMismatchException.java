@@ -70,9 +70,9 @@ public class JsonTypeMismatchException extends JsonException {
 			r = String.format("(%s)", reason);
 		}
 		if (types == null || types.length == 0) {
-			ret = String.format("%s is not allowed here%s.", r, summary(actualJSON));
+			ret = String.format("%s is not allowed here %s.", summary(actualJSON), r);
 		} else {
-			ret = String.format("%s is not allowed here%s. Acceptable type(s) are %s", summary(actualJSON), r, Arrays.toString(types));
+			ret = String.format("%s is not allowed here %s. Acceptable type(s) are %s", summary(actualJSON), r, Arrays.toString(types));
 		}
 		return ret;
 	}

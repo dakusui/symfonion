@@ -176,7 +176,7 @@ public class JsonUtil {
 				if (i >= prioritizedKeys.length) {
 					throw new JsonTypeMismatchException(
 							elem, 
-							String.format("The lenghth must be less than or equal to%d", prioritizedKeys.length)
+							String.format("The lenghth must be less than or equal to %d", prioritizedKeys.length)
 					);
 				}
 				String key = prioritizedKeys[i];
