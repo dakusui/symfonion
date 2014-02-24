@@ -57,6 +57,11 @@
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
     </dependency>
+    <dependency>
+      <groupId>com.github.dakusui</groupId>
+      <artifactId>jcunit</artifactId>
+      <version>0.1.4</version>
+    </dependency>
   </dependencies>
 
   <dependencyManagement>
@@ -71,15 +76,34 @@
 	    <dependency>
 	      <groupId>junit</groupId>
 	      <artifactId>junit</artifactId>
-	      <version>4.7</version>
+	      <version>4.10</version>
 	      <scope>test</scope>
 	    </dependency>
     </dependencies>
   </dependencyManagement>
 
   <build>
+        <resources>
+            <resource>
+                <directory>src/main/java</directory>
+                <includes>
+                    <include>**/*.js</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+            <resource>
+                <directory>src/test/resources</directory>
+            </resource>
+            <resource>
+                <directory>src/test/java</directory>
+                <includes>
+                    <include>**/*.js</include>
+                </includes>
+            </resource>
+        </resources>
     <plugins>
-
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
         <configuration>
