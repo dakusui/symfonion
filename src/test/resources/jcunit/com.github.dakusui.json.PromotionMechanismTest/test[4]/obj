@@ -1,1 +1,8 @@
-<null/>
+<com.google.gson.JsonObject>
+  <members class="linked-hash-map">
+    <entry>
+      <string>key1</string>
+      <com.google.gson.JsonNull/>
+    </entry>
+  </members>
+</com.google.gson.JsonObject>

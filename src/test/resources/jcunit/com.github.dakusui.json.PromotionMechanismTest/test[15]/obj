@@ -1,7 +1,7 @@
 <com.google.gson.JsonObject>
   <members class="linked-hash-map">
     <entry>
-      <string>key-prim-0</string>
+      <string>key1</string>
       <com.google.gson.JsonNull/>
     </entry>
   </members>
