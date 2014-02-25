@@ -1,10 +1,4 @@
 package com.github.dakusui.json;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -13,12 +7,19 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
 public class JsonUtil {
 	static final ThreadLocal<JsonParser> jsonParser;
 	static {
 		jsonParser = new ThreadLocal<JsonParser>();
 	}
-	
+
 	static enum JsonTypes {
 		Object {
 			@Override
@@ -57,8 +58,9 @@ public class JsonUtil {
 				return value.getAsJsonNull();
 			}
 		};
-		
+
 		abstract JsonElement _validate(JsonElement value) throws JsonTypeMismatchException;
+
 		JsonElement validate(JsonElement value) throws JsonTypeMismatchException {
 			if (value == null) {
 				return value;
@@ -66,24 +68,24 @@ public class JsonUtil {
 			return _validate(value);
 		}
 	}
-	
-	private static JsonElement asJsonElementWithDefault(JsonElement base, JsonElement defaultValue, int from,  Object[] path) throws JsonPathNotFoundException, JsonInvalidPathException {
+
+	private static JsonElement asJsonElementWithDefault(JsonElement base, JsonElement defaultValue, int from, Object[] path) throws JsonPathNotFoundException, JsonInvalidPathException {
 		JsonElement ret = _asJsonElement(base, defaultValue, from, path);
 		if (ret == null) {
 			ret = defaultValue;
 		}
 		return ret;
 	}
-	
-	private static JsonElement asJsonElement(JsonElement base, int from,  Object[] path) throws JsonPathNotFoundException, JsonInvalidPathException {
+
+	private static JsonElement asJsonElement(JsonElement base, int from, Object[] path) throws JsonPathNotFoundException, JsonInvalidPathException {
 		JsonElement ret = _asJsonElement(base, null, from, path);
 		if (ret == null) {
 			throw new JsonPathNotFoundException(base, path, from);
-		}		
+		}
 		return ret;
 	}
 
-	private static JsonElement _asJsonElement(JsonElement base, JsonElement defaultValue, int from,  Object[] path) throws JsonInvalidPathException {
+	private static JsonElement _asJsonElement(JsonElement base, JsonElement defaultValue, int from, Object[] path) throws JsonInvalidPathException {
 		if (path.length == from || base == null) {
 			return base;
 		}
@@ -95,21 +97,19 @@ public class JsonUtil {
 			newbase = base.getAsJsonObject().get(path[from].toString());
 		} else if (base.isJsonArray()) {
 			Integer index;
-			if ( 
-				 (path[from] instanceof Integer) || 
-				 (path[from] instanceof Long) ||
-				 (path[from] instanceof Short)
-					) {
-				index = ((Number)path[from]).intValue();
+			if ((path[from] instanceof Integer) ||
+					(path[from] instanceof Long) ||
+					(path[from] instanceof Short)) {
+				index = ((Number) path[from]).intValue();
 			} else {
-				if ( (index = parseInt(path[from])) == null ) {
+				if ((index = parseInt(path[from])) == null) {
 					throw new JsonInvalidPathException(base, path, from);
 				}
 			}
 			if (index < 0 || index >= base.getAsJsonArray().size()) {
 				throw new JsonIndexOutOfBoudsException(base, path, from);
 			}
-			newbase = base.getAsJsonArray().get(((Number)index).intValue());
+			newbase = base.getAsJsonArray().get(((Number) index).intValue());
 		} else if (base.isJsonPrimitive()) {
 			return null;
 		} else {
@@ -118,12 +118,12 @@ public class JsonUtil {
 		}
 
 		JsonElement ret = _asJsonElement(
-				newbase, 
+				newbase,
 				defaultValue,
 				from + 1,
 				path
-		);
-		
+				);
+
 		if (ret == null) {
 			if (defaultValue != null) {
 				return defaultValue;
@@ -137,11 +137,12 @@ public class JsonUtil {
 		try {
 			String str = object.toString();
 			ret = Integer.parseInt(str);
-		} catch (NumberFormatException e) {}
-		
+		} catch (NumberFormatException e) {
+		}
+
 		return ret;
 	}
-	
+
 	public static boolean hasPath(JsonElement base, Object... path) {
 		try {
 			return _asJsonElement(base, null, 0, path) != null;
@@ -152,7 +153,7 @@ public class JsonUtil {
 
 	public static JsonObject asJsonObjectWithDefault(JsonObject base,
 			JsonObject defaultValue, Object... path) throws JsonTypeMismatchException, JsonPathNotFoundException, JsonInvalidPathException {
-		return (JsonObject)JsonTypes.Object.validate(asJsonElementWithDefault(base, defaultValue, path));
+		return (JsonObject) JsonTypes.Object.validate(asJsonElementWithDefault(base, defaultValue, path));
 	}
 
 	public static JsonObject asJsonObject(JsonObject base, Object... path) throws JsonPathNotFoundException, JsonTypeMismatchException, JsonInvalidPathException {
@@ -174,10 +175,17 @@ public class JsonUtil {
 			int i = 0;
 			for (JsonElement item : arr) {
 				if (i >= prioritizedKeys.length) {
-					throw new JsonTypeMismatchException(
-							elem, 
-							String.format("The lenghth must be less than or equal to %d", prioritizedKeys.length)
-					);
+					if (prioritizedKeys.length == 0) {
+						throw new JsonTypeMismatchException(
+								elem,
+								"An object or an empty array are acceptable");
+					} else {
+						throw new JsonTypeMismatchException(
+								elem,
+								String.format(
+										"A primitive, an array whose lenghth is less than or equal to %d, or an object are acceptble",
+										prioritizedKeys.length));
+					}
 				}
 				String key = prioritizedKeys[i];
 				ret.add(key, item);
@@ -186,7 +194,7 @@ public class JsonUtil {
 		}
 		return ret;
 	}
-	
+
 	public static JsonArray asJsonArrayWithPromotion(
 			JsonElement base,
 			Object... path
@@ -204,15 +212,15 @@ public class JsonUtil {
 		}
 		return ret;
 	}
-	
+
 	public static JsonArray asJsonArray(JsonElement base, Object... path) throws JsonTypeMismatchException, JsonPathNotFoundException, JsonInvalidPathException {
 		return asJsonArrayWithDefault(base, null, path);
 	}
-	
-	public static JsonArray asJsonArrayWithDefault(JsonElement base, JsonArray defaultValue, Object... path) throws JsonTypeMismatchException, JsonPathNotFoundException, JsonInvalidPathException  {
+
+	public static JsonArray asJsonArrayWithDefault(JsonElement base, JsonArray defaultValue, Object... path) throws JsonTypeMismatchException, JsonPathNotFoundException, JsonInvalidPathException {
 		return (JsonArray) JsonTypes.Array.validate(asJsonElementWithDefault(base, defaultValue, path));
 	}
-	
+
 	public static JsonElement asJsonElementWithDefault(JsonElement base, JsonElement defaultValue, Object... path) throws JsonPathNotFoundException, JsonInvalidPathException {
 		return asJsonElementWithDefault(base, defaultValue, 0, path);
 	}
@@ -220,16 +228,16 @@ public class JsonUtil {
 	public static JsonElement asJsonElement(JsonElement base, Object... path) throws JsonPathNotFoundException, JsonInvalidPathException {
 		return asJsonElement(base, 0, path);
 	}
-	
-	public static String asString(JsonElement base, Object... path) throws JsonTypeMismatchException, JsonPathNotFoundException, JsonInvalidPathException  {
+
+	public static String asString(JsonElement base, Object... path) throws JsonTypeMismatchException, JsonPathNotFoundException, JsonInvalidPathException {
 		JsonPrimitive prim = (JsonPrimitive) JsonTypes.Primitive.validate(asJsonElement(base, path));
 		if (prim == null) {
 			return null;
 		}
 		return prim.getAsString();
 	}
-	
-	public static String asStringWithDefault(JsonElement base, String defaultValue, Object... path) throws JsonTypeMismatchException, JsonPathNotFoundException, JsonInvalidPathException  {
+
+	public static String asStringWithDefault(JsonElement base, String defaultValue, Object... path) throws JsonTypeMismatchException, JsonPathNotFoundException, JsonInvalidPathException {
 		JsonElement dv = null;
 		if (defaultValue != null) {
 			dv = new JsonPrimitive(defaultValue);
@@ -240,7 +248,7 @@ public class JsonUtil {
 		}
 		return prim.getAsString();
 	}
-	
+
 	public static int asInt(JsonElement base, Object... path) throws JsonTypeMismatchException, JsonPathNotFoundException, JsonFormatException, JsonInvalidPathException {
 		try {
 			return Integer.parseInt(asString(base, path));
@@ -248,7 +256,7 @@ public class JsonUtil {
 			throw new JsonFormatException(asJsonElement(base, path));
 		}
 	}
-	
+
 	public static int asIntWithDefault(JsonElement base, int defaultValue, Object... path) throws JsonTypeMismatchException, JsonPathNotFoundException, JsonFormatException, JsonInvalidPathException {
 		try {
 			return Integer.parseInt(asStringWithDefault(base, Integer.toString(defaultValue), path));
@@ -256,7 +264,7 @@ public class JsonUtil {
 			throw new JsonFormatException(asJsonElement(base, path));
 		}
 	}
-	
+
 	public static long asLong(JsonElement base, Object... path) throws JsonTypeMismatchException, JsonPathNotFoundException, JsonFormatException, JsonInvalidPathException {
 		try {
 			return Long.parseLong(asString(base, path));
@@ -272,7 +280,7 @@ public class JsonUtil {
 			throw new JsonFormatException(asJsonElement(base, path));
 		}
 	}
-	
+
 	public static float asFloat(JsonElement base, Object... path) throws JsonTypeMismatchException, JsonPathNotFoundException, JsonFormatException, JsonInvalidPathException {
 		try {
 			return Float.parseFloat(asString(base, path));
@@ -288,7 +296,7 @@ public class JsonUtil {
 			throw new JsonFormatException(asJsonElement(base, path));
 		}
 	}
-	
+
 	public static double asDouble(JsonElement base, Object... path) throws JsonTypeMismatchException, JsonPathNotFoundException, JsonFormatException, JsonInvalidPathException {
 		try {
 			return Double.parseDouble(asString(base, path));
@@ -304,7 +312,7 @@ public class JsonUtil {
 			throw new JsonFormatException(asJsonElement(base, path));
 		}
 	}
-	
+
 	public static Map<JsonElement, String> buildPathInfo(JsonObject root) {
 		Map<JsonElement, String> ret = new HashMap<JsonElement, String>();
 		ret.put(root, "/");
@@ -333,7 +341,7 @@ public class JsonUtil {
 			path.remove(path.size() - 1);
 		}
 	}
-	
+
 	private static void buildPathInfo(Map<JsonElement, String> map, List<Object> path, JsonObject obj) {
 		for (Entry<String, JsonElement> ent : obj.entrySet()) {
 			String k = ent.getKey();
@@ -343,7 +351,7 @@ public class JsonUtil {
 			path.remove(path.size() - 1);
 		}
 	}
-	
+
 	private static String jsonpath(List<Object> path) {
 		StringBuffer buf = new StringBuffer();
 		boolean firstTime = true;
@@ -362,7 +370,7 @@ public class JsonUtil {
 		}
 		return buf.toString();
 	}
-	
+
 	private static JsonParser jsonParser() {
 		JsonParser ret = null;
 		if ((ret = jsonParser.get()) == null) {
@@ -374,27 +382,31 @@ public class JsonUtil {
 	public static JsonElement toJson(String str) {
 		return jsonParser().parse(str);
 	}
-	
+
 	public static Iterator<String> keyIterator(final JsonObject json) {
 		Iterator<String> i = new Iterator<String>() {
 			Iterator<Entry<String, JsonElement>> iEntries = json.entrySet().iterator();
+
 			public boolean hasNext() {
 				return iEntries.hasNext();
 			}
+
 			public String next() {
 				return iEntries.next().getKey();
 			}
+
 			public void remove() {
 				iEntries.remove();
 			}
 		};
 		return i;
 	}
-	
+
 	public static String formatPath(Object... relPath) {
 		StringBuffer ret = new StringBuffer();
 		for (Object obj : relPath) {
-			if (ret.length() != 0) ret.append("/");
+			if (ret.length() != 0)
+				ret.append("/");
 			ret.append(obj);
 		}
 		return ret.toString();

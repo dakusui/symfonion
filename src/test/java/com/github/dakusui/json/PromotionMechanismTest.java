@@ -1,11 +1,5 @@
 package com.github.dakusui.json;
 
-import org.apache.commons.lang3.ArrayUtils;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
 import com.github.dakusui.jcunit.core.BasicSummarizer;
 import com.github.dakusui.jcunit.core.DefaultRuleSetBuilder;
 import com.github.dakusui.jcunit.core.Generator;
@@ -21,13 +15,19 @@ import com.github.dakusui.symfonion.core.SymfonionException;
 import com.github.dakusui.symfonion.core.Util;
 import com.google.gson.JsonObject;
 
+import org.apache.commons.lang3.ArrayUtils;
+import org.junit.ClassRule;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
 @RunWith(JCUnit.class)
 @Generator(SimpleTestArrayGenerator.class)
 public class PromotionMechanismTest {
 	static {
 		SystemProperties.jcunitBaseDir("src/test/resources/jcunit");
 	}
-	
+
 	@Rule
 	public RuleSet rules = new DefaultRuleSetBuilder().autoRuleSet(this).summarizer(summarizer);
 
@@ -36,7 +36,7 @@ public class PromotionMechanismTest {
 
 	@In(domain = Domain.Method)
 	public JsonObject base;
-	
+
 	@In(domain = Domain.Method)
 	public Object[] pathToParent;
 
@@ -82,20 +82,19 @@ public class PromotionMechanismTest {
 
 	public static String[][] prioritizedKeys() {
 		return new String[][] {
+				new String[] { "key1" },
+				new String[] { "key1", "key2" },
+				new String[] { "key1", "key2", "key3" },
 				new String[] {},
-				new String[] { "key-null-0" },
-				new String[] { "key-prim-0", "key-null-0" },
-				new String[] { "key-prim-0", "key-arr-1", "key-obj-1" },
 		};
 	}
 
-	
 	public static JsonObject[] base() {
 		try {
 			JsonObject obj = JsonUtil.toJson(
 					Util.loadResource(PromotionMechanismTest.class.getCanonicalName().replaceAll("\\.", "/") + ".js")
 					).getAsJsonObject();
-			return new JsonObject[]{obj};
+			return new JsonObject[] { obj };
 		} catch (SymfonionException e) {
 			throw new RuntimeException(e.getMessage(), e);
 		}
