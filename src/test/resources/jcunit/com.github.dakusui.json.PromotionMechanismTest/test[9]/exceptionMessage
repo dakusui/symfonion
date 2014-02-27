@@ -1,1 +1,5 @@
+<<<<<<< HEAD
 <string>array(size=3) is not allowed here (The lenghth must be less than or equal to 0).</string>
+=======
+<string>array(size=3) is not allowed here (A primitive, an array whose lenghth is less than or equal to 1, or an object are acceptble).</string>
+>>>>>>> 6ca4f3d69699371d8f30d9246cdc76a5c23094a8
