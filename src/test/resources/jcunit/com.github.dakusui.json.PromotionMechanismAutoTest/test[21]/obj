@@ -1,0 +1,16 @@
+<com.google.gson.JsonObject>
+  <members class="linked-hash-map">
+    <entry>
+      <string>key1</string>
+      <com.google.gson.JsonPrimitive>
+        <value class="string">hello</value>
+      </com.google.gson.JsonPrimitive>
+    </entry>
+    <entry>
+      <string>key2</string>
+      <com.google.gson.JsonPrimitive>
+        <value class="string">world</value>
+      </com.google.gson.JsonPrimitive>
+    </entry>
+  </members>
+</com.google.gson.JsonObject>
