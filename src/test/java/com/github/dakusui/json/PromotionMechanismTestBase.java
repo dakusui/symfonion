@@ -73,13 +73,21 @@ public abstract class PromotionMechanismTestBase {
   }
 
   public static JsonObject[] base() {
+    return base(PromotionMechanismTestBase.class);
+  }
+
+  private static JsonObject[] base(Class<? extends Object> klazz) {
     try {
       JsonObject obj = JsonUtil.toJson(
-          Util.loadResource(PromotionMechanismTestBase.class.getCanonicalName()
-              .replaceAll("\\.", "/") + ".js")).getAsJsonObject();
+          Util.loadResource(klazz.getCanonicalName().replaceAll("\\.", "/")
+              + ".js")).getAsJsonObject();
       return new JsonObject[] { obj };
     } catch (SymfonionException e) {
-      throw new RuntimeException(e.getMessage(), e);
+      if (!Object.class.equals(klazz)) {
+        return base(klazz.getSuperclass());
+      } else {
+        throw new RuntimeException(e.getMessage(), e);
+      }
     }
   }
 
@@ -97,7 +105,7 @@ public abstract class PromotionMechanismTestBase {
     }
   }
 
-  private static Object[] path(Object[] pathToParent, Object key) {
+  protected static Object[] path(Object[] pathToParent, Object key) {
     return ArrayUtils.add(pathToParent, key);
   }
 }
