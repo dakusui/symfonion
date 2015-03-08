@@ -34,7 +34,7 @@ public class Symfonion {
 		this.fileName = fileName;
 		try {
 			try {
-				this.json = loadSymfonionFile(fileName);
+				this.json = loadSymfonionFile(fileName, new HashMap<String, JsonObject>());
 				ret = new Song(logiasContext, json);
 				ret.init();
 			} catch (JsonSyntaxException e) {
@@ -58,7 +58,8 @@ public class Symfonion {
 		return ret;
 	}
 
-	private JsonObject loadSymfonionFile(String fileName) throws SymfonionException, JsonException {
+	private JsonObject loadSymfonionFile(String fileName, Map<String, JsonObject> alreadyReadFiles) throws SymfonionException, JsonException {
+    if (alreadyReadFiles.containsKey(fileName)) return alreadyReadFiles.get(fileName);
 		JsonObject ret = JsonUtils.toJson(Util.loadFile(fileName)).getAsJsonObject();
     if (ret.has(Keyword.$include.name())) {
       File dir = new File(fileName).getParentFile();
@@ -69,7 +70,10 @@ public class Symfonion {
         if (eachFileName == null) {
           throw new JsonInvalidPathException(ret, new Object[]{Keyword.$include, i});
         }
-        ret = JsonUtils.merge(ret, JsonUtils.toJson(Util.loadFile(new File(dir, eachFileName).getAbsolutePath())).getAsJsonObject());
+        String eachAbsFileName = new File(dir, eachFileName).getAbsolutePath();
+        JsonObject included = JsonUtils.toJson(Util.loadFile(eachAbsFileName)).getAsJsonObject();
+        alreadyReadFiles.put(eachAbsFileName, included);
+        ret = JsonUtils.merge(ret, included);
         i++;
       }
     }
