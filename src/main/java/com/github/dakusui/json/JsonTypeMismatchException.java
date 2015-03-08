@@ -1,6 +1,6 @@
 package com.github.dakusui.json;
 
-import com.github.dakusui.json.JsonUtil.JsonTypes;
+import com.github.dakusui.json.JsonUtils.JsonTypes;
 import com.google.gson.JsonElement;
 
 import java.util.Arrays;
@@ -20,7 +20,7 @@ public class JsonTypeMismatchException extends JsonException {
 	/**
 	 * An array of strings that describe types or values that are allowed on the path
 	 */
-	private JsonUtil.JsonTypes[] expectedTypes;
+	private JsonUtils.JsonTypes[] expectedTypes;
 
 	/**
 	 * A string that describes the reason why the element is considered invalid.
@@ -33,7 +33,7 @@ public class JsonTypeMismatchException extends JsonException {
 	 * @param elem A JSON element whose value is found invalid.
 	 * @param expectedTypes Strings which describe expected values.
 	 */
-	public JsonTypeMismatchException(JsonElement elem, JsonUtil.JsonTypes... expectedTypes) {
+	public JsonTypeMismatchException(JsonElement elem, JsonUtils.JsonTypes... expectedTypes) {
 		this(elem, null, expectedTypes);
 	}
 
@@ -54,7 +54,7 @@ public class JsonTypeMismatchException extends JsonException {
 	 * @param expectedTypes Strings which describe expected values.
 	 * @param reason A string that describes the reason why <code>elem</code> was considered invalid.
 	 */
-	public JsonTypeMismatchException(JsonElement elem, String reason, JsonUtil.JsonTypes... expectedTypes) {
+	public JsonTypeMismatchException(JsonElement elem, String reason, JsonUtils.JsonTypes... expectedTypes) {
 		super(elem);
 		this.expectedTypes = expectedTypes;
 		this.reason = reason;
@@ -63,7 +63,7 @@ public class JsonTypeMismatchException extends JsonException {
 	/*
 	 * Formats an message.
 	 */
-	private static String formatMessage(String reason, JsonUtil.JsonTypes[] types, JsonElement actualJSON) {
+	private static String formatMessage(String reason, JsonUtils.JsonTypes[] types, JsonElement actualJSON) {
 		String ret = null;
 		String r = "";
 		if (reason != null) {

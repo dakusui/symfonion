@@ -1,8 +1,8 @@
 package com.github.dakusui.symfonion.core;
 
-import java.io.File;
-
 import com.google.gson.JsonElement;
+
+import java.io.File;
 
 
 public class ExceptionThrower {
@@ -12,7 +12,7 @@ public class ExceptionThrower {
 	}
 
 	public static void throwFileNotFoundException(File file, Throwable e) throws SymfonionException {
-		throw new SymfonionException(String.format("%s: File not found", file, e.getMessage()));
+		throw new SymfonionException(String.format("%s: File not found (%s)", file, e.getMessage()));
 	}
 
 	public static void throwLoadFileException(File file, Throwable e) throws SymfonionException {
@@ -55,15 +55,20 @@ public class ExceptionThrower {
 	}
 	
 	public static void throwDeviceException(String msg, Throwable e) throws SymfonionException {
-		throw new SymfonionException(e);
+		throw new SymfonionException(msg, e);
 	}
 
 	public static void throwRuntimeException(String msg, Throwable e) {
-		throw new RuntimeException(msg);
+		throw new RuntimeException(msg, e);
 	}
 
 	public static void throwFractionFormatException(String fraction) throws FractionFormatException {
 		throw new FractionFormatException(fraction);
 	}
+
+  public static void interrupted(InterruptedException e) {
+    Thread.currentThread().interrupt();
+    throw new SymfonionRuntimeException(e.getMessage(), e);
+  }
 
 }

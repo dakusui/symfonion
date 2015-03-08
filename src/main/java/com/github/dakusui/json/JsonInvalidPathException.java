@@ -1,8 +1,8 @@
 package com.github.dakusui.json;
 
-import java.util.Arrays;
-
 import com.google.gson.JsonElement;
+
+import java.util.Arrays;
 
 public class JsonInvalidPathException extends JsonException {
 	/**
@@ -11,7 +11,7 @@ public class JsonInvalidPathException extends JsonException {
 	private static final long serialVersionUID = 7832147182391783569L;
 
 	protected String formatMessage(JsonElement base, Object[] path) {
-		return String.format("This element doesn't have path: %s", Arrays.toString(path));
+		return String.format("This element doesn't have path or the path is invalid: %s", Arrays.toString(path));
 	}
 	
 	private JsonElement base;
@@ -30,7 +30,11 @@ public class JsonInvalidPathException extends JsonException {
 		this.index = index;
 	}
 
-	public JsonElement getLocation() {
+  public JsonInvalidPathException(JsonElement base, Object[] path) {
+    this(base, path, 0);
+  }
+
+  public JsonElement getLocation() {
 		return base;
 	}
 

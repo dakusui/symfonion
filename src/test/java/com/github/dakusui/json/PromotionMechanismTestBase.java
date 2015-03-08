@@ -78,9 +78,9 @@ public abstract class PromotionMechanismTestBase {
 
   private static JsonObject[] base(Class<? extends Object> klazz) {
     try {
-      JsonObject obj = JsonUtil.toJson(
-          Util.loadResource(klazz.getCanonicalName().replaceAll("\\.", "/")
-              + ".js")).getAsJsonObject();
+      JsonObject obj = JsonUtils.toJson(
+              Util.loadResource(klazz.getCanonicalName().replaceAll("\\.", "/")
+                      + ".js")).getAsJsonObject();
       return new JsonObject[] { obj };
     } catch (SymfonionException e) {
       if (!Object.class.equals(klazz)) {
@@ -95,8 +95,8 @@ public abstract class PromotionMechanismTestBase {
   public void test() throws Exception {
     this.obj = null;
     try {
-      this.obj = JsonUtil.asJsonObjectWithPromotion(base, prioritizedKeys,
-          path(pathToParent, key));
+      this.obj = JsonUtils.asJsonObjectWithPromotion(base, prioritizedKeys,
+              path(pathToParent, key));
     } catch (RuntimeException e) {
       throw e;
     } catch (JsonException e) {

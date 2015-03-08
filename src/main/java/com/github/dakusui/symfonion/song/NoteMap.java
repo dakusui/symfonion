@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import com.github.dakusui.json.JsonUtil;
+import com.github.dakusui.json.JsonUtils;
 import com.github.dakusui.symfonion.core.ExceptionThrower;
 import com.github.dakusui.symfonion.core.SymfonionException;
 import com.google.gson.JsonElement;
@@ -35,7 +35,7 @@ public class NoteMap {
 		this.name = name;
 	}
 	public NoteMap(final JsonObject json) throws SymfonionException {
-		Iterator<String> i = JsonUtil.keyIterator(json);
+		Iterator<String> i = JsonUtils.keyIterator(json);
 		while (i.hasNext()) {
 			String cur = i.next();
 			int v = json.get(cur).getAsInt();

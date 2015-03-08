@@ -12,7 +12,7 @@ import com.github.dakusui.json.JsonFormatException;
 import com.github.dakusui.json.JsonInvalidPathException;
 import com.github.dakusui.json.JsonPathNotFoundException;
 import com.github.dakusui.json.JsonTypeMismatchException;
-import com.github.dakusui.json.JsonUtil;
+import com.github.dakusui.json.JsonUtils;
 import com.github.dakusui.symfonion.core.SymfonionException;
 import com.github.dakusui.symfonion.core.Util;
 import com.google.gson.JsonArray;
@@ -111,14 +111,14 @@ public class Groove {
 				ExceptionThrower.throwTypeMismatchException(elem, OBJECT);
 			}
 			JsonObject cur = elem.getAsJsonObject();
-			String len = JsonUtil.asString(cur, Keyword.$length); 
-			long   ticks = JsonUtil.asLong(cur, Keyword.$ticks);
-			int    accent = JsonUtil.asInt(cur, Keyword.$accent);
+			String len = JsonUtils.asString(cur, Keyword.$length);
+			long   ticks = JsonUtils.asLong(cur, Keyword.$ticks);
+			int    accent = JsonUtils.asInt(cur, Keyword.$accent);
 			
 			Fraction f = Util.parseNoteLength(len);
 			if (f == null) {
 				ExceptionThrower.throwIllegalFormatException(
-						JsonUtil.asJsonElement(cur, Keyword.$length), 
+						JsonUtils.asJsonElement(cur, Keyword.$length),
 						NOTELENGTH_EXAMPLE);
 			}
 			ret.add(f, ticks, accent);

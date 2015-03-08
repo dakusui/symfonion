@@ -90,39 +90,39 @@ public class JsonUtilTest {
 	
 	@Test
 	public void obj_N01a() throws JsonTypeMismatchException, JsonPathNotFoundException, JsonInvalidPathException {
-		Assert.assertEquals("val1", JsonUtil.asString(this.obj, "key1"));
+		Assert.assertEquals("val1", JsonUtils.asString(this.obj, "key1"));
 	}
 	
 	@Test
 	public void obj_N01b() throws JsonTypeMismatchException, JsonPathNotFoundException, JsonInvalidPathException {
-		Assert.assertEquals("val1", JsonUtil.asStringWithDefault(this.obj, "VAL1", "key1"));
+		Assert.assertEquals("val1", JsonUtils.asStringWithDefault(this.obj, "VAL1", "key1"));
 	}
 	
 	@Test
 	public void obj_N01c() throws JsonTypeMismatchException, JsonPathNotFoundException, JsonInvalidPathException {
-		Assert.assertEquals("VAL1", JsonUtil.asStringWithDefault(this.obj, "VAL1", "_key1"));
+		Assert.assertEquals("VAL1", JsonUtils.asStringWithDefault(this.obj, "VAL1", "_key1"));
 	}
 	
 	@Test
 	public void obj_N01d() throws JsonTypeMismatchException, JsonPathNotFoundException, JsonInvalidPathException {
-		Assert.assertEquals("val72", JsonUtil.asStringWithDefault(this.obj, "VAL1", "key7", 2, "key72"));
+		Assert.assertEquals("val72", JsonUtils.asStringWithDefault(this.obj, "VAL1", "key7", 2, "key72"));
 	}
 	
 	@Test
 	public void obj_N01e() throws JsonTypeMismatchException, JsonPathNotFoundException, JsonInvalidPathException {
-		Assert.assertEquals("val72", JsonUtil.asStringWithDefault(this.obj, "VAL1", "key7", "2", "key72"));
+		Assert.assertEquals("val72", JsonUtils.asStringWithDefault(this.obj, "VAL1", "key7", "2", "key72"));
 	}
 	
 	@Test
 	public void obj_N02() throws JsonTypeMismatchException, JsonPathNotFoundException, JsonInvalidPathException, JsonFormatException {
-		Assert.assertEquals(2, JsonUtil.asInt(this.obj, "key2"));
+		Assert.assertEquals(2, JsonUtils.asInt(this.obj, "key2"));
 	}
 	
 	@Test
 	public void obj_N03a() throws JsonPathNotFoundException, JsonTypeMismatchException, JsonInvalidPathException {
 		JsonObject expected = new JsonObject(); 
 		expected.addProperty("key72", "val72");
-		Assert.assertEquals(expected, JsonUtil.asJsonObject(this.obj, "key7", 2));
+		Assert.assertEquals(expected, JsonUtils.asJsonObject(this.obj, "key7", 2));
 	}
 	
 	@Test
@@ -131,7 +131,7 @@ public class JsonUtilTest {
 		defaultValue.addProperty("key72", "val72def");
 		JsonObject expected = new JsonObject(); 
 		expected.addProperty("key72", "val72");
-		Assert.assertEquals(expected, JsonUtil.asJsonObjectWithDefault(this.obj, defaultValue, "key7", 2));
+		Assert.assertEquals(expected, JsonUtils.asJsonObjectWithDefault(this.obj, defaultValue, "key7", 2));
 	}
 	
 
@@ -141,7 +141,7 @@ public class JsonUtilTest {
 		defaultValue.addProperty("key72", "val72def");
 		JsonObject expected = new JsonObject(); 
 		expected.addProperty("key72", "val72def");
-		Assert.assertEquals(expected, JsonUtil.asJsonObjectWithDefault(this.obj, defaultValue, "key0"));
+		Assert.assertEquals(expected, JsonUtils.asJsonObjectWithDefault(this.obj, defaultValue, "key0"));
 	}
 
 	/*
@@ -154,12 +154,12 @@ public class JsonUtilTest {
 		expected.addProperty("key72", 100);
 		Assert.assertEquals(
 				expected, 
-				JsonUtil.asJsonObjectWithPromotion(
-						this.obj, 
-						new String[]{"key72"}, 
-						defaultValue, 
+				JsonUtils.asJsonObjectWithPromotion(
+						this.obj,
+						new String[]{"key72"},
+						defaultValue,
 						"key7", 1
-						)
+				)
 				);
 	}
 
@@ -173,12 +173,12 @@ public class JsonUtilTest {
 		expected.addProperty("key72", "val72def");
 		Assert.assertEquals(
 				expected, 
-				JsonUtil.asJsonObjectWithPromotion(
-						this.obj, 
-						new String[]{"key72"}, 
-						defaultValue, 
+				JsonUtils.asJsonObjectWithPromotion(
+						this.obj,
+						new String[]{"key72"},
+						defaultValue,
 						"key0", 1
-						)
+				)
 				);
 	}
 	
@@ -192,12 +192,12 @@ public class JsonUtilTest {
 		expected.addProperty("key72", "val72");
 		Assert.assertEquals(
 				expected, 
-				JsonUtil.asJsonObjectWithPromotion(
-						this.obj, 
-						new String[]{"key72"}, 
-						defaultValue, 
+				JsonUtils.asJsonObjectWithPromotion(
+						this.obj,
+						new String[]{"key72"},
+						defaultValue,
 						"key7", 2
-						)
+				)
 				);
 	}
 	
@@ -205,7 +205,7 @@ public class JsonUtilTest {
 	public void obj_E03d() throws JsonPathNotFoundException, JsonTypeMismatchException, JsonInvalidPathException {
 		boolean passed = false;
 		try {
-			JsonUtil.asJsonObjectWithDefault(this.obj, new JsonObject(), "key7", 4);
+			JsonUtils.asJsonObjectWithDefault(this.obj, new JsonObject(), "key7", 4);
 			fail();
 		} catch (JsonIndexOutOfBoudsException e) {
 			passed = true;
@@ -216,7 +216,7 @@ public class JsonUtilTest {
 	@Test
 	public void obj_E02() throws JsonTypeMismatchException, JsonPathNotFoundException, JsonInvalidPathException, JsonFormatException {
 		try {
-			JsonUtil.asInt(this.obj, "_key2");
+			JsonUtils.asInt(this.obj, "_key2");
 			fail();
 		} catch (JsonPathNotFoundException e) {
 			assertEquals(this.obj, e.getLocation());
@@ -228,7 +228,7 @@ public class JsonUtilTest {
 	@Test
 	public void obj_E01d() throws JsonTypeMismatchException, JsonPathNotFoundException, JsonInvalidPathException {
 		try {
-			System.out.println(JsonUtil.asStringWithDefault(this.obj, "VAL1", "key7", "STRING", "key72"));
+			System.out.println(JsonUtils.asStringWithDefault(this.obj, "VAL1", "key7", "STRING", "key72"));
 			fail();
 		} catch (JsonInvalidPathException e) {
 			assertArrayEquals(
@@ -242,6 +242,6 @@ public class JsonUtilTest {
 	
 	@Test
 	public void arr_N01() throws JsonTypeMismatchException, JsonPathNotFoundException, JsonInvalidPathException  {
-		Assert.assertEquals("val1", JsonUtil.asString(this.arr, 0));
+		Assert.assertEquals("val1", JsonUtils.asString(this.arr, 0));
 	}
 }
