@@ -5,7 +5,9 @@
 Here is an example of a piece of music written in SyMFONION.
 
 ```javascript
+
     {
+      "$include":[],
       "$parts":{
         "testviolin":{"$channel":0}
       },
@@ -39,10 +41,49 @@ Basically, a SyMFONION program is a JSON object and its three most important ele
 
 A value for "$parts" is a dictionary which describes 'parts' in music score (like 'piano part', 'guitar part', and so on). "$patterns" holds a set of patterns which are melodies, rhythm patterns, effect patters, and so on. And "$sequence" organises how each pattern should be played. For instance, a pattern "test1" is played twice on a part "testviolin" in the example above.
 
+# Include #
+Inside the ```$include``` attribute, you can specify file names to be included before this file is processed.
+The files specified here are read and merged with this document.
+
+If you have two files like below in the same directory,
+
+example.js
+```javascript
+
+    "$include":[ "included.js" ],
+    "$sequence":[
+    ...
+    ]
+```
+
+included.js
+```javascript
+
+    "$patterns":{
+        ...
+    }
+```
+
+and if example.js is given to SyMFONION, they will be merged into single JSON object.
+
+```javascript
+
+    "$patterns":{
+        ...
+    },
+    "$sequence":[
+    ...
+    ]
+```
+
+And then this merged JSON object will be processed.
+
+
 # Parts #
 By using 'parts' element you can specify which part uses which midi channel. In the example below, the part 'test' will use the midi channel '0'. Note that in symfonion language, A channel number is 0 origin.
 
 ```javascript
+
       "$parts":{
         "test":{"$channel":0},
       },
@@ -51,6 +92,7 @@ By using 'parts' element you can specify which part uses which midi channel. In 
 If you want to use external MIDI devices, you need to specify "$port" attribute for each part,
 
 ```javascript
+
     "$parts":{
        "test":{ "$channel":0, "$port":"part1" }
     }
@@ -67,6 +109,7 @@ Part names must be defined through system properties. For more detail, please re
 "Patterns" section is a dictionary and defines patterns which are referred to from inside "Sequence" section.
 
 ```javascript
+
     "$patterns":{
       "test1":{
         "$body":[
@@ -92,6 +135,7 @@ There are two pre-defined note maps, which are "$normal" and "$percussion". "$no
 A "$body" of a pattern is a list of 'strokes' and each stroke is a dictionary like this.
 
 ```javascript
+
     "$body":[
       {"$notes":"C", "$length":"2", "$pan":127, "$program":2},
       {"$notes":"C", "$length":"2", "$pan":0},
@@ -101,6 +145,7 @@ A "$body" of a pattern is a list of 'strokes' and each stroke is a dictionary li
 Relationships between patterns, strokes, and notes are described in the figure below.
  
 ```bash
+
        +-------+   body+----------------+1     n+----------+
        |Pattern|<>-+-->|Stroke          |<>---->|  Note    |
        +-------+1  |  n+----------------+       +----------+
@@ -129,6 +174,7 @@ On the other hand, there are some parameters which directly belong to note messa
 In the example below, "$velocitybase" is a parameter which modifies a note and "$volume" is a non note message which is translated into a control change message (#7).
 
 ```javascript
+
     {
       "$notes":"C",
       "$velocitybasse":100,
@@ -142,12 +188,14 @@ But in terms of SyMFONION syntax, users can not tell which attributes are parame
 Notes in a stroke must match a regular expression pattern defined by a string below. (This is a "Java-style" regular expression and its syntax slightly different from other ones such as perl's. Refer to this document. http://docs.oracle.com/javase/6/docs/api/java/util/regex/Pattern.html)
 
 ```java
+
     "([A-Zac-z])([#b]*)([><]*)([\\+\\-]*)"
 ```
 
 For example, strings below are valid for this attribute.
 
 ```java
+
     "C";                  // Translated to "C3" (Note number 60)
     "D#";                 // "D sharp" (Note number 63)
     "D##";                // "D doublesharp" (Note number 64)
@@ -170,6 +218,7 @@ For example, strings below are valid for this attribute.
 Some of non-note messages, for example '$volume', can have arrays as their values.
 
 ```javascript
+
     {
         "$notes":"C",
         "$volume":[0,10,20,40]
@@ -181,6 +230,7 @@ If this stroke is a quarter note, 4 volume messages (control change #7) each of 
 You can omit values in between concrete values like this,
 
 ```javascript
+
     {
         "$notes":"C",
         "$volume":[0,,,40]
@@ -195,6 +245,7 @@ SyMFONION fills the gap by using linearization.
 And if you give an integer to "$volume" attribute, its considered as an array which has only one value. In other words, strokes in the example below are equivalent to each other.
 
 ```javascript
+
     {
         "$notes":"C",
         "$volume":80
@@ -211,6 +262,7 @@ This feature is called "arrayable" and users can use this features for "$volume"
 This feature is 'arrayable'.
 
 ```javascript
+
     {
         "$notes":"C",
         "$volume":[0,,,70,,,80],
@@ -224,6 +276,7 @@ Volume change messages (control change #7) are sent with given values to the cha
 This feature is 'arrayable'.
 
 ```javascript
+
     {
         "$notes":"C",
         "$pan":[0,,,,,,127],
@@ -236,6 +289,7 @@ Pan change messages (control change #10) are sent with given values to the chann
 This feature is 'arrayable'.
 
 ```javascript
+
     {
         "$notes":"C",
         "$reverb":[0,,,,,,127],
@@ -248,6 +302,7 @@ Reverb change messages (control change #91) are sent with given values to the ch
 This feature is 'arrayable'.
 
 ```javascript
+
     {
         "$notes":"C",
         "$chorus":[0,,,,,,127],
@@ -260,6 +315,7 @@ Chorus change messages (control change #93) are sent with given values to the ch
 This feature is 'arrayable'.
 
 ```javascript
+
     {
         "$notes":"C",
         "$pitch":[0,,,,,,127],
@@ -274,6 +330,7 @@ Pitch bend messages are sent with given values to the channel with which this pa
 This feature is 'arrayable'.
 
 ```javascript
+
     {
         "$notes":"C",
         "$modulation":[0,,,,,,127],
@@ -286,6 +343,7 @@ Modulation wheel messages (control change #1) are sent with given values to the 
 This feature is NOT 'arrayable'.
 
 ```javascript
+
     {
         "$notes":"C",
         "$program":0,
@@ -298,6 +356,7 @@ A program change message is sent with a given value to the channel with which th
 This feature is NOT 'arrayable'.
 
 ```javascript
+
     {
         "$notes":"C",
         "$tempo":180,
@@ -343,6 +402,7 @@ Both of below are the same meanin
 g.
 
 ```javascript
+
     {"$notes":"C", "$length":"8"},
     {"$notes":"C", "$length":8},
 ```
@@ -350,16 +410,19 @@ g.
 But to create a dotted note, you can only use a string for "$length"
 
 ```javascript
+
     {"$notes":"C", "$length":"8."},   // dotted eighth note.
 ```
 
 Also you can write double dotted/triple dotted notes by using a string.
 
 ```javascript
+
     {"$notes":"C", "$length":"8.."},  // double dotted eighth note.
 ```
 
 ```javascript
+
     {"$notes":"C", "$length":"8..."}, // triple dotted eighth note.
 ```
 
@@ -373,6 +436,7 @@ And "$velocitydelta" is also an integer which specifies the value one accent sig
 So, the velocity value set to midi messages can be calculated by the formula below,
 
 ```
+
     velocity value = $velocitybase + (  (number of "+" in notes)
                                       - (number of "-" in notes) ) * $velocitydelta
 ```
@@ -389,6 +453,7 @@ All notes have their own number. For instance, C3 (The center "C") is 60.
 Users can transpose the notes by using this feature.
 
 ```
+
     {"$notes":"C", "$transpose":1},
 ```
 
@@ -406,6 +471,7 @@ Since it is painful to write $gate or $velocitybase every time for each note, us
 As discussed so far, users can write a symfonion file like below.
 
 ```javascript
+
     "patternexample":{
         "$body":[
             {
@@ -432,6 +498,7 @@ As discussed so far, users can write a symfonion file like below.
 By using this feature, the pattern above can be rewritten like this,
 
 ```javascript
+
     "patternexample":{
         "$body":[
             { "$notes":"CEG" },
@@ -453,6 +520,7 @@ In real musical works, all the sixteenth notes have neither the same length nor 
 In symfonion syntax, you can define grooves like below,
 
 ```javascript
+
     "$grooves":{
         "16beats":[
             { "$length":"16", "$ticks":28, "$accent":30 },
@@ -486,6 +554,7 @@ And each dictionary represents a bar in a score.
 
 
 ```javascript
+
       "$sequence":[
         {
           "$beats":"8/8",
@@ -527,6 +596,7 @@ In that case, what users need to do is below,
 At first, define "fade-in" or "fade-out" pattern in "$patterns" section.
 
 ```javascript
+
     "$patterns":{
         "fade-in":{
             "$length":1,
@@ -545,6 +615,7 @@ At first, define "fade-in" or "fade-out" pattern in "$patterns" section.
 Now users can write a sequence with fade-in and out.
 
 ```javascript
+
     "$sequence":[
         {
             "piano":["fade-in", "melody"],
@@ -561,6 +632,7 @@ Now users can write a sequence with fade-in and out.
 In order to set groove to be used in a sequence, users need to set "$groove" attribute for a pattern,
 
 ```javascript
+
     {
             "$beats":"16/16",
             "$patterns":{

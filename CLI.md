@@ -2,12 +2,13 @@ symfonion - creates and plays music pieces.
 
 # Synopsys
 ```
-symfonion -V|--version
-symfonion -h|--help
-symfonion --list
-symfonion -p|--play {infile} [-O{midioutport}={regex}]... 
-symfonion -c|--compile {infile} [-o {outfile}] 
-symfonion -r|--route {midioutport}={midiinport} [-O{midioutport}={regex}] [-I{midiinport}={regex}]
+
+    symfonion -V|--version
+    symfonion -h|--help
+    symfonion --list
+    symfonion -p|--play {infile} [-O{midioutport}={regex}]...
+    symfonion -c|--compile {infile} [-o {outfile}]
+    symfonion -r|--route {midioutport}={midiinport} [-O{midioutport}={regex}] [-I{midiinport}={regex}]
 ```
 
 # Description
@@ -17,10 +18,13 @@ When invoked without specifying any output files, it simply plays the input file
 
 This page documents the command-line arguments for the SyMFONION processor.
 
+If you do not specify any arguments and GUI is available in your environment,
+a file chooser will be shownand let you choose a symfonion file to be played.
+SyMFONION will behave as if it is given as a parameter.
+
 # Options
 ## -V or --version
 Prints the version and the license of this command.
-(t.b.d.)
 
 ## -h or --help
 Prints the help of this command.
@@ -73,7 +77,7 @@ Issue tracker: https://github.com/dakusui/symfonion/issues
 Written by Hiroshi Ukai
 
 # See also
-* Syntax of SyMFONION: https://github.com/dakusui/symfonion/wiki/Syntax
+* [Syntax of SyMFONION](SYNTAX.md)
 * JSON : http://www.json.org/
 * MIDI standard: http://www.midi.org/aboutmidi/ , http://en.wikipedia.org/wiki/MIDI
 * Standard MIDI files: http://en.wikipedia.org/wiki/MIDI#Standard_MIDI_files
