@@ -7,7 +7,7 @@ import com.github.dakusui.json.JsonFormatException;
 import com.github.dakusui.json.JsonInvalidPathException;
 import com.github.dakusui.json.JsonPathNotFoundException;
 import com.github.dakusui.json.JsonTypeMismatchException;
-import com.github.dakusui.json.JsonUtil;
+import com.github.dakusui.json.JsonUtils;
 import com.github.dakusui.symfonion.core.SymfonionException;
 import com.google.gson.JsonObject;
 
@@ -31,8 +31,8 @@ public class Part {
 	
 	public Part(String name, JsonObject json, Song song) throws SymfonionException, JsonPathNotFoundException, JsonTypeMismatchException, JsonFormatException, JsonInvalidPathException {
 		this.name = name;
-		this.channel = JsonUtil.asInt(json, Keyword.$channel);
-		this.portName = JsonUtil.asStringWithDefault(json, null, Keyword.$port);
+		this.channel = JsonUtils.asInt(json, Keyword.$channel);
+		this.portName = JsonUtils.asStringWithDefault(json, null, Keyword.$port);
 	}
 
 	public String name() {

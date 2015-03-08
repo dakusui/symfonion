@@ -1,13 +1,6 @@
 package com.github.dakusui.symfonion.song;
 
-import static com.github.dakusui.symfonion.core.SymfonionIllegalFormatException.NOTELENGTH_EXAMPLE;
-import static com.github.dakusui.symfonion.core.SymfonionTypeMismatchException.PRIMITIVE;
-
-import com.github.dakusui.json.JsonFormatException;
-import com.github.dakusui.json.JsonInvalidPathException;
-import com.github.dakusui.json.JsonPathNotFoundException;
-import com.github.dakusui.json.JsonTypeMismatchException;
-import com.github.dakusui.json.JsonUtil;
+import com.github.dakusui.json.*;
 import com.github.dakusui.symfonion.MidiCompiler;
 import com.github.dakusui.symfonion.MidiCompiler.CompilerContext;
 import com.github.dakusui.symfonion.core.ExceptionThrower;
@@ -19,13 +12,15 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.MidiEvent;
+import javax.sound.midi.Track;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
 
-import javax.sound.midi.InvalidMidiDataException;
-import javax.sound.midi.MidiEvent;
-import javax.sound.midi.Track;
+import static com.github.dakusui.symfonion.core.SymfonionIllegalFormatException.NOTELENGTH_EXAMPLE;
+import static com.github.dakusui.symfonion.core.SymfonionTypeMismatchException.PRIMITIVE;
 
 public class Stroke {
 	private static final int UNDEFINED_NUM = -1;
@@ -50,36 +45,18 @@ public class Stroke {
 	public Stroke(
 			JsonElement cur,
 			Parameters params,
-			NoteMap noteMap) throws SymfonionException, JsonPathNotFoundException, JsonTypeMismatchException, JsonInvalidPathException, JsonFormatException {
-		String notes = null;
+			NoteMap noteMap) throws SymfonionException, JsonException {
+		String notes;
 		Fraction len = params.length();
 		double gate = params.gate();
 		this.strokeJson = cur;
-		/*
-		 * if (cur.isJsonPrimitive()) {
-		 * notes = cur.getAsString();
-		 * } else if (cur.isJsonArray()) {
-		 * JsonArray arr = cur.getAsJsonArray();
-		 * int elems = arr.size();
-		 * if (elems > 0) {
-		 * notes = arr.get(0).getAsString();
-		 * if (elems > 1) {
-		 * len = Util.parseNoteLength(arr.get(1).getAsString());
-		 * if (len == null) {
-		 * ExceptionThrower.throwIllegalFormatException(arr.get(1), NOTELENGTH_EXAMPLE);
-		 * }
-		 * }
-		 * }
-		 * } else if (cur.isJsonObject()) {
-		 */
-		//	JsonObject obj = cur.getAsJsonObject();
-		JsonObject obj = JsonUtil.asJsonObjectWithPromotion(cur, new String[] {
+		JsonObject obj = JsonUtils.asJsonObjectWithPromotion(cur, new String[]{
 				Keyword.$notes.name(),
 				Keyword.$length.name()
 		});
-		notes = JsonUtil.asStringWithDefault(obj, null, Keyword.$notes);
-		if (JsonUtil.hasPath(obj, Keyword.$length)) {
-			JsonElement lenJSON = JsonUtil.asJsonElement(obj, Keyword.$length);
+		notes = JsonUtils.asStringWithDefault(obj, null, Keyword.$notes);
+		if (JsonUtils.hasPath(obj, Keyword.$length)) {
+			JsonElement lenJSON = JsonUtils.asJsonElement(obj, Keyword.$length);
 			if (lenJSON.isJsonPrimitive()) {
 				len = Util.parseNoteLength(lenJSON.getAsString());
 				if (len == null) {
@@ -89,14 +66,15 @@ public class Stroke {
 				ExceptionThrower.throwTypeMismatchException(lenJSON, PRIMITIVE);
 			}
 		}
-		if (JsonUtil.hasPath(obj, Keyword.$gate)) {
-			gate = JsonUtil.asDouble(obj, Keyword.$gate);
+		if (JsonUtils.hasPath(obj, Keyword.$gate)) {
+			gate = JsonUtils.asDouble(obj, Keyword.$gate);
 		}
-		this.tempo = JsonUtil.hasPath(obj, Keyword.$tempo) ? JsonUtil.asInt(obj, Keyword.$tempo) : UNDEFINED_NUM;
-		this.pgno = JsonUtil.hasPath(obj, Keyword.$program) ? JsonUtil.asInt(obj, Keyword.$program) : UNDEFINED_NUM;
-		if (JsonUtil.hasPath(obj, Keyword.$bank)) {
-			this.bkno = JsonUtil.asString(obj, Keyword.$bank);
+		this.tempo = JsonUtils.hasPath(obj, Keyword.$tempo) ? JsonUtils.asInt(obj, Keyword.$tempo) : UNDEFINED_NUM;
+		this.pgno = JsonUtils.hasPath(obj, Keyword.$program) ? JsonUtils.asInt(obj, Keyword.$program) : UNDEFINED_NUM;
+		if (JsonUtils.hasPath(obj, Keyword.$bank)) {
+			this.bkno = JsonUtils.asString(obj, Keyword.$bank);
 			// Checks if this.bkno can be parsed as a double value.
+			//noinspection ResultOfMethodCallIgnored
 			Double.parseDouble(this.bkno);
 		}
 		this.volume = getIntArray(obj, Keyword.$volume);
@@ -106,7 +84,7 @@ public class Stroke {
 		this.pitch = getIntArray(obj, Keyword.$pitch);
 		this.modulation = getIntArray(obj, Keyword.$modulation);
 		this.aftertouch = getIntArray(obj, Keyword.$aftertouch);
-		this.sysex = JsonUtil.asJsonArrayWithDefault(obj, null, Keyword.$sysex);
+		this.sysex = JsonUtils.asJsonArrayWithDefault(obj, null, Keyword.$sysex);
 		/*
 		 * } else {
 		 * // unsupported
@@ -118,7 +96,7 @@ public class Stroke {
 		if (notes != null) {
 			for (String nn : notes.split(";")) {
 				NoteSet ns = new NoteSet();
-				Fraction nsLen = null;
+				Fraction nsLen;
 				String l;
 				if ((l = parseNotes(nn, ns)) != null) {
 					nsLen = Util.parseNoteLength(l);
@@ -136,12 +114,12 @@ public class Stroke {
 		this.length = strokeLen;
 	}
 
-	private int[] getIntArray(JsonObject cur, Keyword kw) throws SymfonionException, JsonPathNotFoundException, JsonInvalidPathException, JsonTypeMismatchException, JsonFormatException {
-		int[] ret = null;
-		if (!JsonUtil.hasPath(cur, kw)) {
+	private int[] getIntArray(JsonObject cur, Keyword kw) throws SymfonionException, JsonInvalidPathException, JsonTypeMismatchException, JsonFormatException {
+		int[] ret;
+		if (!JsonUtils.hasPath(cur, kw)) {
 			return null;
 		}
-		JsonElement json = JsonUtil.asJsonElement(cur, kw);
+		JsonElement json = JsonUtils.asJsonElement(cur, kw);
 		if (json.isJsonArray()) {
 			JsonArray arr = json.getAsJsonArray();
 			Integer[] tmp = new Integer[arr.size()];
@@ -157,12 +135,12 @@ public class Stroke {
 			int end = 0;
 			for (int i = 0; i < tmp.length; i++) {
 				if (tmp[i] != null) {
-					start = ret[i] = tmp[i].intValue();
+					start = ret[i] = tmp[i];
 				} else {
 					int j = i + 1;
 					while (j < tmp.length) {
 						if (tmp[j] != null) {
-							end = tmp[j].intValue();
+							end = tmp[j];
 							ret[j] = end;
 							break;
 						}
@@ -179,7 +157,7 @@ public class Stroke {
 			}
 		} else {
 			ret = new int[1];
-			ret[0] = JsonUtil.asInt(cur, kw);
+			ret[0] = JsonUtils.asInt(cur, kw);
 		}
 		return ret;
 	}
@@ -232,7 +210,7 @@ public class Stroke {
 
 	static interface EventCreator {
 		void createEvent(int v, long pos) throws InvalidMidiDataException;
-	};
+	}
 
 	private void renderValues(int[] values, long pos, long strokeLen, MidiCompiler compiler, EventCreator creator) throws InvalidMidiDataException {
 		if (values == null) {
@@ -245,13 +223,6 @@ public class Stroke {
 		}
 	}
 
-	/**
-	 * 
-	 * @param compiler
-	 * @param context
-	 * @return
-	 * @throws InvalidMidiDataException
-	 */
 	public void compile(final MidiCompiler compiler, CompilerContext context) throws InvalidMidiDataException {
 		final Track track = context.getTrack();
 		final int ch = context.getChannel();

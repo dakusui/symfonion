@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.github.dakusui.json.JsonException;
-import com.github.dakusui.json.JsonUtil;
+import com.github.dakusui.json.JsonUtils;
 import com.github.dakusui.logias.Logias;
 import com.github.dakusui.logias.lisp.Context;
 import com.github.dakusui.symfonion.core.ExceptionThrower;
@@ -46,17 +46,17 @@ public class Song {
 	}
 
 	private void initSettings() throws SymfonionException, JsonException {
-		JsonElement tmp = JsonUtil.asJsonObjectWithDefault(this.json, new JsonObject(), Keyword.$settings);
+		JsonElement tmp = JsonUtils.asJsonObjectWithDefault(this.json, new JsonObject(), Keyword.$settings);
 		if (tmp != null) {
 			if (!tmp.isJsonObject()) {
 				ExceptionThrower.throwTypeMismatchException(tmp, OBJECT);
 			}
-			String profileName = JsonUtil.asStringWithDefault(tmp.getAsJsonObject(), "", Keyword.$mididevice);
+			String profileName = JsonUtils.asStringWithDefault(tmp.getAsJsonObject(), "", Keyword.$mididevice);
 			Context context = logiasContext;
 			Logias logias = new Logias(logiasContext); 
 			if (!"".equals(profileName)) {
-				JsonObject devicedef = JsonUtil.toJson(Util.loadResource(profileName + ".js")).getAsJsonObject();
-				Iterator<String> i = JsonUtil.keyIterator(devicedef);
+				JsonObject devicedef = JsonUtils.toJson(Util.loadResource(profileName + ".js")).getAsJsonObject();
+				Iterator<String> i = JsonUtils.keyIterator(devicedef);
 				while (i.hasNext()) {
 					String k = i.next();
 					JsonElement v = devicedef.get(k);
@@ -67,7 +67,7 @@ public class Song {
 	}
 
 	private void initSequence() throws SymfonionException, JsonException {
-		JsonElement tmp = JsonUtil.asJsonElement(this.json, Keyword.$sequence);
+		JsonElement tmp = JsonUtils.asJsonElement(this.json, Keyword.$sequence);
 		if (tmp == null) {
 			ExceptionThrower.throwRequiredElementMissingException(this.json, Keyword.$sequence);
 		}
@@ -87,49 +87,49 @@ public class Song {
 	}
 
 	private void initNoteMaps() throws SymfonionException, JsonException {
-		final JsonObject noteMapsJSON = JsonUtil.asJsonObjectWithDefault(this.json, new JsonObject(), Keyword.$notemaps);
+		final JsonObject noteMapsJSON = JsonUtils.asJsonObjectWithDefault(this.json, new JsonObject(), Keyword.$notemaps);
 		
-		Iterator<String> i = JsonUtil.keyIterator(noteMapsJSON);
+		Iterator<String> i = JsonUtils.keyIterator(noteMapsJSON);
 		noteMaps.put(Keyword.$normal.toString(), NoteMap.defaultNoteMap);
 		noteMaps.put(Keyword.$percussion.toString(), NoteMap.defaultPercussionMap);
 		while (i.hasNext()) {
 			String name = i.next();
-			NoteMap cur = new NoteMap(JsonUtil.asJsonObject(noteMapsJSON, name));
+			NoteMap cur = new NoteMap(JsonUtils.asJsonObject(noteMapsJSON, name));
 			noteMaps.put(name, cur);
 		}
 	}
 
 	private void initPatterns() throws SymfonionException, JsonException {
-		JsonObject patternsJSON = JsonUtil.asJsonObjectWithDefault(this.json, new JsonObject(), Keyword.$patterns);
+		JsonObject patternsJSON = JsonUtils.asJsonObjectWithDefault(this.json, new JsonObject(), Keyword.$patterns);
 		
-		Iterator<String> i = JsonUtil.keyIterator(patternsJSON);
+		Iterator<String> i = JsonUtils.keyIterator(patternsJSON);
 		while (i.hasNext()) {
 			String name = i.next();
-			Pattern cur = Pattern.createPattern(name, JsonUtil.asJsonObject(patternsJSON, name), this);
+			Pattern cur = Pattern.createPattern(name, JsonUtils.asJsonObject(patternsJSON, name), this);
 			this.patterns.put(name, cur);
 		}
 	}
 
 	private void initParts() throws SymfonionException, JsonException {
-		if (JsonUtil.hasPath(this.json, Keyword.$parts)) {
-			JsonObject instrumentsJSON = JsonUtil.asJsonObject(this.json, Keyword.$parts);
-			Iterator<String> i = JsonUtil.keyIterator(instrumentsJSON);
+		if (JsonUtils.hasPath(this.json, Keyword.$parts)) {
+			JsonObject instrumentsJSON = JsonUtils.asJsonObject(this.json, Keyword.$parts);
+			Iterator<String> i = JsonUtils.keyIterator(instrumentsJSON);
 			while (i.hasNext()) {
 				String name = i.next();
-				Part cur = new Part(name, JsonUtil.asJsonObject(instrumentsJSON, name), this);
+				Part cur = new Part(name, JsonUtils.asJsonObject(instrumentsJSON, name), this);
 				this.parts.put(name, cur);
 			}
 		}
 	}
 
 	private void initGrooves() throws SymfonionException, JsonException {
-		if (JsonUtil.hasPath(this.json, Keyword.$grooves)) {
-			JsonObject groovesJSON = JsonUtil.asJsonObject(this.json, Keyword.$grooves);
+		if (JsonUtils.hasPath(this.json, Keyword.$grooves)) {
+			JsonObject groovesJSON = JsonUtils.asJsonObject(this.json, Keyword.$grooves);
 			
-			Iterator <String> i = JsonUtil.keyIterator(groovesJSON);
+			Iterator <String> i = JsonUtils.keyIterator(groovesJSON);
 			while (i.hasNext()) {
 				String name = i.next();
-				Groove cur = Groove.createGroove(name, JsonUtil.asJsonArray(groovesJSON, name), this);
+				Groove cur = Groove.createGroove(name, JsonUtils.asJsonArray(groovesJSON, name), this);
 				this.grooves.put(name, cur);
 			}
 		}

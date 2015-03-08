@@ -1,25 +1,8 @@
 package com.github.dakusui.symfonion;
 
-import java.io.File;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
-import javax.sound.midi.InvalidMidiDataException;
-import javax.sound.midi.MetaEventListener;
-import javax.sound.midi.MetaMessage;
-import javax.sound.midi.MidiDevice;
-import javax.sound.midi.MidiSystem;
-import javax.sound.midi.MidiUnavailableException;
-import javax.sound.midi.Sequence;
-import javax.sound.midi.Sequencer;
-import javax.sound.midi.Transmitter;
-
 import com.github.dakusui.json.JsonException;
 import com.github.dakusui.json.JsonPathNotFoundException;
-import com.github.dakusui.json.JsonUtil;
+import com.github.dakusui.json.JsonUtils;
 import com.github.dakusui.logias.lisp.Context;
 import com.github.dakusui.symfonion.core.ExceptionThrower;
 import com.github.dakusui.symfonion.core.SymfonionException;
@@ -28,6 +11,10 @@ import com.github.dakusui.symfonion.core.Util;
 import com.github.dakusui.symfonion.song.Song;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
+
+import javax.sound.midi.*;
+import java.io.File;
+import java.util.*;
 
 public class Symfonion {
 	Context logiasContext;
@@ -43,7 +30,7 @@ public class Symfonion {
 		this.fileName = fileName;
 		try {
 			try {
-				this.json = JsonUtil.toJson(Util.loadFile(fileName)).getAsJsonObject();
+				this.json = loadSymfonionFile(fileName);
 				ret = new Song(logiasContext, json);
 				ret.init();
 			} catch (JsonSyntaxException e) {
@@ -51,13 +38,13 @@ public class Symfonion {
 			} catch (IllegalStateException e) {
 				ExceptionThrower.throwLoadFileException(new File(fileName), e);
 			} catch (JsonPathNotFoundException e) {
-				ExceptionThrower.throwRequiredElementMissingException(e.getLocation(), JsonUtil.formatPath(e.getPath()));
+				ExceptionThrower.throwRequiredElementMissingException(e.getLocation(), JsonUtils.formatPath(e.getPath()));
 			} catch (JsonException e) {
 				throw new RuntimeException(e.getMessage(), e);
 			}
 		} catch (SymfonionSyntaxException e) {
 			e.setSourceFile(new File(this.fileName));
-			String path = JsonUtil.buildPathInfo(this.json).get(e.getLocation());
+			String path = JsonUtils.buildPathInfo(this.json).get(e.getLocation());
 			e.setJsonPath(path);
 			throw e;
 		} catch (SymfonionException e) {
@@ -66,7 +53,12 @@ public class Symfonion {
 		}
 		return ret;
 	}
-	
+
+	private JsonObject loadSymfonionFile(String fileName) throws SymfonionException {
+		JsonObject ret = JsonUtils.toJson(Util.loadFile(fileName)).getAsJsonObject();
+		return ret;
+	}
+
 	public Map<String, Sequence> compile(Song song) throws SymfonionException {
 		MidiCompiler compiler = new MidiCompiler(song.getLogiasContext());
 		Map<String, Sequence> ret = null;
@@ -74,7 +66,7 @@ public class Symfonion {
 			ret = compiler.compile(song);
 		} catch (SymfonionSyntaxException e) {
 			e.setSourceFile(new File(this.fileName));
-			String path = JsonUtil.buildPathInfo(this.json).get(e.getLocation());
+			String path = JsonUtils.buildPathInfo(this.json).get(e.getLocation());
 			e.setJsonPath(path);
 			throw e;
 		} catch (SymfonionException e) {
@@ -112,6 +104,7 @@ public class Symfonion {
 							try {
 								Thread.sleep(1000);
 							} catch (InterruptedException e) {
+                ExceptionThrower.interrupted(e);
 							}
 							playingSequencers.remove(this.seq);
 							if (playingSequencers.isEmpty()) {
