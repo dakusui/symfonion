@@ -1,129 +1,133 @@
-<!doctype html>
-<!-- The Time Machine GitHub pages theme was designed and developed by Jon Rohan, on Feb 7, 2012. -->
-<!-- Follow him for fun. http://twitter.com/jonrohan. Tail his code on http://github.com/jonrohan -->
+<!DOCTYPE html>
 <html>
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 
-  <link rel="stylesheet" href="stylesheets/stylesheet.css" media="screen">
-  <link rel="stylesheet" href="stylesheets/pygment_trac.css">
-  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-  <script type="text/javascript" src="javascripts/script.js"></script>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="description" content="Symfonion : A modern, structured, simple, and JSON based music macro language ">
 
-  <title>Symfonion</title>
-  <meta name="description" content="A modern, structured, simple, and JSON based music macro language ">
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
 
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Symfonion</title>
+  </head>
 
-</head>
+  <body>
 
-<body>
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/dakusui/symfonion">View on GitHub</a>
 
-  <div class="wrapper">
-    <header>
-      <h1 class="title">Symfonion</h1>
-    </header>
-    <div id="container">
-      <p class="tagline">A modern, structured, simple, and JSON based music macro language </p>
-      <div id="main" role="main">
-        <div class="download-bar">
-        <div class="inner">
-          <a href="https://github.com/dakusui/symfonion/tarball/master" class="download-button tar"><span>Download</span></a>
-          <a href="https://github.com/dakusui/symfonion/zipball/master" class="download-button zip"><span>Download</span></a>
-          <a href="https://github.com/dakusui/symfonion" class="code">View Symfonion on GitHub</a>
-        </div>
-        <span class="blc"></span><span class="trc"></span>
-        </div>
-        <article class="markdown-body">
-          <h1>
-<a id="what-is-symfonion" class="anchor" href="#what-is-symfonion" aria-hidden="true"><span class="octicon octicon-link"></span></a>What is SyMFONION</h1>
+          <h1 id="project_title">Symfonion</h1>
+          <h2 id="project_tagline">A modern, structured, simple, and JSON based music macro language </h2>
 
-<p>SyMFONION is a modern music macro language processor.</p>
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/dakusui/symfonion/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/dakusui/symfonion/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>
+<a id="what-is-symfonion" class="anchor" href="#what-is-symfonion" aria-hidden="true"><span class="octicon octicon-link"></span></a>What is Symfonion</h1>
+
+<p>Symfonion is a modern music macro language processor.</p>
 
 <h1>
-<a id="installing-symfonion" class="anchor" href="#installing-symfonion" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installing SyMFONION</h1>
+<a id="installing-symfonion" class="anchor" href="#installing-symfonion" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installing Symfonion</h1>
 
 <h2>
-<a id="debian-and-ubuntu-users" class="anchor" href="#debian-and-ubuntu-users" aria-hidden="true"><span class="octicon octicon-link"></span></a>Debian and Ubuntu users</h2>
+<a id="prerequisites" class="anchor" href="#prerequisites" aria-hidden="true"><span class="octicon octicon-link"></span></a>Prerequisites</h2>
 
-<p>Please download a .deb file from <a href="https://s3-ap-northeast-1.amazonaws.com/symfonion/symfonion_0.8.10-1_all.deb">here</a></p>
-
-<p>And type the command below.</p>
-
-<pre><code>$ sudo dpkg -i symfonion_VERSION_all.deb
-</code></pre>
-
-<p>You will be able to run SyMFONITON by just typing 'symfonion' command from a shell.</p>
+<ol>
+<li>Your system has JRE 1.7 or later</li>
+<li>Your system can play a midi file through Java's API</li>
+</ol>
 
 <h2>
-<a id="other-users" class="anchor" href="#other-users" aria-hidden="true"><span class="octicon octicon-link"></span></a>Other users</h2>
+<a id="linux-and-mac-users" class="anchor" href="#linux-and-mac-users" aria-hidden="true"><span class="octicon octicon-link"></span></a>Linux and Mac users</h2>
 
-<p>Please download a .jar file from <a href="https://s3-ap-northeast-1.amazonaws.com/symfonion/symfonion-0.8.10.jar">here</a></p>
+<ol>
+<li>Download a .zip file symfonion-VERSION.zip from <a href="https://github.com/dakusui/symfonion/releases/tag/symfonion-0.9.1">here</a>
+</li>
+<li>Unzip the contents (<code>symfonion-VERSION-executable.jar</code> and <code>symfonion</code>) somewhere on your path.</li>
+<li>Done</li>
+</ol>
 
-<p>You will be able to run SyMFONION by using java command from a shell.</p>
+<p>You will be able to run <code>symfonion</code> by typing it</p>
 
-<pre><code>$ java -jar symfonion-VERSION.jar infile
+<pre><code>$ symfonion
 </code></pre>
+
+<h2>
+<a id="windows-users" class="anchor" href="#windows-users" aria-hidden="true"><span class="octicon octicon-link"></span></a>Windows users</h2>
+
+<ol>
+<li>Download a .zip file symfonion-VERSION.zip from <a href="https://github.com/dakusui/symfonion/releases/tag/symfonion-0.9.1">here</a>
+</li>
+<li>Unzip the contents (<code>symfonion-VERSION-executable.jar</code> and <code>symfonion</code>) somewhere visible to you.</li>
+<li>Done.</li>
+</ol>
+
+<p>You will be able to run <code>symfonion</code> by double clicking <code>symfonion-VERSION-executable.jar</code>.</p>
 
 <h1>
-<a id="how-to-run-symfonion" class="anchor" href="#how-to-run-symfonion" aria-hidden="true"><span class="octicon octicon-link"></span></a>How to run SyMFONION</h1>
+<a id="how-to-run-symfonion" class="anchor" href="#how-to-run-symfonion" aria-hidden="true"><span class="octicon octicon-link"></span></a>How to run Symfonion</h1>
 
-<p>By typing a command line below, symfonion will compile the given JSON file and play it.</p>
+<p>By typing a command line below, <code>symfonion</code> will compile the given JSON file and play it.</p>
 
 <pre><code>$ symfonion infile
 </code></pre>
 
-<p>or</p>
+<p>where "infile" is a <code>symfonion</code> file and it will look like this.</p>
 
-<pre><code>$ java -jar  symfonion-VERSION.jar infile
-</code></pre>
-
-<p>"infile" is a SyMFONION file and it will look like this.</p>
-
-<div class="highlight highlight-javascript"><pre>{
-    <span class="pl-s1"><span class="pl-pds">"</span>$parts<span class="pl-pds">"</span></span><span class="pl-k">:</span>{ <span class="pl-s1"><span class="pl-pds">"</span>pianor<span class="pl-pds">"</span></span><span class="pl-k">:</span> {<span class="pl-s1"><span class="pl-pds">"</span>$channel<span class="pl-pds">"</span></span><span class="pl-k">:</span><span class="pl-c1">0</span>} },
-    <span class="pl-s1"><span class="pl-pds">"</span>$patterns<span class="pl-pds">"</span></span><span class="pl-k">:</span>{
-        <span class="pl-s1"><span class="pl-pds">"</span>01r<span class="pl-pds">"</span></span><span class="pl-k">:</span>{
-            <span class="pl-s1"><span class="pl-pds">"</span>$body<span class="pl-pds">"</span></span><span class="pl-k">:</span>[<span class="pl-s1"><span class="pl-pds">"</span>r4<span class="pl-pds">"</span></span>,<span class="pl-s1"><span class="pl-pds">"</span>B<span class="pl-pds">"</span></span>,<span class="pl-s1"><span class="pl-pds">"</span>A<span class="pl-pds">"</span></span>,<span class="pl-s1"><span class="pl-pds">"</span>G#<span class="pl-pds">"</span></span>,<span class="pl-s1"><span class="pl-pds">"</span>A<span class="pl-pds">"</span></span>],
-            <span class="pl-s1"><span class="pl-pds">"</span>$length<span class="pl-pds">"</span></span><span class="pl-k">:</span><span class="pl-c1">16</span> 
+<div class="highlight highlight-javascript"><pre>
+    {
+        <span class="pl-s1"><span class="pl-pds">"</span>$parts<span class="pl-pds">"</span></span><span class="pl-k">:</span>{ <span class="pl-s1"><span class="pl-pds">"</span>pianor<span class="pl-pds">"</span></span><span class="pl-k">:</span> {<span class="pl-s1"><span class="pl-pds">"</span>$channel<span class="pl-pds">"</span></span><span class="pl-k">:</span><span class="pl-c1">0</span>} },
+        <span class="pl-s1"><span class="pl-pds">"</span>$patterns<span class="pl-pds">"</span></span><span class="pl-k">:</span>{
+            <span class="pl-s1"><span class="pl-pds">"</span>01r<span class="pl-pds">"</span></span><span class="pl-k">:</span>{
+                <span class="pl-s1"><span class="pl-pds">"</span>$body<span class="pl-pds">"</span></span><span class="pl-k">:</span>[<span class="pl-s1"><span class="pl-pds">"</span>r4<span class="pl-pds">"</span></span>,<span class="pl-s1"><span class="pl-pds">"</span>B<span class="pl-pds">"</span></span>,<span class="pl-s1"><span class="pl-pds">"</span>A<span class="pl-pds">"</span></span>,<span class="pl-s1"><span class="pl-pds">"</span>G#<span class="pl-pds">"</span></span>,<span class="pl-s1"><span class="pl-pds">"</span>A<span class="pl-pds">"</span></span>],
+                <span class="pl-s1"><span class="pl-pds">"</span>$length<span class="pl-pds">"</span></span><span class="pl-k">:</span><span class="pl-c1">16</span>
+            },
+            <span class="pl-s1"><span class="pl-pds">"</span>02r<span class="pl-pds">"</span></span><span class="pl-k">:</span>{
+                <span class="pl-s1"><span class="pl-pds">"</span>$body<span class="pl-pds">"</span></span><span class="pl-k">:</span>[<span class="pl-s1"><span class="pl-pds">"</span>C&gt;8<span class="pl-pds">"</span></span>,<span class="pl-s1"><span class="pl-pds">"</span>r8<span class="pl-pds">"</span></span>,<span class="pl-s1"><span class="pl-pds">"</span>D&gt;<span class="pl-pds">"</span></span>,<span class="pl-s1"><span class="pl-pds">"</span>C&gt;<span class="pl-pds">"</span></span>,<span class="pl-s1"><span class="pl-pds">"</span>B<span class="pl-pds">"</span></span>,<span class="pl-s1"><span class="pl-pds">"</span>C&gt;<span class="pl-pds">"</span></span>, <span class="pl-s1"><span class="pl-pds">"</span>E&gt;8<span class="pl-pds">"</span></span>,<span class="pl-s1"><span class="pl-pds">"</span>r8<span class="pl-pds">"</span></span>,<span class="pl-s1"><span class="pl-pds">"</span>F&gt;<span class="pl-pds">"</span></span>,<span class="pl-s1"><span class="pl-pds">"</span>E&gt;<span class="pl-pds">"</span></span>,<span class="pl-s1"><span class="pl-pds">"</span>D#&gt;<span class="pl-pds">"</span></span>,<span class="pl-s1"><span class="pl-pds">"</span>E&gt;<span class="pl-pds">"</span></span>],
+                <span class="pl-s1"><span class="pl-pds">"</span>$length<span class="pl-pds">"</span></span><span class="pl-k">:</span><span class="pl-c1">16</span>
+            },
+            <span class="pl-s1"><span class="pl-pds">"</span>04r<span class="pl-pds">"</span></span><span class="pl-k">:</span>{
+                <span class="pl-s1"><span class="pl-pds">"</span>$body<span class="pl-pds">"</span></span><span class="pl-k">:</span>[<span class="pl-s1"><span class="pl-pds">"</span>B&gt;<span class="pl-pds">"</span></span>,<span class="pl-s1"><span class="pl-pds">"</span>A&gt;<span class="pl-pds">"</span></span>,<span class="pl-s1"><span class="pl-pds">"</span>G#&gt;<span class="pl-pds">"</span></span>,<span class="pl-s1"><span class="pl-pds">"</span>A&gt;<span class="pl-pds">"</span></span>,<span class="pl-s1"><span class="pl-pds">"</span>B&gt;<span class="pl-pds">"</span></span>,<span class="pl-s1"><span class="pl-pds">"</span>A&gt;<span class="pl-pds">"</span></span>,<span class="pl-s1"><span class="pl-pds">"</span>G#&gt;<span class="pl-pds">"</span></span>,<span class="pl-s1"><span class="pl-pds">"</span>A&gt;<span class="pl-pds">"</span></span>, <span class="pl-s1"><span class="pl-pds">"</span>C&gt;&gt;4<span class="pl-pds">"</span></span>,<span class="pl-s1"><span class="pl-pds">"</span>A&gt;8<span class="pl-pds">"</span></span>,<span class="pl-s1"><span class="pl-pds">"</span>C&gt;&gt;8<span class="pl-pds">"</span></span>],
+                <span class="pl-s1"><span class="pl-pds">"</span>$length<span class="pl-pds">"</span></span><span class="pl-k">:</span><span class="pl-c1">16</span>
+            },
+            <span class="pl-s1"><span class="pl-pds">"</span>06r<span class="pl-pds">"</span></span><span class="pl-k">:</span>{
+                <span class="pl-s1"><span class="pl-pds">"</span>$body<span class="pl-pds">"</span></span><span class="pl-k">:</span>[ <span class="pl-s1"><span class="pl-pds">"</span>B&gt;<span class="pl-pds">"</span></span>,  <span class="pl-s1"><span class="pl-pds">"</span>F#A&gt;<span class="pl-pds">"</span></span>, <span class="pl-s1"><span class="pl-pds">"</span>EG&gt;<span class="pl-pds">"</span></span>, <span class="pl-s1"><span class="pl-pds">"</span>F#A&gt;<span class="pl-pds">"</span></span>, <span class="pl-s1"><span class="pl-pds">"</span>B&gt;<span class="pl-pds">"</span></span>,  <span class="pl-s1"><span class="pl-pds">"</span>F#A&gt;<span class="pl-pds">"</span></span>, <span class="pl-s1"><span class="pl-pds">"</span>EG&gt;<span class="pl-pds">"</span></span>, <span class="pl-s1"><span class="pl-pds">"</span>F#A&gt;<span class="pl-pds">"</span></span> ],
+                <span class="pl-s1"><span class="pl-pds">"</span>$length<span class="pl-pds">"</span></span><span class="pl-k">:</span><span class="pl-c1">8</span>, <span class="pl-s1"><span class="pl-pds">"</span>$gate<span class="pl-pds">"</span></span><span class="pl-k">:</span><span class="pl-c1">0.3</span>
+            },
+            <span class="pl-s1"><span class="pl-pds">"</span>08r<span class="pl-pds">"</span></span><span class="pl-k">:</span>{
+                <span class="pl-s1"><span class="pl-pds">"</span>$body<span class="pl-pds">"</span></span><span class="pl-k">:</span>[<span class="pl-s1"><span class="pl-pds">"</span>B&gt;<span class="pl-pds">"</span></span>,<span class="pl-s1"><span class="pl-pds">"</span>F#A&gt;<span class="pl-pds">"</span></span>,<span class="pl-s1"><span class="pl-pds">"</span>EG&gt;<span class="pl-pds">"</span></span>,<span class="pl-s1"><span class="pl-pds">"</span>D#F#&gt;<span class="pl-pds">"</span></span>, <span class="pl-s1"><span class="pl-pds">"</span>E4<span class="pl-pds">"</span></span>, <span class="pl-s1"><span class="pl-pds">"</span>r4<span class="pl-pds">"</span></span> ],
+                <span class="pl-s1"><span class="pl-pds">"</span>$length<span class="pl-pds">"</span></span><span class="pl-k">:</span><span class="pl-c1">8</span>, <span class="pl-s1"><span class="pl-pds">"</span>$gate<span class="pl-pds">"</span></span><span class="pl-k">:</span><span class="pl-c1">0.3</span>
+            }
         },
-        <span class="pl-s1"><span class="pl-pds">"</span>02r<span class="pl-pds">"</span></span><span class="pl-k">:</span>{
-            <span class="pl-s1"><span class="pl-pds">"</span>$body<span class="pl-pds">"</span></span><span class="pl-k">:</span>[<span class="pl-s1"><span class="pl-pds">"</span>C&gt;8<span class="pl-pds">"</span></span>,<span class="pl-s1"><span class="pl-pds">"</span>r8<span class="pl-pds">"</span></span>,<span class="pl-s1"><span class="pl-pds">"</span>D&gt;<span class="pl-pds">"</span></span>,<span class="pl-s1"><span class="pl-pds">"</span>C&gt;<span class="pl-pds">"</span></span>,<span class="pl-s1"><span class="pl-pds">"</span>B<span class="pl-pds">"</span></span>,<span class="pl-s1"><span class="pl-pds">"</span>C&gt;<span class="pl-pds">"</span></span>, <span class="pl-s1"><span class="pl-pds">"</span>E&gt;8<span class="pl-pds">"</span></span>,<span class="pl-s1"><span class="pl-pds">"</span>r8<span class="pl-pds">"</span></span>,<span class="pl-s1"><span class="pl-pds">"</span>F&gt;<span class="pl-pds">"</span></span>,<span class="pl-s1"><span class="pl-pds">"</span>E&gt;<span class="pl-pds">"</span></span>,<span class="pl-s1"><span class="pl-pds">"</span>D#&gt;<span class="pl-pds">"</span></span>,<span class="pl-s1"><span class="pl-pds">"</span>E&gt;<span class="pl-pds">"</span></span>],
-            <span class="pl-s1"><span class="pl-pds">"</span>$length<span class="pl-pds">"</span></span><span class="pl-k">:</span><span class="pl-c1">16</span> 
-        },
-        <span class="pl-s1"><span class="pl-pds">"</span>04r<span class="pl-pds">"</span></span><span class="pl-k">:</span>{
-            <span class="pl-s1"><span class="pl-pds">"</span>$body<span class="pl-pds">"</span></span><span class="pl-k">:</span>[<span class="pl-s1"><span class="pl-pds">"</span>B&gt;<span class="pl-pds">"</span></span>,<span class="pl-s1"><span class="pl-pds">"</span>A&gt;<span class="pl-pds">"</span></span>,<span class="pl-s1"><span class="pl-pds">"</span>G#&gt;<span class="pl-pds">"</span></span>,<span class="pl-s1"><span class="pl-pds">"</span>A&gt;<span class="pl-pds">"</span></span>,<span class="pl-s1"><span class="pl-pds">"</span>B&gt;<span class="pl-pds">"</span></span>,<span class="pl-s1"><span class="pl-pds">"</span>A&gt;<span class="pl-pds">"</span></span>,<span class="pl-s1"><span class="pl-pds">"</span>G#&gt;<span class="pl-pds">"</span></span>,<span class="pl-s1"><span class="pl-pds">"</span>A&gt;<span class="pl-pds">"</span></span>, <span class="pl-s1"><span class="pl-pds">"</span>C&gt;&gt;4<span class="pl-pds">"</span></span>,<span class="pl-s1"><span class="pl-pds">"</span>A&gt;8<span class="pl-pds">"</span></span>,<span class="pl-s1"><span class="pl-pds">"</span>C&gt;&gt;8<span class="pl-pds">"</span></span>],
-            <span class="pl-s1"><span class="pl-pds">"</span>$length<span class="pl-pds">"</span></span><span class="pl-k">:</span><span class="pl-c1">16</span>
-        },
-        <span class="pl-s1"><span class="pl-pds">"</span>06r<span class="pl-pds">"</span></span><span class="pl-k">:</span>{
-            <span class="pl-s1"><span class="pl-pds">"</span>$body<span class="pl-pds">"</span></span><span class="pl-k">:</span>[ <span class="pl-s1"><span class="pl-pds">"</span>B&gt;<span class="pl-pds">"</span></span>,  <span class="pl-s1"><span class="pl-pds">"</span>F#A&gt;<span class="pl-pds">"</span></span>, <span class="pl-s1"><span class="pl-pds">"</span>EG&gt;<span class="pl-pds">"</span></span>, <span class="pl-s1"><span class="pl-pds">"</span>F#A&gt;<span class="pl-pds">"</span></span>, <span class="pl-s1"><span class="pl-pds">"</span>B&gt;<span class="pl-pds">"</span></span>,  <span class="pl-s1"><span class="pl-pds">"</span>F#A&gt;<span class="pl-pds">"</span></span>, <span class="pl-s1"><span class="pl-pds">"</span>EG&gt;<span class="pl-pds">"</span></span>, <span class="pl-s1"><span class="pl-pds">"</span>F#A&gt;<span class="pl-pds">"</span></span> ],
-            <span class="pl-s1"><span class="pl-pds">"</span>$length<span class="pl-pds">"</span></span><span class="pl-k">:</span><span class="pl-c1">8</span>, <span class="pl-s1"><span class="pl-pds">"</span>$gate<span class="pl-pds">"</span></span><span class="pl-k">:</span><span class="pl-c1">0.3</span>
-        },
-        <span class="pl-s1"><span class="pl-pds">"</span>08r<span class="pl-pds">"</span></span><span class="pl-k">:</span>{
-            <span class="pl-s1"><span class="pl-pds">"</span>$body<span class="pl-pds">"</span></span><span class="pl-k">:</span>[<span class="pl-s1"><span class="pl-pds">"</span>B&gt;<span class="pl-pds">"</span></span>,<span class="pl-s1"><span class="pl-pds">"</span>F#A&gt;<span class="pl-pds">"</span></span>,<span class="pl-s1"><span class="pl-pds">"</span>EG&gt;<span class="pl-pds">"</span></span>,<span class="pl-s1"><span class="pl-pds">"</span>D#F#&gt;<span class="pl-pds">"</span></span>, <span class="pl-s1"><span class="pl-pds">"</span>E4<span class="pl-pds">"</span></span>, <span class="pl-s1"><span class="pl-pds">"</span>r4<span class="pl-pds">"</span></span> ],
-            <span class="pl-s1"><span class="pl-pds">"</span>$length<span class="pl-pds">"</span></span><span class="pl-k">:</span><span class="pl-c1">8</span>, <span class="pl-s1"><span class="pl-pds">"</span>$gate<span class="pl-pds">"</span></span><span class="pl-k">:</span><span class="pl-c1">0.3</span> 
-        }
-    },
-    <span class="pl-s1"><span class="pl-pds">"</span>$sequence<span class="pl-pds">"</span></span><span class="pl-k">:</span>[
-        { <span class="pl-s1"><span class="pl-pds">"</span>$patterns<span class="pl-pds">"</span></span><span class="pl-k">:</span>{<span class="pl-s1"><span class="pl-pds">"</span>pianor<span class="pl-pds">"</span></span><span class="pl-k">:</span>[<span class="pl-s1"><span class="pl-pds">"</span>01r<span class="pl-pds">"</span></span>]},   <span class="pl-s1"><span class="pl-pds">"</span>$beats<span class="pl-pds">"</span></span><span class="pl-k">:</span><span class="pl-s1"><span class="pl-pds">"</span>2/4<span class="pl-pds">"</span></span> },
-        { <span class="pl-s1"><span class="pl-pds">"</span>$patterns<span class="pl-pds">"</span></span><span class="pl-k">:</span>{<span class="pl-s1"><span class="pl-pds">"</span>pianor<span class="pl-pds">"</span></span><span class="pl-k">:</span>[<span class="pl-s1"><span class="pl-pds">"</span>02r<span class="pl-pds">"</span></span>]},   <span class="pl-s1"><span class="pl-pds">"</span>$beats<span class="pl-pds">"</span></span><span class="pl-k">:</span><span class="pl-s1"><span class="pl-pds">"</span>4/4<span class="pl-pds">"</span></span> },
-        { <span class="pl-s1"><span class="pl-pds">"</span>$patterns<span class="pl-pds">"</span></span><span class="pl-k">:</span>{<span class="pl-s1"><span class="pl-pds">"</span>pianor<span class="pl-pds">"</span></span><span class="pl-k">:</span>[<span class="pl-s1"><span class="pl-pds">"</span>04r<span class="pl-pds">"</span></span>]},   <span class="pl-s1"><span class="pl-pds">"</span>$beats<span class="pl-pds">"</span></span><span class="pl-k">:</span><span class="pl-s1"><span class="pl-pds">"</span>4/4<span class="pl-pds">"</span></span> },
-        { <span class="pl-s1"><span class="pl-pds">"</span>$patterns<span class="pl-pds">"</span></span><span class="pl-k">:</span>{<span class="pl-s1"><span class="pl-pds">"</span>pianor<span class="pl-pds">"</span></span><span class="pl-k">:</span>[<span class="pl-s1"><span class="pl-pds">"</span>06r<span class="pl-pds">"</span></span>]},   <span class="pl-s1"><span class="pl-pds">"</span>$beats<span class="pl-pds">"</span></span><span class="pl-k">:</span><span class="pl-s1"><span class="pl-pds">"</span>4/4<span class="pl-pds">"</span></span> },
-        { <span class="pl-s1"><span class="pl-pds">"</span>$patterns<span class="pl-pds">"</span></span><span class="pl-k">:</span>{<span class="pl-s1"><span class="pl-pds">"</span>pianor<span class="pl-pds">"</span></span><span class="pl-k">:</span>[<span class="pl-s1"><span class="pl-pds">"</span>08r<span class="pl-pds">"</span></span>]},   <span class="pl-s1"><span class="pl-pds">"</span>$beats<span class="pl-pds">"</span></span><span class="pl-k">:</span><span class="pl-s1"><span class="pl-pds">"</span>4/4<span class="pl-pds">"</span></span> }
-    ]
-}</pre></div>
+        <span class="pl-s1"><span class="pl-pds">"</span>$sequence<span class="pl-pds">"</span></span><span class="pl-k">:</span>[
+            { <span class="pl-s1"><span class="pl-pds">"</span>$patterns<span class="pl-pds">"</span></span><span class="pl-k">:</span>{<span class="pl-s1"><span class="pl-pds">"</span>pianor<span class="pl-pds">"</span></span><span class="pl-k">:</span>[<span class="pl-s1"><span class="pl-pds">"</span>01r<span class="pl-pds">"</span></span>]},   <span class="pl-s1"><span class="pl-pds">"</span>$beats<span class="pl-pds">"</span></span><span class="pl-k">:</span><span class="pl-s1"><span class="pl-pds">"</span>2/4<span class="pl-pds">"</span></span> },
+            { <span class="pl-s1"><span class="pl-pds">"</span>$patterns<span class="pl-pds">"</span></span><span class="pl-k">:</span>{<span class="pl-s1"><span class="pl-pds">"</span>pianor<span class="pl-pds">"</span></span><span class="pl-k">:</span>[<span class="pl-s1"><span class="pl-pds">"</span>02r<span class="pl-pds">"</span></span>]},   <span class="pl-s1"><span class="pl-pds">"</span>$beats<span class="pl-pds">"</span></span><span class="pl-k">:</span><span class="pl-s1"><span class="pl-pds">"</span>4/4<span class="pl-pds">"</span></span> },
+            { <span class="pl-s1"><span class="pl-pds">"</span>$patterns<span class="pl-pds">"</span></span><span class="pl-k">:</span>{<span class="pl-s1"><span class="pl-pds">"</span>pianor<span class="pl-pds">"</span></span><span class="pl-k">:</span>[<span class="pl-s1"><span class="pl-pds">"</span>04r<span class="pl-pds">"</span></span>]},   <span class="pl-s1"><span class="pl-pds">"</span>$beats<span class="pl-pds">"</span></span><span class="pl-k">:</span><span class="pl-s1"><span class="pl-pds">"</span>4/4<span class="pl-pds">"</span></span> },
+            { <span class="pl-s1"><span class="pl-pds">"</span>$patterns<span class="pl-pds">"</span></span><span class="pl-k">:</span>{<span class="pl-s1"><span class="pl-pds">"</span>pianor<span class="pl-pds">"</span></span><span class="pl-k">:</span>[<span class="pl-s1"><span class="pl-pds">"</span>06r<span class="pl-pds">"</span></span>]},   <span class="pl-s1"><span class="pl-pds">"</span>$beats<span class="pl-pds">"</span></span><span class="pl-k">:</span><span class="pl-s1"><span class="pl-pds">"</span>4/4<span class="pl-pds">"</span></span> },
+            { <span class="pl-s1"><span class="pl-pds">"</span>$patterns<span class="pl-pds">"</span></span><span class="pl-k">:</span>{<span class="pl-s1"><span class="pl-pds">"</span>pianor<span class="pl-pds">"</span></span><span class="pl-k">:</span>[<span class="pl-s1"><span class="pl-pds">"</span>08r<span class="pl-pds">"</span></span>]},   <span class="pl-s1"><span class="pl-pds">"</span>$beats<span class="pl-pds">"</span></span><span class="pl-k">:</span><span class="pl-s1"><span class="pl-pds">"</span>4/4<span class="pl-pds">"</span></span> }
+        ]
+    }</pre></div>
 
 <p>(W.A. Mozart, K.311)</p>
 
-<p>The syntax of it is described here 
-<a href="https://github.com/dakusui/symfonion/wiki/Syntax">Syntax</a></p>
+<p>The syntax of it is described<br>
+<a href="SYNTAX.md">Syntax</a></p>
 
 <p>For the detail of the command line options, please refer to 
-<a href="https://github.com/dakusui/symfonion/wiki/Command-line-manual">Command line manual</a></p>
+<a href="CLI.md">Command line manual</a></p>
 
-<p>For the updates, best practices, howtos, examples, and so on, please visit
-<a href="http://symfonion.hatenadiary.jp/">Symfonion Blog</a></p>
+<p>For the updates, best practices, how-tos, examples, and so on, please visit
+<a href="http://symfonion.hatenadiary.jp/">Symfonion Blog</a> (mainly in Japanese)</p>
 
 <h1>
 <a id="copyright-and-license" class="anchor" href="#copyright-and-license" aria-hidden="true"><span class="octicon octicon-link"></span></a>Copyright and license</h1>
@@ -141,26 +145,18 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.</p>
-        </article>
-      </div>
+      </section>
     </div>
-    <footer>
-      <div class="owner">
-      <p><a href="https://github.com/dakusui" class="avatar"><img src="https://avatars0.githubusercontent.com/u/529265?v=3&amp;s=60" width="48" height="48"></a> <a href="https://github.com/dakusui">dakusui</a> maintains <a href="https://github.com/dakusui/symfonion">Symfonion</a></p>
 
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Symfonion maintained by <a href="https://github.com/dakusui">dakusui</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
 
-      </div>
-      <div class="creds">
-        <small>This page generated using <a href="http://pages.github.com/">GitHub Pages</a><br>theme by <a href="https://twitter.com/jonrohan/">Jon Rohan</a></small>
-      </div>
-    </footer>
-  </div>
-  <div class="current-section">
-    <a href="#top">Scroll to top</a>
-    <a href="https://github.com/dakusui/symfonion/tarball/master" class="tar">tar</a><a href="https://github.com/dakusui/symfonion/zipball/master" class="zip">zip</a><a href="" class="code">source code</a>
-    <p class="name"></p>
-  </div>
+    
 
-  
-</body>
+  </body>
 </html>
