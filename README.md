@@ -19,7 +19,7 @@ $ symfonion
 
 ## Windows users
 1. Download a .zip file symfonion-VERSION.zip from [here](https://github.com/dakusui/symfonion/releases/tag/symfonion-0.9.1)
-2. Unzip the contents (```symfonion-VERSION-executable.jar``` and ```symfonion```) somewhere visible to you.
+2. Unzip the contents (```symfonion-VERSION-executable.jar```) somewhere visible to you.
 3. Done.
 
 You will be able to run ```symfonion``` by double clicking ```symfonion-VERSION-executable.jar```.
