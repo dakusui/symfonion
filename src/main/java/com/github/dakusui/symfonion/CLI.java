@@ -1,36 +1,23 @@
 package com.github.dakusui.symfonion;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintStream;
+import com.github.dakusui.logias.lisp.Context;
+import com.github.dakusui.symfonion.core.SymfonionException;
+import com.github.dakusui.symfonion.song.Keyword;
+import com.github.dakusui.symfonion.song.Song;
+import org.apache.commons.cli.*;
+
+import javax.sound.midi.*;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
-
-import javax.sound.midi.MidiDevice;
-import javax.sound.midi.MidiSystem;
-import javax.sound.midi.MidiUnavailableException;
-import javax.sound.midi.Receiver;
-import javax.sound.midi.Sequence;
-import javax.sound.midi.Transmitter;
-
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.GnuParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionBuilder;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
-
-import com.github.dakusui.logias.lisp.Context;
-import com.github.dakusui.symfonion.core.SymfonionException;
-import com.github.dakusui.symfonion.song.Keyword;
-import com.github.dakusui.symfonion.song.Song;
 
 public class CLI {
   static enum Mode {
@@ -171,6 +158,7 @@ public class CLI {
                 t.setReceiver(r);
                 System.out
                     .println("Now in MIDI patch-bay mode. Hit enter to quit.");
+                //noinspection ResultOfMethodCallIgnored
                 System.in.read();
               } catch (IOException e) {
                 System.out.println("quitting due to an error.");
@@ -213,14 +201,14 @@ public class CLI {
     }
   }
 
-  private Mode                 mode     = Mode.VERSION;
-  private File                 source;
+  private Mode mode = Mode.VERSION;
+  private File source;
   private File                 sink     = new File("a.midi");
   private Route                route    = null;
   private Map<String, Pattern> midiins  = new HashMap<String, Pattern>();
   private Map<String, Pattern> midiouts = new HashMap<String, Pattern>();
-  private Symfonion            symfonion;
-  private Options              options;
+  private Symfonion symfonion;
+  private Options   options;
 
   public CLI(String... args) throws ParseException, CLIException {
     this.init(args);
@@ -231,18 +219,16 @@ public class CLI {
       throws CLIException {
     Map<String, Pattern> portDefinitions = this.getMidiOutDefinitions();
     String deviceType = "out";
-    Map<String, MidiDevice> devices = prepareMidiDevices(ps, deviceType,
+    return prepareMidiDevices(ps, deviceType,
         portDefinitions);
-    return devices;
   }
 
+  @SuppressWarnings("UnusedDeclaration")
   protected Map<String, MidiDevice> prepareMidiInDevices(PrintStream ps)
       throws CLIException {
     Map<String, Pattern> portDefinitions = this.getMidiOutDefinitions();
     String deviceType = "in";
-    Map<String, MidiDevice> devices = prepareMidiDevices(ps, deviceType,
-        portDefinitions);
-    return devices;
+    return prepareMidiDevices(ps, deviceType, portDefinitions);
   }
 
   private Map<String, MidiDevice> prepareMidiDevices(PrintStream ps,
@@ -279,10 +265,10 @@ public class CLI {
   }
 
   protected File composeOutputFile(String outfile, String portName) {
-    if (portName == null || Keyword.$default.equals(portName)) {
+    if (portName == null || Keyword.$default.name().equals(portName)) {
       return new File(outfile);
     }
-    File ret = null;
+    File ret;
     int lastIndexOfDot = outfile.lastIndexOf('.');
     if (lastIndexOfDot == -1) {
       ret = new File(outfile + "." + portName);
@@ -312,9 +298,8 @@ public class CLI {
 
   CommandLine parseArgs(Options options, String[] args) throws ParseException {
     CommandLineParser parser = new GnuParser();
-    CommandLine ret = parser.parse(options, args);
 
-    return ret;
+    return parser.parse(options, args);
   }
 
   private Options buildOptions() {
@@ -447,7 +432,7 @@ public class CLI {
         ret.put(portname, portpattern);
       } catch (PatternSyntaxException e) {
         String msg = String.format(
-            "Regular expression '%' for '%s' isn't valid.", portname, p);
+            "Regular expression '%s' for '%s' isn't valid.", portname, p);
         throw new CLIException(composeErrMsg(msg, optionName, null), e);
       }
     }
@@ -469,7 +454,7 @@ public class CLI {
     int sz = cmd.getOptionProperties(optionName).size();
     if (sz != 1) {
       String msg = composeErrMsg(String.format(
-          "This option requires one and only one value. (found %d times)", sz),
+              "This option requires one and only one value. (found %d times)", sz),
           optionName, null);
       throw new CLIException(msg);
     }
@@ -502,7 +487,7 @@ public class CLI {
       try {
         props.load(stream);
         version = props.getProperty("version");
-      } catch (IOException e) {
+      } catch (IOException ignored) {
       }
     }
     return version;
@@ -529,13 +514,17 @@ public class CLI {
   }
 
   public static void main(String... args) {
-    int exitCode = invoke(System.out, System.err, args);
-    System.exit(exitCode);
+    if (args.length == 0 && !GraphicsEnvironment.isHeadless()) {
+      fallbackToSimpleGUI();
+    } else {
+      int exitCode = invoke(System.out, System.err, args);
+      System.exit(exitCode);
+    }
   }
 
   public static int invoke(PrintStream stdout, PrintStream stderr,
       String... args) {
-    int ret = 255;
+    int ret;
     try {
       CLI cli = new CLI(args);
       cli.mode.invoke(cli, stdout);
@@ -559,5 +548,68 @@ public class CLI {
 
   private static void printError(PrintStream ps, Throwable t) {
     ps.println(String.format("symfonion: %s", t.getMessage()));
+  }
+
+  private static String filenameFromFileChooser() {
+    JFileChooser chooser = new JFileChooser();
+    chooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
+    int result = chooser.showOpenDialog(new JFrame());
+    if (result == JFileChooser.APPROVE_OPTION) {
+      return chooser.getSelectedFile().getAbsolutePath();
+    }
+    return null;
+  }
+
+  private static void fallbackToSimpleGUI() {
+    String selectedFile = filenameFromFileChooser();
+    if (selectedFile != null) {
+      String[] args = new String[] { selectedFile };
+      final JTextArea textArea = new JTextArea();
+      JFrame frame = new JFrame("symfonion output");
+      frame.addWindowListener(new WindowAdapter() {
+
+        public void windowClosing(WindowEvent e) {
+          System.exit(0);
+        }
+      });
+      frame.add(textArea);
+      frame.pack();
+      frame.setSize(800,600);
+      frame.setVisible(true);
+      PrintStream ps = new PrintStream(new OutputStream() {
+        private final StringBuilder sb = new StringBuilder();
+
+        @Override
+        public void flush() {
+        }
+
+        @Override
+        public void close() {
+        }
+
+        @Override
+        public void write(int b) throws IOException {
+          if (b == '\r')
+            return;
+
+          if (b == '\n') {
+            final String text = sb.toString() + "\n";
+            SwingUtilities.invokeLater(new Runnable() {
+              public void run() {
+                textArea.append(text);
+              }
+            });
+            sb.setLength(0);
+            return;
+          }
+
+          sb.append((char) b);
+        }
+
+      });
+      System.setOut(ps);
+      System.setErr(ps);
+      invoke(System.out, System.err, args);
+    }
   }
 }
