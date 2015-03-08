@@ -11,10 +11,10 @@ Symfonion is a modern music macro language processor.
 2. Unzip the contents (```symfonion-VERSION-executable.jar``` and ```symfonion```) somewhere on your path.
 3. Done
 
-You will be able to run ```symfonion``` by using java command from a shell.
+You will be able to run ```symfonion``` by typing it
 
 ```
-$ java -jar symfonion-VERSION.jar infile
+$ symfonion
 ```
 
 ## Windows users
