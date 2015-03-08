@@ -1,6 +1,7 @@
 package com.github.dakusui.symfonion;
 
 import com.github.dakusui.json.JsonException;
+import com.github.dakusui.json.JsonInvalidPathException;
 import com.github.dakusui.json.JsonPathNotFoundException;
 import com.github.dakusui.json.JsonUtils;
 import com.github.dakusui.logias.lisp.Context;
@@ -8,7 +9,10 @@ import com.github.dakusui.symfonion.core.ExceptionThrower;
 import com.github.dakusui.symfonion.core.SymfonionException;
 import com.github.dakusui.symfonion.core.SymfonionSyntaxException;
 import com.github.dakusui.symfonion.core.Util;
+import com.github.dakusui.symfonion.song.Keyword;
 import com.github.dakusui.symfonion.song.Song;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 
@@ -54,8 +58,21 @@ public class Symfonion {
 		return ret;
 	}
 
-	private JsonObject loadSymfonionFile(String fileName) throws SymfonionException {
+	private JsonObject loadSymfonionFile(String fileName) throws SymfonionException, JsonException {
 		JsonObject ret = JsonUtils.toJson(Util.loadFile(fileName)).getAsJsonObject();
+    if (ret.has(Keyword.$include.name())) {
+      File dir = new File(fileName).getParentFile();
+      JsonArray includedFiles = JsonUtils.asJsonArray(ret, Keyword.$include.name());
+      int i=0;
+      for (JsonElement each : includedFiles) {
+        String eachFileName = JsonUtils.asString(each);
+        if (eachFileName == null) {
+          throw new JsonInvalidPathException(ret, new Object[]{Keyword.$include, i});
+        }
+        ret = JsonUtils.merge(ret, JsonUtils.toJson(Util.loadFile(new File(dir, eachFileName).getAbsolutePath())).getAsJsonObject());
+        i++;
+      }
+    }
 		return ret;
 	}
 
@@ -118,7 +135,7 @@ public class Symfonion {
 		return ret;
 	}
 	
-	private void startSequencers(List<String> portNames, Map<String, MidiDevice> devices, Map<String, Sequencer> sequencers) {
+	private void startSequencers(List<String> portNames, Map<String, Sequencer> sequencers) {
 		for (String portName : portNames) {
 			System.out.println("Start playing on " + portName + "(" + System.currentTimeMillis() + ")");
 			sequencers.get(portName).start();
@@ -148,7 +165,7 @@ public class Symfonion {
 		try {
 			sequencers = prepareSequencers(portNames, devices, sequences);
 			try {
-				startSequencers(portNames, devices, sequencers);
+				startSequencers(portNames, sequencers);
 				this.wait();
 			} finally {
 				System.out.println("Finished playing.");
