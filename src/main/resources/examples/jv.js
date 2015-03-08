@@ -374,7 +374,7 @@
 	                          "$perfnum",
 	                          ["$hex", "002d"],
 	                          ["$cons", ["$shift", -4, ["$&", ["$hex", "f0"], "$tempo" ] ],
-	                           ["$cons", ["$&", ["$hex", "0f"], "$tempo" ], "$nil" ],
+	                           ["$cons", ["$&", ["$hex", "0f"], "$tempo" ], "$nil" ]
 	                          ]
 	                         ]
 	],
@@ -408,7 +408,7 @@
                            ["$cons", "$patchgrouptype", 
                             ["$cons", "$patchgroupid",
                              ["$cons", ["$shift", -4, ["$&", ["$hex", "000000f0"], "$patchnum"] ],
-                              ["$cons", ["$&", ["$hex", "0000000f"], "$patchnum"] , "$nil"],
+                              ["$cons", ["$&", ["$hex", "0000000f"], "$patchnum"] , "$nil"]
                              ] 
                             ]
                            ]
@@ -516,7 +516,7 @@
 	                       ]
 	],
 	"jv-refresh-currentperf":["$lambda", [],
-	                   ["$set-syscommon-perfnum", "$currentperf"],
+	                   ["$set-syscommon-perfnum", "$currentperf"]
 	],
 	"jv-set-patchnum-user":["$lambda", ["$partnum", "$patchnum"],
 	                        ["$set-perfpart-patch", "$currentperf", "$partnum", 0, 1, "$patchnum"]

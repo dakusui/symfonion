@@ -3,8 +3,8 @@
 		"$mididevice":"jv"
 	},
 	"$parts":{
-		"test":{"$channel":0},
-		"test2":{"$channel":9}
+		"test":{"$channel":0, "$port":"jv1010"},
+		"test2":{"$channel":9, "$port":"jv1010"}
 	},
 	"$patterns":{
 		"sysextest1":{
@@ -28,7 +28,7 @@
 			         { "$sysex":["$jv-init-part", 14, 14]},
 			         { "$sysex":["$jv-init-part", 15, 15]},
 			         { "$sysex":["$jv-set-patchnum-pr-a", "$channel", 122] },
-			         { "$sysex":["$jv-set-efx-level", "$channel", 127] },
+			         { "$sysex":["$jv-set-mixefx-send-level", "$channel", 127] },
 			         { "$sysex":["$jv-set-output-level", "$channel", 127] },
 			         { "$sysex":["$jv-set-output-assign", "$channel", "$output-EFX"] },
 			         { "$sysex":["$set-perfcommon-efx-distortion", "$currentperf", 127, 0, 3, 30, 30, 32] },
@@ -36,7 +36,7 @@
 			         { "$sysex":["$set-perfcommon-chorus", "$currentperf", 0, 106, 106, 16,  64, 2] },
 			         { "$sysex":["$set-perfcommon-reverb", "$currentperf", "$reverb-type-STAGE1", 106, 127, "$reverb-hfdump-2000", 0] },
 			         { "$sysex":["$set-perfcommon-tempo", "$currentperf", 100] },
-			         { "$sysex":["$jv-refresh-currentperf"] },
+			         { "$sysex":["$jv-refresh-currentperf"] }
 			],
 			"$length":0
 		},
@@ -52,7 +52,7 @@
 			         { "$sysex":["$set-perfcommon-chorus", "$currentperf", 0, 106, 106, 16,  64, 2] },
 			         { "$sysex":["$set-perfcommon-reverb", "$currentperf", "$reverb-type-STAGE1", 106, 127, "$reverb-hfdump-2000", 0] },
 			         { "$sysex":["$set-perfcommon-tempo", "$currentperf", 32] },
-			         { "$sysex":["$jv-refresh-currentperf"] },
+			         { "$sysex":["$jv-refresh-currentperf"] }
 			],
 			"$length":0
 		},
@@ -69,7 +69,7 @@
 			         {"$notes":"C", "$length":"2", "$pan":127, "$chorus":32 },
 			         {"$sysex":["$set-perfcommon-efx-param", "$currentperf", 2, 0], "$length":0 },
 			         {"$sysex":["$jv-refresh-currentperf"], "$length":0 },
-			         {"$notes":"C", "$length":"2", "$pan":0 },
+			         {"$notes":"C", "$length":"2", "$pan":0 }
 			],
 			"$parameters":{
 				"$length":"8"

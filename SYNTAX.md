@@ -98,7 +98,7 @@ If you want to use external MIDI devices, you need to specify "$port" attribute 
     }
 ```
 
-Part names must be defined through system properties. For more detail, please refer to [[Command line parameters]].
+Part names must be defined through system properties. For more detail, please refer to [Command line parameters](CLI.md).
 
 # Notemaps #
 "Notemaps" are a bit advanced feature. By using this feature, users can configure a drum map for a pre-General MIDI age's synthesizer (Yamaha SY-77 for instance).
