@@ -131,6 +131,29 @@ A user can set this attribute to a name defined in the section "$notemaps" or pr
 
 There are two pre-defined note maps, which are "$normal" and "$percussion". "$normal" is a normal note map where "C" is mapped to 60 and "D" to 62. "$percussion" is configured for drum kits defined in General MIDI standard.
 
+Default note map ($normal) definition follows
+
+| # |Note name|Number|
+|--:|:-------:|-----:|
+|  1|C        |60    |
+|  2|D        |62    |
+|  3|E        |64    |
+|  4|F        |65    |
+|  5|G        |67    |
+|  6|A        |69    |
+|  7|B        |71    |
+
+And percussion ($percussion) is like below
+
+| # |Name| Number|Note         |
+|--:|:--:| -----:|:-----------:|
+| 1 | B  | 60    |Bass drum    |
+| 2 | S  | 62    |Snare drum   |
+| 3 | C  | 64    |Cymbal       |
+| 4 | O  | 65    |Opened Hi-hat|
+| 5 | H  | 67    |Hi-hat       |
+| 6 | T  | 69    |Tom tom      |
+
 ## Body ##
 A "$body" of a pattern is a list of 'strokes' and each stroke is a dictionary like this.
 
