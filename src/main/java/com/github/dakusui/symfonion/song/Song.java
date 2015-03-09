@@ -1,16 +1,5 @@
 package com.github.dakusui.symfonion.song;
 
-import static com.github.dakusui.symfonion.core.SymfonionTypeMismatchException.ARRAY;
-import static com.github.dakusui.symfonion.core.SymfonionTypeMismatchException.OBJECT;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import com.github.dakusui.json.JsonException;
 import com.github.dakusui.json.JsonUtils;
 import com.github.dakusui.logias.Logias;
@@ -21,6 +10,11 @@ import com.github.dakusui.symfonion.core.Util;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+
+import java.util.*;
+
+import static com.github.dakusui.symfonion.core.SymfonionTypeMismatchException.ARRAY;
+import static com.github.dakusui.symfonion.core.SymfonionTypeMismatchException.OBJECT;
 
 public class Song {
 	private JsonObject json;
@@ -105,7 +99,7 @@ public class Song {
 		Iterator<String> i = JsonUtils.keyIterator(patternsJSON);
 		while (i.hasNext()) {
 			String name = i.next();
-			Pattern cur = Pattern.createPattern(name, JsonUtils.asJsonObject(patternsJSON, name), this);
+			Pattern cur = Pattern.createPattern(JsonUtils.asJsonObject(patternsJSON, name), this);
 			this.patterns.put(name, cur);
 		}
 	}
@@ -116,7 +110,7 @@ public class Song {
 			Iterator<String> i = JsonUtils.keyIterator(instrumentsJSON);
 			while (i.hasNext()) {
 				String name = i.next();
-				Part cur = new Part(name, JsonUtils.asJsonObject(instrumentsJSON, name), this);
+				Part cur = new Part(name, JsonUtils.asJsonObject(instrumentsJSON, name));
 				this.parts.put(name, cur);
 			}
 		}
