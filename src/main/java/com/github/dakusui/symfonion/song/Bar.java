@@ -15,46 +15,46 @@ import java.util.Map.Entry;
 import static com.github.dakusui.symfonion.core.SymfonionTypeMismatchException.ARRAY;
 
 public class Bar {
-	Fraction beats;
-	Map<String, List<Pattern>> patternLists = new HashMap<String, List<Pattern>>();
-	Map<String, JsonElement> locations = new HashMap<String, JsonElement>();
-	Groove groove;
-	private Song song;
-	private JsonObject json = null;
-	
+  Fraction beats;
+  Map<String, List<Pattern>> patternLists = new HashMap<String, List<Pattern>>();
+  Map<String, JsonElement>   locations    = new HashMap<String, JsonElement>();
+  Groove groove;
+  private Song song;
+  private JsonObject json = null;
 
-	public Bar(JsonObject jsonObject, Song song) throws SymfonionException, JsonException {
-		this.song = song;
-		this.json = jsonObject;
-		init(jsonObject);
-	}
 
-	public void init(JsonObject jsonObject) throws SymfonionException, JsonException {
-		try {
-			this.beats = Util.parseFraction(JsonUtils.asString(jsonObject, Keyword.$beats));
-		} catch (FractionFormatException e) {
-			ExceptionThrower.throwIllegalFormatException(
-					JsonUtils.asJsonElement(jsonObject, Keyword.$beats),
-					SymfonionIllegalFormatException.FRACTION_EXAMPLE);
-		}
-		this.beats = this.beats == null ? Fraction.one : this.beats;
-		this.groove = Groove.DEFAULT_INSTANCE;
-		Groove g = Groove.DEFAULT_INSTANCE;
-		if (JsonUtils.hasPath(jsonObject, Keyword.$groove)) {
-			String grooveName = JsonUtils.asString(jsonObject, Keyword.$groove.name());
-			g = song.groove(grooveName);
-			if (g == null) {
-				ExceptionThrower.throwGrooveNotDefinedException(
-						JsonUtils.asJsonElement(jsonObject, Keyword.$groove),
-						grooveName
-						);			
-			}
-		}
-		this.groove = g;
-		JsonObject patternsJsonObject = JsonUtils.asJsonObject(jsonObject, Keyword.$patterns);
-		if (patternsJsonObject == null) {
-			ExceptionThrower.throwRequiredElementMissingException(jsonObject, Keyword.$patterns);
-		}
+  public Bar(JsonObject jsonObject, Song song) throws SymfonionException, JsonException {
+    this.song = song;
+    this.json = jsonObject;
+    init(jsonObject);
+  }
+
+  private void init(JsonObject jsonObject) throws SymfonionException, JsonException {
+    try {
+      this.beats = Util.parseFraction(JsonUtils.asString(jsonObject, Keyword.$beats));
+    } catch (FractionFormatException e) {
+      ExceptionThrower.throwIllegalFormatException(
+          JsonUtils.asJsonElement(jsonObject, Keyword.$beats),
+          SymfonionIllegalFormatException.FRACTION_EXAMPLE);
+    }
+    this.beats = this.beats == null ? Fraction.one : this.beats;
+    this.groove = Groove.DEFAULT_INSTANCE;
+    Groove g = Groove.DEFAULT_INSTANCE;
+    if (JsonUtils.hasPath(jsonObject, Keyword.$groove)) {
+      String grooveName = JsonUtils.asString(jsonObject, Keyword.$groove.name());
+      g = song.groove(grooveName);
+      if (g == null) {
+        ExceptionThrower.throwGrooveNotDefinedException(
+            JsonUtils.asJsonElement(jsonObject, Keyword.$groove),
+            grooveName
+        );
+      }
+    }
+    this.groove = g;
+    JsonObject patternsJsonObject = JsonUtils.asJsonObject(jsonObject, Keyword.$patterns);
+    if (patternsJsonObject == null) {
+      ExceptionThrower.throwRequiredElementMissingException(jsonObject, Keyword.$patterns);
+    }
     for (Entry<String, JsonElement> stringJsonElementEntry : patternsJsonObject.entrySet()) {
       String partName = stringJsonElementEntry.getKey();
       List<Pattern> patterns = new LinkedList<Pattern>();
@@ -75,31 +75,31 @@ public class Bar {
       }
       patternLists.put(partName, patterns);
     }
-	}
-	
-	public Set<String> partNames() {
-		return Collections.unmodifiableSet(this.patternLists.keySet());
-	}
-	
-	public List<Pattern> part(String instrumentName) {
-		return Collections.unmodifiableList(this.patternLists.get(instrumentName));
-	}
+  }
 
-	public Fraction beats() {
-		return this.beats;
-	}
-	
-	public Groove groove() {
-		return this.groove;
-	}
+  public Set<String> partNames() {
+    return Collections.unmodifiableSet(this.patternLists.keySet());
+  }
 
-	public JsonElement location(String partName) {
-		try {
-			return JsonUtils.asJsonElement(this.json, Keyword.$patterns, partName);
-		} catch (JsonPathNotFoundException e) {
-			return null;
-		} catch (JsonInvalidPathException e) {
-			return null;
-		}
-	}
+  public List<Pattern> part(String instrumentName) {
+    return Collections.unmodifiableList(this.patternLists.get(instrumentName));
+  }
+
+  public Fraction beats() {
+    return this.beats;
+  }
+
+  public Groove groove() {
+    return this.groove;
+  }
+
+  public JsonElement location(String partName) {
+    try {
+      return JsonUtils.asJsonElement(this.json, Keyword.$patterns, partName);
+    } catch (JsonPathNotFoundException e) {
+      return null;
+    } catch (JsonInvalidPathException e) {
+      return null;
+    }
+  }
 }
