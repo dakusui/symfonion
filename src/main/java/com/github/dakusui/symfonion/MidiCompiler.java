@@ -17,6 +17,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 public class MidiCompiler {
@@ -150,40 +151,42 @@ public class MidiCompiler {
           ExceptionThrower.throwPartNotFound(bar.location(partName), partName);
         }
         int channel = song.part(partName).channel();
-        for (Pattern pattern : bar.part(partName)) {
+        for (List<Pattern> patterns : bar.part(partName)) {
           ////
           // relativePosition is a relative position from the beginning
           // of the bar the pattern belongs to.
           Fraction relPosInBar = Fraction.zero;
-          Parameters params = pattern.parameters();
-          patternStarted();
-          for (Stroke stroke : pattern.strokes()) {
-            try {
-              Fraction endingPos = Fraction.add(relPosInBar, stroke.length());
+          for (Pattern each : patterns) {
+            Parameters params = each.parameters();
+            patternStarted();
+            for (Stroke stroke : each.strokes()) {
+              try {
+                Fraction endingPos = Fraction.add(relPosInBar, stroke.length());
 
-              stroke.compile(
-                  this,
-                  new CompilerContext(
-                      track,
-                      channel,
-                      params,
-                      relPosInBar,
-                      barPositionInTicks,
-                      groove
-                  )
-              );
+                stroke.compile(
+                    this,
+                    new CompilerContext(
+                        track,
+                        channel,
+                        params,
+                        relPosInBar,
+                        barPositionInTicks,
+                        groove
+                    )
+                );
 
-              relPosInBar = endingPos;
-              ////
-              // Breaks if relative position goes over the length of the bar.
-              if (Fraction.compare(relPosInBar, bar.beats()) >= 0) {
-                break;
+                relPosInBar = endingPos;
+                ////
+                // Breaks if relative position goes over the length of the bar.
+                if (Fraction.compare(relPosInBar, bar.beats()) >= 0) {
+                  break;
+                }
+              } finally {
+                strokeEnded();
               }
-            } finally {
-              strokeEnded();
             }
+            patternEnded();
           }
-          patternEnded();
         }
         partEnded();
       }

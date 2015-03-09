@@ -16,8 +16,7 @@ import static com.github.dakusui.symfonion.core.SymfonionTypeMismatchException.A
 
 public class Bar {
   Fraction beats;
-  Map<String, List<Pattern>> patternLists = new HashMap<String, List<Pattern>>();
-  Map<String, JsonElement>   locations    = new HashMap<String, JsonElement>();
+  Map<String, List<List<Pattern>>> patternLists = new HashMap<String, List<List<Pattern>>>();
   Groove groove;
   private Song song;
   private JsonObject json = null;
@@ -57,21 +56,24 @@ public class Bar {
     }
     for (Entry<String, JsonElement> stringJsonElementEntry : patternsJsonObject.entrySet()) {
       String partName = stringJsonElementEntry.getKey();
-      List<Pattern> patterns = new LinkedList<Pattern>();
+      List<List<Pattern>> patterns = new LinkedList<List<Pattern>>();
       JsonArray partPatternsJsonArray = JsonUtils.asJsonArray(patternsJsonObject, partName);
       if (!partPatternsJsonArray.isJsonArray()) {
         ExceptionThrower.throwTypeMismatchException(partPatternsJsonArray, ARRAY);
       }
       int len = partPatternsJsonArray.size();
       for (int j = 0; j < len; j++) {
-        JsonElement jsonPattern = partPatternsJsonArray.get(j);
-        String patternName = jsonPattern.getAsString();
-        locations.put(partName, jsonPattern);
-        Pattern cur = song.pattern(patternName);
-        if (cur == null) {
-          ExceptionThrower.throwPatternNotFound(jsonPattern, patternName);
+        JsonElement jsonPatterns = partPatternsJsonArray.get(j);
+        String patternNames = jsonPatterns.getAsString();
+        List<Pattern> p = new LinkedList<Pattern>();
+        for (String each : patternNames.split(";")) {
+          Pattern cur = song.pattern(each);
+          if (cur == null) {
+            ExceptionThrower.throwPatternNotFound(jsonPatterns, patternNames);
+          }
+          p.add(cur);
         }
-        patterns.add(cur);
+        patterns.add(p);
       }
       patternLists.put(partName, patterns);
     }
@@ -81,7 +83,7 @@ public class Bar {
     return Collections.unmodifiableSet(this.patternLists.keySet());
   }
 
-  public List<Pattern> part(String instrumentName) {
+  public List<List<Pattern>> part(String instrumentName) {
     return Collections.unmodifiableList(this.patternLists.get(instrumentName));
   }
 
