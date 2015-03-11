@@ -1,23 +1,19 @@
 package com.github.dakusui.symfonion.song;
 
-import static com.github.dakusui.symfonion.core.SymfonionIllegalFormatException.NOTELENGTH_EXAMPLE;
-import static com.github.dakusui.symfonion.core.SymfonionTypeMismatchException.OBJECT;
-
-import java.util.LinkedList;
-import java.util.List;
-
+import com.github.dakusui.json.*;
 import com.github.dakusui.symfonion.core.ExceptionThrower;
 import com.github.dakusui.symfonion.core.Fraction;
-import com.github.dakusui.json.JsonFormatException;
-import com.github.dakusui.json.JsonInvalidPathException;
-import com.github.dakusui.json.JsonPathNotFoundException;
-import com.github.dakusui.json.JsonTypeMismatchException;
-import com.github.dakusui.json.JsonUtils;
 import com.github.dakusui.symfonion.core.SymfonionException;
 import com.github.dakusui.symfonion.core.Util;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+
+import java.util.LinkedList;
+import java.util.List;
+
+import static com.github.dakusui.symfonion.core.SymfonionIllegalFormatException.NOTELENGTH_EXAMPLE;
+import static com.github.dakusui.symfonion.core.SymfonionTypeMismatchException.OBJECT;
 
 public class Groove {
 	public static final Groove DEFAULT_INSTANCE = new Groove();
@@ -91,7 +87,7 @@ public class Groove {
 			}
 			ret.pos = pos;
 		} else {
-			ret.pos = (long) (pos + (long)(rest.doubleValue() * this.resolution));
+			ret.pos = (pos + (long)(rest.doubleValue() * this.resolution));
 		}
 		return ret;
 	}
@@ -103,8 +99,7 @@ public class Groove {
 		beats.add(new Beat(length, ticks, accent));
 	}
 
-	public static Groove createGroove(String grooveName, JsonArray grooveDef,
-			Song song) throws SymfonionException, JsonPathNotFoundException, JsonTypeMismatchException, JsonInvalidPathException, JsonFormatException {
+	public static Groove createGroove(JsonArray grooveDef) throws SymfonionException, JsonTypeMismatchException, JsonInvalidPathException, JsonFormatException {
 		Groove ret = new Groove();
 		for (JsonElement elem : grooveDef) {
 			if (!elem.isJsonObject()) {
