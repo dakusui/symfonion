@@ -79,7 +79,7 @@ public class MidiCompiler {
     public long convertRelativePositionInStrokeToAbsolutePosition(Fraction relativePositionInStroke) {
       Groove.Unit unit = resolveRelativePositionInStroke(relativePositionInStroke);
       long relativePositionInBarInTicks = unit.pos();
-      return barPositionInTicks + relativePositionInBarInTicks;
+      return getBarPositionInTicks() + relativePositionInBarInTicks;
     }
 
     public int getGrooveAccent(Fraction relPosInStroke) {
@@ -89,28 +89,13 @@ public class MidiCompiler {
 
     private Groove.Unit resolveRelativePositionInStroke(
         Fraction relativePositionInStroke) {
-      Groove.Unit unit = this.groove.resolve(
+      return this.getGroove().resolve(
           Fraction.add(
-              this.relativeStrokePositionInBar,
+              this.getRelativeStrokePositionInBar(),
               relativePositionInStroke
           )
       );
-      return unit;
     }
-
-		/*
-    public long getPosition() {
-			return position;
-		}
-
-		public int getGrooveAccent() {
-			return this.grooveAccent;
-		}
-		
-		public long getStrokeLengthInTicks() {
-			return strokeLengthInTicks;
-		}
-		*/
   }
 
   private Context logiasContext;
@@ -224,17 +209,15 @@ public class MidiCompiler {
         ch,
         nKey,
         nVelocity);
-    MidiEvent event = new MidiEvent(message,
+    return new MidiEvent(message,
         lTick);
-    return event;
   }
 
   public MidiEvent createProgramChangeEvent(int ch, int pgnum, long lTick) throws InvalidMidiDataException {
     ShortMessage message = new ShortMessage();
     message.setMessage(ShortMessage.PROGRAM_CHANGE, ch, pgnum, 0);
 
-    MidiEvent event = new MidiEvent(message, lTick);
-    return event;
+    return new MidiEvent(message, lTick);
   }
 
   public MidiEvent createSysexEvent(int ch, JsonArray arr, long lTick) throws InvalidMidiDataException {
@@ -259,18 +242,17 @@ public class MidiCompiler {
     try {
       baos.close();
     } catch (IOException e) {
+      ExceptionThrower.throwRuntimeException(e.getMessage(), e);
     }
     byte[] data = baos.toByteArray();
     message.setMessage(data, data.length);
-    MidiEvent ret = new MidiEvent(message, lTick);
-    return ret;
+    return new MidiEvent(message, lTick);
   }
 
   public MidiEvent createControlChangeEvent(int ch, int controllernum, int param, long lTick) throws InvalidMidiDataException {
     ShortMessage message = new ShortMessage();
     message.setMessage(ShortMessage.CONTROL_CHANGE, ch, controllernum, param);
-    MidiEvent event = new MidiEvent(message, lTick);
-    return event;
+    return new MidiEvent(message, lTick);
   }
 
   public MidiEvent createBankSelectMSBEvent(int ch, int bkmsb, long lTick) throws InvalidMidiDataException {
@@ -300,8 +282,7 @@ public class MidiCompiler {
   public MidiEvent createPitchBendEvent(int ch, int depth, long lTick) throws InvalidMidiDataException {
     ShortMessage message = new ShortMessage();
     message.setMessage(ShortMessage.PITCH_BEND, ch, 0, depth);
-    MidiEvent event = new MidiEvent(message, lTick);
-    return event;
+    return new MidiEvent(message, lTick);
   }
 
   public MidiEvent createModulationEvent(int ch, int depth, long lTick) throws InvalidMidiDataException {
@@ -311,8 +292,7 @@ public class MidiCompiler {
   public MidiEvent createAfterTouchChangeEvent(int ch, int v, long lTick) throws InvalidMidiDataException {
     ShortMessage message = new ShortMessage();
     message.setMessage(ShortMessage.CHANNEL_PRESSURE, ch, v, 0);
-    MidiEvent event = new MidiEvent(message, lTick);
-    return event;
+    return new MidiEvent(message, lTick);
   }
 
   public MidiEvent createTempoEvent(int tempo, long lTick) throws InvalidMidiDataException {
