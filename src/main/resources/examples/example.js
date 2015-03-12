@@ -41,7 +41,7 @@
 		"effect1":{
 		    "$notemap":"$normal",    // "$melody", "$pattern", and "$sequence"
 		    "$body":[
-		        {"$pitch":[64,,,,,,0]},
+		        {"$pitch":[0,64,,,,,,0]},
 		    ]
 		},
 		"effect2":{
@@ -77,11 +77,11 @@
 				"B+H",   "H-", "O", "H--",
 				"BS+H",  "H-", "O", ""
 			],
-	        "$velocitybase":106,
-	        "$velocitydelta":10,
-	        "$gate":0.8,
-	        "$length":"16",
-	        "$transpose":0 // does not make sense for rhythm patterns
+      "$velocitybase":106,
+      "$velocitydelta":10,
+      "$gate":0.8,
+      "$length":"16",
+      "$transpose":0, // does not make sense for rhythm patterns
 			"$percussionkit":null
 		}
 	},
