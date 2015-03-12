@@ -3,7 +3,7 @@
   
   <groupId>com.github.dakusui</groupId>
   <artifactId>symfonion</artifactId>
-  <version>0.9.5-SNAPSHOT</version>
+  <version>0.9.6-SNAPSHOT</version>
   <description>A JSON based music macro language processor.</description>
   <packaging>jar</packaging>
   
@@ -19,8 +19,8 @@
   </licenses>
   
   <scm>
-    <connection>scm:git:git://github.com/dakusui/symfonion.git</connection>
-    <developerConnection>scm:git:git@github.com:dakusui/symfonion.git
+    <connection>scm:git:https://github.com/dakusui/symfonion.git</connection>
+    <developerConnection>scm:git:https://github.com/dakusui/symfonion.git
     </developerConnection>
     <url>http://github.com/dakusui/symfonion</url>
   </scm>
