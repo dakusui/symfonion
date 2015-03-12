@@ -120,7 +120,7 @@
 	  </execution>
 	  <execution>
 	    <id>create-archive</id>
-	    <phase>package</phase>
+	    <phase>deploy</phase>
 	    <goals>
 	      <goal>assembly</goal>
 	    </goals>
@@ -134,6 +134,27 @@
 	</executions>
       </plugin>
       
+      <plugin>
+	<groupId>de.jutzig</groupId>
+	<artifactId>github-release-plugin</artifactId>
+	<version>1.1.0</version>
+	<executions>
+	  <execution>
+	    <id>github-upload</id>
+	    <phase>deploy</phase>
+	    <goals>
+	      <goal>release</goal>
+	    </goals>
+	    <inherited>false</inherited>
+	    <configuration>
+	      <releaseName>v${project.version}</releaseName>
+	      <tag>v${project.version}</tag>
+	      <artifact>${project.build.directory}/${project.artifactId}-${project.version}-release.zip</artifact>
+ 	    </configuration>
+	  </execution>
+	</executions>
+      </plugin>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
