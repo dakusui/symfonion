@@ -235,6 +235,8 @@ For example, strings below are valid for this attribute.
     "C>#+";               // You can use ">", "#", and "+" (and other modifiers) in combination.
     "CEG";                // Chord C (C3, E3, and G3 will be played at once.)
     "C#>>+++E#++G#+";     // You can also use modifier in combination even when you are writing a chord.
+    "Db>++4;r4;r8;BbDb>8;DbGb>8;GbDb>8;DbAb>+1";
+                          // You can concatenate strokes by using semi colons.
 ```
     
 ### Non-note messages ###
@@ -665,4 +667,39 @@ In order to set groove to be used in a sequence, users need to set "$groove" att
     },
 ```
 
-If the groove is not defined in "$grooves" section, an error will be reported.
+If the groove ```16beats``` is not defined in "$grooves" section, an error will be reported.
+
+If you want to repeat  a pattern ```melody1```, you can do this in 2 ways. One is obviously below
+
+```javascript
+
+    {
+            "$beats":"16/16",
+            "$patterns":{
+                "vocal":["melody1"]
+            },
+            "$groove":"16beats"
+    },
+    {
+            "$beats":"16/16",
+            "$patterns":{
+                "vocal":["melody1"]
+            },
+            "$groove":"16beats"
+    },
+```
+
+The other is using a semi-colon as a separator.
+
+```javascript
+
+    {
+            "$beats":"16/16",
+            "$patterns":{
+                "vocal":["melody1;melody1"]
+            },
+            "$groove":"16beats"
+    },
+```
+
+Enjoy music!

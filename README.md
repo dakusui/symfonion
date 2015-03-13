@@ -7,22 +7,22 @@ Symfonion is a modern music macro language processor.
 2. Your system can play a midi file through Java's API
 
 ## Linux and Mac users
-1. Download a .zip file symfonion-VERSION.zip from [here](https://github.com/dakusui/symfonion/releases/tag/symfonion-0.9.1)
-2. Unzip the contents (```symfonion-VERSION-executable.jar``` and ```symfonion```) somewhere on your path.
+1. Download a .zip file symfonion-VERSION-release.zip from [here](https://github.com/dakusui/symfonion/releases/)
+2. Unzip the contents place ```symfonion.jar``` and ```symfonion``` somewhere on your path.
 3. Done
 
-You will be able to run ```symfonion``` by typing it
+You will be able to run ```symfonion``` by typing
 
 ```
 $ symfonion
 ```
 
 ## Windows users
-1. Download a .zip file symfonion-VERSION.zip from [here](https://github.com/dakusui/symfonion/releases/tag/symfonion-0.9.1)
-2. Unzip the contents (```symfonion-VERSION-executable.jar```) somewhere visible to you.
+1. Download a .zip file symfonion-VERSION-release.zip from [here](https://github.com/dakusui/symfonion/releases/)
+2. Unzip the contents and place ```symfonion.jar``` somewhere visible to you.
 3. Done.
 
-You will be able to run ```symfonion``` by double clicking ```symfonion-VERSION-executable.jar```.
+You will be able to run ```symfonion``` by double clicking ```symfonion.jar```.
 
 # How to run Symfonion #
 By typing a command line below, ```symfonion``` will compile the given JSON file and play it.
@@ -70,11 +70,9 @@ where "infile" is a ```symfonion``` file and it will look like this.
 ```
 (W.A. Mozart, K.311)
 
-The syntax of it is described  
-[Syntax](src/site/docs/SYNTAX.md)
+The syntax of it is described in [Syntax](src/site/docs/SYNTAX.md)
 
-For the detail of the command line options, please refer to 
-[Command line manual](src/site/docs/CLI.md)
+For the detail of the command line options, please refer to [Command line manual](src/site/docs/CLI.md)
 
 For the updates, best practices, how-tos, examples, and so on, please visit
 [Symfonion Blog](http://symfonion.hatenadiary.jp/) (mainly in Japanese)

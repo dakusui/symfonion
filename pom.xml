@@ -60,6 +60,7 @@
             <groupId>com.github.dakusui</groupId>
             <artifactId>jcunit</artifactId>
             <version>0.1.6</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
