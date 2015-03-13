@@ -71,10 +71,10 @@ where "infile" is a ```symfonion``` file and it will look like this.
 (W.A. Mozart, K.311)
 
 The syntax of it is described  
-[Syntax](SYNTAX.md)
+[Syntax](src/site/docs/SYNTAX.md)
 
 For the detail of the command line options, please refer to 
-[Command line manual](CLI.md)
+[Command line manual](src/site/docs/CLI.md)
 
 For the updates, best practices, how-tos, examples, and so on, please visit
 [Symfonion Blog](http://symfonion.hatenadiary.jp/) (mainly in Japanese)
