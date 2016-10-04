@@ -8,7 +8,7 @@ Symfonion is a modern music macro language processor.
 
 ## Linux and Mac users
 1. Download a .zip file symfonion-VERSION-release.zip from [here](https://github.com/dakusui/symfonion/releases/)
-2. Unzip the contents place ```symfonion.jar``` and ```symfonion``` somewhere on your path.
+2. Unzip the contents. And place ```symfonion.jar``` and ```symfonion``` somewhere on your path.
 3. Done
 
 You will be able to run ```symfonion``` by typing
