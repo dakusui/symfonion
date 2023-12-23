@@ -80,7 +80,7 @@ public abstract class PromotionMechanismTestBase {
     try {
       JsonObject obj = JsonUtils.toJson(
               Util.loadResource(klazz.getCanonicalName().replaceAll("\\.", "/")
-                      + ".js")).getAsJsonObject();
+                      + ".json")).getAsJsonObject();
       return new JsonObject[] { obj };
     } catch (SymfonionException e) {
       if (!Object.class.equals(klazz)) {
@@ -92,7 +92,7 @@ public abstract class PromotionMechanismTestBase {
   }
 
   @Test
-  public void test() throws Exception {
+  public void test() {
     this.obj = null;
     try {
       this.obj = JsonUtils.asJsonObjectWithPromotion(base, prioritizedKeys,
