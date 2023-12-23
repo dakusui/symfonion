@@ -1,0 +1,16 @@
+{
+  "$sequence":[
+      {
+        "$beats":"8/8",
+        "$patterns":{
+          "test":["test1"]
+        }
+      },
+      {
+        "$beats":"8/8",
+        "$patterns":{
+          "test":["test1"]
+        }
+      }
+  ]
+}
