@@ -32,7 +32,7 @@ public class InvalidJsonErrorTest extends ErrorTest {
 	public void nonwellformed_brokenobject() throws IOException, SymfonionException, ParseException {
 		String resourceName = "invalidjson/03_nonwellformed_02.json";
 		assertEquals(
-				String.format("symfonion: %s: Unterminated object at line 13 column 8\n", getWorkFile()), 
+				String.format("symfonion: %s: Unterminated object at line 13 column 8 path $.$patterns.melody1.$body[15].$length\n", getWorkFile()),
 				invokeWithResource(resourceName)
 				);
 	}
