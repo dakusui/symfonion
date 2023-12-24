@@ -13,5 +13,7 @@ jobs:
       with:
         distribution: adopt
         java-version: 21
+    - name: list files in current directory
+      run: ls
     - name: Build with Maven
       run: mvn -B package --file pom.xml
