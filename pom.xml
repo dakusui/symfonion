@@ -36,6 +36,7 @@
         <maven-shade-plugin.version>3.5.1</maven-shade-plugin.version>
         <maven-assembly-plugin.version>3.6.0</maven-assembly-plugin.version>
         <github-release-plugin.version>1.1.0</github-release-plugin.version>
+        <thincrest-pcond.version>1.0.0</thincrest-pcond.version>
     </properties>
 
     <developers>
@@ -68,6 +69,10 @@
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.github.dakusui</groupId>
+            <artifactId>thincrest-pcond</artifactId>
+        </dependency>
     </dependencies>
 
     <dependencyManagement>
@@ -91,7 +96,11 @@
                 <groupId>com.google.code.gson</groupId>
                 <artifactId>gson</artifactId>
                 <version>${gson.version}</version>
-                <type>jar</type>
+            </dependency>
+            <dependency>
+                <groupId>com.github.dakusui</groupId>
+                <artifactId>thincrest-pcond</artifactId>
+                <version>${thincrest-pcond.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -155,8 +164,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.1</version>
                 <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
+                    <source>1.8</source>
+                    <target>1.8</target>
                 </configuration>
             </plugin>
 
