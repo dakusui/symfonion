@@ -1,0 +1,15 @@
+<project>
+    <body>
+        <menu name="Documents">
+            <item href="SYNTAX.html" name="About symfonion syntax"/>
+            <item href="CLI.html" name="About symfonion CLI"/>
+        </menu>
+        <menu ref="reports" inherit="top"/>
+        <menu ref="modules"/>
+    </body>
+    <skin>
+        <groupId>org.apache.maven.skins</groupId>
+        <artifactId>maven-fluido-skin</artifactId>
+        <version>1.7</version>
+    </skin>
+</project>
