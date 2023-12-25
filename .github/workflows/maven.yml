@@ -20,8 +20,8 @@ jobs:
         java-version: 21
         cache: maven
     - name: list files in current directory
-      working-directory: ${{ github.workspace }}
+      working-directory: /home/runner/work/symfonion/
       run: ls -al
     - name: Build with Maven
-      working-directory: ${{ github.workspace }}
+      working-directory: /home/runner/work/symfonion/
       run: mvn -B package
