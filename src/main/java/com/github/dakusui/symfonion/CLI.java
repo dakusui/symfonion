@@ -205,8 +205,8 @@ public class CLI {
   private File source;
   private File                 sink     = new File("a.midi");
   private Route                route    = null;
-  private Map<String, Pattern> midiins  = new HashMap<String, Pattern>();
-  private Map<String, Pattern> midiouts = new HashMap<String, Pattern>();
+  private Map<String, Pattern> midiins  = new HashMap<>();
+  private Map<String, Pattern> midiouts = new HashMap<>();
   private Symfonion symfonion;
   private Options   options;
 
