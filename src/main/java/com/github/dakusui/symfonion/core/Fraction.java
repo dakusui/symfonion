@@ -75,11 +75,11 @@ public class Fraction extends Object implements Cloneable, Serializable
 	}
 
 	public String toString() {
-		return ("(" + this.numer + "/" + this.denom + ")");
+		return ("(" + this.getNumerator() + "/" + this.getDenominator() + ")");
 	}
 
 	public double doubleValue() {
-		return (1.0*this.numer/this.denom);
+		return (1.0*this.getNumerator()/this.getDenominator());
 	}
 
 	public int wholePortion() {
