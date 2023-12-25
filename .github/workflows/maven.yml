@@ -2,9 +2,9 @@ name: Java CI
 
 on:
   push:
-    branches: [ $default-branch ]
+    branches: [ $default-branch, "master-**" ]
   pull_request:
-    branches: [ $default-branch ]
+    branches: [ $default-branch, "master-**" ]
   workflow_dispatch:
 
 jobs:
@@ -20,6 +20,8 @@ jobs:
         java-version: 21
         cache: maven
     - name: list files in current directory
-      run: ls
+      working-directory: ${{ github.workspace }}
+      run: ls -al
     - name: Build with Maven
+      working-directory: ${{ github.workspace }}
       run: mvn -B package --file pom.xml
