@@ -240,18 +240,7 @@ public class CLI {
       MidiDeviceScanner scanner = MidiDeviceScanner.chooseOutputDevices(ps,
           regex);
       scanner.scan();
-      MidiDevice.Info[] matchedInfos = scanner.getMatchedDevices();
-      if (matchedInfos.length > 1) {
-        String msg = String.format(
-            "Device for port '%s' (regex:%s) wasn't identical (%d)", portname,
-            regex, matchedInfos.length);
-        throw new CLIException(msg);
-      } else if (matchedInfos.length == 0) {
-        String msg = String.format(
-            "No matching device was found for port '%s' (regex:%s)", portname,
-            regex);
-        throw new CLIException(msg);
-      }
+      MidiDevice.Info[] matchedInfos = getInfos(portname, scanner, regex);
       try {
         devices.put(portname, MidiSystem.getMidiDevice(matchedInfos[0]));
       } catch (MidiUnavailableException e) {
@@ -262,6 +251,22 @@ public class CLI {
       }
     }
     return devices;
+  }
+
+  private static MidiDevice.Info[] getInfos(String portname, MidiDeviceScanner scanner, Pattern regex) throws CLIException {
+    MidiDevice.Info[] matchedInfos = scanner.getMatchedDevices();
+    if (matchedInfos.length > 1) {
+      String msg = String.format(
+          "Device for port '%s' (regex:%s) wasn't identical (%d)", portname,
+              regex, matchedInfos.length);
+      throw new CLIException(msg);
+    } else if (matchedInfos.length == 0) {
+      String msg = String.format(
+          "No matching device was found for port '%s' (regex:%s)", portname,
+              regex);
+      throw new CLIException(msg);
+    }
+    return matchedInfos;
   }
 
   protected File composeOutputFile(String outfile, String portName) {

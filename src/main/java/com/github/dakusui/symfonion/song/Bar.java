@@ -12,6 +12,7 @@ import com.google.gson.JsonObject;
 import java.util.*;
 import java.util.Map.Entry;
 
+import static com.github.dakusui.symfonion.core.ExceptionThrower.*;
 import static com.github.dakusui.symfonion.core.SymfonionTypeMismatchException.ARRAY;
 
 public class Bar {
@@ -32,7 +33,7 @@ public class Bar {
     try {
       this.beats = Util.parseFraction(JsonUtils.asString(jsonObject, Keyword.$beats));
     } catch (FractionFormatException e) {
-      ExceptionThrower.throwIllegalFormatException(
+      throw illegalFormatException(
           JsonUtils.asJsonElement(jsonObject, Keyword.$beats),
           SymfonionIllegalFormatException.FRACTION_EXAMPLE);
     }
@@ -43,7 +44,7 @@ public class Bar {
       String grooveName = JsonUtils.asString(jsonObject, Keyword.$groove.name());
       g = song.groove(grooveName);
       if (g == null) {
-        ExceptionThrower.throwGrooveNotDefinedException(
+        throw grooveNotDefinedException(
             JsonUtils.asJsonElement(jsonObject, Keyword.$groove),
             grooveName
         );
@@ -52,14 +53,14 @@ public class Bar {
     this.groove = g;
     JsonObject patternsJsonObject = JsonUtils.asJsonObject(jsonObject, Keyword.$patterns);
     if (patternsJsonObject == null) {
-      ExceptionThrower.throwRequiredElementMissingException(jsonObject, Keyword.$patterns);
+      throw requiredElementMissingException(jsonObject, Keyword.$patterns);
     }
     for (Entry<String, JsonElement> stringJsonElementEntry : patternsJsonObject.entrySet()) {
       String partName = stringJsonElementEntry.getKey();
       List<List<Pattern>> patterns = new LinkedList<List<Pattern>>();
       JsonArray partPatternsJsonArray = JsonUtils.asJsonArray(patternsJsonObject, partName);
       if (!partPatternsJsonArray.isJsonArray()) {
-        ExceptionThrower.throwTypeMismatchException(partPatternsJsonArray, ARRAY);
+        throw typeMismatchException(partPatternsJsonArray, ARRAY);
       }
       int len = partPatternsJsonArray.size();
       for (int j = 0; j < len; j++) {
@@ -69,7 +70,7 @@ public class Bar {
         for (String each : patternNames.split(";")) {
           Pattern cur = song.pattern(each);
           if (cur == null) {
-            ExceptionThrower.throwPatternNotFound(jsonPatterns, patternNames);
+            throw patternNotFound(jsonPatterns, patternNames);
           }
           p.add(cur);
         }

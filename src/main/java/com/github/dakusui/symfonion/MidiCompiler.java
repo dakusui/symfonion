@@ -20,6 +20,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import static com.github.dakusui.symfonion.core.ExceptionThrower.partNotFound;
+
 public class MidiCompiler {
   public static class CompilerContext {
     private Track      track;
@@ -133,7 +135,7 @@ public class MidiCompiler {
         Track track = tracks.get(partName);
         if (track == null) {
           aborted();
-          ExceptionThrower.throwPartNotFound(bar.location(partName), partName);
+          throw partNotFound(bar.location(partName), partName);
         }
         int channel = song.part(partName).channel();
         for (List<Pattern> patterns : bar.part(partName)) {
@@ -242,7 +244,7 @@ public class MidiCompiler {
     try {
       baos.close();
     } catch (IOException e) {
-      ExceptionThrower.throwRuntimeException(e.getMessage(), e);
+      throw ExceptionThrower.runtimeException(e.getMessage(), e);
     }
     byte[] data = baos.toByteArray();
     message.setMessage(data, data.length);

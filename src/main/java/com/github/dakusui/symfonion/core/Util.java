@@ -13,6 +13,8 @@ import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.github.dakusui.symfonion.core.ExceptionThrower.*;
+
 
 public class Util {
 	public static final Pattern fractionPattern = Pattern.compile("([0-9]+)/([1-9][0-9]*)");
@@ -32,7 +34,7 @@ public class Util {
 		}
 		Matcher m = fractionPattern.matcher(str);
 		if (!m.matches()) {
-			ExceptionThrower.throwFractionFormatException(str);
+			throw throwFractionFormatException(str);
 		}
 		Fraction ret = new Fraction(
 							   Integer.parseInt(m.group(1)), 
@@ -47,7 +49,7 @@ public class Util {
 			InputStream is = new BufferedInputStream(ClassLoader.getSystemResourceAsStream(resourceName));
 			loadFromInputStream(b, is);
 		} catch (IOException e) {
-			ExceptionThrower.throwLoadResourceException(resourceName, e);
+			throw loadResourceException(resourceName, e);
 		}
 		return b.toString();
 	}
@@ -60,9 +62,9 @@ public class Util {
 			InputStream is = new BufferedInputStream(new FileInputStream(f));
 			loadFromInputStream(b, is);
 		} catch (FileNotFoundException e) {
-			ExceptionThrower.throwFileNotFoundException(f, e);
+			throw fileNotFoundException(f, e);
 		} catch (IOException e) {
-			ExceptionThrower.throwLoadFileException(f, e);
+			throw loadFileException(f, e);
 		}
 		return b.toString();
 	}

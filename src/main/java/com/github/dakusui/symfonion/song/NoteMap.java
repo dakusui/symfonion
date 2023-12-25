@@ -5,10 +5,11 @@ import java.util.Iterator;
 import java.util.Map;
 
 import com.github.dakusui.json.JsonUtils;
-import com.github.dakusui.symfonion.core.ExceptionThrower;
 import com.github.dakusui.symfonion.core.SymfonionException;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+
+import static com.github.dakusui.symfonion.core.ExceptionThrower.noteNotDefinedException;
 
 
 public class NoteMap {
@@ -48,7 +49,7 @@ public class NoteMap {
 			return -1;
 		}
 		if (!this.map.containsKey(notename)) {
-			ExceptionThrower.throwNoteNotDefinedException(location, notename, this.name);
+			throw noteNotDefinedException(location, notename, this.name);
 		}
 		return this.map.get(notename);
 	}

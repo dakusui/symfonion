@@ -4,7 +4,6 @@ import com.github.dakusui.json.JsonFormatException;
 import com.github.dakusui.json.JsonInvalidPathException;
 import com.github.dakusui.json.JsonTypeMismatchException;
 import com.github.dakusui.json.JsonUtils;
-import com.github.dakusui.symfonion.core.ExceptionThrower;
 import com.github.dakusui.symfonion.core.Fraction;
 import com.github.dakusui.symfonion.core.SymfonionException;
 import com.github.dakusui.symfonion.core.Util;
@@ -15,6 +14,7 @@ import com.google.gson.JsonObject;
 import java.util.LinkedList;
 import java.util.List;
 
+import static com.github.dakusui.symfonion.core.ExceptionThrower.*;
 import static com.github.dakusui.symfonion.core.SymfonionIllegalFormatException.NOTELENGTH_EXAMPLE;
 import static com.github.dakusui.symfonion.core.SymfonionTypeMismatchException.OBJECT;
 
@@ -66,11 +66,11 @@ public class Groove {
   public Unit resolve(Fraction offset) {
     if (offset == null) {
       String msg = "offset cannot be null. (Groove#resolve)";
-      ExceptionThrower.throwRuntimeException(msg, null);
+      throw runtimeException(msg, null);
     }
     if (Fraction.compare(offset, Fraction.zero) < 0) {
       String msg = "offset cannot be negative. (Groove#resolve)";
-      ExceptionThrower.throwRuntimeException(msg, null);
+      throw runtimeException(msg, null);
     }
     long pos = 0;
 
@@ -103,7 +103,7 @@ public class Groove {
 
   public void add(Fraction length, long ticks, int accent) {
     if (this == DEFAULT_INSTANCE) {
-      ExceptionThrower.throwRuntimeException("Groove.DEFAULT_INSTANCE is immutable.", null);
+      throw runtimeException("Groove.DEFAULT_INSTANCE is immutable.", null);
     }
     beats.add(new Beat(length, ticks, accent));
   }
@@ -112,7 +112,7 @@ public class Groove {
     Groove ret = new Groove();
     for (JsonElement elem : grooveDef) {
       if (!elem.isJsonObject()) {
-        ExceptionThrower.throwTypeMismatchException(elem, OBJECT);
+        throw typeMismatchException(elem, OBJECT);
       }
       JsonObject cur = elem.getAsJsonObject();
       String len = JsonUtils.asString(cur, Keyword.$length);
@@ -121,7 +121,7 @@ public class Groove {
 
       Fraction f = Util.parseNoteLength(len);
       if (f == null) {
-        ExceptionThrower.throwIllegalFormatException(
+        throw illegalFormatException(
             JsonUtils.asJsonElement(cur, Keyword.$length),
             NOTELENGTH_EXAMPLE);
       }

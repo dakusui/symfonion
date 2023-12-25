@@ -20,6 +20,8 @@ import javax.sound.midi.*;
 import java.io.File;
 import java.util.*;
 
+import static com.github.dakusui.symfonion.core.ExceptionThrower.*;
+
 public class Symfonion {
 	Context logiasContext;
 	private String fileName;
@@ -38,11 +40,11 @@ public class Symfonion {
 				ret = new Song(logiasContext, json);
 				ret.init();
 			} catch (JsonSyntaxException e) {
-				ExceptionThrower.throwLoadFileException(new File(fileName), e.getCause());
+				throw loadFileException(new File(fileName), e.getCause());
 			} catch (IllegalStateException e) {
-				ExceptionThrower.throwLoadFileException(new File(fileName), e);
+				throw loadFileException(new File(fileName), e);
 			} catch (JsonPathNotFoundException e) {
-				ExceptionThrower.throwRequiredElementMissingException(e.getLocation(), JsonUtils.formatPath(e.getPath()));
+				throw requiredElementMissingException(e.getLocation(), JsonUtils.formatPath(e.getPath()));
 			} catch (JsonException e) {
 				throw new RuntimeException(e.getMessage(), e);
 			}
@@ -94,7 +96,7 @@ public class Symfonion {
 			e.setSourceFile(new File(this.fileName));
 			throw e;
 		} catch (InvalidMidiDataException e) {
-			ExceptionThrower.throwCompilationException("Failed to compile a song.", e);
+			throw compilationException("Failed to compile a song.", e);
 		}
 		return ret;
 	}
@@ -125,7 +127,7 @@ public class Symfonion {
 							try {
 								Thread.sleep(1000);
 							} catch (InterruptedException e) {
-                ExceptionThrower.interrupted(e);
+								throw interrupted(e);
 							}
 							playingSequencers.remove(this.seq);
 							if (playingSequencers.isEmpty()) {
@@ -176,11 +178,11 @@ public class Symfonion {
 				cleanUpSequencers(portNames, devices, sequencers);
 			}
 		} catch (MidiUnavailableException e) {
-			ExceptionThrower.throwDeviceException("Midi device was not available.", e);
+			throw deviceException("Midi device was not available.", e);
 		} catch (InvalidMidiDataException e) {
-			ExceptionThrower.throwDeviceException("Data was invalid.", e);
+			throw deviceException("Data was invalid.", e);
 		} catch (InterruptedException e) {
-			ExceptionThrower.throwDeviceException("Operation was interrupted.", e);
+			throw deviceException("Operation was interrupted.", e);
 		}
 	}
 }

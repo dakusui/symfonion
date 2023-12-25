@@ -4,7 +4,6 @@ import com.github.dakusui.json.JsonException;
 import com.github.dakusui.json.JsonUtils;
 import com.github.dakusui.logias.Logias;
 import com.github.dakusui.logias.lisp.Context;
-import com.github.dakusui.symfonion.core.ExceptionThrower;
 import com.github.dakusui.symfonion.core.SymfonionException;
 import com.github.dakusui.symfonion.core.Util;
 import com.google.gson.JsonArray;
@@ -13,6 +12,8 @@ import com.google.gson.JsonObject;
 
 import java.util.*;
 
+import static com.github.dakusui.symfonion.core.ExceptionThrower.requiredElementMissingException;
+import static com.github.dakusui.symfonion.core.ExceptionThrower.typeMismatchException;
 import static com.github.dakusui.symfonion.core.SymfonionTypeMismatchException.ARRAY;
 import static com.github.dakusui.symfonion.core.SymfonionTypeMismatchException.OBJECT;
 
@@ -43,7 +44,7 @@ public class Song {
 		JsonElement tmp = JsonUtils.asJsonObjectWithDefault(this.json, new JsonObject(), Keyword.$settings);
 		if (tmp != null) {
 			if (!tmp.isJsonObject()) {
-				ExceptionThrower.throwTypeMismatchException(tmp, OBJECT);
+				throw typeMismatchException(tmp, OBJECT);
 			}
 			String profileName = JsonUtils.asStringWithDefault(tmp.getAsJsonObject(), "", Keyword.$mididevice);
 			Context context = logiasContext;
@@ -63,17 +64,17 @@ public class Song {
 	private void initSequence() throws SymfonionException, JsonException {
 		JsonElement tmp = JsonUtils.asJsonElement(this.json, Keyword.$sequence);
 		if (tmp == null) {
-			ExceptionThrower.throwRequiredElementMissingException(this.json, Keyword.$sequence);
+			throw requiredElementMissingException(this.json, Keyword.$sequence);
 		}
 		if (!tmp.isJsonArray()) {
-			ExceptionThrower.throwTypeMismatchException(tmp, ARRAY);
+			throw typeMismatchException(tmp, ARRAY);
 		}
 		JsonArray seqJson = tmp.getAsJsonArray(); 
 		int len = seqJson.getAsJsonArray().size();
 		for (int i = 0; i < len; i++) {
 			JsonElement barJson = seqJson.get(i);
 			if (!barJson.isJsonObject()) {
-				ExceptionThrower.throwTypeMismatchException(seqJson, OBJECT);
+				throw typeMismatchException(seqJson, OBJECT);
 			}
 			Bar bar = new Bar(barJson.getAsJsonObject(), this);
 			bars.add(bar);

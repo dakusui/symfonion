@@ -2,7 +2,6 @@ package com.github.dakusui.symfonion.song;
 
 import com.github.dakusui.json.JsonException;
 import com.github.dakusui.json.JsonUtils;
-import com.github.dakusui.symfonion.core.ExceptionThrower;
 import com.github.dakusui.symfonion.core.Fraction;
 import com.github.dakusui.symfonion.core.SymfonionException;
 import com.github.dakusui.symfonion.core.Util;
@@ -14,6 +13,8 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import static com.github.dakusui.symfonion.core.ExceptionThrower.illegalFormatException;
+import static com.github.dakusui.symfonion.core.ExceptionThrower.noteMapNotFoundException;
 import static com.github.dakusui.symfonion.core.SymfonionIllegalFormatException.NOTELENGTH_EXAMPLE;
 
 
@@ -44,7 +45,7 @@ public class Pattern {
       this.gate = JsonUtils.asDoubleWithDefault(json, 0.8, Keyword.$gate);
       this.length = Util.parseNoteLength(JsonUtils.asStringWithDefault(json, "4", Keyword.$length));
       if (this.length == null) {
-        ExceptionThrower.throwIllegalFormatException(
+        throw illegalFormatException(
             JsonUtils.asJsonElement(json, Keyword.$length),
             NOTELENGTH_EXAMPLE
         );
@@ -80,7 +81,7 @@ public class Pattern {
       String noteMapName = JsonUtils.asString(json, Keyword.$notemap);
       noteMap = song.noteMap(noteMapName);
       if (noteMap == null) {
-        ExceptionThrower.throwNoteMapNotFoundException(
+        throw noteMapNotFoundException(
             JsonUtils.asJsonElement(json, Keyword.$notemap),
             noteMapName
         );

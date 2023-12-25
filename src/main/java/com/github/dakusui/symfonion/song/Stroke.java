@@ -3,7 +3,6 @@ package com.github.dakusui.symfonion.song;
 import com.github.dakusui.json.*;
 import com.github.dakusui.symfonion.MidiCompiler;
 import com.github.dakusui.symfonion.MidiCompiler.CompilerContext;
-import com.github.dakusui.symfonion.core.ExceptionThrower;
 import com.github.dakusui.symfonion.core.Fraction;
 import com.github.dakusui.symfonion.core.SymfonionException;
 import com.github.dakusui.symfonion.core.Util;
@@ -19,6 +18,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
 
+import static com.github.dakusui.symfonion.core.ExceptionThrower.illegalFormatException;
+import static com.github.dakusui.symfonion.core.ExceptionThrower.typeMismatchException;
 import static com.github.dakusui.symfonion.core.SymfonionIllegalFormatException.NOTELENGTH_EXAMPLE;
 import static com.github.dakusui.symfonion.core.SymfonionTypeMismatchException.PRIMITIVE;
 
@@ -60,10 +61,10 @@ public class Stroke {
 			if (lenJSON.isJsonPrimitive()) {
 				len = Util.parseNoteLength(lenJSON.getAsString());
 				if (len == null) {
-					ExceptionThrower.throwIllegalFormatException(lenJSON, NOTELENGTH_EXAMPLE);
+					throw illegalFormatException(lenJSON, NOTELENGTH_EXAMPLE);
 				}
 			} else {
-				ExceptionThrower.throwTypeMismatchException(lenJSON, PRIMITIVE);
+				throw typeMismatchException(lenJSON, PRIMITIVE);
 			}
 		}
 		if (JsonUtils.hasPath(obj, Keyword.$gate)) {
@@ -203,7 +204,7 @@ public class Stroke {
 		}
 		if (i != s.length()) {
 			String msg = s.substring(0, i) + "`" + s.substring(i) + "' isn't a valid note expression. Notes must be like 'C', 'CEG8.', and so on.";
-			ExceptionThrower.throwIllegalFormatException(this.strokeJson, msg);
+			throw illegalFormatException(this.strokeJson, msg);
 		}
 		return ret;
 	}

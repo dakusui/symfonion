@@ -13,6 +13,8 @@ import javax.sound.midi.SysexMessage;
 
 import com.github.dakusui.symfonion.core.ExceptionThrower;
 
+import static com.github.dakusui.symfonion.core.ExceptionThrower.deviceException;
+
 
 public class JVController {
 	public synchronized void sendexeclusive() throws Exception {
@@ -43,7 +45,7 @@ public class JVController {
 				rec.close();
 			}
 		} catch (Exception e) {
-			ExceptionThrower.throwDeviceException("Failed to access a midi device.", e);
+			throw deviceException("Failed to access a midi device.", e);
 		} finally {
 			midiout.close();
 		}

@@ -2,9 +2,11 @@ package com.github.dakusui.symfonion;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
+import com.github.dakusui.symfonion.core.SymfonionException;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
@@ -61,20 +63,12 @@ public class CLITest {
 		assertEquals("test2", r.getMidiInDefinitions().get("in2").toString());
 	}
 
-	public static void main(String[] args) throws ParseException {
-		Options options = new Options();
-		Option opt = OptionBuilder.create('T');
-		opt.setValueSeparator('=');
-		opt.setOptionalArg(true);
-		opt.setArgs(1);
-		options.addOption(opt);
-		
-		CommandLineParser parser = new GnuParser();
-		CommandLine cmd = parser.parse( options, new String[]{"-Tk1", "-Tk2"});
-		System.out.println(cmd.getOptionProperties("T"));
-		System.out.println(cmd.getOptionValue("T"));
-		for (Option opt2 : cmd.getOptions()) {
-			System.out.println(opt2.getValue());
-		}
+	@Test
+	public void whenList() throws SymfonionException, ParseException, IOException {
+		CLI r = new CLI("--list");
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		r.getMode().invoke(r, new PrintStream(out));
+
+		System.err.println(out.toString(StandardCharsets.UTF_8));
 	}
 }
