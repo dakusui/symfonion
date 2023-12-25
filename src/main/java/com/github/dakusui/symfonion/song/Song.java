@@ -4,7 +4,7 @@ import com.github.dakusui.json.JsonException;
 import com.github.dakusui.json.JsonUtils;
 import com.github.dakusui.logias.Logias;
 import com.github.dakusui.logias.lisp.Context;
-import com.github.dakusui.symfonion.core.SymfonionException;
+import com.github.dakusui.symfonion.core.exceptions.SymfonionException;
 import com.github.dakusui.symfonion.core.Util;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -12,10 +12,10 @@ import com.google.gson.JsonObject;
 
 import java.util.*;
 
-import static com.github.dakusui.symfonion.core.ExceptionThrower.requiredElementMissingException;
-import static com.github.dakusui.symfonion.core.ExceptionThrower.typeMismatchException;
-import static com.github.dakusui.symfonion.core.SymfonionTypeMismatchException.ARRAY;
-import static com.github.dakusui.symfonion.core.SymfonionTypeMismatchException.OBJECT;
+import static com.github.dakusui.symfonion.core.exceptions.ExceptionThrower.requiredElementMissingException;
+import static com.github.dakusui.symfonion.core.exceptions.ExceptionThrower.typeMismatchException;
+import static com.github.dakusui.symfonion.core.exceptions.SymfonionTypeMismatchException.ARRAY;
+import static com.github.dakusui.symfonion.core.exceptions.SymfonionTypeMismatchException.OBJECT;
 
 public class Song {
 	private JsonObject json;

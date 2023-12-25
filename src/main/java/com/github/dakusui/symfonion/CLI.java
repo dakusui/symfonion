@@ -1,7 +1,7 @@
 package com.github.dakusui.symfonion;
 
 import com.github.dakusui.logias.lisp.Context;
-import com.github.dakusui.symfonion.core.SymfonionException;
+import com.github.dakusui.symfonion.core.exceptions.SymfonionException;
 import com.github.dakusui.symfonion.song.Keyword;
 import com.github.dakusui.symfonion.song.Song;
 import org.apache.commons.cli.*;

@@ -3,7 +3,7 @@ package com.github.dakusui.symfonion.song;
 import com.github.dakusui.json.JsonException;
 import com.github.dakusui.json.JsonUtils;
 import com.github.dakusui.symfonion.core.Fraction;
-import com.github.dakusui.symfonion.core.SymfonionException;
+import com.github.dakusui.symfonion.core.exceptions.SymfonionException;
 import com.github.dakusui.symfonion.core.Util;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -13,9 +13,9 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import static com.github.dakusui.symfonion.core.ExceptionThrower.illegalFormatException;
-import static com.github.dakusui.symfonion.core.ExceptionThrower.noteMapNotFoundException;
-import static com.github.dakusui.symfonion.core.SymfonionIllegalFormatException.NOTELENGTH_EXAMPLE;
+import static com.github.dakusui.symfonion.core.exceptions.ExceptionThrower.illegalFormatException;
+import static com.github.dakusui.symfonion.core.exceptions.ExceptionThrower.noteMapNotFoundException;
+import static com.github.dakusui.symfonion.core.exceptions.SymfonionIllegalFormatException.NOTELENGTH_EXAMPLE;
 
 
 public class Pattern {

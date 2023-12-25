@@ -7,7 +7,7 @@ import java.io.IOException;
 import org.apache.commons.cli.ParseException;
 import org.junit.Test;
 
-import com.github.dakusui.symfonion.core.SymfonionException;
+import com.github.dakusui.symfonion.core.exceptions.SymfonionException;
 
 public class InvalidDataErrorTest extends ErrorTest {
 

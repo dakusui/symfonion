@@ -3,16 +3,9 @@ package com.github.dakusui.symfonion;
 import static org.junit.Assert.assertEquals;
 
 import java.io.*;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
-import com.github.dakusui.symfonion.core.SymfonionException;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.GnuParser;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionBuilder;
-import org.apache.commons.cli.Options;
+import com.github.dakusui.symfonion.core.exceptions.SymfonionException;
 import org.apache.commons.cli.ParseException;
 import org.junit.Test;
 

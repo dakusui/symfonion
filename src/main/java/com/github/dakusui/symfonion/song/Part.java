@@ -4,7 +4,7 @@ import com.github.dakusui.json.JsonFormatException;
 import com.github.dakusui.json.JsonInvalidPathException;
 import com.github.dakusui.json.JsonTypeMismatchException;
 import com.github.dakusui.json.JsonUtils;
-import com.github.dakusui.symfonion.core.SymfonionException;
+import com.github.dakusui.symfonion.core.exceptions.SymfonionException;
 import com.google.gson.JsonObject;
 
 

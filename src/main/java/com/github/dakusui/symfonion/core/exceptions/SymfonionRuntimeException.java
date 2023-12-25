@@ -1,4 +1,4 @@
-package com.github.dakusui.symfonion.core;
+package com.github.dakusui.symfonion.core.exceptions;
 
 public class SymfonionRuntimeException extends RuntimeException {
   public SymfonionRuntimeException(String message) {

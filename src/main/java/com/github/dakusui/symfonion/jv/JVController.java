@@ -11,9 +11,7 @@ import javax.sound.midi.Receiver;
 import javax.sound.midi.ShortMessage;
 import javax.sound.midi.SysexMessage;
 
-import com.github.dakusui.symfonion.core.ExceptionThrower;
-
-import static com.github.dakusui.symfonion.core.ExceptionThrower.deviceException;
+import static com.github.dakusui.symfonion.core.exceptions.ExceptionThrower.deviceException;
 
 
 public class JVController {

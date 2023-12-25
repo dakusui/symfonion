@@ -1,5 +1,8 @@
 package com.github.dakusui.symfonion.core;
 
+import com.github.dakusui.symfonion.core.exceptions.FractionFormatException;
+import com.github.dakusui.symfonion.core.exceptions.SymfonionException;
+
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -13,7 +16,7 @@ import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.github.dakusui.symfonion.core.ExceptionThrower.*;
+import static com.github.dakusui.symfonion.core.exceptions.ExceptionThrower.*;
 
 
 public class Util {

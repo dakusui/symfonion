@@ -5,7 +5,7 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 import com.github.dakusui.symfonion.core.Fraction;
-import com.github.dakusui.symfonion.core.SymfonionException;
+import com.github.dakusui.symfonion.core.exceptions.SymfonionException;
 import com.github.dakusui.symfonion.core.Util;
 
 import static com.github.dakusui.symfonion.core.Util.parseNoteLength;

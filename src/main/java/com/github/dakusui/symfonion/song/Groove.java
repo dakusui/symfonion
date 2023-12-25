@@ -5,7 +5,7 @@ import com.github.dakusui.json.JsonInvalidPathException;
 import com.github.dakusui.json.JsonTypeMismatchException;
 import com.github.dakusui.json.JsonUtils;
 import com.github.dakusui.symfonion.core.Fraction;
-import com.github.dakusui.symfonion.core.SymfonionException;
+import com.github.dakusui.symfonion.core.exceptions.SymfonionException;
 import com.github.dakusui.symfonion.core.Util;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -14,9 +14,9 @@ import com.google.gson.JsonObject;
 import java.util.LinkedList;
 import java.util.List;
 
-import static com.github.dakusui.symfonion.core.ExceptionThrower.*;
-import static com.github.dakusui.symfonion.core.SymfonionIllegalFormatException.NOTELENGTH_EXAMPLE;
-import static com.github.dakusui.symfonion.core.SymfonionTypeMismatchException.OBJECT;
+import static com.github.dakusui.symfonion.core.exceptions.ExceptionThrower.*;
+import static com.github.dakusui.symfonion.core.exceptions.SymfonionIllegalFormatException.NOTELENGTH_EXAMPLE;
+import static com.github.dakusui.symfonion.core.exceptions.SymfonionTypeMismatchException.OBJECT;
 
 public class Groove {
   public static final Groove DEFAULT_INSTANCE = new Groove();

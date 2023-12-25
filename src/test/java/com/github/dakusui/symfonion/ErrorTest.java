@@ -8,7 +8,7 @@ import java.io.PrintStream;
 import org.apache.commons.cli.ParseException;
 import org.junit.Before;
 
-import com.github.dakusui.symfonion.core.SymfonionException;
+import com.github.dakusui.symfonion.core.exceptions.SymfonionException;
 import com.github.dakusui.symfonion.core.Util;
 
 public class ErrorTest {

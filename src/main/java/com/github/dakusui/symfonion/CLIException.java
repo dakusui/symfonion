@@ -1,6 +1,6 @@
 package com.github.dakusui.symfonion;
 
-import com.github.dakusui.symfonion.core.SymfonionException;
+import com.github.dakusui.symfonion.core.exceptions.SymfonionException;
 
 public class CLIException extends SymfonionException {
 	/**

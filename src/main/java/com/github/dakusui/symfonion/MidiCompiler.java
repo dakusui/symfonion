@@ -4,9 +4,9 @@ import com.github.dakusui.logias.Logias;
 import com.github.dakusui.logias.lisp.Context;
 import com.github.dakusui.logias.lisp.s.Literal;
 import com.github.dakusui.logias.lisp.s.Sexp;
-import com.github.dakusui.symfonion.core.ExceptionThrower;
+import com.github.dakusui.symfonion.core.exceptions.ExceptionThrower;
 import com.github.dakusui.symfonion.core.Fraction;
-import com.github.dakusui.symfonion.core.SymfonionException;
+import com.github.dakusui.symfonion.core.exceptions.SymfonionException;
 import com.github.dakusui.symfonion.core.Util;
 import com.github.dakusui.symfonion.song.*;
 import com.github.dakusui.symfonion.song.Pattern.Parameters;
@@ -20,7 +20,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import static com.github.dakusui.symfonion.core.ExceptionThrower.partNotFound;
+import static com.github.dakusui.symfonion.core.exceptions.ExceptionThrower.partNotFound;
 
 public class MidiCompiler {
   public static class CompilerContext {
