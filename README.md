@@ -33,7 +33,7 @@ $ symfonion infile
 
 where "infile" is a ```symfonion``` file and it will look like this.
 
-```javascript
+```json
 
     {
         "$parts":{ "pianor": {"$channel":0} },
