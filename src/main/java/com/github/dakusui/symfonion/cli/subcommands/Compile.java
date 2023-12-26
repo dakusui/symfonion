@@ -1,6 +1,7 @@
 package com.github.dakusui.symfonion.cli.subcommands;
 
 import com.github.dakusui.symfonion.cli.Cli;
+import com.github.dakusui.symfonion.cli.CliUtils;
 import com.github.dakusui.symfonion.cli.Subcommand;
 import com.github.dakusui.symfonion.core.exceptions.SymfonionException;
 import com.github.dakusui.symfonion.scenarios.Symfonion;
@@ -23,7 +24,7 @@ public class Compile implements Subcommand {
         for (String portName : sequences.keySet()) {
             Sequence seq = sequences.get(portName);
             String outfile = cli.getSinkFile().getAbsolutePath();
-            File outputFile = cli.composeOutputFile(outfile, portName);
+            File outputFile = CliUtils.composeOutputFile(outfile, portName);
             MidiSystem.write(seq, 1, outputFile);
 
         }

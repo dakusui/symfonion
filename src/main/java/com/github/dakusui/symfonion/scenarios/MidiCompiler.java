@@ -23,84 +23,8 @@ import java.util.Map;
 import static com.github.dakusui.symfonion.core.exceptions.ExceptionThrower.partNotFound;
 
 public class MidiCompiler {
-  public static class CompilerContext {
-    private Track      track;
-    private int        channel;
-    private Parameters params;
-    private Fraction   relativeStrokePositionInBar;
-    private long       barPositionInTicks;
-    private Groove     groove;
-
-    public Fraction getRelativeStrokePositionInBar() {
-      return relativeStrokePositionInBar;
-    }
-
-    public long getBarPositionInTicks() {
-      return barPositionInTicks;
-    }
-
-    public Groove getGroove() {
-      return groove;
-    }
-
-    public CompilerContext(
-        Track track,
-        int channel,
-        Parameters params,
-        Fraction relativeStrokePositionInBar,
-        long barPositionInTicks,
-        Groove groove
-    ) {
-      this.track = track;
-      this.channel = channel;
-      this.params = params;
-      this.relativeStrokePositionInBar = relativeStrokePositionInBar;
-      this.barPositionInTicks = barPositionInTicks;
-      this.groove = groove;
-      //this.position = position;
-      //this.grooveAccent = grooveAccent;
-      //this.strokeLengthInTicks = strokeLengthInTicks;
-    }
-
-    public Track getTrack() {
-      return track;
-    }
-
-    public int getChannel() {
-      return channel;
-    }
-
-    public Parameters getParams() {
-      return params;
-    }
-
-    public long getStrokeLengthInTicks(Stroke stroke) {
-      return convertRelativePositionInStrokeToAbsolutePosition(stroke.length());
-    }
-
-    public long convertRelativePositionInStrokeToAbsolutePosition(Fraction relativePositionInStroke) {
-      Groove.Unit unit = resolveRelativePositionInStroke(relativePositionInStroke);
-      long relativePositionInBarInTicks = unit.pos();
-      return getBarPositionInTicks() + relativePositionInBarInTicks;
-    }
-
-    public int getGrooveAccent(Fraction relPosInStroke) {
-      Groove.Unit unit = resolveRelativePositionInStroke(relPosInStroke);
-      return unit.accent();
-    }
-
-    private Groove.Unit resolveRelativePositionInStroke(
-        Fraction relativePositionInStroke) {
-      return this.getGroove().resolve(
-          Fraction.add(
-              this.getRelativeStrokePositionInBar(),
-              relativePositionInStroke
-          )
-      );
-    }
-  }
-
-  private Context logiasContext;
+  
+  private final Context logiasContext;
 
   public MidiCompiler(Context logiasContext) {
     this.logiasContext = logiasContext;
@@ -109,8 +33,9 @@ public class MidiCompiler {
   public Map<String, Sequence> compile(Song song) throws InvalidMidiDataException, SymfonionException {
     System.out.println("Now compiling...");
     int resolution = 384;
-    Map<String, Sequence> ret = new HashMap<String, Sequence>();
-    Map<String, Track> tracks = new HashMap<String, Track>();
+    Map<String, Sequence> ret = new HashMap<>();
+    Map<String, Track> tracks;
+    tracks = new HashMap<>();
     for (String partName : song.partNames()) {
       Part part = song.part(partName);
       String portName = part.portName();
@@ -152,7 +77,7 @@ public class MidiCompiler {
 
                 stroke.compile(
                     this,
-                    new CompilerContext(
+                    new MidiCompilerContext(
                         track,
                         channel,
                         params,
@@ -179,7 +104,7 @@ public class MidiCompiler {
       }
       barEnded();
       barid++;
-      barPositionInTicks += bar.beats().doubleValue() * resolution;
+      barPositionInTicks += (long) (bar.beats().doubleValue() * resolution);
     }
     System.out.println("Compilation finished.");
     return ret;

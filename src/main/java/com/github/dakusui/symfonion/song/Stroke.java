@@ -2,7 +2,7 @@ package com.github.dakusui.symfonion.song;
 
 import com.github.dakusui.json.*;
 import com.github.dakusui.symfonion.scenarios.MidiCompiler;
-import com.github.dakusui.symfonion.scenarios.MidiCompiler.CompilerContext;
+import com.github.dakusui.symfonion.scenarios.MidiCompilerContext;
 import com.github.dakusui.symfonion.core.Fraction;
 import com.github.dakusui.symfonion.core.exceptions.SymfonionException;
 import com.github.dakusui.symfonion.core.Utils;
@@ -224,9 +224,9 @@ public class Stroke {
 		}
 	}
 
-	public void compile(final MidiCompiler compiler, CompilerContext context) throws InvalidMidiDataException {
-		final Track track = context.getTrack();
-		final int ch = context.getChannel();
+	public void compile(final MidiCompiler compiler, MidiCompilerContext context) throws InvalidMidiDataException {
+		final Track track = context.track();
+		final int ch = context.channel();
 		long absolutePosition = context.convertRelativePositionInStrokeToAbsolutePosition(Fraction.zero);
 		long strokeLen = context.getStrokeLengthInTicks(this);
 		if (tempo != UNDEFINED_NUM) {
@@ -295,8 +295,8 @@ public class Stroke {
 				track.add(compiler.createAfterTouchChangeEvent(ch, v, pos));
 			}
 		});
-		int transpose = context.getParams().transpose();
-		int arpegiodelay = context.getParams().arpegio();
+		int transpose = context.params().transpose();
+		int arpegiodelay = context.params().arpegio();
 		int delta = 0;
 		Fraction relPosInStroke = Fraction.zero;
 		for (NoteSet noteSet : this.noteSets()) {
@@ -314,8 +314,8 @@ public class Stroke {
 						0,
 						Math.min(
 								127,
-								context.getParams().velocitybase() +
-										note.accent() * context.getParams().velocitydelta() +
+								context.params().velocitybase() +
+										note.accent() * context.params().velocitydelta() +
 										context.getGrooveAccent(relPosInStroke)
 								)
 						);

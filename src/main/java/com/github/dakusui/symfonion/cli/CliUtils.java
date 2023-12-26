@@ -1,7 +1,10 @@
 package com.github.dakusui.symfonion.cli;
 
 import com.github.dakusui.symfonion.core.exceptions.CLIException;
+import com.github.dakusui.symfonion.song.Keyword;
 import org.apache.commons.cli.CommandLine;
+
+import java.io.File;
 
 import static java.lang.String.format;
 
@@ -45,6 +48,21 @@ public enum CliUtils {
               "This option requires one and only one value. (found %d times)", sz),
           optionName, null);
       throw new CLIException(msg);
+    }
+    return ret;
+  }
+  
+  public static File composeOutputFile(String outfile, String portName) {
+    if (portName == null || Keyword.$default.name().equals(portName)) {
+      return new File(outfile);
+    }
+    File ret;
+    int lastIndexOfDot = outfile.lastIndexOf('.');
+    if (lastIndexOfDot == -1) {
+      ret = new File(outfile + "." + portName);
+    } else {
+      ret = new File(outfile.substring(0, lastIndexOfDot) + "." + portName
+          + outfile.substring(lastIndexOfDot));
     }
     return ret;
   }

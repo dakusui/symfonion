@@ -6,7 +6,6 @@ import com.github.dakusui.symfonion.core.exceptions.CLIException;
 import com.github.dakusui.symfonion.scenarios.MidiDeviceScanner;
 import com.github.dakusui.symfonion.scenarios.Symfonion;
 import com.github.dakusui.symfonion.core.exceptions.SymfonionException;
-import com.github.dakusui.symfonion.song.Keyword;
 import org.apache.commons.cli.*;
 
 import javax.sound.midi.*;
@@ -43,21 +42,16 @@ public class Cli {
   
   public Map<String, MidiDevice> prepareMidiOutDevices(PrintStream ps)
       throws CLIException {
-    Map<String, Pattern> portDefinitions = this.getMidiOutDefinitions();
-    String deviceType = "out";
-    return prepareMidiDevices(ps, deviceType,
-        portDefinitions);
+    return prepareMidiDevices(ps, "out", this.getMidiOutDefinitions());
   }
   
   @SuppressWarnings("UnusedDeclaration")
   protected Map<String, MidiDevice> prepareMidiInDevices(PrintStream ps)
       throws CLIException {
-    Map<String, Pattern> portDefinitions = this.getMidiOutDefinitions();
-    String deviceType = "in";
-    return prepareMidiDevices(ps, deviceType, portDefinitions);
+    return prepareMidiDevices(ps, "in", this.getMidiOutDefinitions());
   }
   
-  private Map<String, MidiDevice> prepareMidiDevices(PrintStream ps,
+  private static Map<String, MidiDevice> prepareMidiDevices(PrintStream ps,
                                                      String deviceType, Map<String, Pattern> portDefinitions)
       throws CLIException {
     Map<String, MidiDevice> devices = new HashMap<>();
@@ -91,21 +85,6 @@ public class Cli {
       throw new CLIException(msg);
     }
     return matchedInfos;
-  }
-  
-  public static File composeOutputFile(String outfile, String portName) {
-    if (portName == null || Keyword.$default.name().equals(portName)) {
-      return new File(outfile);
-    }
-    File ret;
-    int lastIndexOfDot = outfile.lastIndexOf('.');
-    if (lastIndexOfDot == -1) {
-      ret = new File(outfile + "." + portName);
-    } else {
-      ret = new File(outfile.substring(0, lastIndexOfDot) + "." + portName
-          + outfile.substring(lastIndexOfDot));
-    }
-    return ret;
   }
   
   public Options getOptions() {
