@@ -1,4 +1,4 @@
-package com.github.dakusui.symfonion;
+package com.github.dakusui.symfonion.core.exceptions;
 
 import com.github.dakusui.symfonion.core.exceptions.SymfonionException;
 

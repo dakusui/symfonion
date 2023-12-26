@@ -1,8 +1,8 @@
 package com.github.dakusui.symfonion.song;
 
 import com.github.dakusui.json.*;
-import com.github.dakusui.symfonion.MidiCompiler;
-import com.github.dakusui.symfonion.MidiCompiler.CompilerContext;
+import com.github.dakusui.symfonion.scenarios.MidiCompiler;
+import com.github.dakusui.symfonion.scenarios.MidiCompiler.CompilerContext;
 import com.github.dakusui.symfonion.core.Fraction;
 import com.github.dakusui.symfonion.core.exceptions.SymfonionException;
 import com.github.dakusui.symfonion.core.Util;

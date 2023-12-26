@@ -1,4 +1,4 @@
-package com.github.dakusui.symfonion;
+package com.github.dakusui.symfonion.scenarios;
 
 import java.io.PrintStream;
 import java.util.LinkedList;

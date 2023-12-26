@@ -1,4 +1,4 @@
-package com.github.dakusui.symfonion;
+package com.github.dakusui.symfonion.scenarios;
 
 import com.github.dakusui.logias.Logias;
 import com.github.dakusui.logias.lisp.Context;

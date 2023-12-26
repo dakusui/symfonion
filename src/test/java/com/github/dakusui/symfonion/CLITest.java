@@ -5,6 +5,9 @@ import static org.junit.Assert.assertEquals;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 
+import com.github.dakusui.symfonion.cli.CLI;
+import com.github.dakusui.symfonion.cli.subcommands.PresetSubcommand;
+import com.github.dakusui.symfonion.core.exceptions.CLIException;
 import com.github.dakusui.symfonion.core.exceptions.SymfonionException;
 import org.apache.commons.cli.ParseException;
 import org.junit.Test;
@@ -13,20 +16,20 @@ public class CLITest {
 	@Test
 	public void help_01() throws CLIException, ParseException {
 		CLI r = new CLI("-h");
-		assertEquals(CLI.Mode.HELP, r.getMode());
+		assertEquals(PresetSubcommand.HELP, r.getMode());
 	}
 
 	@Test
 	public void help_02() throws ParseException, IOException, CLIException {
 		CLI r = new CLI("--help");
-		assertEquals(CLI.Mode.HELP, r.getMode());
+		assertEquals(PresetSubcommand.HELP, r.getMode());
 	}
 	
 	@Test
 	public void compile_01() throws ParseException, CLIException {
 		String srcFileName = "test.json";
 		CLI r = new CLI("-c", srcFileName);
-		assertEquals(CLI.Mode.COMPILE, r.getMode());
+		assertEquals(PresetSubcommand.COMPILE, r.getMode());
 		assertEquals(new File(srcFileName), r.getSourceFile());
 	}
 	

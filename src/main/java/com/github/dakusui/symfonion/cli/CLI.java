@@ -1,9 +1,12 @@
-package com.github.dakusui.symfonion;
+package com.github.dakusui.symfonion.cli;
 
 import com.github.dakusui.logias.lisp.Context;
+import com.github.dakusui.symfonion.cli.subcommands.PresetSubcommand;
+import com.github.dakusui.symfonion.core.exceptions.CLIException;
+import com.github.dakusui.symfonion.scenarios.MidiDeviceScanner;
+import com.github.dakusui.symfonion.scenarios.Symfonion;
 import com.github.dakusui.symfonion.core.exceptions.SymfonionException;
 import com.github.dakusui.symfonion.song.Keyword;
-import com.github.dakusui.symfonion.song.Song;
 import org.apache.commons.cli.*;
 
 import javax.sound.midi.*;
@@ -20,194 +23,14 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 public class CLI {
-  static enum Mode {
-    VERSION {
-      @Override
-      public void invoke(CLI cli, PrintStream ps) {
-        ps.println("SyMFONION " + cli.version());
-        ps.println(cli.license());
-      }
-    },
-    HELP {
-      @Override
-      public void invoke(CLI cli, PrintStream ps) {
-        HelpFormatter formatter = new HelpFormatter();
-        formatter.printHelp("SYNTAX", cli.getOptions());
-      }
-    },
-    LIST {
-      @Override
-      public void invoke(CLI cli, PrintStream ps) {
-        MidiDeviceScanner.listAllDevices(System.out).scan();
-      }
-    },
-    PLAY {
-      @Override
-      public void invoke(CLI cli, PrintStream ps) throws SymfonionException,
-          IOException {
-        Symfonion symfonion = cli.getSymfonion();
 
-        Song song = symfonion.load(cli.getSourceFile().getAbsolutePath());
-        Map<String, Sequence> sequences = symfonion.compile(song);
-        ps.println();
-        Map<String, MidiDevice> devices = cli.prepareMidiOutDevices(ps);
-        ps.println();
-        symfonion.play(devices, sequences);
-      }
-    },
-    COMPILE {
-      @Override
-      public void invoke(CLI cli, PrintStream ps) throws SymfonionException,
-          IOException {
-        Symfonion symfonion = cli.getSymfonion();
-        Song song = symfonion.load(cli.getSourceFile().getAbsolutePath());
-        Map<String, Sequence> sequences = symfonion.compile(song);
-
-        for (String portName : sequences.keySet()) {
-          Sequence seq = sequences.get(portName);
-          String outfile = cli.getSinkFile().getAbsolutePath();
-          File outputFile = cli.composeOutputFile(outfile, portName);
-          MidiSystem.write(seq, 1, outputFile);
-        }
-      }
-    },
-    ROUTE {
-      @Override
-      public void invoke(CLI cli, PrintStream ps) throws CLIException {
-        Route route = cli.getRoute();
-        String inPortName = route.in;
-        String outPortName = route.out;
-
-        Map<String, Pattern> inDefs = cli.getMidiInDefinitions();
-
-        if (!inDefs.containsKey(inPortName)) {
-          String msg = cli
-              .composeErrMsg(
-                  String
-                      .format(
-                          "MIDI-in port '%s' is specified, but it is not defined by '-I' option.",
-                          inPortName), "r", "--route");
-          throw new CLIException(msg);
-        }
-        Pattern inRegex = inDefs.get(inPortName);
-        MidiDeviceScanner inScanner = MidiDeviceScanner.chooseInputDevices(
-            System.out, inRegex);
-        inScanner.scan();
-        MidiDevice.Info[] matchedInDevices = inScanner.getMatchedDevices();
-        if (matchedInDevices.length == 0 || matchedInDevices.length > 1) {
-          String msg = cli.composeErrMsg(String.format(
-              "MIDI-in device for %s(%s) is not found or found more than one.",
-              inPortName, inRegex), "I", null);
-          throw new CLIException(msg);
-        }
-
-        ps.println();
-
-        Map<String, Pattern> outDefs = cli.getMidiOutDefinitions();
-        if (!outDefs.containsKey(outPortName)) {
-          String msg = cli
-              .composeErrMsg(
-                  String
-                      .format(
-                          "MIDI-out port '%s' is specified, but it is not defined by '-O' option.",
-                          inPortName), "r", "route");
-          throw new CLIException(msg);
-        }
-        Pattern outRegex = outDefs.get(outPortName);
-        MidiDeviceScanner outScanner = MidiDeviceScanner.chooseOutputDevices(
-            System.out, outRegex);
-        outScanner.scan();
-        MidiDevice.Info[] matchedOutDevices = outScanner.getMatchedDevices();
-        if (matchedOutDevices.length == 0 || matchedOutDevices.length > 1) {
-          String msg = cli
-              .composeErrMsg(
-                  String
-                      .format(
-                          "MIDI-out device for %s(%s) is not found or found more than one.",
-                          outPortName, outRegex), "I", null);
-          throw new CLIException(msg);
-        }
-        ps.println();
-        patchbay(matchedInDevices[0], matchedOutDevices[0]);
-      }
-
-      void patchbay(MidiDevice.Info in, MidiDevice.Info out)
-          throws CLIException {
-        MidiDevice midiout;
-        try {
-          midiout = MidiSystem.getMidiDevice(out);
-          midiout.open();
-        } catch (MidiUnavailableException e) {
-          throw new CLIException(String.format(
-              "(-) Failed to open MIDI-out device (%s)", out.getName()), e);
-        }
-        try {
-          MidiDevice midiin;
-          try {
-            midiin = MidiSystem.getMidiDevice(in);
-            midiin.open();
-          } catch (MidiUnavailableException ee) {
-            throw new CLIException(String.format(
-                "(-) Failed to open MIDI-in device (%s)", in.getName()), ee);
-          }
-          try {
-            Receiver r = midiout.getReceiver();
-            try {
-              Transmitter t = midiin.getTransmitter();
-              try {
-                t.setReceiver(r);
-                System.out
-                    .println("Now in MIDI patch-bay mode. Hit enter to quit.");
-                //noinspection ResultOfMethodCallIgnored
-                System.in.read();
-              } catch (IOException e) {
-                System.out.println("quitting due to an error.");
-              } finally {
-                System.out.println("closing transmitter");
-                t.close();
-              }
-            } catch (MidiUnavailableException e) {
-              throw new CLIException(String.format(
-                  "(-) Failed to get transmitter from MIDI-in device (%s)",
-                  in.getName()), e);
-            } finally {
-              System.out.println("closing receiver");
-              r.close();
-            }
-          } catch (MidiUnavailableException e) {
-            throw new CLIException(String.format(
-                "(-) Failed to get receiver from MIDI-out device (%s)",
-                out.getName()), e);
-          } finally {
-            midiin.close();
-          }
-        } finally {
-          midiout.close();
-        }
-      }
-    };
-
-    public abstract void invoke(CLI cli, PrintStream ps)
-        throws SymfonionException, IOException;
-  }
-
-  static class Route {
-    String in;
-    String out;
-
-    Route(String in, String out) {
-      this.in = in;
-      this.out = out;
-    }
-  }
-
-  private Mode mode = Mode.VERSION;
+  private Subcommand subcommand = PresetSubcommand.VERSION;
   private File source;
   private File                 sink     = new File("a.midi");
   private Route                route    = null;
   private Map<String, Pattern> midiins  = new HashMap<>();
   private Map<String, Pattern> midiouts = new HashMap<>();
-  private Symfonion symfonion;
+  private final Symfonion symfonion;
   private Options   options;
 
   public CLI(String... args) throws ParseException, CLIException {
@@ -215,7 +38,7 @@ public class CLI {
     this.symfonion = createSymfonion();
   }
 
-  protected Map<String, MidiDevice> prepareMidiOutDevices(PrintStream ps)
+  public Map<String, MidiDevice> prepareMidiOutDevices(PrintStream ps)
       throws CLIException {
     Map<String, Pattern> portDefinitions = this.getMidiOutDefinitions();
     String deviceType = "out";
@@ -234,7 +57,7 @@ public class CLI {
   private Map<String, MidiDevice> prepareMidiDevices(PrintStream ps,
       String deviceType, Map<String, Pattern> portDefinitions)
       throws CLIException {
-    Map<String, MidiDevice> devices = new HashMap<String, MidiDevice>();
+    Map<String, MidiDevice> devices = new HashMap<>();
     for (String portname : portDefinitions.keySet()) {
       Pattern regex = portDefinitions.get(portname);
       MidiDeviceScanner scanner = MidiDeviceScanner.chooseOutputDevices(ps,
@@ -269,7 +92,7 @@ public class CLI {
     return matchedInfos;
   }
 
-  protected File composeOutputFile(String outfile, String portName) {
+  public File composeOutputFile(String outfile, String portName) {
     if (portName == null || Keyword.$default.name().equals(portName)) {
       return new File(outfile);
     }
@@ -284,7 +107,7 @@ public class CLI {
     return ret;
   }
 
-  protected Options getOptions() {
+  public Options getOptions() {
     return this.options;
   }
 
@@ -373,13 +196,13 @@ public class CLI {
       this.sink = new File(sinkFilename);
     }
     if (cmd.hasOption("V") || cmd.hasOption("version")) {
-      this.mode = Mode.VERSION;
+      this.subcommand = PresetSubcommand.VERSION;
     } else if (cmd.hasOption("h") || cmd.hasOption("help")) {
-      this.mode = Mode.HELP;
+      this.subcommand = PresetSubcommand.HELP;
     } else if (cmd.hasOption("l") || cmd.hasOption("list")) {
-      this.mode = Mode.LIST;
+      this.subcommand = PresetSubcommand.LIST;
     } else if (cmd.hasOption("p") || cmd.hasOption("play")) {
-      this.mode = Mode.PLAY;
+      this.subcommand = PresetSubcommand.PLAY;
       String sourceFilename = getSingleOptionValue(cmd, "p");
       if (sourceFilename == null) {
         String msg = composeErrMsg(
@@ -388,7 +211,7 @@ public class CLI {
       }
       this.source = new File(sourceFilename);
     } else if (cmd.hasOption("c") || cmd.hasOption("compile")) {
-      this.mode = Mode.COMPILE;
+      this.subcommand = PresetSubcommand.COMPILE;
       String sourceFilename = getSingleOptionValue(cmd, "c");
       if (sourceFilename == null) {
         String msg = composeErrMsg(
@@ -397,7 +220,7 @@ public class CLI {
       }
       this.source = new File(sourceFilename);
     } else if (cmd.hasOption("r") || cmd.hasOption("route")) {
-      this.mode = Mode.ROUTE;
+      this.subcommand = PresetSubcommand.ROUTE;
       Properties props = cmd.getOptionProperties("r");
       if (props.size() != 1) {
         String msg = composeErrMsg(
@@ -411,11 +234,11 @@ public class CLI {
     } else {
       @SuppressWarnings("unchecked")
       List<String> leftovers = cmd.getArgList();
-      if (leftovers.size() == 0) {
-        this.mode = Mode.HELP;
+      if (leftovers.isEmpty()) {
+        this.subcommand = PresetSubcommand.HELP;
       } else if (leftovers.size() == 1) {
-        this.mode = Mode.PLAY;
-        this.source = new File(leftovers.get(0));
+        this.subcommand = PresetSubcommand.PLAY;
+        this.source = new File(leftovers.getFirst());
       } else {
         String msg = composeErrMsg(
             String.format("Unrecognized arguments:%s",
@@ -428,7 +251,7 @@ public class CLI {
   private Map<String, Pattern> initializeMidiPorts(CommandLine cmd,
       String optionName) throws CLIException {
     Properties props = cmd.getOptionProperties(optionName);
-    Map<String, Pattern> ret = new HashMap<String, Pattern>();
+    Map<String, Pattern> ret = new HashMap<>();
     for (Object key : props.keySet()) {
       String portname = key.toString();
       String p = props.getProperty(portname);
@@ -444,8 +267,8 @@ public class CLI {
     return ret;
   }
 
-  private String composeErrMsg(String msg, String optionName,
-      String longOptionName) {
+  public String composeErrMsg(String msg, String optionName,
+                              String longOptionName) {
     if (longOptionName != null) {
       return String.format("(-%s/--%s) %s", optionName, longOptionName, msg);
     } else {
@@ -466,24 +289,22 @@ public class CLI {
     return ret;
   }
 
-  public Mode getMode() {
-    return this.mode;
+  public Subcommand getMode() {
+    return this.subcommand;
   }
 
-  private String license() {
-    return "Copyright 2013 Hiroshi Ukai.\n\n"
-        + "Licensed under the Apache License, Version 2.0 (the \"License\");"
-        + "you may not use this work except in compliance with the License. "
-        + "You may obtain a copy of the License in the LICENSE file, or at:\n\n"
-        + "http://www.apache.org/licenses/LICENSE-2.0\n\n"
-        + "Unless required by applicable law or agreed to in writing, "
-        + "software distributed under the License is distributed on an \"AS IS\" "
-        + "BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either "
-        + "express or implied. See the License for the specific language "
-        + "governing permissions and limitations under the License.";
+  public String license() {
+    return """
+            Copyright 2013 Hiroshi Ukai.
+
+            Licensed under the Apache License, Version 2.0 (the "License");you may not use this work except in compliance with the License. You may obtain a copy of the License in the LICENSE file, or at:
+
+            https://www.apache.org/licenses/LICENSE-2.0
+
+            Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.""";
   }
 
-  private String version() {
+  public String version() {
     String path = "/META-INF/maven/com.github.dakusui/symfonion/pom.properties";
     Properties props = new Properties();
     String version = "(N/A)";
@@ -532,14 +353,13 @@ public class CLI {
     int ret;
     try {
       CLI cli = new CLI(args);
-      cli.mode.invoke(cli, stdout);
+      cli.subcommand.invoke(cli, stdout);
       ret = 0;
     } catch (ParseException e) {
       printError(stderr, e);
       ret = 1;
     } catch (CLIException e) {
       printError(stderr, e);
-      e.printStackTrace();
       ret = 2;
     } catch (SymfonionException e) {
       printError(stderr, e);
@@ -552,7 +372,7 @@ public class CLI {
   }
 
   private static void printError(PrintStream ps, Throwable t) {
-    ps.println(String.format("symfonion: %s", t.getMessage()));
+    ps.printf("symfonion: %s%n", t.getMessage());
   }
 
   private static String filenameFromFileChooser() {
@@ -594,17 +414,13 @@ public class CLI {
         }
 
         @Override
-        public void write(int b) throws IOException {
+        public void write(int b) {
           if (b == '\r')
             return;
 
           if (b == '\n') {
-            final String text = sb.toString() + "\n";
-            SwingUtilities.invokeLater(new Runnable() {
-              public void run() {
-                textArea.append(text);
-              }
-            });
+            final String text = sb + "\n";
+            SwingUtilities.invokeLater(() -> textArea.append(text));
             sb.setLength(0);
             return;
           }

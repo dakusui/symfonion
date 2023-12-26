@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 
+import com.github.dakusui.symfonion.cli.CLI;
+import com.github.dakusui.symfonion.core.exceptions.CLIException;
 import org.apache.commons.cli.ParseException;
 import org.junit.Before;
 
