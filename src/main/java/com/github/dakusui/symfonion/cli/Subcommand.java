@@ -6,5 +6,5 @@ import java.io.IOException;
 import java.io.PrintStream;
 
 public interface Subcommand {
-    void invoke(CLI cli, PrintStream ps) throws SymfonionException, IOException;
+    void invoke(Cli cli, PrintStream ps) throws SymfonionException, IOException;
 }

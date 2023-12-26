@@ -1,6 +1,6 @@
 package com.github.dakusui.symfonion.cli.subcommands;
 
-import com.github.dakusui.symfonion.cli.CLI;
+import com.github.dakusui.symfonion.cli.Cli;
 import com.github.dakusui.symfonion.cli.Subcommand;
 import com.github.dakusui.symfonion.core.exceptions.SymfonionException;
 
@@ -25,7 +25,7 @@ public class Version implements Subcommand {
       String path = "/META-INF/maven/com.github.dakusui/symfonion/pom.properties";
       Properties props = new Properties();
       String version = "(N/A)";
-      InputStream stream = CLI.class.getResourceAsStream(path);
+      InputStream stream = Cli.class.getResourceAsStream(path);
       if (stream != null) {
         try {
           props.load(stream);
@@ -37,7 +37,7 @@ public class Version implements Subcommand {
     }
     
     @Override
-    public void invoke(CLI cli, PrintStream ps) throws SymfonionException, IOException {
+    public void invoke(Cli cli, PrintStream ps) throws SymfonionException, IOException {
         ps.println("SyMFONION " + version());
         ps.println(license());
     }

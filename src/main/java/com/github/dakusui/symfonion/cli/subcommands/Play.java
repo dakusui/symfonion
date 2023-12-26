@@ -1,6 +1,6 @@
 package com.github.dakusui.symfonion.cli.subcommands;
 
-import com.github.dakusui.symfonion.cli.CLI;
+import com.github.dakusui.symfonion.cli.Cli;
 import com.github.dakusui.symfonion.cli.Subcommand;
 import com.github.dakusui.symfonion.core.exceptions.SymfonionException;
 import com.github.dakusui.symfonion.song.Song;
@@ -13,7 +13,7 @@ import java.util.Map;
 
 public class Play implements Subcommand {
     @Override
-    public void invoke(CLI cli, PrintStream ps) throws SymfonionException, IOException {
+    public void invoke(Cli cli, PrintStream ps) throws SymfonionException, IOException {
         Symfonion symfonion = cli.getSymfonion();
 
         Song song = symfonion.load(cli.getSourceFile().getAbsolutePath());

@@ -25,7 +25,7 @@ import java.util.regex.PatternSyntaxException;
 import static com.github.dakusui.symfonion.cli.CliUtils.composeErrMsg;
 import static java.lang.String.format;
 
-public class CLI {
+public class Cli {
   
   private Subcommand subcommand = PresetSubcommand.VERSION;
   private File source;
@@ -36,7 +36,7 @@ public class CLI {
   private final Symfonion symfonion;
   private Options options;
   
-  public CLI(String... args) throws ParseException, CLIException {
+  public Cli(String... args) throws ParseException, CLIException {
     this.init(args);
     this.symfonion = createSymfonion();
   }
@@ -293,7 +293,7 @@ public class CLI {
   public static int invoke(PrintStream stdout, PrintStream stderr, String... args) {
     int ret;
     try {
-      CLI cli = new CLI(args);
+      Cli cli = new Cli(args);
       cli.subcommand.invoke(cli, stdout);
       ret = 0;
     } catch (ParseException e) {

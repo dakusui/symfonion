@@ -1,6 +1,6 @@
 package com.github.dakusui.symfonion.cli.subcommands;
 
-import com.github.dakusui.symfonion.cli.CLI;
+import com.github.dakusui.symfonion.cli.Cli;
 import com.github.dakusui.symfonion.cli.CliUtils;
 import com.github.dakusui.symfonion.cli.Route;
 import com.github.dakusui.symfonion.cli.Subcommand;
@@ -17,7 +17,7 @@ import static java.lang.String.format;
 
 public class PatchBay implements Subcommand {
     @Override
-    public void invoke(CLI cli, PrintStream ps) throws CLIException {
+    public void invoke(Cli cli, PrintStream ps) throws CLIException {
         Route route = cli.getRoute();
         String inPortName = route.in();
         String outPortName = route.out();

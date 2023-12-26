@@ -5,6 +5,7 @@
 /.settings
 /.classpath
 /.project
+/generated
 report.jcunit
 .idea
 symfonion.iml
