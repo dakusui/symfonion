@@ -6,39 +6,31 @@ import com.github.dakusui.symfonion.core.exceptions.SymfonionException;
 
 import java.io.IOException;
 import java.io.PrintStream;
+import java.lang.reflect.InvocationTargetException;
+
+import static java.util.Objects.requireNonNull;
 
 public enum PresetSubcommand implements Subcommand {
-    VERSION {
-        @Override
-        public void invoke(CLI cli, PrintStream ps) throws SymfonionException, IOException {
-            new Version().invoke(cli, ps);
-        }
-    }, HELP {
-        @Override
-        public void invoke(CLI cli, PrintStream ps) {
-            new Help().invoke(cli, ps);
-        }
-    }, LIST {
-        @Override
-        public void invoke(CLI cli, PrintStream ps) {
-            new ListDevices().invoke(cli, ps);
-        }
-    }, PLAY {
-        @Override
-        public void invoke(CLI cli, PrintStream ps) throws SymfonionException, IOException {
-            new Play().invoke(cli, ps);
-        }
-    }, COMPILE {
-        @Override
-        public void invoke(CLI cli, PrintStream ps) throws SymfonionException, IOException {
-            new Compile().invoke(cli, ps);
-        }
-    }, ROUTE {
-        @Override
-        public void invoke(CLI cli, PrintStream ps) throws SymfonionException, IOException {
-            new PatchBay().invoke(cli, ps);
-        }
-    };
-
-    public abstract void invoke(CLI cli, PrintStream ps) throws SymfonionException, IOException;
+  VERSION(Version.class),
+  HELP(Help.class),
+  LIST(ListDevices.class),
+  PLAY(Play.class),
+  COMPILE(Compile.class),
+  ROUTE(PatchBay.class);
+  
+  private final Class<? extends Subcommand> subcommandClass;
+  
+  PresetSubcommand(Class<? extends Subcommand> subcommandClass) {
+    this.subcommandClass = requireNonNull(subcommandClass);
+  }
+  
+  final public void invoke(CLI cli, PrintStream ps) throws SymfonionException, IOException {
+    try {
+      ((Subcommand) this.subcommandClass.getConstructors()[0].newInstance()).invoke(cli, ps);
+    } catch (InstantiationException | IllegalAccessException e) {
+      throw new RuntimeException(e);
+    } catch (InvocationTargetException e) {
+      throw new RuntimeException(e.getCause());
+    }
+  }
 }
