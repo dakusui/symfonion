@@ -11,13 +11,13 @@ import org.apache.commons.cli.ParseException;
 import org.junit.Before;
 
 import com.github.dakusui.symfonion.core.exceptions.SymfonionException;
-import com.github.dakusui.symfonion.core.Util;
+import com.github.dakusui.symfonion.core.Utils;
 
 public class ErrorTest {
 	private File workFile;
 
 	File load(String resourceName) throws IOException, SymfonionException {
-		String content = Util.loadResource(resourceName);
+		String content = Utils.loadResource(resourceName);
 		File ret = this.getWorkFile();
 		PrintStream ps = new PrintStream(ret);
 		try {

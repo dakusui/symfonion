@@ -7,7 +7,7 @@ import com.github.dakusui.logias.lisp.s.Sexp;
 import com.github.dakusui.symfonion.core.exceptions.ExceptionThrower;
 import com.github.dakusui.symfonion.core.Fraction;
 import com.github.dakusui.symfonion.core.exceptions.SymfonionException;
-import com.github.dakusui.symfonion.core.Util;
+import com.github.dakusui.symfonion.core.Utils;
 import com.github.dakusui.symfonion.song.*;
 import com.github.dakusui.symfonion.song.Pattern.Parameters;
 import com.google.gson.JsonArray;
@@ -300,7 +300,7 @@ public class MidiCompiler {
   public MidiEvent createTempoEvent(int tempo, long lTick) throws InvalidMidiDataException {
     int mpqn = 60000000 / tempo;
     MetaMessage mm = new MetaMessage();
-    byte[] data = Util.getIntBytes(mpqn);
+    byte[] data = Utils.getIntBytes(mpqn);
     mm.setMessage(0x51, data, data.length);
     return new MidiEvent(mm, lTick);
   }

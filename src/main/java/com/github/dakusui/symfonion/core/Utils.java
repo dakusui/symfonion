@@ -17,9 +17,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.github.dakusui.symfonion.core.exceptions.ExceptionThrower.*;
+import static java.lang.String.format;
 
 
-public class Util {
+public class Utils {
 	public static final Pattern fractionPattern = Pattern.compile("([0-9]+)/([1-9][0-9]*)");
 	public static final java.util.regex.Pattern lengthPattern = java.util.regex.Pattern.compile("([1-9][0-9]*)(\\.*)");	
 
@@ -87,7 +88,7 @@ public class Util {
 		if (m.matches()) {
 			int l = Integer.parseInt(m.group(1));
 			ret = new Fraction(1, l);
-			int dots = Util.count('.', m.group(2));
+			int dots = Utils.count('.', m.group(2));
 			for (int i = 0; i < dots; i++) {
 				l *= 2;
 				ret = Fraction.add(ret, new Fraction(1, l));
@@ -126,4 +127,5 @@ public class Util {
 		}
 		return Integer.parseInt(o.toString());
 	}
+
 }

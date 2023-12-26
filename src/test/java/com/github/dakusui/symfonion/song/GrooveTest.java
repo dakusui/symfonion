@@ -6,9 +6,9 @@ import org.junit.Test;
 
 import com.github.dakusui.symfonion.core.Fraction;
 import com.github.dakusui.symfonion.core.exceptions.SymfonionException;
-import com.github.dakusui.symfonion.core.Util;
+import com.github.dakusui.symfonion.core.Utils;
 
-import static com.github.dakusui.symfonion.core.Util.parseNoteLength;
+import static com.github.dakusui.symfonion.core.Utils.parseNoteLength;
 
 public class GrooveTest {
 
@@ -75,10 +75,10 @@ public class GrooveTest {
 
 	Groove testGrooveA() throws SymfonionException {
 		Groove groove = new Groove();
-		groove.add(Util.parseNoteLength("16"), 24, 1);
-		groove.add(Util.parseNoteLength("16"), 24, 2);
-		groove.add(Util.parseNoteLength("16"), 24, 3);
-		groove.add(Util.parseNoteLength("16"), 24, 4);
+		groove.add(Utils.parseNoteLength("16"), 24, 1);
+		groove.add(Utils.parseNoteLength("16"), 24, 2);
+		groove.add(Utils.parseNoteLength("16"), 24, 3);
+		groove.add(Utils.parseNoteLength("16"), 24, 4);
 		return groove;
 	}
 	
@@ -155,10 +155,10 @@ public class GrooveTest {
 
 	Groove testGrooveB() throws SymfonionException {
 		Groove groove = new Groove();
-		groove.add(Util.parseNoteLength("16"), 26, 1);
-		groove.add(Util.parseNoteLength("16"), 22, 2);
-		groove.add(Util.parseNoteLength("16"), 25, 3);
-		groove.add(Util.parseNoteLength("16"), 23, 4);
+		groove.add(Utils.parseNoteLength("16"), 26, 1);
+		groove.add(Utils.parseNoteLength("16"), 22, 2);
+		groove.add(Utils.parseNoteLength("16"), 25, 3);
+		groove.add(Utils.parseNoteLength("16"), 23, 4);
 		return groove;
 	}
 }

@@ -5,7 +5,7 @@ import com.github.dakusui.json.JsonUtils;
 import com.github.dakusui.logias.Logias;
 import com.github.dakusui.logias.lisp.Context;
 import com.github.dakusui.symfonion.core.exceptions.SymfonionException;
-import com.github.dakusui.symfonion.core.Util;
+import com.github.dakusui.symfonion.core.Utils;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -50,7 +50,7 @@ public class Song {
 			Context context = logiasContext;
 			Logias logias = new Logias(logiasContext); 
 			if (!"".equals(profileName)) {
-				JsonObject devicedef = JsonUtils.toJson(Util.loadResource(profileName + ".js")).getAsJsonObject();
+				JsonObject devicedef = JsonUtils.toJson(Utils.loadResource(profileName + ".js")).getAsJsonObject();
 				Iterator<String> i = JsonUtils.keyIterator(devicedef);
 				while (i.hasNext()) {
 					String k = i.next();

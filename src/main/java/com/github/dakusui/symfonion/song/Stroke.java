@@ -5,7 +5,7 @@ import com.github.dakusui.symfonion.scenarios.MidiCompiler;
 import com.github.dakusui.symfonion.scenarios.MidiCompiler.CompilerContext;
 import com.github.dakusui.symfonion.core.Fraction;
 import com.github.dakusui.symfonion.core.exceptions.SymfonionException;
-import com.github.dakusui.symfonion.core.Util;
+import com.github.dakusui.symfonion.core.Utils;
 import com.github.dakusui.symfonion.song.Pattern.Parameters;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -59,7 +59,7 @@ public class Stroke {
 		if (JsonUtils.hasPath(obj, Keyword.$length)) {
 			JsonElement lenJSON = JsonUtils.asJsonElement(obj, Keyword.$length);
 			if (lenJSON.isJsonPrimitive()) {
-				len = Util.parseNoteLength(lenJSON.getAsString());
+				len = Utils.parseNoteLength(lenJSON.getAsString());
 				if (len == null) {
 					throw illegalFormatException(lenJSON, NOTELENGTH_EXAMPLE);
 				}
@@ -100,7 +100,7 @@ public class Stroke {
 				Fraction nsLen;
 				String l;
 				if ((l = parseNotes(nn, ns)) != null) {
-					nsLen = Util.parseNoteLength(l);
+					nsLen = Utils.parseNoteLength(l);
 				} else {
 					nsLen = len;
 				}
@@ -189,14 +189,14 @@ public class Stroke {
 			if (n_ >= 0) {
 				int n =
 						n_ +
-								Util.count('#', m.group(2)) - Util.count('b', m.group(2)) +
-								Util.count('>', m.group(3)) * 12 - Util.count('<', m.group(3)) * 12;
-				int a = Util.count('+', m.group(4)) - Util.count('-', m.group(4));
+								Utils.count('#', m.group(2)) - Utils.count('b', m.group(2)) +
+								Utils.count('>', m.group(3)) * 12 - Utils.count('<', m.group(3)) * 12;
+				int a = Utils.count('+', m.group(4)) - Utils.count('-', m.group(4));
 				Note nn = new Note(n, a);
 				notes.add(nn);
 			}
 		}
-		Matcher n = Util.lengthPattern.matcher(s);
+		Matcher n = Utils.lengthPattern.matcher(s);
 		String ret = null;
 		if (n.find(i)) {
 			ret = s.substring(n.start(), n.end());

@@ -1,6 +1,7 @@
 package com.github.dakusui.symfonion.cli.subcommands;
 
 import com.github.dakusui.symfonion.cli.CLI;
+import com.github.dakusui.symfonion.cli.CliUtils;
 import com.github.dakusui.symfonion.cli.Route;
 import com.github.dakusui.symfonion.cli.Subcommand;
 import com.github.dakusui.symfonion.core.exceptions.CLIException;
@@ -24,7 +25,7 @@ public class PatchBay implements Subcommand {
         Map<String, Pattern> inDefs = cli.getMidiInDefinitions();
 
         if (!inDefs.containsKey(inPortName)) {
-            String msg = cli.composeErrMsg(format("MIDI-in port '%s' is specified, but it is not defined by '-I' option.", inPortName), "r", "--route");
+            String msg = CliUtils.composeErrMsg(format("MIDI-in port '%s' is specified, but it is not defined by '-I' option.", inPortName), "r", "--route");
             throw new CLIException(msg);
         }
         Pattern inRegex = inDefs.get(inPortName);
@@ -33,7 +34,7 @@ public class PatchBay implements Subcommand {
         inScanner.scan();
         MidiDevice.Info[] matchedInDevices = inScanner.getMatchedDevices();
         if (matchedInDevices.length != 1) {
-            String msg = cli.composeErrMsg(format(
+            String msg = CliUtils.composeErrMsg(format(
                     "MIDI-in device for %s(%s) is not found or found more than one.",
                     inPortName, inRegex), "I", null);
             throw new CLIException(msg);
@@ -43,7 +44,7 @@ public class PatchBay implements Subcommand {
 
         Map<String, Pattern> outDefs = cli.getMidiOutDefinitions();
         if (!outDefs.containsKey(outPortName)) {
-            String msg = cli
+            String msg = CliUtils
                     .composeErrMsg(
                             format(
                                     "MIDI-out port '%s' is specified, but it is not defined by '-O' option.",
@@ -56,7 +57,7 @@ public class PatchBay implements Subcommand {
         outScanner.scan();
         MidiDevice.Info[] matchedOutDevices = outScanner.getMatchedDevices();
         if (matchedOutDevices.length != 1) {
-            String msg = cli.composeErrMsg(format(
+            String msg = CliUtils.composeErrMsg(format(
                     "MIDI-out device for %s(%s) is not found or found more than one.",
                     outPortName, outRegex), "I", null);
             throw new CLIException(msg);

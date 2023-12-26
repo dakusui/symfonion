@@ -4,7 +4,7 @@ import com.github.dakusui.json.JsonException;
 import com.github.dakusui.json.JsonUtils;
 import com.github.dakusui.symfonion.core.Fraction;
 import com.github.dakusui.symfonion.core.exceptions.SymfonionException;
-import com.github.dakusui.symfonion.core.Util;
+import com.github.dakusui.symfonion.core.Utils;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -43,7 +43,7 @@ public class Pattern {
       this.velocitybase = JsonUtils.asIntWithDefault(json, 64, Keyword.$velocitybase);
       this.velocitydelta = JsonUtils.asIntWithDefault(json, 5, Keyword.$velocitydelta);
       this.gate = JsonUtils.asDoubleWithDefault(json, 0.8, Keyword.$gate);
-      this.length = Util.parseNoteLength(JsonUtils.asStringWithDefault(json, "4", Keyword.$length));
+      this.length = Utils.parseNoteLength(JsonUtils.asStringWithDefault(json, "4", Keyword.$length));
       if (this.length == null) {
         throw illegalFormatException(
             JsonUtils.asJsonElement(json, Keyword.$length),

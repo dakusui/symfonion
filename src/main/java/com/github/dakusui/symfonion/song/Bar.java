@@ -34,7 +34,7 @@ public class Bar {
 
   private void init(JsonObject jsonObject) throws SymfonionException, JsonException {
     try {
-      this.beats = Util.parseFraction(JsonUtils.asString(jsonObject, Keyword.$beats));
+      this.beats = Utils.parseFraction(JsonUtils.asString(jsonObject, Keyword.$beats));
     } catch (FractionFormatException e) {
       throw illegalFormatException(
           JsonUtils.asJsonElement(jsonObject, Keyword.$beats),

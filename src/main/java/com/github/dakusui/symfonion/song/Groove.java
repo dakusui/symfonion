@@ -6,7 +6,7 @@ import com.github.dakusui.json.JsonTypeMismatchException;
 import com.github.dakusui.json.JsonUtils;
 import com.github.dakusui.symfonion.core.Fraction;
 import com.github.dakusui.symfonion.core.exceptions.SymfonionException;
-import com.github.dakusui.symfonion.core.Util;
+import com.github.dakusui.symfonion.core.Utils;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -119,7 +119,7 @@ public class Groove {
       long ticks = JsonUtils.asLong(cur, Keyword.$ticks);
       int accent = JsonUtils.asInt(cur, Keyword.$accent);
 
-      Fraction f = Util.parseNoteLength(len);
+      Fraction f = Utils.parseNoteLength(len);
       if (f == null) {
         throw illegalFormatException(
             JsonUtils.asJsonElement(cur, Keyword.$length),

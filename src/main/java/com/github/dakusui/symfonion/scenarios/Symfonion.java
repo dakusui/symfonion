@@ -7,7 +7,7 @@ import com.github.dakusui.json.JsonUtils;
 import com.github.dakusui.logias.lisp.Context;
 import com.github.dakusui.symfonion.core.exceptions.SymfonionException;
 import com.github.dakusui.symfonion.core.exceptions.SymfonionSyntaxException;
-import com.github.dakusui.symfonion.core.Util;
+import com.github.dakusui.symfonion.core.Utils;
 import com.github.dakusui.symfonion.song.Keyword;
 import com.github.dakusui.symfonion.song.Song;
 import com.google.gson.JsonArray;
@@ -61,7 +61,7 @@ public class Symfonion {
 
 	private JsonObject loadSymfonionFile(String fileName, Map<String, JsonObject> alreadyReadFiles) throws SymfonionException, JsonException {
     if (alreadyReadFiles.containsKey(fileName)) return alreadyReadFiles.get(fileName);
-		JsonObject ret = JsonUtils.toJson(Util.loadFile(fileName)).getAsJsonObject();
+		JsonObject ret = JsonUtils.toJson(Utils.loadFile(fileName)).getAsJsonObject();
     if (ret.has(Keyword.$include.name())) {
       File dir = new File(fileName).getParentFile();
       JsonArray includedFiles = JsonUtils.asJsonArray(ret, Keyword.$include.name());
@@ -72,7 +72,7 @@ public class Symfonion {
           throw new JsonInvalidPathException(ret, new Object[]{Keyword.$include, i});
         }
         String eachAbsFileName = new File(dir, eachFileName).getAbsolutePath();
-        JsonObject included = JsonUtils.toJson(Util.loadFile(eachAbsFileName)).getAsJsonObject();
+        JsonObject included = JsonUtils.toJson(Utils.loadFile(eachAbsFileName)).getAsJsonObject();
         alreadyReadFiles.put(eachAbsFileName, included);
         ret = JsonUtils.merge(ret, included);
         i++;
