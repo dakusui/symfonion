@@ -13,7 +13,7 @@ import javax.sound.midi.MidiDevice.Info;
 public abstract class MidiDeviceScanner {
 	static abstract class RegexMidiDeviceScanner extends MidiDeviceScanner {
 
-		private Pattern regex;
+		private final Pattern regex;
 
 		public RegexMidiDeviceScanner(PrintStream ps, Pattern regex) {
 			super(ps);
@@ -24,7 +24,7 @@ public abstract class MidiDeviceScanner {
 		protected void start(Info[] allDevices) {
 			PrintStream ps = getPrintStream();
 			ps.println("     " + getHeader());
-			ps.println(String.format("  io %s", format(null)));
+			ps.printf("  io %s%n", format(null));
 			ps.println("--------------------------------------------------------------------------------");
 		}
 
@@ -40,7 +40,7 @@ public abstract class MidiDeviceScanner {
 		protected void matched(Info device) {
 			String i = isInputDevice(device) ? "I" : " ";
 			String o = isOutputDevice(device) ? "O" : " ";
-			getPrintStream().println(String.format("* %1s%1s %s", i, o, format(device)));
+			getPrintStream().printf("* %1s%1s %s%n", i, o, format(device));
 		}
 
 		@Override
@@ -55,11 +55,11 @@ public abstract class MidiDeviceScanner {
 		protected void didntMatch(Info device) {
 			String i = isInputDevice(device) ? "I" : " ";
 			String o = isOutputDevice(device) ? "O" : " ";
-			getPrintStream().println(String.format("  %1s%1s %s", i, o, format(device)));
+			getPrintStream().printf("  %1s%1s %s%n", i, o, format(device));
 		}
 	}
 		
-	private PrintStream ps;
+	private final PrintStream ps;
 	private MidiDevice.Info[] matchedDevices = null;
 	
 	protected abstract void start(MidiDevice.Info[] allDevices);
@@ -73,7 +73,7 @@ public abstract class MidiDeviceScanner {
 	}
 	
 	public void scan() {
-		List<MidiDevice.Info> matched = new LinkedList<MidiDevice.Info>();
+		List<MidiDevice.Info> matched = new LinkedList<>();
 		MidiDevice.Info[] allDevices = MidiSystem.getMidiDeviceInfo();
 		
 		start(allDevices);
@@ -96,13 +96,11 @@ public abstract class MidiDeviceScanner {
 		Object tmp = null;
 		try {
 			MidiDevice dev = MidiSystem.getMidiDevice(info);
-			dev.open();
-			try {
-				tmp = dev.getReceiver();
-			} finally {
-				dev.close();
-			}
-		} catch (Exception e) {
+          try (dev) {
+            dev.open();
+            tmp = dev.getReceiver();
+          }
+		} catch (Exception ignored) {
 		}
 		return tmp != null;
 	}
@@ -111,13 +109,11 @@ public abstract class MidiDeviceScanner {
 		Object tmp = null;
 		try {
 			MidiDevice dev = MidiSystem.getMidiDevice(device);
-			dev.open();
-			try {
-				tmp = dev.getTransmitter();
-			} finally {
-				dev.close();
-			}
-		} catch (Exception e) {
+          try (dev) {
+            dev.open();
+            tmp = dev.getTransmitter();
+          }
+		} catch (Exception ignored) {
 		}
 		return tmp != null;
 	}
@@ -126,9 +122,6 @@ public abstract class MidiDeviceScanner {
 		return this.ps;
 	}
 	
-	public void setPrintStream(PrintStream ps) {
-		this.ps = ps;
-	}
 	
 	protected String format(MidiDevice.Info info) {
 		return String.format(
@@ -149,7 +142,7 @@ public abstract class MidiDeviceScanner {
 			protected void start(Info[] allDevices) {
 				PrintStream ps = getPrintStream();
 				ps.println("     Available MIDI devices");
-				ps.println(String.format("  io %s", format(null)));
+				ps.printf("  io %s%n", format(null));
 				ps.println("---------------------------------------------------------------------------");
 			}
 			
@@ -170,7 +163,7 @@ public abstract class MidiDeviceScanner {
 			protected void scanned(Info device) {
 				String i = isInputDevice(device) ? "I" : " ";
 				String o = isOutputDevice(device) ? "O" : " ";
-				getPrintStream().println(String.format("  %1s%1s %s", i, o, format(device)));
+				getPrintStream().printf("  %1s%1s %s%n", i, o, format(device));
 			}
 
 			@Override

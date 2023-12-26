@@ -59,7 +59,7 @@ public class Symfonion {
     return ret;
   }
   
-  private JsonObject loadSymfonionFile(String fileName, Map<String, JsonObject> alreadyReadFiles) throws SymfonionException, JsonException {
+  private static JsonObject loadSymfonionFile(String fileName, Map<String, JsonObject> alreadyReadFiles) throws SymfonionException, JsonException {
     if (alreadyReadFiles.containsKey(fileName)) return alreadyReadFiles.get(fileName);
     JsonObject ret = JsonUtils.toJson(Utils.loadFile(fileName)).getAsJsonObject();
     if (ret.has(Keyword.$include.name())) {
