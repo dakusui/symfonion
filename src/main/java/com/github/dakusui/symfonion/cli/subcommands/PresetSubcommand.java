@@ -10,9 +10,8 @@ import java.io.PrintStream;
 public enum PresetSubcommand implements Subcommand {
     VERSION {
         @Override
-        public void invoke(CLI cli, PrintStream ps) {
-            ps.println("SyMFONION " + cli.version());
-            ps.println(cli.license());
+        public void invoke(CLI cli, PrintStream ps) throws SymfonionException, IOException {
+            new Version().invoke(cli, ps);
         }
     }, HELP {
         @Override
