@@ -101,7 +101,7 @@ public class Cli {
   }
   
   protected Symfonion createSymfonion() {
-    return new Symfonion(Context.ROOT);
+    return new Symfonion(Context.ROOT.createChild());
   }
   
   static CommandLine parseArgs(Options options, String[] args) throws ParseException {
