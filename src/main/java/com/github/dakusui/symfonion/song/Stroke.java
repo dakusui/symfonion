@@ -41,17 +41,17 @@ public class Stroke {
 	private int tempo = UNDEFINED_NUM;
 	private JsonArray sysex;
 	private int[] aftertouch;
-	private JsonElement strokeJson;
+	private final JsonElement strokeJson;
 
 	public Stroke(
-			JsonElement cur,
+			JsonElement strokeJson,
 			Parameters params,
 			NoteMap noteMap) throws SymfonionException, JsonException {
 		String notes;
 		Fraction len = params.length();
 		double gate = params.gate();
-		this.strokeJson = cur;
-		JsonObject obj = JsonUtils.asJsonObjectWithPromotion(cur, new String[]{
+		this.strokeJson = strokeJson;
+		JsonObject obj = JsonUtils.asJsonObjectWithPromotion(strokeJson, new String[]{
 				Keyword.$notes.name(),
 				Keyword.$length.name()
 		});

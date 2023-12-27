@@ -27,11 +27,19 @@ public class MidiCompiler {
   private final Context logiasContext;
 
   public MidiCompiler(Context logiasContext) {
-    this.logiasContext = logiasContext;
+    this.logiasContext = (logiasContext);
   }
-
+  
+  /**
+   * Compiles a {@link Song} object into a map from a port name to {@link Sequence} object.
+   *
+   * @param song An object that holds user-provided music data.
+   * @return A map from a port name to {@code Sequence} object.
+   * @throws InvalidMidiDataException Won't be thrown.
+   * @throws SymfonionException Undefined part name is referenced by a bar.
+   */
   public Map<String, Sequence> compile(Song song) throws InvalidMidiDataException, SymfonionException {
-    System.out.println("Now compiling...");
+    System.err.println("Now compiling...");
     int resolution = 384;
     Map<String, Sequence> ret = new HashMap<>();
     Map<String, Track> tracks;
@@ -106,7 +114,7 @@ public class MidiCompiler {
       barid++;
       barPositionInTicks += (long) (bar.beats().doubleValue() * resolution);
     }
-    System.out.println("Compilation finished.");
+    System.err.println("Compilation finished.");
     return ret;
   }
 

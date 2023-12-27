@@ -1,5 +1,6 @@
 package com.github.dakusui.symfonion.core.exceptions;
 
+import com.github.dakusui.json.JsonUtils;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
@@ -18,7 +19,7 @@ public class SymfonionIllegalFormatException extends SymfonionSyntaxException {
 
 	private static String formatMessage(String acceptableExample,
 			JsonElement location) {
-		return String.format("%s is invalid. (%s)", summary(location), acceptableExample);
+		return String.format("%s is invalid. (%s)", JsonUtils.summarizeJsonElement(location), acceptableExample);
 	}
 
 	static public void main(String[] args) {

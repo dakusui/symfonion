@@ -14,7 +14,6 @@ public class GrooveTest {
 
 	@Test
 	public void test_A01() throws SymfonionException {
-		System.out.println("hello");
 		Groove groove = testGrooveA();
 		Groove.Unit unit;
 		

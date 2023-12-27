@@ -14,6 +14,22 @@ public class JsonUtils {
     jsonParser = new ThreadLocal<>();
   }
   
+  public static String summarizeJsonElement(JsonElement jsonElement) {
+        if (jsonElement == null || jsonElement.isJsonNull()) {
+            return "null";
+        }
+        if (jsonElement.isJsonPrimitive()) {
+            return jsonElement.getAsString() + "(primitive)";
+        }
+        if (jsonElement.isJsonArray()) {
+            return "array(size=" + jsonElement.getAsJsonArray().size() + ")";
+        }
+        if (jsonElement.isJsonObject()) {
+            return "object(" + jsonElement.getAsJsonObject().entrySet().size() + " entries)";
+        }
+        return jsonElement.toString() + "(unknown)";
+    }
+  
   enum JsonTypes {
     Object {
       @Override

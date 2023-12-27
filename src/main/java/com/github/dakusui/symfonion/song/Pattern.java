@@ -12,6 +12,7 @@ import com.google.gson.JsonObject;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import static com.github.dakusui.symfonion.core.exceptions.ExceptionThrower.illegalFormatException;
 import static com.github.dakusui.symfonion.core.exceptions.ExceptionThrower.noteMapNotFoundException;
@@ -75,11 +76,11 @@ public class Pattern {
     }
   }
 
-  public static Pattern createPattern(JsonObject json, Song song) throws SymfonionException, JsonException {
+  public static Pattern createPattern(JsonObject json, Map<String, NoteMap> noteMaps) throws SymfonionException, JsonException {
     NoteMap noteMap = NoteMap.defaultNoteMap;
     if (JsonUtils.hasPath(json, Keyword.$notemap)) {
       String noteMapName = JsonUtils.asString(json, Keyword.$notemap);
-      noteMap = song.noteMap(noteMapName);
+      noteMap = noteMaps.get(noteMapName);
       if (noteMap == null) {
         throw noteMapNotFoundException(
             JsonUtils.asJsonElement(json, Keyword.$notemap),

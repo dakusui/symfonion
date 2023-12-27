@@ -2,6 +2,7 @@ package com.github.dakusui.symfonion.core.exceptions;
 
 import java.util.Arrays;
 
+import com.github.dakusui.json.JsonUtils;
 import com.google.gson.JsonElement;
 
 public class SymfonionTypeMismatchException extends SymfonionSyntaxException {
@@ -21,11 +22,11 @@ public class SymfonionTypeMismatchException extends SymfonionSyntaxException {
 	}
 	
 	private static String formatMessage(String[] expectedTypes, JsonElement actualJSON) {
-		String ret = null;
+		String ret;
 		if (expectedTypes == null) {
-			ret = String.format("%s is not allowed here.", summary(actualJSON));
+			ret = String.format("%s is not allowed here.", JsonUtils.summarizeJsonElement(actualJSON));
 		} else {
-			ret = String.format("%s is not allowed here. Acceptable type(s) are %s", summary(actualJSON), Arrays.toString(expectedTypes));
+			ret = String.format("%s is not allowed here. Acceptable type(s) are %s", JsonUtils.summarizeJsonElement(actualJSON), Arrays.toString(expectedTypes));
 		}
 		return ret;
 	}
