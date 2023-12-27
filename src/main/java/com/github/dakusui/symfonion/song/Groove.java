@@ -20,49 +20,49 @@ import static com.github.dakusui.symfonion.core.exceptions.SymfonionTypeMismatch
 
 public class Groove {
   public static final Groove DEFAULT_INSTANCE = new Groove();
-
+  
   static class Beat {
-    final long     ticks;
-    final int      accent;
+    final long ticks;
+    final int accent;
     final Fraction length;
-
+    
     public Beat(Fraction length, long ticks, int accent) {
       this.length = length;
       this.ticks = ticks;
       this.accent = accent;
     }
   }
-
+  
   public static class Unit {
     final long pos;
-    final int  accentDelta;
-
+    final int accentDelta;
+    
     public Unit(long pos, int accentDelta) {
       this.pos = pos;
       this.accentDelta = accentDelta;
     }
-
+    
     public long pos() {
       return this.pos;
     }
-
+    
     public int accent() {
       return this.accentDelta;
     }
   }
-
+  
   List<Beat> beats = new LinkedList<Beat>();
-
+  
   private int resolution;
-
+  
   public Groove() {
     this(384);
   }
-
+  
   public Groove(int resolution) {
     this.resolution = resolution;
   }
-
+  
   public Unit resolve(Fraction offset) {
     if (offset == null) {
       String msg = "offset cannot be null. (Groove#resolve)";
@@ -73,7 +73,7 @@ public class Groove {
       throw runtimeException(msg, null);
     }
     long pos = 0;
-
+    
     Fraction rest = offset.clone();
     int i = 0;
     while (Fraction.compare(rest, Fraction.zero) > 0) {
@@ -100,30 +100,28 @@ public class Groove {
     }
     return new Unit(p, d);
   }
-
+  
   public void add(Fraction length, long ticks, int accent) {
     if (this == DEFAULT_INSTANCE) {
       throw runtimeException("Groove.DEFAULT_INSTANCE is immutable.", null);
     }
     beats.add(new Beat(length, ticks, accent));
   }
-
-  public static Groove createGroove(JsonArray grooveDef) throws SymfonionException, JsonTypeMismatchException, JsonInvalidPathException, JsonFormatException {
+  
+  public static Groove createGroove(JsonArray grooveDef, JsonObject root) throws SymfonionException, JsonTypeMismatchException, JsonInvalidPathException, JsonFormatException {
     Groove ret = new Groove();
     for (JsonElement elem : grooveDef) {
       if (!elem.isJsonObject()) {
-        throw typeMismatchException(elem, OBJECT);
+        throw typeMismatchException(elem, root, OBJECT);
       }
       JsonObject cur = elem.getAsJsonObject();
       String len = JsonUtils.asString(cur, Keyword.$length);
       long ticks = JsonUtils.asLong(cur, Keyword.$ticks);
       int accent = JsonUtils.asInt(cur, Keyword.$accent);
-
+      
       Fraction f = Utils.parseNoteLength(len);
       if (f == null) {
-        throw illegalFormatException(
-            JsonUtils.asJsonElement(cur, Keyword.$length),
-            NOTELENGTH_EXAMPLE);
+        throw illegalFormatException(JsonUtils.asJsonElement(cur, Keyword.$length), root, NOTELENGTH_EXAMPLE);
       }
       ret.add(f, ticks, accent);
     }

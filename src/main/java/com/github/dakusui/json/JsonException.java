@@ -1,6 +1,7 @@
 package com.github.dakusui.json;
 
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 public class JsonException extends Exception {
 
@@ -19,5 +20,5 @@ public class JsonException extends Exception {
 	public JsonElement getLocation() {
 		return this.location;
 	}
-	
+ 
 }

@@ -2,7 +2,9 @@ package com.github.dakusui.symfonion.core.exceptions;
 
 import java.io.File;
 
+import com.github.dakusui.json.JsonUtils;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 public class SymfonionSyntaxException extends SymfonionException {
 
@@ -11,27 +13,24 @@ public class SymfonionSyntaxException extends SymfonionException {
 	 */
 	private static final long serialVersionUID = 5992346365176153504L;
 	
-	private JsonElement location;
+	private final JsonElement problemCausingJsonNode;
+	private final JsonObject root;
 	private String jsonpath;
 	
-	public SymfonionSyntaxException(String message, JsonElement location) {
+	public SymfonionSyntaxException(String message, JsonElement problemCausingJsonNode, JsonObject root) {
 		super(message);
-		this.location = location;
+		this.problemCausingJsonNode = problemCausingJsonNode;
+		this.root = root;
 	}
 	
-	public JsonElement getLocation() {
-		return this.location;
+	public JsonElement getProblemCausingJsonNode() {
+		return this.problemCausingJsonNode;
 	}
 
-	public void setJsonPath(String path) {
-		this.jsonpath = path;
-	}
-	
 	public String getJsonPath() {
-		if (this.jsonpath == null) {
-			return "n/a";
-		}
-		return this.jsonpath;
+		if (root == null || problemCausingJsonNode == null)
+			return "(n/a)";
+		return JsonUtils.findPathOf(this.problemCausingJsonNode, this.root);
 	}
 	
 	@Override

@@ -30,6 +30,10 @@ public class JsonUtils {
         return jsonElement.toString() + "(unknown)";
     }
   
+  public static String findPathOf(JsonElement target, JsonObject root) {
+      return buildPathInfo(root).get(target);
+    }
+  
   enum JsonTypes {
     Object {
       @Override

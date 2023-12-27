@@ -1,6 +1,7 @@
 package com.github.dakusui.symfonion.core.exceptions;
 
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 import java.io.File;
 
@@ -23,35 +24,35 @@ public class ExceptionThrower {
 		throw new SymfonionException(String.format("%s: Failed to read resource (%s)", resourceName, e.getMessage()));
 	}
 
-	public static SymfonionReferenceException noteMapNotFoundException(JsonElement location, String missingReference) throws SymfonionException {
-		throw new SymfonionReferenceException(missingReference, "notemap", location);
+	public static SymfonionReferenceException noteMapNotFoundException(JsonElement problemCausingJsonNode, JsonObject root, String missingReference) throws SymfonionException {
+		throw new SymfonionReferenceException(missingReference, "notemap", problemCausingJsonNode, root);
 	}
 
-	public static SymfonionReferenceException noteNotDefinedException(JsonElement location, String missingReference, String notemapName) throws SymfonionException {
-		throw new SymfonionReferenceException(missingReference, String.format("note in %s", notemapName), location);
+	public static SymfonionReferenceException noteNotDefinedException(JsonElement problemCausingJsonNode, JsonObject root, String missingReference, String notemapName) throws SymfonionException {
+		throw new SymfonionReferenceException(missingReference, String.format("note in %s", notemapName), problemCausingJsonNode, root);
 	}
 
-	public static SymfonionReferenceException grooveNotDefinedException(JsonElement location, String missingReference) throws SymfonionException {
-		throw new SymfonionReferenceException(missingReference, "groove", location);
+	public static SymfonionReferenceException grooveNotDefinedException(JsonElement problemCausingJsonNode, JsonObject root, String missingReference) throws SymfonionException {
+		throw new SymfonionReferenceException(missingReference, "groove", problemCausingJsonNode, root);
 	}
 
-	public static SymfonionReferenceException partNotFound(JsonElement location, String missingReference) throws SymfonionException {
-		throw new SymfonionReferenceException(missingReference, "part", location);
+	public static SymfonionReferenceException partNotFound(JsonElement problemCausingJsonNode, JsonObject root, String missingReference) throws SymfonionException {
+		throw new SymfonionReferenceException(missingReference, "part", problemCausingJsonNode, root);
 	}
 
-	public static SymfonionReferenceException patternNotFound(JsonElement location, String missingReference) throws SymfonionException {
-		throw new SymfonionReferenceException(missingReference, "pattern", location);
+	public static SymfonionReferenceException patternNotFound(JsonElement problemCausingJsonNode, JsonObject root, String missingReference) throws SymfonionException {
+		throw new SymfonionReferenceException(missingReference, "pattern", problemCausingJsonNode, root);
 	}
-	public static SymfonionTypeMismatchException typeMismatchException(JsonElement actualJSON, String... expectedTypes) throws SymfonionSyntaxException {
-		throw new SymfonionTypeMismatchException(expectedTypes, actualJSON, actualJSON);
+	public static SymfonionTypeMismatchException typeMismatchException(JsonElement actualJSON, JsonObject root, String... expectedTypes) throws SymfonionSyntaxException {
+		throw new SymfonionTypeMismatchException(expectedTypes, actualJSON, actualJSON, root);
 	}
 
-	public static SymfonionIllegalFormatException illegalFormatException(JsonElement actualJSON, String acceptableExample) throws SymfonionIllegalFormatException {
-		throw new SymfonionIllegalFormatException(actualJSON, acceptableExample);
+	public static SymfonionIllegalFormatException illegalFormatException(JsonElement actualJSON, JsonObject root, String acceptableExample) throws SymfonionIllegalFormatException {
+		throw new SymfonionIllegalFormatException(actualJSON, root, acceptableExample);
 	}
 	
-	public static SymfonionMissingElementException requiredElementMissingException(JsonElement actualJSON, Object relPath) throws SymfonionMissingElementException {
-		throw new SymfonionMissingElementException(actualJSON, relPath);
+	public static SymfonionMissingElementException requiredElementMissingException(JsonElement actualJSON, JsonObject root, Object relPath) throws SymfonionMissingElementException {
+		throw new SymfonionMissingElementException(actualJSON, root, relPath);
 	}
 	
 	public static SymfonionException deviceException(String msg, Throwable e) throws SymfonionException {

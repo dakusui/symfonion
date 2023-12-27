@@ -68,7 +68,7 @@ public class MidiCompiler {
         Track track = tracks.get(partName);
         if (track == null) {
           aborted();
-          throw partNotFound(bar.location(partName), partName);
+          throw partNotFound(bar.lookUpJsonNode(partName), bar.rootJsonObject(), partName);
         }
         int channel = song.part(partName).channel();
         for (List<Pattern> patterns : bar.part(partName)) {

@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 import com.github.dakusui.json.JsonUtils;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 public class SymfonionTypeMismatchException extends SymfonionSyntaxException {
 	public static final String OBJECT = "object";
@@ -17,8 +18,8 @@ public class SymfonionTypeMismatchException extends SymfonionSyntaxException {
 	private static final long serialVersionUID = 6798033658231719409L;
 
 
-	public SymfonionTypeMismatchException(String[] expectedTypes, JsonElement actualJSON, JsonElement location) {
-		super(formatMessage(expectedTypes, actualJSON), location);
+	public SymfonionTypeMismatchException(String[] expectedTypes, JsonElement actualJSON, JsonElement problemCausingJsonNode, JsonObject root) {
+		super(formatMessage(expectedTypes, actualJSON), problemCausingJsonNode, root);
 	}
 	
 	private static String formatMessage(String[] expectedTypes, JsonElement actualJSON) {

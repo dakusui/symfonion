@@ -32,7 +32,7 @@ public class Song {
     private static Context loadMidiDeviceProfile(JsonObject json, Context logiasContext) throws SymfonionException, JsonException {
       JsonElement tmp = JsonUtils.asJsonObjectWithDefault(json, new JsonObject(), Keyword.$settings);
       if (!tmp.isJsonObject()) {
-        throw typeMismatchException(tmp, OBJECT);
+        throw typeMismatchException(tmp, json, OBJECT);
       }
       String profileName = JsonUtils.asStringWithDefault(tmp.getAsJsonObject(), "", Keyword.$mididevice);
       Logias logias = new Logias(logiasContext);
@@ -52,16 +52,16 @@ public class Song {
       List<Bar> bars = new LinkedList<>();
       JsonElement tmp = JsonUtils.asJsonElement(json, Keyword.$sequence);
       if (!tmp.isJsonArray()) {
-        throw typeMismatchException(tmp, ARRAY);
+        throw typeMismatchException(tmp, json, ARRAY);
       }
       JsonArray seqJson = tmp.getAsJsonArray();
       int len = seqJson.getAsJsonArray().size();
       for (int i = 0; i < len; i++) {
         JsonElement barJson = seqJson.get(i);
         if (!barJson.isJsonObject()) {
-          throw typeMismatchException(seqJson, OBJECT);
+          throw typeMismatchException(seqJson, json, OBJECT);
         }
-        Bar bar = new Bar(barJson.getAsJsonObject(), grooves, patterns);
+        Bar bar = new Bar(barJson.getAsJsonObject(), json, grooves, patterns);
         bars.add(bar);
       }
       return bars;
@@ -89,7 +89,7 @@ public class Song {
       Iterator<String> i = JsonUtils.keyIterator(patternsJSON);
       while (i.hasNext()) {
         String name = i.next();
-        Pattern cur = Pattern.createPattern(JsonUtils.asJsonObject(patternsJSON, name), noteMaps);
+        Pattern cur = Pattern.createPattern(JsonUtils.asJsonObject(patternsJSON, name), json, noteMaps);
         patterns.put(name, cur);
       }
       return patterns;
@@ -117,7 +117,7 @@ public class Song {
         Iterator<String> i = JsonUtils.keyIterator(groovesJSON);
         while (i.hasNext()) {
           String name = i.next();
-          Groove cur = Groove.createGroove(JsonUtils.asJsonArray(groovesJSON, name));
+          Groove cur = Groove.createGroove(JsonUtils.asJsonArray(groovesJSON, name), json);
           grooves.put(name, cur);
         }
       }

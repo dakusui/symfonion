@@ -13,8 +13,8 @@ public class SymfonionIllegalFormatException extends SymfonionSyntaxException {
 	 */
 	private static final long serialVersionUID = 8614872945878002862L;
 
-	public SymfonionIllegalFormatException(JsonElement location, String acceptableExample) {
-		super(formatMessage(acceptableExample, location), location);
+	public SymfonionIllegalFormatException(JsonElement problemCausingJsonNode, JsonObject root, String acceptableExample) {
+		super(formatMessage(acceptableExample, problemCausingJsonNode), problemCausingJsonNode, root);
 	}
 
 	private static String formatMessage(String acceptableExample,
