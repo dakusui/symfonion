@@ -184,7 +184,7 @@ public class Stroke {
       if (i != m.start()) {
         throw new SymfonionException("Error:" + s.substring(0, i) + "[" + s.substring(i, m.start()) + "]" + s.substring(m.start()));
       }
-      int n_ = this.noteMap.note(m.group(1), this.rootObjectNode, this.strokeJson);
+      int n_ = this.noteMap.note(m.group(1), this.strokeJson, this.rootObjectNode);
       if (n_ >= 0) {
         int n =
             n_ +

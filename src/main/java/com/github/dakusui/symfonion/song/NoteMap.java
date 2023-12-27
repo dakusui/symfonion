@@ -35,7 +35,7 @@ public class NoteMap {
 	public NoteMap(String name) {
 		this.name = name;
 	}
-	public NoteMap(final JsonObject json) throws SymfonionException {
+	public NoteMap(final JsonObject json) {
 		Iterator<String> i = JsonUtils.keyIterator(json);
 		while (i.hasNext()) {
 			String cur = i.next();
@@ -44,12 +44,12 @@ public class NoteMap {
 		}
 	}
 	
-	public int note(String notename, JsonObject root, JsonElement problemCausingJsonNode) throws SymfonionException {
+	public int note(String notename, JsonElement problemCausingJsonNode, JsonObject rootJsonObject) throws SymfonionException {
 		if ("r".equals(notename)) {
 			return -1;
 		}
 		if (!this.map.containsKey(notename)) {
-			throw noteNotDefinedException(problemCausingJsonNode, root, notename, this.name);
+			throw noteNotDefinedException(problemCausingJsonNode, rootJsonObject, notename, this.name);
 		}
 		return this.map.get(notename);
 	}
