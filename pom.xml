@@ -40,7 +40,7 @@
         <maven-project-info-reports-plugin.version>3.0.0
         </maven-project-info-reports-plugin.version>
         <github-release-plugin.version>1.1.0</github-release-plugin.version>
-        <thincrest-pcond.version>1.0.0</thincrest-pcond.version>
+        <thincrest-pcond.version>1.0.1-SNAPSHOT</thincrest-pcond.version>
         <jacoco-maven-plugin.version>0.8.11</jacoco-maven-plugin.version>
         <pitest-maven.version>1.15.3</pitest-maven.version>
         <asciidoctor.maven.plugin.version>2.0.0-RC.1

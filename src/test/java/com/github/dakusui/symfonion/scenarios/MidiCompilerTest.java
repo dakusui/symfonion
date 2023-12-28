@@ -4,12 +4,10 @@ import com.github.dakusui.json.JsonException;
 import com.github.dakusui.logias.lisp.Context;
 import com.github.dakusui.symfonion.core.exceptions.SymfonionException;
 import com.github.dakusui.symfonion.song.Song;
-import com.github.dakusui.testutils.AllOf;
-import com.github.dakusui.testutils.Cliche;
-import com.github.dakusui.testutils.Lists;
-import com.github.dakusui.testutils.Transform;
+import com.github.dakusui.testutils.*;
 import com.github.dakusui.thincrest_pcond.forms.Functions;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -151,12 +149,12 @@ public class MidiCompilerTest {
                     transform(collectionToList().andThen(elementAt(0))).check(isEqualTo("port1")))),
                 transform(compiledSong_getSequence("port1")).check(
                     allOf(
-                        transform(tracksFromSequence()).check(
+                        transform(SequenceTo.trackList()).check(
                             allOf(
                                 transform(trackListSize()).check(isEqualTo(1)),
-                                transform(trackAt(0).andThen(sizeFromTrack())).check(isEqualTo(1)),
-                                transform(trackAt(0).andThen(midiEventFromTrack(0))).check(isNotNull()),
-                                transform(trackAt(0).andThen(ticksFromTrack())).check(isEqualTo(0L))
+                                transform(trackAt(0).andThen(TrackTo.size())).check(isEqualTo(1)),
+                                transform(trackAt(0).andThen(TrackTo.midiEventAt(0))).check(isNotNull()),
+                                transform(trackAt(0).andThen(TrackTo.ticks())).check(isEqualTo(0L))
                             )),
                         transform(tickLengthFromSequence()).check(isEqualTo(0L))
                     )))),
@@ -181,12 +179,12 @@ public class MidiCompilerTest {
                     transform(collectionToList().andThen(elementAt(0))).check(isEqualTo("port1")))),
                 transform(compiledSong_getSequence("port1")).check(
                     allOf(
-                        Transform.$(tracksFromSequence()).check(AllOf.$(
+                        Transform.$(SequenceTo.trackList()).check(AllOf.$(
                             transform(trackListSize()).check(isEqualTo(1)),
                             transform(trackAt(0)).check(allOf(
-                                transform(sizeFromTrack()).check(isEqualTo(6)),
-                                transform(midiEventFromTrack(0)).check(isNotNull()),
-                                transform(ticksFromTrack()).check(isEqualTo(192L)))))),
+                                transform(TrackTo.size()).check(isEqualTo(6)),
+                                transform(TrackTo.midiEventAt(0)).check(isNotNull()),
+                                transform(TrackTo.ticks()).check(isEqualTo(192L)))))),
                         transform(tickLengthFromSequence()).check(isEqualTo(192L)))
                 ))),
         createNormalTestCase(
@@ -205,12 +203,12 @@ public class MidiCompilerTest {
                     Transform.$(collectionToList().andThen(elementAt(0))).check(isEqualTo("port1")))),
                 transform(compiledSong_getSequence("port1")).check(
                     allOf(
-                        Transform.$(tracksFromSequence()).check(AllOf.$(
+                        Transform.$(SequenceTo.trackList()).check(AllOf.$(
                             transform(trackListSize()).check(isEqualTo(1)),
                             transform(trackAt(0)).check(allOf(
-                                transform(sizeFromTrack()).check(isEqualTo(6)),
-                                transform(midiEventFromTrack(0)).check(isNotNull()),
-                                transform(ticksFromTrack()).check(isEqualTo(192L)))))),
+                                transform(TrackTo.size()).check(isEqualTo(6)),
+                                transform(TrackTo.midiEventAt(0)).check(isNotNull()),
+                                transform(TrackTo.ticks()).check(isEqualTo(192L)))))),
                         transform(tickLengthFromSequence()).check(isEqualTo(192L)))
                 ))),
         createNormalTestCase(
@@ -231,45 +229,47 @@ public class MidiCompilerTest {
                     Transform.$(collectionToList().andThen(elementAt(0))).check(isEqualTo("port1")))),
                 transform(compiledSong_getSequence("port1")).check(
                     allOf(
-                        Transform.$(tracksFromSequence()).check(AllOf.$(
+                        Transform.$(SequenceTo.trackList()).check(AllOf.$(
                             transform(trackListSize()).check(isEqualTo(1)),
                             transform(trackAt(0)).check(allOf(
-                                transform(sizeFromTrack()).check(isEqualTo(33)),
-                                transform(midiEventFromTrack(0)).check(isNotNull()),
-                                transform(ticksFromTrack()).check(isEqualTo(475L)))))),
+                                transform(TrackTo.size()).check(isEqualTo(33)),
+                                transform(TrackTo.midiEventAt(0)).check(isNotNull()),
+                                transform(TrackTo.ticks()).check(isEqualTo(475L)))))),
                         transform(tickLengthFromSequence()).check(isEqualTo(475L)))
                 ))),
         createNormalTestCase(
-            composeSymfonionSongJsonObject(),
+            composeSymfonionSongJsonObject(
+                json("C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;"),
+                sixteenBeatsGroove()),
             allOf(
-                Transform.$(Cliche.<String, Sequence>keyList()).check(AllOf.$(
-                    Transform.$(Lists.size()).check(isEqualTo(1)),
-                    Transform.$(Lists.<String>elementAt(0)).check(isEqualTo("port1")))),
-                transform(compiledSong_getSequence("port1").andThen(tracksFromSequence())).check(AllOf.$(
-                    transform(trackListSize()).check(isEqualTo(1)),
-                    transform(trackAt(0)).check(allOf(
-                        transform(sizeFromTrack()).check(isEqualTo(33)),
-                        transform(midiEventFromTrack(0)).check(isNotNull()),
-                        transform(ticksFromTrack()).check(isEqualTo(475L))))))
-            ))
+                Transform.$(MapTo.<String, Sequence>keyList()).allOf(
+                    Transform.$(ListTo.size()).check(isEqualTo(1)),
+                    Transform.$(ListTo.<String>elementAt(0)).check(isEqualTo("port1"))),
+                Transform.$(compiledSong_getSequence("port1").andThen(SequenceTo.trackList())).allOf(
+                    Transform.$(ListTo.size()).check(isEqualTo(1)),
+                    Transform.$(ListTo.<Track>elementAt(0)).allOf(
+                        Transform.$(TrackTo.size()).check(isEqualTo(33)),
+                        Transform.$(TrackTo.midiEventAt(0)).check(isNotNull()),
+                        Transform.$(TrackTo.ticks()).check(isEqualTo(475L))))))
     );
   }
   
-  private static JsonObject composeSymfonionSongJsonObject() {
-    return composeSymfonionSongJsonObject_();
-  }
-  
-  private static JsonObject composeSymfonionSongJsonObject_() {
+  private static JsonObject composeSymfonionSongJsonObject(JsonElement noteSequence, JsonArray groove) {
+    String patternName = "C16x16";
+    String grooveName = "16beats";
+    String partName = "piano";
+    String portName = "port1";
+    String beats = "16/4";
     return object(
         $("$settings", object()),
-        $("$parts", object($("piano", object($("$channel", json(0)), $("$port", json("port1")))))),
-        $("$patterns", object($("C16x16", object($("$body", array(json("C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;"))))))),
-        $("$grooves", object($("16beats", sixteenBeatsGroove()))),
+        $("$parts", object($(partName, object($("$channel", json(0)), $("$port", json(portName)))))),
+        $("$patterns", object($(patternName, object($("$body", array(noteSequence)))))),
+        $("$grooves", object($(grooveName, groove))),
         $("$sequence", array(
             merge(
-                object($("$beats", json("8/4"))),
-                object($("$patterns", object($("piano", array("C16x16"))))),
-                object($("$groove", json("16beats")))
+                object($("$beats", json(beats))),
+                object($("$patterns", object($(partName, array(patternName))))),
+                object($("$groove", json(grooveName)))
             ))));
   }
   
@@ -340,22 +340,6 @@ public class MidiCompilerTest {
     return function("Sequence#getTickLength", Sequence::getTickLength);
   }
   
-  private static Function<Sequence, List<Track>> tracksFromSequence() {
-    return function("Sequence#getTracks", seq -> Arrays.asList(seq.getTracks()));
-  }
-  
-  
-  private static Function<Track, Integer> sizeFromTrack() {
-    return function("Track#size", Track::size);
-  }
-  
-  private static Function<Track, MidiEvent> midiEventFromTrack(int index) {
-    return function(() -> "Track#get[" + index + "]", t -> t.get(index));
-  }
-  
-  private static Function<Track, Long> ticksFromTrack() {
-    return function(() -> "Track#ticks", Track::ticks);
-  }
   
   private static JsonArray sixteenBeatsGrooveFlat() {
     return array(

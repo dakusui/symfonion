@@ -5,7 +5,7 @@ import com.github.dakusui.thincrest_pcond.forms.Printables;
 import java.util.List;
 import java.util.function.Function;
 
-public enum Lists {
+public enum ListTo {
   ;
   
   public static Function<List<?>, Integer> size() {
