@@ -13,6 +13,11 @@ public enum Cliche {
     return Printables.function("keySet", Map::keySet);
   }
   
+  public static <K, V> Function<Map<K, V>, List<K>> keyList() {
+    return Printables.function("keyList", map -> map.keySet().stream().toList());
+  }
+  
+  
   public static <E, C extends Collection<E>> Function<C, Integer> collectionSize() {
     return PrintableFunctionFactory.Simple.SIZE.instance();
   }

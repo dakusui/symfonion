@@ -114,7 +114,7 @@ public class Stroke {
     this.length = strokeLen;
   }
   
-  private int[] getIntArray(JsonObject cur, Keyword kw) throws SymfonionException, JsonInvalidPathException, JsonTypeMismatchException, JsonFormatException {
+  private int[] getIntArray(JsonObject cur, Keyword kw) throws JsonInvalidPathException, JsonTypeMismatchException, JsonFormatException {
     int[] ret;
     if (!JsonUtils.hasPath(cur, kw)) {
       return null;

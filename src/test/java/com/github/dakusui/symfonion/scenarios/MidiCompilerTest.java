@@ -6,10 +6,10 @@ import com.github.dakusui.symfonion.core.exceptions.SymfonionException;
 import com.github.dakusui.symfonion.song.Song;
 import com.github.dakusui.testutils.AllOf;
 import com.github.dakusui.testutils.Cliche;
+import com.github.dakusui.testutils.Lists;
 import com.github.dakusui.testutils.Transform;
 import com.github.dakusui.thincrest_pcond.forms.Functions;
-import com.github.dakusui.thincrest_pcond.forms.Predicates;
-import com.github.dakusui.thincrest_pcond.forms.Printables;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,15 +23,15 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.github.dakusui.json.JsonTestUtils.*;
-import static com.github.dakusui.testutils.Cliche.collectionSize;
+import static com.github.dakusui.testutils.Cliche.*;
+import static com.github.dakusui.testutils.json.JsonTestUtils.*;
 import static com.github.dakusui.symfonion.scenarios.MidiCompilerTest.TestCase.createNegativeTestCase;
 import static com.github.dakusui.symfonion.scenarios.MidiCompilerTest.TestCase.createNormalTestCase;
-import static com.github.dakusui.testutils.Cliche.collectionToList;
 import static com.github.dakusui.thincrest.TestAssertions.assertThat;
 import static com.github.dakusui.thincrest_pcond.forms.Functions.elementAt;
 import static com.github.dakusui.thincrest_pcond.forms.Functions.size;
 import static com.github.dakusui.thincrest_pcond.forms.Predicates.*;
+import static com.github.dakusui.thincrest_pcond.forms.Printables.function;
 import static java.lang.String.format;
 
 @RunWith(Parameterized.class)
@@ -212,8 +212,65 @@ public class MidiCompilerTest {
                                 transform(midiEventFromTrack(0)).check(isNotNull()),
                                 transform(ticksFromTrack()).check(isEqualTo(192L)))))),
                         transform(tickLengthFromSequence()).check(isEqualTo(192L)))
-                )))
+                ))),
+        createNormalTestCase(
+            object(
+                $("$settings", object()),
+                $("$parts", object($("piano", object($("$channel", json(0)), $("$port", json("port1")))))),
+                $("$patterns", object($("C16x16", object($("$body", array(json("C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;"))))))),
+                $("$grooves", object($("16beats", sixteenBeatsGrooveFlat()))),
+                $("$sequence", array(
+                    merge(
+                        object($("$beats", json("8/4"))),
+                        object($("$patterns", object($("piano", array("C16x16"))))),
+                        object($("$groove", json("16beats")))
+                    )))),
+            allOf(
+                Transform.$(Cliche.<String, Sequence>keySet().andThen(castToObjectCollection())).check(allOf(
+                    Transform.$(size()).check(isEqualTo(1)),
+                    Transform.$(collectionToList().andThen(elementAt(0))).check(isEqualTo("port1")))),
+                transform(compiledSong_getSequence("port1")).check(
+                    allOf(
+                        Transform.$(tracksFromSequence()).check(AllOf.$(
+                            transform(trackListSize()).check(isEqualTo(1)),
+                            transform(trackAt(0)).check(allOf(
+                                transform(sizeFromTrack()).check(isEqualTo(33)),
+                                transform(midiEventFromTrack(0)).check(isNotNull()),
+                                transform(ticksFromTrack()).check(isEqualTo(475L)))))),
+                        transform(tickLengthFromSequence()).check(isEqualTo(475L)))
+                ))),
+        createNormalTestCase(
+            composeSymfonionSongJsonObject(),
+            allOf(
+                Transform.$(Cliche.<String, Sequence>keyList()).check(AllOf.$(
+                    Transform.$(Lists.size()).check(isEqualTo(1)),
+                    Transform.$(Lists.<String>elementAt(0)).check(isEqualTo("port1")))),
+                transform(compiledSong_getSequence("port1").andThen(tracksFromSequence())).check(AllOf.$(
+                    transform(trackListSize()).check(isEqualTo(1)),
+                    transform(trackAt(0)).check(allOf(
+                        transform(sizeFromTrack()).check(isEqualTo(33)),
+                        transform(midiEventFromTrack(0)).check(isNotNull()),
+                        transform(ticksFromTrack()).check(isEqualTo(475L))))))
+            ))
     );
+  }
+  
+  private static JsonObject composeSymfonionSongJsonObject() {
+    return composeSymfonionSongJsonObject_();
+  }
+  
+  private static JsonObject composeSymfonionSongJsonObject_() {
+    return object(
+        $("$settings", object()),
+        $("$parts", object($("piano", object($("$channel", json(0)), $("$port", json("port1")))))),
+        $("$patterns", object($("C16x16", object($("$body", array(json("C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;"))))))),
+        $("$grooves", object($("16beats", sixteenBeatsGroove()))),
+        $("$sequence", array(
+            merge(
+                object($("$beats", json("8/4"))),
+                object($("$patterns", object($("piano", array("C16x16"))))),
+                object($("$groove", json("16beats")))
+            ))));
   }
   
   private static JsonObject programChange(int program, double bank) {
@@ -260,7 +317,7 @@ public class MidiCompilerTest {
   }
   
   private static Function<Map<String, Sequence>, Sequence> compiledSong_getSequence(String portName) {
-    return Printables.function("get[" + portName + "]", m -> m.get(portName));
+    return function("get[" + portName + "]", m -> m.get(portName));
   }
   
   private static Function<Map<String, Sequence>, Set<String>> compiledSong_keySet() {
@@ -280,23 +337,78 @@ public class MidiCompilerTest {
   }
   
   private static Function<Sequence, Long> tickLengthFromSequence() {
-    return Printables.function("Sequence#getTickLength", Sequence::getTickLength);
+    return function("Sequence#getTickLength", Sequence::getTickLength);
   }
   
   private static Function<Sequence, List<Track>> tracksFromSequence() {
-    return Printables.function("Sequence#getTracks", seq -> Arrays.asList(seq.getTracks()));
+    return function("Sequence#getTracks", seq -> Arrays.asList(seq.getTracks()));
   }
   
   
   private static Function<Track, Integer> sizeFromTrack() {
-    return Printables.function("Track#size", Track::size);
+    return function("Track#size", Track::size);
   }
   
   private static Function<Track, MidiEvent> midiEventFromTrack(int index) {
-    return Printables.function(() -> "Track#get[" + index + "]", t -> t.get(index));
+    return function(() -> "Track#get[" + index + "]", t -> t.get(index));
   }
   
   private static Function<Track, Long> ticksFromTrack() {
-    return Printables.function(() -> "Track#ticks", Track::ticks);
+    return function(() -> "Track#ticks", Track::ticks);
   }
+  
+  private static JsonArray sixteenBeatsGrooveFlat() {
+    return array(
+        grooveElement("16", 24, 0),
+        grooveElement("16", 24, 0),
+        grooveElement("16", 24, 0),
+        grooveElement("16", 24, 0),
+        
+        grooveElement("16", 24, 0),
+        grooveElement("16", 24, 0),
+        grooveElement("16", 24, 0),
+        grooveElement("16", 24, 0),
+        
+        grooveElement("16", 24, 0),
+        grooveElement("16", 24, 0),
+        grooveElement("16", 24, 0),
+        grooveElement("16", 24, 0),
+        
+        grooveElement("16", 24, 0),
+        grooveElement("16", 24, 0),
+        grooveElement("16", 24, 0),
+        grooveElement("16", 24, 0)
+    
+    );
+  }
+  
+  private static JsonArray sixteenBeatsGroove() {
+    return array(
+        grooveElement("16", 28, 30),
+        grooveElement("16", 20, -10),
+        grooveElement("16", 26, 10),
+        grooveElement("16", 22, -5),
+        
+        grooveElement("16", 28, 20),
+        grooveElement("16", 20, -8),
+        grooveElement("16", 26, 10),
+        grooveElement("16", 22, -4),
+        
+        grooveElement("16", 28, 25),
+        grooveElement("16", 20, -8),
+        grooveElement("16", 26, 10),
+        grooveElement("16", 22, -5),
+        
+        grooveElement("16", 28, 15),
+        grooveElement("16", 20, -8),
+        grooveElement("16", 26, 10),
+        grooveElement("16", 22, -10)
+    );
+  }
+  
+  
+  private static JsonObject grooveElement(String noteLength, int ticks, int accent) {
+    return object($("$length", json(noteLength)), $("$ticks", json(ticks)), $("$accent", json(accent)));
+  }
+  
 }
