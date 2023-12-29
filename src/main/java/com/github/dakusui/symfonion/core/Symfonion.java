@@ -29,7 +29,7 @@ public class Symfonion {
     this.logiasContext = logiasContext;
   }
   
-  public Song load(String fileName) throws SymfonionException {
+  public Song load(String fileName)  {
     Song ret;
     this.fileName = fileName;
     try {
