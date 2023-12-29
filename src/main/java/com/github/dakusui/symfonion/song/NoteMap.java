@@ -5,11 +5,11 @@ import java.util.Iterator;
 import java.util.Map;
 
 import com.github.dakusui.json.JsonUtils;
-import com.github.dakusui.symfonion.core.exceptions.SymfonionException;
+import com.github.dakusui.symfonion.exceptions.SymfonionException;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import static com.github.dakusui.symfonion.core.exceptions.ExceptionThrower.noteNotDefinedException;
+import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.noteNotDefinedException;
 
 
 public class NoteMap {

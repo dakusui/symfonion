@@ -1,10 +1,8 @@
-package com.github.dakusui.symfonion.core;
+package com.github.dakusui.symfonion.utils;
 
 import com.google.gson.JsonObject;
 
 import java.io.File;
-
-import static com.github.dakusui.valid8j.Requires.requireNonNull;
 
 public record ExceptionComposer(JsonObject rootObjectNode, File sourceFile) {
   

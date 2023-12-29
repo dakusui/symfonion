@@ -1,4 +1,4 @@
-package com.github.dakusui.symfonion.core.exceptions;
+package com.github.dakusui.symfonion.exceptions;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;

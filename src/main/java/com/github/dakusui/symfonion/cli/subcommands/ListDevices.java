@@ -2,7 +2,7 @@ package com.github.dakusui.symfonion.cli.subcommands;
 
 import com.github.dakusui.symfonion.cli.Cli;
 import com.github.dakusui.symfonion.cli.Subcommand;
-import com.github.dakusui.symfonion.scenarios.MidiDeviceScanner;
+import com.github.dakusui.symfonion.utils.midi.MidiDeviceScanner;
 
 import java.io.PrintStream;
 

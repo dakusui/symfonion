@@ -1,11 +1,11 @@
 package com.github.dakusui.symfonion.song;
 
 import com.github.dakusui.json.*;
-import com.github.dakusui.symfonion.scenarios.MidiCompiler;
-import com.github.dakusui.symfonion.scenarios.MidiCompilerContext;
-import com.github.dakusui.symfonion.core.Fraction;
-import com.github.dakusui.symfonion.core.exceptions.SymfonionException;
-import com.github.dakusui.symfonion.core.Utils;
+import com.github.dakusui.symfonion.core.MidiCompiler;
+import com.github.dakusui.symfonion.core.MidiCompilerContext;
+import com.github.dakusui.symfonion.utils.Fraction;
+import com.github.dakusui.symfonion.exceptions.SymfonionException;
+import com.github.dakusui.symfonion.utils.Utils;
 import com.github.dakusui.symfonion.song.Pattern.Parameters;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -18,10 +18,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
 
-import static com.github.dakusui.symfonion.core.exceptions.ExceptionThrower.illegalFormatException;
-import static com.github.dakusui.symfonion.core.exceptions.ExceptionThrower.typeMismatchException;
-import static com.github.dakusui.symfonion.core.exceptions.SymfonionIllegalFormatException.NOTELENGTH_EXAMPLE;
-import static com.github.dakusui.symfonion.core.exceptions.SymfonionTypeMismatchException.PRIMITIVE;
+import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.illegalFormatException;
+import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.typeMismatchException;
+import static com.github.dakusui.symfonion.exceptions.SymfonionIllegalFormatException.NOTELENGTH_EXAMPLE;
+import static com.github.dakusui.symfonion.exceptions.SymfonionTypeMismatchException.PRIMITIVE;
 
 public class Stroke {
   private static final int UNDEFINED_NUM = -1;

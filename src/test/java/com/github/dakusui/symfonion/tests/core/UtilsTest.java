@@ -1,6 +1,6 @@
 package com.github.dakusui.symfonion.tests.core;
 
-import com.github.dakusui.symfonion.core.Utils;
+import com.github.dakusui.symfonion.utils.Utils;
 import com.github.dakusui.testutils.forms.Transform;
 import com.github.dakusui.thincrest.TestAssertions;
 import com.github.dakusui.valid8j_pcond.forms.Functions;
@@ -18,7 +18,7 @@ public class UtilsTest {
 
     TestAssertions.assertThat(
         result,
-        Transform.$(Functions.<Byte>arrayToList()).checkAllOf(
+        Transform.$(Functions.<Byte>arrayToList()).allOf(
             Transform.$(Functions.<Byte>elementAt(0)).check(isEqualTo((byte)0x12)),
             Transform.$(Functions.<Byte>elementAt(1)).check(isEqualTo((byte)0x34)),
             Transform.$(Functions.<Byte>elementAt(2)).check(isEqualTo((byte)0x56))

@@ -1,13 +1,13 @@
-package com.github.dakusui.symfonion.scenarios;
+package com.github.dakusui.symfonion.core;
 
 import com.github.dakusui.logias.Logias;
 import com.github.dakusui.logias.lisp.Context;
 import com.github.dakusui.logias.lisp.s.Literal;
 import com.github.dakusui.logias.lisp.s.Sexp;
-import com.github.dakusui.symfonion.core.exceptions.ExceptionThrower;
-import com.github.dakusui.symfonion.core.Fraction;
-import com.github.dakusui.symfonion.core.exceptions.SymfonionException;
-import com.github.dakusui.symfonion.core.Utils;
+import com.github.dakusui.symfonion.exceptions.ExceptionThrower;
+import com.github.dakusui.symfonion.utils.Fraction;
+import com.github.dakusui.symfonion.exceptions.SymfonionException;
+import com.github.dakusui.symfonion.utils.Utils;
 import com.github.dakusui.symfonion.song.*;
 import com.github.dakusui.symfonion.song.Pattern.Parameters;
 import com.google.gson.JsonArray;
@@ -20,7 +20,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import static com.github.dakusui.symfonion.core.exceptions.ExceptionThrower.partNotFound;
+import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.partNotFound;
 
 public class MidiCompiler {
   

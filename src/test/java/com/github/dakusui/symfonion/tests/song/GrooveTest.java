@@ -2,14 +2,14 @@ package com.github.dakusui.symfonion.tests.song;
 
 import static org.junit.Assert.*;
 
-import com.github.dakusui.symfonion.scenarios.Groove;
+import com.github.dakusui.symfonion.song.Groove;
 import org.junit.Test;
 
-import com.github.dakusui.symfonion.core.Fraction;
-import com.github.dakusui.symfonion.core.exceptions.SymfonionException;
-import com.github.dakusui.symfonion.core.Utils;
+import com.github.dakusui.symfonion.utils.Fraction;
+import com.github.dakusui.symfonion.exceptions.SymfonionException;
+import com.github.dakusui.symfonion.utils.Utils;
 
-import static com.github.dakusui.symfonion.core.Utils.parseNoteLength;
+import static com.github.dakusui.symfonion.utils.Utils.parseNoteLength;
 
 public class GrooveTest {
 

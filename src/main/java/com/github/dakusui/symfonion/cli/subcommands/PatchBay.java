@@ -4,8 +4,8 @@ import com.github.dakusui.symfonion.cli.Cli;
 import com.github.dakusui.symfonion.cli.CliUtils;
 import com.github.dakusui.symfonion.cli.Route;
 import com.github.dakusui.symfonion.cli.Subcommand;
-import com.github.dakusui.symfonion.core.exceptions.CLIException;
-import com.github.dakusui.symfonion.scenarios.MidiDeviceScanner;
+import com.github.dakusui.symfonion.exceptions.CLIException;
+import com.github.dakusui.symfonion.utils.midi.MidiDeviceScanner;
 
 import javax.sound.midi.*;
 import java.io.IOException;

@@ -1,6 +1,6 @@
 package com.github.dakusui.symfonion.cli;
 
-import com.github.dakusui.symfonion.core.exceptions.CLIException;
+import com.github.dakusui.symfonion.exceptions.CLIException;
 import com.github.dakusui.symfonion.song.Keyword;
 import org.apache.commons.cli.CommandLine;
 

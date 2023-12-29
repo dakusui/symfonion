@@ -1,12 +1,12 @@
-package com.github.dakusui.symfonion.scenarios;
+package com.github.dakusui.symfonion.core;
 
 import com.github.dakusui.json.JsonException;
 import com.github.dakusui.json.JsonInvalidPathException;
 import com.github.dakusui.json.JsonPathNotFoundException;
 import com.github.dakusui.json.JsonUtils;
 import com.github.dakusui.logias.lisp.Context;
-import com.github.dakusui.symfonion.core.exceptions.SymfonionException;
-import com.github.dakusui.symfonion.core.Utils;
+import com.github.dakusui.symfonion.exceptions.SymfonionException;
+import com.github.dakusui.symfonion.utils.Utils;
 import com.github.dakusui.symfonion.song.Keyword;
 import com.github.dakusui.symfonion.song.Song;
 import com.google.gson.JsonArray;
@@ -18,7 +18,7 @@ import javax.sound.midi.*;
 import java.io.File;
 import java.util.*;
 
-import static com.github.dakusui.symfonion.core.exceptions.ExceptionThrower.*;
+import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.*;
 
 public class Symfonion {
   Context logiasContext;

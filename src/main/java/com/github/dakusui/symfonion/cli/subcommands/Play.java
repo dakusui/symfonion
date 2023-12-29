@@ -2,17 +2,17 @@ package com.github.dakusui.symfonion.cli.subcommands;
 
 import com.github.dakusui.symfonion.cli.Cli;
 import com.github.dakusui.symfonion.cli.Subcommand;
-import com.github.dakusui.symfonion.core.exceptions.SymfonionException;
+import com.github.dakusui.symfonion.exceptions.SymfonionException;
 import com.github.dakusui.symfonion.song.Song;
-import com.github.dakusui.symfonion.scenarios.Symfonion;
+import com.github.dakusui.symfonion.core.Symfonion;
 
 import javax.sound.midi.*;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.*;
 
-import static com.github.dakusui.symfonion.core.exceptions.ExceptionThrower.deviceException;
-import static com.github.dakusui.symfonion.core.exceptions.ExceptionThrower.interrupted;
+import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.deviceException;
+import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.interrupted;
 
 public class Play implements Subcommand {
     private static Map<String, Sequencer> prepareSequencers(List<String> portNames, Map<String, MidiDevice> devices, Map<String, Sequence> sequences) throws MidiUnavailableException, InvalidMidiDataException {

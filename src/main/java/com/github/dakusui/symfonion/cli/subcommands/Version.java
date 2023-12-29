@@ -2,7 +2,7 @@ package com.github.dakusui.symfonion.cli.subcommands;
 
 import com.github.dakusui.symfonion.cli.Cli;
 import com.github.dakusui.symfonion.cli.Subcommand;
-import com.github.dakusui.symfonion.core.exceptions.SymfonionException;
+import com.github.dakusui.symfonion.exceptions.SymfonionException;
 
 import java.io.IOException;
 import java.io.InputStream;

@@ -6,12 +6,10 @@ import java.io.IOException;
 import java.io.PrintStream;
 
 import com.github.dakusui.symfonion.cli.Cli;
-import com.github.dakusui.symfonion.core.exceptions.CLIException;
-import org.apache.commons.cli.ParseException;
 import org.junit.Before;
 
-import com.github.dakusui.symfonion.core.exceptions.SymfonionException;
-import com.github.dakusui.symfonion.core.Utils;
+import com.github.dakusui.symfonion.exceptions.SymfonionException;
+import com.github.dakusui.symfonion.utils.Utils;
 
 public class ErrorTest {
   private File workFile;

@@ -2,7 +2,7 @@ package com.github.dakusui.symfonion.song;
 
 import java.util.LinkedList;
 
-import com.github.dakusui.symfonion.core.Fraction;
+import com.github.dakusui.symfonion.utils.Fraction;
 
 public class NoteSet extends LinkedList<Note> {
 

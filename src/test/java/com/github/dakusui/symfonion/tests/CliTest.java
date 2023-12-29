@@ -7,8 +7,8 @@ import java.nio.charset.StandardCharsets;
 
 import com.github.dakusui.symfonion.cli.Cli;
 import com.github.dakusui.symfonion.cli.subcommands.PresetSubcommand;
-import com.github.dakusui.symfonion.core.exceptions.CLIException;
-import com.github.dakusui.symfonion.core.exceptions.SymfonionException;
+import com.github.dakusui.symfonion.exceptions.CLIException;
+import com.github.dakusui.symfonion.exceptions.SymfonionException;
 import org.apache.commons.cli.ParseException;
 import org.junit.Test;
 

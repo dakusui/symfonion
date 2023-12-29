@@ -1,7 +1,7 @@
 package com.github.dakusui.symfonion.testutils;
 
 import com.github.dakusui.json.JsonException;
-import com.github.dakusui.symfonion.core.exceptions.SymfonionException;
+import com.github.dakusui.symfonion.exceptions.SymfonionException;
 import com.google.gson.JsonObject;
 
 import javax.sound.midi.InvalidMidiDataException;

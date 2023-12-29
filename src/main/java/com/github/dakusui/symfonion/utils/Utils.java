@@ -1,13 +1,13 @@
-package com.github.dakusui.symfonion.core;
+package com.github.dakusui.symfonion.utils;
 
-import com.github.dakusui.symfonion.core.exceptions.FractionFormatException;
-import com.github.dakusui.symfonion.core.exceptions.SymfonionException;
+import com.github.dakusui.symfonion.exceptions.FractionFormatException;
+import com.github.dakusui.symfonion.exceptions.SymfonionException;
 
 import java.io.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.github.dakusui.symfonion.core.exceptions.ExceptionThrower.*;
+import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.*;
 import static com.github.dakusui.valid8j.Requires.requireNonNull;
 import static java.nio.charset.StandardCharsets.UTF_8;
 

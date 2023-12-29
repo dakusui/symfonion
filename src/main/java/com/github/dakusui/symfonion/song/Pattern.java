@@ -2,9 +2,9 @@ package com.github.dakusui.symfonion.song;
 
 import com.github.dakusui.json.JsonException;
 import com.github.dakusui.json.JsonUtils;
-import com.github.dakusui.symfonion.core.Fraction;
-import com.github.dakusui.symfonion.core.exceptions.SymfonionException;
-import com.github.dakusui.symfonion.core.Utils;
+import com.github.dakusui.symfonion.utils.Fraction;
+import com.github.dakusui.symfonion.exceptions.SymfonionException;
+import com.github.dakusui.symfonion.utils.Utils;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -15,9 +15,9 @@ import java.util.List;
 import java.util.Map;
 
 import static com.github.dakusui.json.JsonUtils.asJsonElement;
-import static com.github.dakusui.symfonion.core.exceptions.ExceptionThrower.illegalFormatException;
-import static com.github.dakusui.symfonion.core.exceptions.ExceptionThrower.noteMapNotFoundException;
-import static com.github.dakusui.symfonion.core.exceptions.SymfonionIllegalFormatException.NOTELENGTH_EXAMPLE;
+import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.illegalFormatException;
+import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.noteMapNotFoundException;
+import static com.github.dakusui.symfonion.exceptions.SymfonionIllegalFormatException.NOTELENGTH_EXAMPLE;
 
 
 public class Pattern {

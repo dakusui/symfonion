@@ -2,10 +2,10 @@ package com.github.dakusui.symfonion.cli;
 
 import com.github.dakusui.logias.lisp.Context;
 import com.github.dakusui.symfonion.cli.subcommands.PresetSubcommand;
-import com.github.dakusui.symfonion.core.exceptions.CLIException;
-import com.github.dakusui.symfonion.scenarios.MidiDeviceScanner;
-import com.github.dakusui.symfonion.scenarios.Symfonion;
-import com.github.dakusui.symfonion.core.exceptions.SymfonionException;
+import com.github.dakusui.symfonion.exceptions.CLIException;
+import com.github.dakusui.symfonion.utils.midi.MidiDeviceScanner;
+import com.github.dakusui.symfonion.core.Symfonion;
+import com.github.dakusui.symfonion.exceptions.SymfonionException;
 import org.apache.commons.cli.*;
 
 import javax.sound.midi.*;

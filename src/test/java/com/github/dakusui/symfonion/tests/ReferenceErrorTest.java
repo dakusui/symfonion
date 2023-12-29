@@ -1,6 +1,6 @@
 package com.github.dakusui.symfonion.tests;
 
-import com.github.dakusui.symfonion.core.exceptions.SymfonionException;
+import com.github.dakusui.symfonion.exceptions.SymfonionException;
 import org.apache.commons.cli.ParseException;
 import org.junit.Test;
 

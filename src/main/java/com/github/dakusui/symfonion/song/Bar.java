@@ -3,11 +3,10 @@ package com.github.dakusui.symfonion.song;
 import com.github.dakusui.json.JsonException;
 import com.github.dakusui.json.JsonInvalidPathException;
 import com.github.dakusui.json.JsonUtils;
-import com.github.dakusui.symfonion.core.*;
-import com.github.dakusui.symfonion.core.exceptions.FractionFormatException;
-import com.github.dakusui.symfonion.core.exceptions.SymfonionException;
-import com.github.dakusui.symfonion.core.exceptions.SymfonionIllegalFormatException;
-import com.github.dakusui.symfonion.scenarios.Groove;
+import com.github.dakusui.symfonion.utils.*;
+import com.github.dakusui.symfonion.exceptions.FractionFormatException;
+import com.github.dakusui.symfonion.exceptions.SymfonionException;
+import com.github.dakusui.symfonion.exceptions.SymfonionIllegalFormatException;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -15,8 +14,8 @@ import com.google.gson.JsonObject;
 import java.util.*;
 import java.util.Map.Entry;
 
-import static com.github.dakusui.symfonion.core.exceptions.ExceptionThrower.*;
-import static com.github.dakusui.symfonion.core.exceptions.SymfonionTypeMismatchException.ARRAY;
+import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.*;
+import static com.github.dakusui.symfonion.exceptions.SymfonionTypeMismatchException.ARRAY;
 
 public class Bar {
   private final Map<String, Groove> grooves;

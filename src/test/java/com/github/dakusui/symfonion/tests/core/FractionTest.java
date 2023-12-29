@@ -1,6 +1,6 @@
 package com.github.dakusui.symfonion.tests.core;
 
-import com.github.dakusui.symfonion.core.Fraction;
+import com.github.dakusui.symfonion.utils.Fraction;
 import org.junit.Assert;
 import org.junit.Test;
 
