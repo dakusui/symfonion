@@ -17,7 +17,7 @@ public enum IfMidiMessage {
   }
   
   public static Predicate<MidiMessage> isNoteOff() {
-    return Printables.predicate("isNoteOn", m -> statusOf(m) == Status.NOTE_OFF);
+    return Printables.predicate("isNoteOff", m -> statusOf(m) == Status.NOTE_OFF);
   }
   
   public static Predicate<MidiMessage> channel(Predicate<Integer> cond) {
@@ -37,7 +37,15 @@ public enum IfMidiMessage {
   }
   
   public static Predicate<MidiMessage> isControlChange() {
-    return Printables.predicate("isProgramChange", CONTROL_CHANGE::matches);
+    return Printables.predicate("isControlChange", CONTROL_CHANGE::matches);
+  }
+  
+  public static Predicate<MidiMessage> programNumber(Predicate<Byte> cond) {
+    return Printables.predicate("programNumber->" + cond, m -> cond.test(data1Of(m)));
+  }
+  
+  public static Predicate<MidiMessage> control(Predicate<Byte> cond) {
+    return Printables.predicate("controlNumber->" + cond, m -> cond.test(data1Of(m)));
   }
   
   enum Status {

@@ -5,9 +5,11 @@ import com.github.dakusui.logias.lisp.Context;
 import com.github.dakusui.symfonion.core.exceptions.SymfonionException;
 import com.github.dakusui.symfonion.song.Song;
 import com.github.dakusui.testutils.*;
+import com.github.dakusui.thincrest_pcond.validator.Validator;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -24,9 +26,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.github.dakusui.symfonion.scenarios.MidiCompilerTest.TestCase.createNegativeTestCase;
-import static com.github.dakusui.symfonion.scenarios.MidiCompilerTest.TestCase.createNormalTestCase;
+import static com.github.dakusui.symfonion.scenarios.MidiCompilerTest.TestCase.createPositiveTestCase;
 import static com.github.dakusui.testutils.Cliche.collectionSize;
-import static com.github.dakusui.testutils.IfMidiMessage.note;
+import static com.github.dakusui.testutils.IfMidiMessage.*;
 import static com.github.dakusui.testutils.json.JsonTestUtils.*;
 import static com.github.dakusui.thincrest.TestAssertions.assertThat;
 import static com.github.dakusui.thincrest_pcond.forms.Functions.elementAt;
@@ -36,7 +38,20 @@ import static java.lang.String.format;
 
 @RunWith(Parameterized.class)
 public class MidiCompilerTest {
-  public record TestCase(JsonObject input, Predicate<Map<String, Sequence>> testOracleForOutput,
+  
+  public enum Notes {
+    ;
+    
+    public static final byte C3 = (byte) 60;
+  }
+  
+  public enum Controls {
+    ;
+    
+    public static final byte VOLUME = (byte) 7;
+  }
+  
+  public record TestCase(String name, JsonObject input, Predicate<Map<String, Sequence>> testOracleForOutput,
                          Predicate<Exception> testOracleForException) {
     public void executeAndVerify() {
       boolean succeeded = false;
@@ -70,13 +85,17 @@ public class MidiCompilerTest {
       assertThat(e, this.testOracleForException());
     }
     
-    
-    public static TestCase createNormalTestCase(JsonObject input, Predicate<Map<String, Sequence>> testOracleForOutput) {
-      return new TestCase(input, testOracleForOutput, null);
+    public String toString() {
+      return this.name();
     }
     
-    public static TestCase createNegativeTestCase(JsonObject input, Predicate<Exception> testOracleForException) {
-      return new TestCase(input, null, testOracleForException);
+    
+    public static TestCase createPositiveTestCase(String name, JsonObject input, Predicate<Map<String, Sequence>> testOracleForOutput) {
+      return new TestCase("POSITIVE: " + name, input, testOracleForOutput, null);
+    }
+    
+    public static TestCase createNegativeTestCase(String name, JsonObject input, Predicate<Exception> testOracleForException) {
+      return new TestCase("NEGATIVE: " + name, input, null, testOracleForException);
     }
     
     private static Map<String, Sequence> execute(JsonObject input) throws JsonException, InvalidMidiDataException, SymfonionException {
@@ -96,6 +115,17 @@ public class MidiCompilerTest {
     }
   }
   
+  public record TestCaseName(String given, String when, String then) {
+    public String toString() {
+      return String.format("given: '%s' when: '%s' then: '%s'", given, when, then);
+    }
+  }
+  
+  @BeforeClass
+  public static void beforeAll() {
+    Validator.reconfigure(c -> c.summarizedStringLength(120));
+  }
+  
   private static String formatMidiMessage(MidiMessage message) {
     return String.format("message: %-20s: %s", message.getClass().getSimpleName(), toHex(message.getMessage()));
   }
@@ -106,6 +136,10 @@ public class MidiCompilerTest {
     for (byte b : a)
       sb.append(String.format("%02x", b));
     return sb.toString();
+  }
+  
+  public static String name(String given, String when, String then) {
+    return new TestCaseName(given, when, then).toString();
   }
   
   private final TestCase testCase;
@@ -119,26 +153,34 @@ public class MidiCompilerTest {
     this.testCase.executeAndVerify();
   }
   
-  @Parameters
+  @Parameters( name = "{index}: {0}" )
   public static Collection<Object[]> parameters() {
     return Stream.concat(
-        normalTestCases().stream().map(c -> new Object[]{c}),
+        positiveTestCases().stream().map(c -> new Object[]{c}),
         negativeTestCases().stream().map(c -> new Object[]{c})).collect(Collectors.toList());
   }
   
-  public static List<TestCase> normalTestCases() {
+  public static List<TestCase> positiveTestCases() {
     return Arrays.asList(
-        createNormalTestCase(
+        createPositiveTestCase(
+            name("top level attributes are all empty", "compile", "empty song"),
             rootJsonObjectBase(),
             Transform.$(compiledSong_keySet()).check(isEmpty())),
         
-        createNormalTestCase(
+        createPositiveTestCase(
+            name("no pattern in sequence is given", "compile", "empty song"),
             merge(
                 rootJsonObjectBase(),
-                sequenceJsonObjectBase()),
+                object(
+                    $("$sequence", array(
+                        object(
+                            $("$beats", json("8/4")),
+                            $("$patterns", object()))
+                    )))),
             Transform.$(compiledSong_keySet()).check(isEmpty())),
         
-        createNormalTestCase(
+        createPositiveTestCase(
+            name("pattern contains no explicit event", "compile", "one message (end of sequence) is found"),
             merge(
                 rootJsonObjectBase(),
                 object($("$parts", object($("piano", object($("$channel", json(0)), $("$port", json("port1"))))))),
@@ -161,36 +203,9 @@ public class MidiCompilerTest {
                     Transform.$(SequenceTo.tickLength()).check(isEqualTo(0L))
                 ))),
         
-        createNormalTestCase(
-            merge(
-                rootJsonObjectBase(),
-                object(
-                    $("$parts", object($("piano", object($("$channel", json(0)), $("$port", json("port1"))))))
-                ),
-                
-                object(
-                    $("$parts", object($("piano", object($("$channel", json(0)), $("$port", json("port1")))))),
-                    $("$patterns", object($("pg-change-to-piano", object($("$body", array(json("C"), programChange(100, 83.2))))))),
-                    $("$sequence", array(
-                        object(
-                            $("$beats", json("8/4")),
-                            $("$patterns", object($("piano", array("pg-change-to-piano")))))
-                    )))),
-            AllOf.$(
-                Transform.$(MapTo.<String, Sequence>keyList()).allOf(
-                    Transform.$(ListTo.size()).check(isEqualTo(1)),
-                    Transform.$(ListTo.<String>elementAt(0)).check(isEqualTo("port1"))),
-                Transform.$(compiledSong_getSequence("port1")).allOf(
-                    Transform.$(SequenceTo.trackList()).check(AllOf.$(
-                        Transform.$(ListTo.size()).check(isEqualTo(1)),
-                        Transform.$(ListTo.<Track>elementAt(0)).allOf(
-                            Transform.$(TrackTo.size()).check(isEqualTo(6)),
-                            Transform.$(TrackTo.midiEventAt(0)).check(isNotNull()),
-                            Transform.$(TrackTo.ticks()).check(isEqualTo(96L))))),
-                    Transform.$(SequenceTo.tickLength()).check(isEqualTo(96L))
-                ))),
-        
-        createNormalTestCase(
+       
+        createPositiveTestCase(
+            name("pattern contains note on, note off, program change, and bank change (LSB and MSB)", "compile", "number of events and tick length seem ok"),
             object(
                 $("$settings", object()),
                 $("$parts", object($("piano", object($("$channel", json(0)), $("$port", json("port1")))))),
@@ -215,7 +230,8 @@ public class MidiCompilerTest {
                         Transform.$(SequenceTo.tickLength()).check(isEqualTo(96L)))
                 ))),
         
-        createNormalTestCase(
+        createPositiveTestCase(
+            name("sixteen notes are given in a single string element", "compile", "number of events and tick length seem ok"),
             object(
                 $("$settings", object()),
                 $("$parts", object($("piano", object($("$channel", json(0)), $("$port", json("port1")))))),
@@ -241,7 +257,8 @@ public class MidiCompilerTest {
                     Transform.$(SequenceTo.tickLength()).check(isEqualTo(379L)))
             )),
         
-        createNormalTestCase(
+        createPositiveTestCase(
+            name("sixteen notes are given in a single string element", "compile", "number of events and tick length seem ok"),
             composeSymfonionSongJsonObject(
                 "port1", json("C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;"), sixteenBeatsGroove()),
             AllOf.$(
@@ -255,7 +272,8 @@ public class MidiCompilerTest {
                         Transform.$(TrackTo.midiEventAt(0)).check(isNotNull()),
                         Transform.$(TrackTo.ticks()).check(isEqualTo(379L)))))),
         
-        createNormalTestCase(
+        createPositiveTestCase(
+            name("sixteen notes are given in two string elements", "compile", "number of events and tick length seem ok"),
             composeSymfonionSongJsonObject(
                 "port1", array(json("C16;C16;C16;C16;C16;C16;C16;C16;"), json("C16;C16;C16;C16;C16;C16;C16;C16;")), sixteenBeatsGroove()),
             AllOf.$(
@@ -269,7 +287,8 @@ public class MidiCompilerTest {
                         Transform.$(TrackTo.midiEventAt(0)).check(isNotNull()),
                         Transform.$(TrackTo.ticks()).check(isEqualTo(379L)))))),
         
-        createNormalTestCase(
+        createPositiveTestCase(
+            name("sixteenth note with short gate (0.25)", "compile", "number of events and tick length seem ok"),
             composeSymfonionSongJsonObject(
                 "port1", array(new StrokeBuilder().notes("C16").program(65).gate(0.25).build()), sixteenBeatsGroove()),
             AllOf.$(
@@ -283,15 +302,24 @@ public class MidiCompilerTest {
                         Transform.$(TrackTo.midiEventAt(0)).check(isNotNull()),
                         Transform.$(TrackTo.ticks()).check(isEqualTo(7L)))))),
         
-        createNormalTestCase(
+        createPositiveTestCase(
+            name("a note and controls (program change, volume, pan, chorus, reverb, modulation, and pitch)", "compile", "note on/off, program change, and volume are included."),
             composeSymfonionSongJsonObject(
                 "port2", array(new StrokeBuilder().notes("C16").program(65).volume(99).pan(101).chorus(102).reverb(103).modulation(104).pitch(105).gate(0.25).build()), sixteenBeatsGroove()),
             Transform.$(compiledSong_getSequence("port2").andThen(SequenceTo.trackList()).andThen(ListTo.elementAt(0))).allOf(
-                Transform.$(TrackTo.midiMessageStream()).check(anyMatch(IfMidiMessage.isProgramChange())),
-                Transform.$(TrackTo.midiMessageStream()).check(anyMatch(IfMidiMessage.isNoteOn().and(note(isEqualTo((byte)60/*C3*/))))),
-                Transform.$(TrackTo.midiMessageStream()).check(anyMatch(IfMidiMessage.isNoteOff())),
-                Transform.$(TrackTo.midiMessageStream()).check(anyMatch(IfMidiMessage.isControlChange()))
+                Transform.$(TrackTo.midiMessageStream(IfMidiMessage.isNoteOn())).check(anyMatch(note(isEqualTo(Notes.C3)))),
+                Transform.$(TrackTo.midiMessageStream(IfMidiMessage.isNoteOff())).check(anyMatch(note(isEqualTo(Notes.C3)))),
+                Transform.$(TrackTo.midiMessageStream(IfMidiMessage.isProgramChange())).check(anyMatch(programNumber(isEqualTo((byte) 65)))),
+                Transform.$(TrackTo.midiMessageStream(IfMidiMessage.isControlChange())).check(anyMatch(control(isEqualTo(Controls.VOLUME))))
             )));
+  }
+  
+  public static List<TestCase> negativeTestCases() {
+    return List.of(
+        createNegativeTestCase(
+            name("empty JSON object", "compile", "An exception is thrown"),
+            object(),
+            isNotNull()));
   }
   
   
@@ -317,15 +345,6 @@ public class MidiCompilerTest {
     return object($("$program", json(program)), $("$bank", json(bank)));
   }
   
-  private static JsonObject sequenceJsonObjectBase() {
-    return object(
-        $("$sequence", array(
-            object(
-                $("$beats", json("8/4")),
-                $("$patterns", object()))
-        )));
-  }
-  
   private static JsonObject rootJsonObjectBase() {
     return object(
         $("$settings", object()),
@@ -334,14 +353,7 @@ public class MidiCompilerTest {
         $("$sequence", array()));
   }
   
-  public static List<TestCase> negativeTestCases() {
-    return List.of(
-        createNegativeTestCase(
-            object(),
-            isNotNull()));
-  }
-  
-  
+ 
   private static Function<List<Track>, Track> trackAt(int i) {
     return elementAt(i);
   }

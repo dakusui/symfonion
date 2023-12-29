@@ -7,8 +7,10 @@ import javax.sound.midi.MidiMessage;
 import javax.sound.midi.Track;
 import java.util.AbstractList;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+import static com.github.dakusui.thincrest_pcond.forms.Predicates.alwaysTrue;
 import static com.github.dakusui.thincrest_pcond.forms.Printables.function;
 
 public enum TrackTo {
@@ -41,6 +43,16 @@ public enum TrackTo {
   }
   
   public static Function<Track, Stream<MidiMessage>> midiMessageStream() {
-    return function(() -> midiEventStream() + "->map[.message]", (Track track) -> midiEventStream().apply(track).map(MidiEvent::getMessage).map(message -> new PrintableMidiMessage(message.getMessage())));
+    return midiMessageStream(alwaysTrue());
+  }
+  
+  public static Function<Track, Stream<MidiMessage>> midiMessageStream(Predicate<MidiMessage> cond) {
+    return function(() -> midiEventStream() + "->map[.message]->filter[" + cond + "]",
+        (Track track) -> midiEventStream()
+            .apply(track)
+            .map(MidiEvent::getMessage)
+            .map(message -> new PrintableMidiMessage(message.getMessage()))
+            .map(message -> (MidiMessage) message)
+            .filter(cond));
   }
 }
