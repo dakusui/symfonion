@@ -2,7 +2,7 @@ package com.github.dakusui.testutils.midi;
 
 import javax.sound.midi.MidiMessage;
 
-import static com.github.dakusui.symfonion.scenarios.MidiCompilerTest.toHex;
+import static com.github.dakusui.testutils.TestUtils.toHex;
 
 public class PrintableMidiMessage extends MidiMessage {
   /**

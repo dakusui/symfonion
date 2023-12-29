@@ -1,4 +1,4 @@
-package com.github.dakusui.testutils;
+package com.github.dakusui.testutils.forms.midi;
 
 import com.github.dakusui.thincrest_pcond.forms.Printables;
 

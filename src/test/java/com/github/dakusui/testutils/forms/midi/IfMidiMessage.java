@@ -1,12 +1,12 @@
-package com.github.dakusui.testutils;
+package com.github.dakusui.testutils.forms.midi;
 
 import com.github.dakusui.thincrest_pcond.forms.Printables;
 
 import javax.sound.midi.MidiMessage;
 import java.util.function.Predicate;
 
-import static com.github.dakusui.symfonion.scenarios.MidiCompilerTest.toHex;
-import static com.github.dakusui.testutils.IfMidiMessage.Status.*;
+import static com.github.dakusui.testutils.TestUtils.toHex;
+import static com.github.dakusui.testutils.forms.midi.IfMidiMessage.Status.*;
 
 public enum IfMidiMessage {
   ;

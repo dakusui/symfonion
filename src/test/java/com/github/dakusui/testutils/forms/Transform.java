@@ -1,4 +1,4 @@
-package com.github.dakusui.testutils;
+package com.github.dakusui.testutils.forms;
 
 import com.github.dakusui.thincrest_pcond.core.printable.PrintablePredicateFactory;
 import com.github.dakusui.thincrest_pcond.forms.Predicates;
