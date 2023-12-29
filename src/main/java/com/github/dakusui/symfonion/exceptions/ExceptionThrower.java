@@ -5,7 +5,6 @@ import com.google.gson.JsonObject;
 
 import java.io.File;
 
-
 public class ExceptionThrower {
 
 	public static SymfonionException compilationException(String msg, Throwable e) throws SymfonionException {
