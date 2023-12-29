@@ -1,4 +1,4 @@
-package com.github.dakusui.testutils.symfonion;
+package com.github.dakusui.symfonion.testutils;
 
 import com.github.dakusui.json.JsonException;
 import com.github.dakusui.logias.lisp.Context;

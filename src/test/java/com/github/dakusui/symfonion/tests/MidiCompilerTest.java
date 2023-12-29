@@ -5,11 +5,12 @@ import com.github.dakusui.testutils.forms.*;
 import com.github.dakusui.testutils.forms.midi.IfMidiMessage;
 import com.github.dakusui.testutils.forms.midi.SequenceTo;
 import com.github.dakusui.testutils.forms.midi.TrackTo;
-import com.github.dakusui.testutils.forms.symfonion.SongTo;
-import com.github.dakusui.testutils.symfonion.json.StrokeBuilder;
-import com.github.dakusui.testutils.symfonion.json.SymfonionJsonTestUtils;
+import com.github.dakusui.symfonion.testutils.forms.SongTo;
+import com.github.dakusui.symfonion.testutils.json.StrokeBuilder;
+import com.github.dakusui.symfonion.testutils.json.SymfonionJsonTestUtils;
 import com.github.dakusui.testutils.midi.Controls;
-import com.github.dakusui.testutils.symfonion.SymfonionTestCase;
+import com.github.dakusui.symfonion.testutils.SymfonionTestCase;
+import com.github.dakusui.thincrest_pcond.forms.Predicates;
 import com.github.dakusui.thincrest_pcond.validator.Validator;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -17,6 +18,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
+import javax.sound.midi.MidiMessage;
 import javax.sound.midi.Sequence;
 import javax.sound.midi.Track;
 import java.util.Arrays;
@@ -25,9 +27,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.github.dakusui.testutils.midi.Controls.VOLUME;
 import static com.github.dakusui.testutils.midi.Notes.C3;
-import static com.github.dakusui.testutils.symfonion.SymfonionTestCase.createNegativeTestCase;
-import static com.github.dakusui.testutils.symfonion.SymfonionTestCase.createPositiveTestCase;
+import static com.github.dakusui.symfonion.testutils.SymfonionTestCase.createNegativeTestCase;
+import static com.github.dakusui.symfonion.testutils.SymfonionTestCase.createPositiveTestCase;
 import static com.github.dakusui.testutils.forms.midi.IfMidiMessage.*;
 import static com.github.dakusui.testutils.json.JsonTestUtils.*;
 import static com.github.dakusui.thincrest_pcond.forms.Predicates.*;
@@ -39,7 +42,7 @@ public class MidiCompilerTest {
   public static void beforeAll() {
     Validator.reconfigure(c -> c.summarizedStringLength(120));
   }
- 
+  
   private final SymfonionTestCase testCase;
   
   public MidiCompilerTest(SymfonionTestCase testCase) {
@@ -208,8 +211,37 @@ public class MidiCompilerTest {
                 Transform.$(TrackTo.midiMessageStream(IfMidiMessage.isNoteOn())).check(anyMatch(note(isEqualTo(C3)))),
                 Transform.$(TrackTo.midiMessageStream(IfMidiMessage.isNoteOff())).check(anyMatch(note(isEqualTo(C3)))),
                 Transform.$(TrackTo.midiMessageStream(IfMidiMessage.isProgramChange())).check(anyMatch(programNumber(isEqualTo((byte) 65)))),
-                Transform.$(TrackTo.midiMessageStream(IfMidiMessage.isControlChange())).check(anyMatch(control(isEqualTo(Controls.VOLUME))))
-            )));
+                Transform.$(TrackTo.midiMessageStream(IfMidiMessage.isControlChange())).check(anyMatch(control(isEqualTo(VOLUME))))
+            )),
+        
+        createPositiveTestCase(
+            TestUtils.name("a note and an 'arrayable' control (volume)", "compile", "arrayable control expanded."),
+            SymfonionJsonTestUtils.composeSymfonionSongJsonObject(
+                "port2", array(new StrokeBuilder().notes("C4").volume(array(10, 20, 30, 40, 50, 60, 70, 80, 90, 100)).build()), SymfonionJsonTestUtils.sixteenBeatsGroove()),
+            Transform.$(SongTo.sequence("port2").andThen(SequenceTo.trackList()).andThen(ListTo.elementAt(0))).allOf(
+                Transform.$(TrackTo.midiMessageStream(IfMidiMessage.isNoteOn())).check(anyMatch(note(isEqualTo(C3)))),
+                Transform.$(TrackTo.midiMessageStream(IfMidiMessage.isNoteOff())).check(anyMatch(note(isEqualTo(C3)))),
+                Transform.$(TrackTo.midiMessageStream(IfMidiMessage.isControlChange().and(control(isEqualTo(VOLUME)))))
+                    .check(allMatch(controlData(greaterThanOrEqualTo((byte) 10)))),
+                Transform.$(TrackTo.midiMessageStream(IfMidiMessage.isControlChange().and(control(isEqualTo(VOLUME)))))
+                    .check(Transform.<Stream<MidiMessage>, Long>$(StreamTo.count()).check(isEqualTo(10L)))
+            )),
+        createPositiveTestCase(
+            TestUtils.name("a note and an 'arrayable' control (volume) with nulls", "compile", "arrayable control expanded replacing nulls with intermediate values."),
+            SymfonionJsonTestUtils.composeSymfonionSongJsonObject(
+                "port2", array(new StrokeBuilder().notes("C4").volume(array(10, null, null, null, null, null, null, null, null, 100)).build()), SymfonionJsonTestUtils.sixteenBeatsGroove()),
+            Transform.$(SongTo.sequence("port2").andThen(SequenceTo.trackList()).andThen(ListTo.elementAt(0))).allOf(
+                Transform.$(TrackTo.midiMessageStream(IfMidiMessage.isNoteOn())).check(anyMatch(note(isEqualTo(C3)))),
+                Transform.$(TrackTo.midiMessageStream(IfMidiMessage.isNoteOff())).check(anyMatch(note(isEqualTo(C3)))),
+                Transform.$(TrackTo.midiMessageStream(IfMidiMessage.isControlChange().and(control(isEqualTo(VOLUME)))))
+                    .check(allMatch(controlData(greaterThanOrEqualTo((byte) 10)))),
+                Transform.$(TrackTo.midiMessageStream(IfMidiMessage.isControlChange().and(control(isEqualTo(VOLUME)))))
+                    .check(Transform.<Stream<MidiMessage>, Long>$(StreamTo.count()).check(isEqualTo(10L))),
+                Transform.$(TrackTo.midiMessageStream(IfMidiMessage.isControlChange().and(control(isEqualTo(VOLUME)).and(controlData(greaterThanOrEqualTo((byte)50))))))
+                    .check(Transform.<Stream<MidiMessage>, Long>$(StreamTo.count()).check(greaterThan(4L)))
+            ))
+    );
+    
   }
   
   public static List<SymfonionTestCase> negativeTestCases() {

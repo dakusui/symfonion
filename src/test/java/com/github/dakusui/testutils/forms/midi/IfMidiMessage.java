@@ -48,6 +48,10 @@ public enum IfMidiMessage {
     return Printables.predicate("controlNumber->" + cond, m -> cond.test(data1Of(m)));
   }
   
+  public static Predicate<MidiMessage> controlData(Predicate<Byte> cond) {
+    return Printables.predicate("controlData->" + cond, m -> cond.test(data2Of(m)));
+  }
+  
   enum Status {
     NOTE_OFF((byte) 0x80),
     NOTE_ON((byte) 0x90),

@@ -1,4 +1,4 @@
-package com.github.dakusui.testutils.forms.symfonion;
+package com.github.dakusui.symfonion.testutils.forms;
 
 import com.github.dakusui.testutils.forms.Cliche;
 

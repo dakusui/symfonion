@@ -1,4 +1,4 @@
-package com.github.dakusui.testutils.symfonion.json;
+package com.github.dakusui.symfonion.testutils.json;
 
 import com.github.dakusui.testutils.json.JsonObjectBuilder;
 
@@ -23,6 +23,8 @@ import com.github.dakusui.testutils.json.JsonObjectBuilder;
  
  */
 public class StrokeBuilder extends JsonObjectBuilder<StrokeBuilder> {
+  public StrokeBuilder() {
+  }
   public StrokeBuilder notes(Object notes) {
     return this.add("$notes", notes);
   }
