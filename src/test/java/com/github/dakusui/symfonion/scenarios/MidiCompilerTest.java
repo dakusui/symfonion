@@ -5,7 +5,7 @@ import com.github.dakusui.logias.lisp.Context;
 import com.github.dakusui.symfonion.core.exceptions.SymfonionException;
 import com.github.dakusui.symfonion.song.Song;
 import com.github.dakusui.testutils.*;
-import com.github.dakusui.thincrest_pcond.forms.Functions;
+import com.github.dakusui.testutils.json.JsonTestUtils;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -28,6 +28,7 @@ import static com.github.dakusui.symfonion.scenarios.MidiCompilerTest.TestCase.c
 import static com.github.dakusui.symfonion.scenarios.MidiCompilerTest.TestCase.createNormalTestCase;
 import static com.github.dakusui.testutils.Cliche.collectionSize;
 import static com.github.dakusui.testutils.json.JsonTestUtils.*;
+import static com.github.dakusui.testutils.json.JsonTestUtils.array;
 import static com.github.dakusui.thincrest.TestAssertions.assertThat;
 import static com.github.dakusui.thincrest_pcond.forms.Functions.elementAt;
 import static com.github.dakusui.thincrest_pcond.forms.Predicates.*;
@@ -237,8 +238,21 @@ public class MidiCompilerTest {
             )),
         createNormalTestCase(
             composeSymfonionSongJsonObject(
-                json("C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;"),
-                sixteenBeatsGroove(), "port1"),
+                sixteenBeatsGroove(), "port1", json("C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;")),
+            AllOf.$(
+                Transform.$(MapTo.<String, Sequence>keyList()).allOf(
+                    Transform.$(ListTo.size()).check(isEqualTo(1)),
+                    Transform.$(ListTo.<String>elementAt(0)).check(isEqualTo("port1"))),
+                Transform.$(compiledSong_getSequence("port1").andThen(SequenceTo.trackList())).allOf(
+                    Transform.$(ListTo.size()).check(isEqualTo(1)),
+                    Transform.$(ListTo.<Track>elementAt(0)).allOf(
+                        Transform.$(TrackTo.size()).check(isEqualTo(33)),
+                        Transform.$(TrackTo.midiEventAt(0)).check(isNotNull()),
+                        Transform.$(TrackTo.ticks()).check(isEqualTo(475L)))))),
+        
+        createNormalTestCase(
+            composeSymfonionSongJsonObject(
+                sixteenBeatsGroove(), "port1", array(json("C16;C16;C16;C16;C16;C16;C16;C16;"), json("C16;C16;C16;C16;C16;C16;C16;C16;"))),
             AllOf.$(
                 Transform.$(MapTo.<String, Sequence>keyList()).allOf(
                     Transform.$(ListTo.size()).check(isEqualTo(1)),
@@ -252,15 +266,16 @@ public class MidiCompilerTest {
     );
   }
   
-  private static JsonObject composeSymfonionSongJsonObject(JsonElement noteSequence, JsonArray groove, String portname1) {
+  
+  private static JsonObject composeSymfonionSongJsonObject(JsonArray groove, String portName, JsonElement strokes) {
     String patternName = "C16x16";
     String grooveName = "16beats";
     String partName = "piano";
     String beats = "16/4";
     return object(
         $("$settings", object()),
-        $("$parts", object($(partName, object($("$channel", json(0)), $("$port", json(portname1)))))),
-        $("$patterns", object($(patternName, object($("$body", array(noteSequence)))))),
+        $("$parts", object($(partName, object($("$channel", json(0)), $("$port", json(portName)))))),
+        $("$patterns", object($(patternName, object($("$body", strokes))))),
         $("$grooves", object($(grooveName, groove))),
         $("$sequence", array(
             merge(

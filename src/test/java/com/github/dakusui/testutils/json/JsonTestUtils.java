@@ -62,18 +62,36 @@ public enum JsonTestUtils {
     }
   }
   
+  /**
+   * Merges given {@code JsonObject}s into one JSON object and returns it.
+   * A {@code null} in {@code objs} will be ignored.
+   *
+   * @param objs {@code JsonObject}s to be merged.
+   * @return A merged {@code JsonObject}.
+   * @see ExtendJsonObject#merge(JsonObject...)
+   */
   public static JsonObject merge(JsonObject... objs) {
     JsonObject ret = new JsonObject();
     ExtendJsonObject.extendJsonObject(ret, ConflictStrategy.PREFER_SECOND_OBJ, objs);
     return ret;
   }
   
-  static enum ExtendJsonObject {
+  enum ExtendJsonObject {
     ;
     
+    /**
+     * Ignores {@code null} in objs will be ignored.
+     *
+     * @param destinationObject An object to which the merge result is accumulated.
+     * @param conflictResolutionStrategy A strategy to resolve a conflict detected during a merge.
+     * @param objs {@code JsonObject}s to be merged.
+     * @throws JsonObjectExtensionConflictException Failed to resolve a conflict during the execution.
+     */
     public static void extendJsonObject(JsonObject destinationObject, ConflictStrategy conflictResolutionStrategy, JsonObject ... objs)
         throws JsonObjectExtensionConflictException {
       for (JsonObject obj : objs) {
+        if (obj == null)
+          continue;
         extendJsonObject(destinationObject, obj, conflictResolutionStrategy);
       }
     }
