@@ -29,7 +29,7 @@ public class Symfonion {
     this.logiasContext = logiasContext;
   }
   
-  public Song load(String fileName) throws SymfonionException {
+  public Song load(String fileName)  {
     Song ret;
     this.fileName = fileName;
     try {
@@ -52,7 +52,7 @@ public class Symfonion {
     return ret;
   }
   
-  private static JsonObject loadSymfonionFile(String fileName, Map<String, JsonObject> alreadyReadFiles) throws SymfonionException, JsonException {
+  private static JsonObject loadSymfonionFile(String fileName, Map<String, JsonObject> alreadyReadFiles) {
     if (alreadyReadFiles.containsKey(fileName)) return alreadyReadFiles.get(fileName);
     JsonObject ret = JsonUtils.toJson(Utils.loadFile(fileName)).getAsJsonObject();
     if (ret.has(Keyword.$include.name())) {
@@ -74,7 +74,7 @@ public class Symfonion {
     return ret;
   }
   
-  public Map<String, Sequence> compile(Song song) throws SymfonionException {
+  public Map<String, Sequence> compile(Song song)  {
     MidiCompiler compiler = new MidiCompiler(song.getLogiasContext());
     Map<String, Sequence> ret;
     try {
