@@ -1,7 +1,5 @@
 package com.github.dakusui.testutils;
 
-import com.github.dakusui.symfonion.scenarios.TestCaseName;
-
 public enum TestUtils {
   ;
   

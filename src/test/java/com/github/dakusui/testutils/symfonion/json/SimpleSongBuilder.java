@@ -1,5 +1,6 @@
-package com.github.dakusui.symfonion.scenarios;
+package com.github.dakusui.testutils.symfonion.json;
 
+import com.github.dakusui.testutils.json.JsonBuilder;
 import com.github.dakusui.testutils.json.JsonTestUtils;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -28,7 +29,7 @@ class SimpleSongBuilder extends JsonBuilder<SimpleSongBuilder> {
   }
   
   @Override
-  JsonObject build() {
+  public JsonObject build() {
     String patternName = "pattern1";
     String grooveName = "16beats";
     String partName = "part1";

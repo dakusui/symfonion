@@ -1,8 +1,6 @@
-package com.github.dakusui.symfonion.scenarios;
+package com.github.dakusui.testutils.symfonion.json;
 
-import com.google.gson.JsonElement;
-
-import static com.github.dakusui.testutils.json.JsonTestUtils.json;
+import com.github.dakusui.testutils.json.JsonObjectBuilder;
 
 public class PatternBuilder extends JsonObjectBuilder<PatternBuilder> {
   public PatternBuilder length(Object length) {

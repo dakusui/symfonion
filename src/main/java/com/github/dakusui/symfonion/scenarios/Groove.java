@@ -1,4 +1,4 @@
-package com.github.dakusui.symfonion.song;
+package com.github.dakusui.symfonion.scenarios;
 
 import com.github.dakusui.json.JsonFormatException;
 import com.github.dakusui.json.JsonInvalidPathException;
@@ -7,6 +7,7 @@ import com.github.dakusui.json.JsonUtils;
 import com.github.dakusui.symfonion.core.Fraction;
 import com.github.dakusui.symfonion.core.exceptions.SymfonionException;
 import com.github.dakusui.symfonion.core.Utils;
+import com.github.dakusui.symfonion.song.Keyword;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -34,8 +35,8 @@ public class Groove {
   }
   
   public static class Unit {
-    final long pos;
-    final int accentDelta;
+    public final long pos;
+    public final int accentDelta;
     
     public Unit(long pos, int accentDelta) {
       this.pos = pos;

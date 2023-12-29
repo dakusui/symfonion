@@ -1,7 +1,6 @@
 package com.github.dakusui.symfonion.scenarios;
 
 import com.github.dakusui.symfonion.core.Fraction;
-import com.github.dakusui.symfonion.song.Groove;
 import com.github.dakusui.symfonion.song.Pattern;
 import com.github.dakusui.symfonion.song.Stroke;
 

@@ -7,6 +7,7 @@ import com.github.dakusui.symfonion.core.*;
 import com.github.dakusui.symfonion.core.exceptions.FractionFormatException;
 import com.github.dakusui.symfonion.core.exceptions.SymfonionException;
 import com.github.dakusui.symfonion.core.exceptions.SymfonionIllegalFormatException;
+import com.github.dakusui.symfonion.scenarios.Groove;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;

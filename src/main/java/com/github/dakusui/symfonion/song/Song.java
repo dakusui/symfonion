@@ -6,6 +6,7 @@ import com.github.dakusui.logias.Logias;
 import com.github.dakusui.logias.lisp.Context;
 import com.github.dakusui.symfonion.core.Utils;
 import com.github.dakusui.symfonion.core.exceptions.SymfonionException;
+import com.github.dakusui.symfonion.scenarios.Groove;
 import com.github.dakusui.valid8j.Requires;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;

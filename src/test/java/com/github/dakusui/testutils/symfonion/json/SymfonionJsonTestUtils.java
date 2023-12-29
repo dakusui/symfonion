@@ -1,4 +1,4 @@
-package com.github.dakusui.testutils.json.symfonion;
+package com.github.dakusui.testutils.symfonion.json;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;

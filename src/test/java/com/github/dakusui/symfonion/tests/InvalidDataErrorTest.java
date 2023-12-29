@@ -1,4 +1,4 @@
-package com.github.dakusui.symfonion;
+package com.github.dakusui.symfonion.tests;
 
 import static org.junit.Assert.assertEquals;
 

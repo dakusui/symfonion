@@ -1,4 +1,4 @@
-package com.github.dakusui.json;
+package com.github.dakusui.symfonion.tests.json;
 
 import static com.github.dakusui.thincrest.TestAssertions.assertThat;
 import static com.github.dakusui.thincrest_pcond.forms.Functions.*;
@@ -9,6 +9,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import com.github.dakusui.json.*;
 import com.github.dakusui.thincrest_pcond.forms.Printables;
 import org.junit.Assert;
 import org.junit.Before;

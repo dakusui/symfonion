@@ -1,13 +1,15 @@
-package com.github.dakusui.symfonion.core;
+package com.github.dakusui.symfonion.tests.core;
 
 import static org.junit.Assert.*;
 
+import com.github.dakusui.symfonion.core.Fraction;
+import org.junit.Assert;
 import org.junit.Test;
 
 public class FractionTest {
 	@Test
 	public void test_compare01() {
-		assertEquals(0, Fraction.compare(Fraction.one, Fraction.one));
+		Assert.assertEquals(0, Fraction.compare(Fraction.one, Fraction.one));
 	}
 	
 	@Test

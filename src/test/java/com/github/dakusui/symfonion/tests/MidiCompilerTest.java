@@ -1,4 +1,4 @@
-package com.github.dakusui.symfonion.scenarios;
+package com.github.dakusui.symfonion.tests;
 
 import com.github.dakusui.testutils.TestUtils;
 import com.github.dakusui.testutils.forms.*;
@@ -6,7 +6,9 @@ import com.github.dakusui.testutils.forms.midi.IfMidiMessage;
 import com.github.dakusui.testutils.forms.midi.SequenceTo;
 import com.github.dakusui.testutils.forms.midi.TrackTo;
 import com.github.dakusui.testutils.forms.symfonion.SongTo;
-import com.github.dakusui.testutils.json.symfonion.SymfonionJsonTestUtils;
+import com.github.dakusui.testutils.symfonion.json.StrokeBuilder;
+import com.github.dakusui.testutils.symfonion.json.SymfonionJsonTestUtils;
+import com.github.dakusui.testutils.midi.Controls;
 import com.github.dakusui.testutils.symfonion.SymfonionTestCase;
 import com.github.dakusui.thincrest_pcond.validator.Validator;
 import org.junit.BeforeClass;
@@ -23,8 +25,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.github.dakusui.symfonion.scenarios.Controls.VOLUME;
-import static com.github.dakusui.symfonion.scenarios.Notes.C3;
+import static com.github.dakusui.testutils.midi.Notes.C3;
 import static com.github.dakusui.testutils.symfonion.SymfonionTestCase.createNegativeTestCase;
 import static com.github.dakusui.testutils.symfonion.SymfonionTestCase.createPositiveTestCase;
 import static com.github.dakusui.testutils.forms.midi.IfMidiMessage.*;
@@ -207,7 +208,7 @@ public class MidiCompilerTest {
                 Transform.$(TrackTo.midiMessageStream(IfMidiMessage.isNoteOn())).check(anyMatch(note(isEqualTo(C3)))),
                 Transform.$(TrackTo.midiMessageStream(IfMidiMessage.isNoteOff())).check(anyMatch(note(isEqualTo(C3)))),
                 Transform.$(TrackTo.midiMessageStream(IfMidiMessage.isProgramChange())).check(anyMatch(programNumber(isEqualTo((byte) 65)))),
-                Transform.$(TrackTo.midiMessageStream(IfMidiMessage.isControlChange())).check(anyMatch(control(isEqualTo(VOLUME))))
+                Transform.$(TrackTo.midiMessageStream(IfMidiMessage.isControlChange())).check(anyMatch(control(isEqualTo(Controls.VOLUME))))
             )));
   }
   

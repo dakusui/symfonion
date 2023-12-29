@@ -1,4 +1,4 @@
-package com.github.dakusui.symfonion.scenarios;
+package com.github.dakusui.testutils;
 
 public record TestCaseName(String given, String when, String then) {
   public String toString() {

@@ -1,4 +1,4 @@
-package com.github.dakusui.symfonion.scenarios;
+package com.github.dakusui.testutils.midi;
 
 public enum Controls {
   ;
