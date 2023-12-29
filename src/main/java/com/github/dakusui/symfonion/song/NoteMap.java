@@ -5,10 +5,11 @@ import java.util.Iterator;
 import java.util.Map;
 
 import com.github.dakusui.json.JsonUtils;
-import com.github.dakusui.symfonion.core.ExceptionThrower;
-import com.github.dakusui.symfonion.core.SymfonionException;
+import com.github.dakusui.symfonion.exceptions.SymfonionException;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+
+import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.noteNotDefinedException;
 
 
 public class NoteMap {
@@ -34,7 +35,7 @@ public class NoteMap {
 	public NoteMap(String name) {
 		this.name = name;
 	}
-	public NoteMap(final JsonObject json) throws SymfonionException {
+	public NoteMap(final JsonObject json) {
 		Iterator<String> i = JsonUtils.keyIterator(json);
 		while (i.hasNext()) {
 			String cur = i.next();
@@ -43,12 +44,12 @@ public class NoteMap {
 		}
 	}
 	
-	public int note(String notename, JsonElement location) throws SymfonionException {
+	public int note(String notename, JsonElement problemCausingJsonNode, JsonObject rootJsonObject) throws SymfonionException {
 		if ("r".equals(notename)) {
 			return -1;
 		}
 		if (!this.map.containsKey(notename)) {
-			ExceptionThrower.throwNoteNotDefinedException(location, notename, this.name);
+			throw noteNotDefinedException(problemCausingJsonNode, rootJsonObject, notename, this.name);
 		}
 		return this.map.get(notename);
 	}

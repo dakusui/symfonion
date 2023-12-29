@@ -34,7 +34,7 @@ public class JsonInvalidPathException extends JsonException {
     this(base, path, 0);
   }
 
-  public JsonElement getLocation() {
+  public JsonElement getProblemCausingNode() {
 		return base;
 	}
 

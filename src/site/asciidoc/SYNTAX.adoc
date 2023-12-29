@@ -47,7 +47,9 @@ A value for "$parts" is a dictionary which describes 'parts' in music score (lik
 
 == Include
 
-Inside the ```$include``` attribute, you can specify file names to be included before this file is processed.
+NOTE: This feature will be deprecated soon because it is planned to integrate `jq-front` into the symfonion's use case as described in https://github.com/dakusui/symfonion/issues/15[Issue-15]
+
+Inside the `$include` attribute, you can specify file names to be included before this file is processed.
 The files specified here are read and merged with this document.
 
 If you have two files like below in the same directory,
@@ -63,6 +65,7 @@ If you have two files like below in the same directory,
 }
 ----
 
+[source, json]
 .included.json
 ----
 {
@@ -472,6 +475,22 @@ This feature is NOT 'arrayable'.
 ----
 
 A program change message is sent with a given value to the channel with which this pattern is associated through a part.
+
+===== Bank
+
+To select a bank, you can use `$bank` attribute in a stroke.
+
+[source, json]
+----
+    {
+        "$notes": "C",
+        "bank": 12.3,
+        "...": "..."
+    }
+----
+
+Note that an integer will result in an error because a bank select message needs both MSB and LSB.
+Use a double and its integer part will be used as MSB and the fractional part will be used LSB part.
 
 ===== Tempo
 

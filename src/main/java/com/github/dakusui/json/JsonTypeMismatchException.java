@@ -5,6 +5,8 @@ import com.google.gson.JsonElement;
 
 import java.util.Arrays;
 
+import static com.github.dakusui.json.JsonUtils.summarizeJsonElement;
+
 /**
  * An exception thrown when a Json element is found on a certain path has an
  * invalid type.
@@ -70,9 +72,9 @@ public class JsonTypeMismatchException extends JsonException {
 			r = String.format("(%s)", reason);
 		}
 		if (types == null || types.length == 0) {
-			ret = String.format("%s is not allowed here %s.", summary(actualJSON), r);
+			ret = String.format("%s is not allowed here %s.", summarizeJsonElement(actualJSON), r);
 		} else {
-			ret = String.format("%s is not allowed here %s. Acceptable type(s) are %s", summary(actualJSON), r, Arrays.toString(types));
+			ret = String.format("%s is not allowed here %s. Acceptable type(s) are %s", summarizeJsonElement(actualJSON), r, Arrays.toString(types));
 		}
 		return ret;
 	}
@@ -82,6 +84,6 @@ public class JsonTypeMismatchException extends JsonException {
 	 */
 	@Override
 	public String getMessage() {
-		return formatMessage(this.reason, this.expectedTypes, getLocation());
+		return formatMessage(this.reason, this.expectedTypes, getProblemCausingNode());
 	}
 }

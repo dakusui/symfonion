@@ -1,7 +1,7 @@
 package com.github.dakusui.symfonion.jv.efx;
 
 public class Settings {
-  static enum SignalSink {
+  enum SignalSink {
     MIX,
     EFX,
     REV,
