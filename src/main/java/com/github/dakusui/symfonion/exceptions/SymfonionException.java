@@ -3,7 +3,7 @@ package com.github.dakusui.symfonion.exceptions;
 import java.io.File;
 import java.io.Serial;
 
-public class SymfonionException extends Exception {
+public class SymfonionException extends RuntimeException {
 
   /**
    * A serial version uid.
