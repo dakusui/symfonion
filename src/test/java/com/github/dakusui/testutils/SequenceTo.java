@@ -14,4 +14,8 @@ public enum SequenceTo {
   public static Function<Sequence, List<Track>> trackList() {
     return function("Sequence#getTracks", seq -> Arrays.asList(seq.getTracks()));
   }
+  
+  public static Function<Sequence, Long> tickLength() {
+    return function("Sequence#getTickLength", Sequence::getTickLength);
+  }
 }

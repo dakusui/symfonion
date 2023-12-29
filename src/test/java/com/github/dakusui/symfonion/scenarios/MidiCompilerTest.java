@@ -14,20 +14,22 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
-import javax.sound.midi.*;
+import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.MidiMessage;
+import javax.sound.midi.Sequence;
+import javax.sound.midi.Track;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.github.dakusui.testutils.Cliche.*;
-import static com.github.dakusui.testutils.json.JsonTestUtils.*;
 import static com.github.dakusui.symfonion.scenarios.MidiCompilerTest.TestCase.createNegativeTestCase;
 import static com.github.dakusui.symfonion.scenarios.MidiCompilerTest.TestCase.createNormalTestCase;
+import static com.github.dakusui.testutils.Cliche.collectionSize;
+import static com.github.dakusui.testutils.json.JsonTestUtils.*;
 import static com.github.dakusui.thincrest.TestAssertions.assertThat;
 import static com.github.dakusui.thincrest_pcond.forms.Functions.elementAt;
-import static com.github.dakusui.thincrest_pcond.forms.Functions.size;
 import static com.github.dakusui.thincrest_pcond.forms.Predicates.*;
 import static com.github.dakusui.thincrest_pcond.forms.Printables.function;
 import static java.lang.String.format;
@@ -128,12 +130,12 @@ public class MidiCompilerTest {
     return Arrays.asList(
         createNormalTestCase(
             rootJsonObjectBase(),
-            transform(compiledSong_keySet()).check(isEmpty())),
+            Transform.$(compiledSong_keySet()).check(isEmpty())),
         createNormalTestCase(
             merge(
                 rootJsonObjectBase(),
                 sequenceJsonObjectBase()),
-            transform(compiledSong_keySet()).check(isEmpty())),
+            Transform.$(compiledSong_keySet()).check(isEmpty())),
         createNormalTestCase(
             merge(
                 rootJsonObjectBase(),
@@ -143,21 +145,19 @@ public class MidiCompilerTest {
                         object($("$beats", json("8/4"))),
                         object($("$patterns", object($("piano", array()))))
                     ))))),
-            allOf(
-                transform(compiledSong_keySet().andThen(castToObjectCollection())).check(allOf(
-                    transform(size()).check(isEqualTo(1)),
-                    transform(collectionToList().andThen(elementAt(0))).check(isEqualTo("port1")))),
-                transform(compiledSong_getSequence("port1")).check(
-                    allOf(
-                        transform(SequenceTo.trackList()).check(
-                            allOf(
-                                transform(trackListSize()).check(isEqualTo(1)),
-                                transform(trackAt(0).andThen(TrackTo.size())).check(isEqualTo(1)),
-                                transform(trackAt(0).andThen(TrackTo.midiEventAt(0))).check(isNotNull()),
-                                transform(trackAt(0).andThen(TrackTo.ticks())).check(isEqualTo(0L))
-                            )),
-                        transform(tickLengthFromSequence()).check(isEqualTo(0L))
-                    )))),
+            AllOf.$(
+                Transform.$(MapTo.<String, Sequence>keyList()).allOf(
+                    Transform.$(ListTo.size()).check(isEqualTo(1)),
+                    Transform.$(ListTo.<String>elementAt(0)).check(isEqualTo("port1"))),
+                Transform.$(compiledSong_getSequence("port1")).allOf(
+                    Transform.$(SequenceTo.trackList()).checkAllOf(
+                        Transform.$(ListTo.size()).check(isEqualTo(1)),
+                        Transform.$(ListTo.<Track>elementAt(0)).checkAllOf(
+                            Transform.$(TrackTo.size()).check(isEqualTo(1)),
+                            Transform.$(TrackTo.midiEventAt(0)).check(isNotNull()),
+                            Transform.$(TrackTo.ticks()).check(isEqualTo(0L)))),
+                    Transform.$(SequenceTo.tickLength()).check(isEqualTo(0L))
+                ))),
         createNormalTestCase(
             merge(
                 rootJsonObjectBase(),
@@ -173,19 +173,18 @@ public class MidiCompilerTest {
                             $("$beats", json("8/4")),
                             $("$patterns", object($("piano", array("pg-change-to-piano")))))
                     )))),
-            allOf(
-                Transform.$(compiledSong_keySet().andThen(castToObjectCollection())).check(allOf(
-                    transform(size()).check(isEqualTo(1)),
-                    transform(collectionToList().andThen(elementAt(0))).check(isEqualTo("port1")))),
-                transform(compiledSong_getSequence("port1")).check(
-                    allOf(
-                        Transform.$(SequenceTo.trackList()).check(AllOf.$(
-                            transform(trackListSize()).check(isEqualTo(1)),
-                            transform(trackAt(0)).check(allOf(
-                                transform(TrackTo.size()).check(isEqualTo(6)),
-                                transform(TrackTo.midiEventAt(0)).check(isNotNull()),
-                                transform(TrackTo.ticks()).check(isEqualTo(192L)))))),
-                        transform(tickLengthFromSequence()).check(isEqualTo(192L)))
+            AllOf.$(
+                Transform.$(MapTo.<String, Sequence>keyList()).allOf(
+                    Transform.$(ListTo.size()).check(isEqualTo(1)),
+                    Transform.$(ListTo.<String>elementAt(0)).check(isEqualTo("port1"))),
+                Transform.$(compiledSong_getSequence("port1")).allOf(
+                    Transform.$(SequenceTo.trackList()).check(AllOf.$(
+                        Transform.$(ListTo.size()).check(isEqualTo(1)),
+                        Transform.$(ListTo.<Track>elementAt(0)).allOf(
+                            Transform.$(TrackTo.size()).check(isEqualTo(6)),
+                            Transform.$(TrackTo.midiEventAt(0)).check(isNotNull()),
+                            Transform.$(TrackTo.ticks()).check(isEqualTo(192L))))),
+                    Transform.$(SequenceTo.tickLength()).check(isEqualTo(192L))
                 ))),
         createNormalTestCase(
             object(
@@ -198,18 +197,18 @@ public class MidiCompilerTest {
                         object($("$patterns", object($("piano", array("pg-change-to-piano"))))))
                 ))),
             allOf(
-                Transform.$(Cliche.<String, Sequence>keySet().andThen(castToObjectCollection())).check(allOf(
-                    Transform.$(size()).check(isEqualTo(1)),
-                    Transform.$(collectionToList().andThen(elementAt(0))).check(isEqualTo("port1")))),
-                transform(compiledSong_getSequence("port1")).check(
+                Transform.$(MapTo.<String, Sequence>keyList()).checkAllOf(
+                    Transform.$(ListTo.size()).check(isEqualTo(1)),
+                    Transform.$(ListTo.<String>elementAt(0)).check(isEqualTo("port1"))),
+                Transform.$(compiledSong_getSequence("port1")).check(
                     allOf(
                         Transform.$(SequenceTo.trackList()).check(AllOf.$(
-                            transform(trackListSize()).check(isEqualTo(1)),
-                            transform(trackAt(0)).check(allOf(
-                                transform(TrackTo.size()).check(isEqualTo(6)),
-                                transform(TrackTo.midiEventAt(0)).check(isNotNull()),
-                                transform(TrackTo.ticks()).check(isEqualTo(192L)))))),
-                        transform(tickLengthFromSequence()).check(isEqualTo(192L)))
+                            Transform.$(trackListSize()).check(isEqualTo(1)),
+                            Transform.$(trackAt(0)).check(allOf(
+                                Transform.$(TrackTo.size()).check(isEqualTo(6)),
+                                Transform.$(TrackTo.midiEventAt(0)).check(isNotNull()),
+                                Transform.$(TrackTo.ticks()).check(isEqualTo(192L)))))),
+                        Transform.$(SequenceTo.tickLength()).check(isEqualTo(192L)))
                 ))),
         createNormalTestCase(
             object(
@@ -223,25 +222,24 @@ public class MidiCompilerTest {
                         object($("$patterns", object($("piano", array("C16x16"))))),
                         object($("$groove", json("16beats")))
                     )))),
-            allOf(
-                Transform.$(Cliche.<String, Sequence>keySet().andThen(castToObjectCollection())).check(allOf(
-                    Transform.$(size()).check(isEqualTo(1)),
-                    Transform.$(collectionToList().andThen(elementAt(0))).check(isEqualTo("port1")))),
-                transform(compiledSong_getSequence("port1")).check(
-                    allOf(
-                        Transform.$(SequenceTo.trackList()).check(AllOf.$(
-                            transform(trackListSize()).check(isEqualTo(1)),
-                            transform(trackAt(0)).check(allOf(
-                                transform(TrackTo.size()).check(isEqualTo(33)),
-                                transform(TrackTo.midiEventAt(0)).check(isNotNull()),
-                                transform(TrackTo.ticks()).check(isEqualTo(475L)))))),
-                        transform(tickLengthFromSequence()).check(isEqualTo(475L)))
-                ))),
+            AllOf.$(
+                Transform.$(MapTo.<String, Sequence>keyList()).checkAllOf(
+                    Transform.$(ListTo.size()).check(isEqualTo(1)),
+                    Transform.$(ListTo.<String>elementAt(0)).check(isEqualTo("port1"))),
+                Transform.$(compiledSong_getSequence("port1")).allOf(
+                    Transform.$(SequenceTo.trackList()).allOf(
+                        Transform.$(ListTo.size()).check(isEqualTo(1)),
+                        Transform.$(ListTo.<Track>elementAt(0)).allOf(
+                            Transform.$(TrackTo.size()).check(isEqualTo(33)),
+                            Transform.$(TrackTo.midiEventAt(0)).check(isNotNull()),
+                            Transform.$(TrackTo.ticks()).check(isEqualTo(475L)))),
+                    Transform.$(SequenceTo.tickLength()).check(isEqualTo(475L)))
+            )),
         createNormalTestCase(
             composeSymfonionSongJsonObject(
                 json("C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;"),
-                sixteenBeatsGroove()),
-            allOf(
+                sixteenBeatsGroove(), "port1"),
+            AllOf.$(
                 Transform.$(MapTo.<String, Sequence>keyList()).allOf(
                     Transform.$(ListTo.size()).check(isEqualTo(1)),
                     Transform.$(ListTo.<String>elementAt(0)).check(isEqualTo("port1"))),
@@ -254,15 +252,14 @@ public class MidiCompilerTest {
     );
   }
   
-  private static JsonObject composeSymfonionSongJsonObject(JsonElement noteSequence, JsonArray groove) {
+  private static JsonObject composeSymfonionSongJsonObject(JsonElement noteSequence, JsonArray groove, String portname1) {
     String patternName = "C16x16";
     String grooveName = "16beats";
     String partName = "piano";
-    String portName = "port1";
     String beats = "16/4";
     return object(
         $("$settings", object()),
-        $("$parts", object($(partName, object($("$channel", json(0)), $("$port", json(portName)))))),
+        $("$parts", object($(partName, object($("$channel", json(0)), $("$port", json(portname1)))))),
         $("$patterns", object($(patternName, object($("$body", array(noteSequence)))))),
         $("$grooves", object($(grooveName, groove))),
         $("$sequence", array(
@@ -307,11 +304,6 @@ public class MidiCompilerTest {
   }
   
   
-  private static Function<? super Object, Collection<Object>> castToObjectCollection() {
-    return Functions.castTo(Functions.value());
-  }
-  
-  
   private static Function<List<Track>, Integer> trackListSize() {
     return collectionSize();
   }
@@ -334,10 +326,6 @@ public class MidiCompilerTest {
   
   private static Song createSong(Context context, JsonObject jsonObject) throws JsonException, SymfonionException {
     return new Song.Builder(context, jsonObject).build();
-  }
-  
-  private static Function<Sequence, Long> tickLengthFromSequence() {
-    return function("Sequence#getTickLength", Sequence::getTickLength);
   }
   
   
