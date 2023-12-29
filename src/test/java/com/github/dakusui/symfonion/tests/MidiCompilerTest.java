@@ -1,16 +1,14 @@
 package com.github.dakusui.symfonion.tests;
 
+import com.github.dakusui.symfonion.testutils.SymfonionTestCase;
+import com.github.dakusui.symfonion.testutils.forms.SongTo;
+import com.github.dakusui.symfonion.testutils.json.StrokeBuilder;
+import com.github.dakusui.symfonion.testutils.json.SymfonionJsonTestUtils;
 import com.github.dakusui.testutils.TestUtils;
 import com.github.dakusui.testutils.forms.*;
 import com.github.dakusui.testutils.forms.midi.IfMidiMessage;
 import com.github.dakusui.testutils.forms.midi.SequenceTo;
 import com.github.dakusui.testutils.forms.midi.TrackTo;
-import com.github.dakusui.symfonion.testutils.forms.SongTo;
-import com.github.dakusui.symfonion.testutils.json.StrokeBuilder;
-import com.github.dakusui.symfonion.testutils.json.SymfonionJsonTestUtils;
-import com.github.dakusui.testutils.midi.Controls;
-import com.github.dakusui.symfonion.testutils.SymfonionTestCase;
-import com.github.dakusui.thincrest_pcond.forms.Predicates;
 import com.github.dakusui.thincrest_pcond.validator.Validator;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -27,12 +25,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.github.dakusui.testutils.midi.Controls.VOLUME;
-import static com.github.dakusui.testutils.midi.Notes.C3;
 import static com.github.dakusui.symfonion.testutils.SymfonionTestCase.createNegativeTestCase;
 import static com.github.dakusui.symfonion.testutils.SymfonionTestCase.createPositiveTestCase;
 import static com.github.dakusui.testutils.forms.midi.IfMidiMessage.*;
 import static com.github.dakusui.testutils.json.JsonTestUtils.*;
+import static com.github.dakusui.testutils.midi.Controls.VOLUME;
+import static com.github.dakusui.testutils.midi.Notes.C3;
 import static com.github.dakusui.thincrest_pcond.forms.Predicates.*;
 
 @RunWith(Parameterized.class)

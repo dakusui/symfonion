@@ -230,7 +230,7 @@ public class JsonUtilTest {
   }
   
   @Test
-  public void obj_E03d() throws JsonPathNotFoundException, JsonTypeMismatchException, JsonInvalidPathException {
+  public void obj_E03d() throws JsonTypeMismatchException, JsonInvalidPathException {
     boolean passed = false;
     try {
       JsonUtils.asJsonObjectWithDefault(this.obj, new JsonObject(), "key7", 4);
@@ -274,7 +274,7 @@ public class JsonUtilTest {
   public void arr_N01() throws JsonTypeMismatchException, JsonInvalidPathException {
     Assert.assertEquals("val1", JsonUtils.asString(this.arr, 0));
   }
-  
+
   private static Function<Object[], List<Object>> call_Arrays_asList() {
     return Printables.function("Arrays_asList", Arrays::asList);
   }
