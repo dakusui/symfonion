@@ -1,24 +1,26 @@
 package com.github.dakusui.json;
 
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+
+import java.io.Serial;
 
 public class JsonException extends Exception {
 
 	/**
 	 * Serial version UID.
 	 */
+	@Serial
 	private static final long serialVersionUID = 1383951548283698713L;
 	
-	private JsonElement location;
+	private final JsonElement problemCausingNode;
 
-	public JsonException(JsonElement location) {
-		this.location = location;
+	public JsonException(JsonElement problemCausingNode) {
+		this.problemCausingNode = problemCausingNode;
 	}
 	
 	
-	public JsonElement getLocation() {
-		return this.location;
+	public JsonElement getProblemCausingNode() {
+		return this.problemCausingNode;
 	}
  
 }

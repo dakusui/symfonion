@@ -2,13 +2,16 @@ package com.github.dakusui.symfonion.utils;
 
 import com.github.dakusui.symfonion.exceptions.FractionFormatException;
 import com.github.dakusui.symfonion.exceptions.SymfonionException;
+import com.github.dakusui.valid8j_pcond.forms.Printables;
 
 import java.io.*;
+import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.*;
-import static com.github.dakusui.valid8j.Requires.requireNonNull;
+import static com.github.dakusui.valid8j.Requires.require;
+import static com.github.dakusui.valid8j_pcond.forms.Predicates.isNotNull;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 
@@ -41,12 +44,16 @@ public class Utils {
   public static String loadResource(String resourceName) throws SymfonionException {
     StringBuffer b = new StringBuffer(4096);
     try {
-      InputStream is = new BufferedInputStream(requireNonNull(ClassLoader.getSystemResourceAsStream(resourceName)));
+      InputStream is = new BufferedInputStream(require(ClassLoader.getSystemResourceAsStream(resourceName), resourceIsNotNull(resourceName)));
       loadFromInputStream(b, is);
     } catch (IOException e) {
       throw loadResourceException(resourceName, e);
     }
     return b.toString();
+  }
+
+  private static Predicate<InputStream> resourceIsNotNull(String resourceName) {
+    return Printables.predicate(() -> "isNotNull[resourceLoadedFrom[" + resourceName + "]]", isNotNull());
   }
 
   public static String loadFile(String fileName) throws SymfonionException {

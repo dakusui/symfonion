@@ -41,7 +41,7 @@ public class Symfonion {
       } catch (IllegalStateException e) {
         throw loadFileException(new File(fileName), e);
       } catch (JsonPathNotFoundException e) {
-        throw requiredElementMissingException(e.getLocation(), this.json, JsonUtils.formatPath(e.getPath()));
+        throw requiredElementMissingException(e.getProblemCausingNode(), this.json, JsonUtils.formatPath(e.getPath()));
       } catch (JsonException e) {
         throw new RuntimeException(e.getMessage(), e);
       }

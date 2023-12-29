@@ -247,7 +247,7 @@ public class JsonUtilTest {
       JsonUtils.asInt(this.obj, "_key2");
       fail();
     } catch (JsonPathNotFoundException e) {
-      assertEquals(this.obj, e.getLocation());
+      assertEquals(this.obj, e.getProblemCausingNode());
       assertArrayEquals(new Object[]{"_key2"}, e.getPath());
       assertEquals(0, e.getIndex());
     }
@@ -265,7 +265,7 @@ public class JsonUtilTest {
               transform(call("getPath").andThen(castTo((Object[]) value()))
                   .andThen(call_Arrays_asList())).check(isEqualTo(asList("key7", "STRING", "key72"))),
               transform(call("getIndex")).check(isEqualTo(1)),
-              transform(call("getLocation")).check(isEqualTo(this.obj.get("key7")))));
+              transform(call("getProblemCausingNode")).check(isEqualTo(this.obj.get("key7")))));
     }
   }
  

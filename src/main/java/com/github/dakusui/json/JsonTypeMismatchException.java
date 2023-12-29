@@ -84,6 +84,6 @@ public class JsonTypeMismatchException extends JsonException {
 	 */
 	@Override
 	public String getMessage() {
-		return formatMessage(this.reason, this.expectedTypes, getLocation());
+		return formatMessage(this.reason, this.expectedTypes, getProblemCausingNode());
 	}
 }
