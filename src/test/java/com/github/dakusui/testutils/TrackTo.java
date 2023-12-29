@@ -1,8 +1,13 @@
 package com.github.dakusui.testutils;
 
+import com.github.dakusui.testutils.midi.PrintableMidiMessage;
+
 import javax.sound.midi.MidiEvent;
+import javax.sound.midi.MidiMessage;
 import javax.sound.midi.Track;
+import java.util.AbstractList;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 import static com.github.dakusui.thincrest_pcond.forms.Printables.function;
 
@@ -19,5 +24,23 @@ public enum TrackTo {
   
   public static Function<Track, Long> ticks() {
     return function(() -> "Track#ticks", Track::ticks);
+  }
+  
+  public static Function<Track, Stream<MidiEvent>> midiEventStream() {
+    return function(() -> "midiEventStream", track -> new AbstractList<MidiEvent>() {
+      @Override
+      public int size() {
+        return track.size();
+      }
+      
+      @Override
+      public MidiEvent get(int index) {
+        return track.get(index);
+      }
+    }.stream());
+  }
+  
+  public static Function<Track, Stream<MidiMessage>> midiMessageStream() {
+    return function(() -> midiEventStream() + "->map[.message]", (Track track) -> midiEventStream().apply(track).map(MidiEvent::getMessage).map(message -> new PrintableMidiMessage(message.getMessage())));
   }
 }

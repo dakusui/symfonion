@@ -58,7 +58,7 @@ public class MidiCompiler {
     ////
     // position is the offset of a bar from the beginning of the sequence.
     // Giving the sequencer a grace period to initialize its internal state.
-    long barPositionInTicks = resolution / 4;
+    long barPositionInTicks = 0; //= resolution / 4;
     int barid = 0;
     for (Bar bar : song.bars()) {
       barStarted(barid);

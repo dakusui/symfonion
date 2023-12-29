@@ -12,40 +12,47 @@ public enum IfMidiMessage {
   ;
   
   
-  Predicate<MidiMessage> isNoteOn() {
+  public static Predicate<MidiMessage> isNoteOn() {
     return Printables.predicate("isNoteOn", m -> statusOf(m) == NOTE_ON);
   }
   
-  Predicate<MidiMessage> isNoteOff() {
+  public static Predicate<MidiMessage> isNoteOff() {
     return Printables.predicate("isNoteOn", m -> statusOf(m) == Status.NOTE_OFF);
   }
   
-  Predicate<MidiMessage> channel(Predicate<Integer> cond) {
+  public static Predicate<MidiMessage> channel(Predicate<Integer> cond) {
     return Printables.predicate("channel->" + cond, m -> cond.test(channelOf(m)));
   }
   
-  Predicate<MidiMessage> note(Predicate<Byte> cond) {
+  public static Predicate<MidiMessage> note(Predicate<Byte> cond) {
     return Printables.predicate("note->" + cond, m -> cond.test(data1Of(m)));
   }
-
-  Predicate<MidiMessage> velocity(Predicate<Byte> cond) {
+  
+  public static Predicate<MidiMessage> velocity(Predicate<Byte> cond) {
     return Printables.predicate("velocity->" + cond, m -> cond.test(data2Of(m)));
   }
   
+  public static Predicate<MidiMessage> isProgramChange() {
+    return Printables.predicate("isProgramChange", PROGRAM_CHANGE::matches);
+  }
+  
+  public static Predicate<MidiMessage> isControlChange() {
+    return Printables.predicate("isProgramChange", CONTROL_CHANGE::matches);
+  }
   
   enum Status {
-    NOTE_OFF(0x08),
-    NOTE_ON(0x09),
-    POLYPHONIC_AFTERTOUCH(0x0a),
-    CONTROL_CHANGE(0x0b),
-    PROGRAM_CHANGE(0x0c),
-    CHANNEL_AFTERTOUCH(0x0d),
-    PITCH_WHEEL(0x0e),
-    SYSTEM_EXCLUSIVE(0x0f);
+    NOTE_OFF((byte) 0x80),
+    NOTE_ON((byte) 0x90),
+    POLYPHONIC_AFTERTOUCH((byte) 0xa0),
+    CONTROL_CHANGE((byte) 0xb0),
+    PROGRAM_CHANGE((byte) 0xc0),
+    CHANNEL_AFTERTOUCH((byte) 0xd0),
+    PITCH_WHEEL((byte) 0xe0),
+    SYSTEM_EXCLUSIVE((byte) 0xf0);
     
     private final int statusCode;
     
-    Status(int statusCode) {
+    Status(byte statusCode) {
       this.statusCode = statusCode;
     }
     
@@ -53,12 +60,12 @@ public enum IfMidiMessage {
       return statusCode(message) == this.statusCode;
     }
     
-    int statusCode(MidiMessage message) {
+    byte statusCode(MidiMessage message) {
       return extractStatusCode(message.getMessage());
     }
     
-    private static int extractStatusCode(byte[] message) {
-      return message[0] >> 4;
+    private static byte extractStatusCode(byte[] message) {
+      return (byte) (message[0] & (byte) 0xf0);
     }
     
     public static Status statusOf(MidiMessage message) {

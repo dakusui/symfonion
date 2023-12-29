@@ -490,6 +490,7 @@ To select a bank, you can use `$bank` attribute in a stroke.
 ----
 
 Note that an integer will result in an error because a bank select message needs both MSB and LSB.
+Use a double and its integer part will be used as MSB and the fractional part will be used LSB part.
 
 ===== Tempo
 
