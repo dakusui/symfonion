@@ -26,7 +26,6 @@ public class Compile implements Subcommand {
             String outfile = cli.getSinkFile().getAbsolutePath();
             File outputFile = CliUtils.composeOutputFile(outfile, portName);
             MidiSystem.write(seq, 1, outputFile);
-
         }
     }
 }

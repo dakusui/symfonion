@@ -47,12 +47,6 @@ public class Cli {
     return prepareMidiDevices(ps, "out", this.getMidiOutDefinitions());
   }
 
-  @SuppressWarnings("UnusedDeclaration")
-  protected Map<String, MidiDevice> prepareMidiInDevices(PrintStream ps)
-      throws CLIException {
-    return prepareMidiDevices(ps, "in", this.getMidiOutDefinitions());
-  }
-
   private static Map<String, MidiDevice> prepareMidiDevices(PrintStream ps, String deviceType, Map<String, Pattern> portDefinitions) {
     Map<String, MidiDevice> devices = new HashMap<>();
     for (String portName : portDefinitions.keySet()) {
