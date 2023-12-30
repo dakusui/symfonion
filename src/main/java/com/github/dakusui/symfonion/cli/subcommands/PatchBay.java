@@ -13,6 +13,7 @@ import java.io.PrintStream;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import static com.github.dakusui.symfonion.cli.CliUtils.composeErrMsg;
 import static java.lang.String.format;
 
 public class PatchBay implements Subcommand {
@@ -21,73 +22,57 @@ public class PatchBay implements Subcommand {
     Route route = cli.getRoute();
     String inPortName = route.in();
     String outPortName = route.out();
-    
+
     Map<String, Pattern> inDefs = cli.getMidiInDefinitions();
-    
+
     if (!inDefs.containsKey(inPortName)) {
-      String msg = CliUtils.composeErrMsg(format("MIDI-in port '%s' is specified, but it is not defined by '-I' option.", inPortName), "r", "--route");
-      throw new CLIException(msg);
+      throw new CLIException(composeErrMsg(format("MIDI-in port '%s' is specified, but it is not defined by '-I' option.", inPortName), "r", "--route"));
     }
     Pattern inRegex = inDefs.get(inPortName);
-    MidiDeviceScanner inScanner = MidiDeviceScanner.chooseInputDevices(
-        System.out, inRegex);
+    MidiDeviceScanner inScanner = MidiDeviceScanner.chooseInputDevices(System.out, inRegex);
     inScanner.scan();
     MidiDevice.Info[] matchedInDevices = inScanner.getMatchedDevices();
     if (matchedInDevices.length != 1) {
-      String msg = CliUtils.composeErrMsg(format(
-          "MIDI-in device for %s(%s) is not found or found more than one.",
-          inPortName, inRegex), "I", null);
-      throw new CLIException(msg);
+      throw new CLIException(composeErrMsg(format("MIDI-in device for %s(%s) is not found or found more than one.", inPortName, inRegex), "I", null));
     }
-    
+
     ps.println();
-    
+
     Map<String, Pattern> outDefs = cli.getMidiOutDefinitions();
     if (!outDefs.containsKey(outPortName)) {
-      String msg = CliUtils
-          .composeErrMsg(
-              format(
-                  "MIDI-out port '%s' is specified, but it is not defined by '-O' option.",
-                  inPortName), "r", "route");
-      throw new CLIException(msg);
+      throw new CLIException(composeErrMsg(format("MIDI-out port '%s' is specified, but it is not defined by '-O' option.", inPortName), "r", "route"));
     }
     Pattern outRegex = outDefs.get(outPortName);
-    MidiDeviceScanner outScanner = MidiDeviceScanner.chooseOutputDevices(
-        System.out, outRegex);
+    MidiDeviceScanner outScanner = MidiDeviceScanner.chooseOutputDevices(System.out, outRegex);
     outScanner.scan();
     MidiDevice.Info[] matchedOutDevices = outScanner.getMatchedDevices();
     if (matchedOutDevices.length != 1) {
-      String msg = CliUtils.composeErrMsg(format(
-          "MIDI-out device for %s(%s) is not found or found more than one.",
-          outPortName, outRegex), "I", null);
-      throw new CLIException(msg);
+      throw new CLIException(composeErrMsg(format("MIDI-out device for %s(%s) is not found or found more than one.", outPortName, outRegex), "I", null));
     }
     ps.println();
-    patchbay(matchedInDevices[0], matchedOutDevices[0]);
+    patchBay(matchedInDevices[0], matchedOutDevices[0]);
   }
-  
-  void patchbay(MidiDevice.Info in, MidiDevice.Info out)
+
+  public static void patchBay(MidiDevice.Info in, MidiDevice.Info out)
       throws CLIException {
-    MidiDevice midiout;
+    MidiDevice midiOut;
     try {
-      midiout = MidiSystem.getMidiDevice(out);
-      midiout.open();
+      midiOut = MidiSystem.getMidiDevice(out);
+      midiOut.open();
     } catch (MidiUnavailableException e) {
-      throw new CLIException(format(
-          "(-) Failed to open MIDI-out device (%s)", out.getName()), e);
+      throw new CLIException(format("(-) Failed to open MIDI-out device (%s)", out.getName()), e);
     }
     try {
-      MidiDevice midiin;
+      MidiDevice midiIn;
       try {
-        midiin = MidiSystem.getMidiDevice(in);
-        midiin.open();
+        midiIn = MidiSystem.getMidiDevice(in);
+        midiIn.open();
       } catch (MidiUnavailableException ee) {
-        throw new CLIException(format(
-            "(-) Failed to open MIDI-in device (%s)", in.getName()), ee);
+        throw new CLIException(format("(-) Failed to open MIDI-in device (%s)", in.getName()), ee);
       }
       try {
-        try (Receiver r = midiout.getReceiver()) {
-          try (Transmitter t = midiin.getTransmitter()) {
+        try (Receiver r = midiOut.getReceiver()) {
+          try (Transmitter t = midiIn.getTransmitter()) {
             t.setReceiver(r);
             System.err.println("Now in MIDI patch-bay mode. Hit enter to quit.");
             //noinspection ResultOfMethodCallIgnored
@@ -98,17 +83,15 @@ public class PatchBay implements Subcommand {
             System.err.println("closing transmitter");
           }
         } catch (MidiUnavailableException e) {
-          throw new CLIException(format(
-              "(-) Failed to get transmitter from MIDI-in device (%s)",
-              in.getName()), e);
+          throw new CLIException(format("(-) Failed to get transmitter from MIDI-in device (%s)", in.getName()), e);
         } finally {
           System.err.println("closing receiver");
         }
       } finally {
-        midiin.close();
+        midiIn.close();
       }
     } finally {
-      midiout.close();
+      midiOut.close();
     }
   }
 }
