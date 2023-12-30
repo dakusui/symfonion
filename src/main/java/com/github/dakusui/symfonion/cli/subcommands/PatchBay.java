@@ -1,7 +1,6 @@
 package com.github.dakusui.symfonion.cli.subcommands;
 
 import com.github.dakusui.symfonion.cli.Cli;
-import com.github.dakusui.symfonion.cli.CliUtils;
 import com.github.dakusui.symfonion.cli.Route;
 import com.github.dakusui.symfonion.cli.Subcommand;
 import com.github.dakusui.symfonion.exceptions.CLIException;
@@ -14,6 +13,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import static com.github.dakusui.symfonion.cli.CliUtils.composeErrMsg;
+import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.*;
 import static java.lang.String.format;
 
 public class PatchBay implements Subcommand {
@@ -50,29 +50,37 @@ public class PatchBay implements Subcommand {
       throw new CLIException(composeErrMsg(format("MIDI-out device for %s(%s) is not found or found more than one.", outPortName, outRegex), "I", null));
     }
     ps.println();
-    patchBay(matchedInDevices[0], matchedOutDevices[0]);
+    MidiDevice inMidiDevice;
+    try {
+      inMidiDevice = MidiSystem.getMidiDevice(matchedInDevices[0]);
+    } catch (MidiUnavailableException e) {
+      throw failedToOpenMidiIn(e, matchedInDevices[0]);
+    }
+    MidiDevice outMidiDevice;
+    try {
+      outMidiDevice= MidiSystem.getMidiDevice(matchedOutDevices[0]);
+    } catch (MidiUnavailableException e) {
+      throw failedToOpenMidiOut(e, matchedInDevices[0]);
+    }
+    patchBay(inMidiDevice, outMidiDevice);
   }
 
-  public static void patchBay(MidiDevice.Info in, MidiDevice.Info out)
+  public static void patchBay(MidiDevice inMidiDevice, MidiDevice outMidiDevice)
       throws CLIException {
-    MidiDevice midiOut;
     try {
-      midiOut = MidiSystem.getMidiDevice(out);
-      midiOut.open();
+      outMidiDevice.open();
     } catch (MidiUnavailableException e) {
-      throw new CLIException(format("(-) Failed to open MIDI-out device (%s)", out.getName()), e);
+      throw failedToOpenMidiOut(e, outMidiDevice.getDeviceInfo());
     }
-    try {
-      MidiDevice midiIn;
+    try (outMidiDevice) {
       try {
-        midiIn = MidiSystem.getMidiDevice(in);
-        midiIn.open();
+        inMidiDevice.open();
       } catch (MidiUnavailableException ee) {
-        throw new CLIException(format("(-) Failed to open MIDI-in device (%s)", in.getName()), ee);
+        throw failedToOpenMidiIn(ee, inMidiDevice.getDeviceInfo());
       }
-      try {
-        try (Receiver r = midiOut.getReceiver()) {
-          try (Transmitter t = midiIn.getTransmitter()) {
+      try (inMidiDevice) {
+        try (Receiver r = outMidiDevice.getReceiver()) {
+          try (Transmitter t = inMidiDevice.getTransmitter()) {
             t.setReceiver(r);
             System.err.println("Now in MIDI patch-bay mode. Hit enter to quit.");
             //noinspection ResultOfMethodCallIgnored
@@ -83,15 +91,11 @@ public class PatchBay implements Subcommand {
             System.err.println("closing transmitter");
           }
         } catch (MidiUnavailableException e) {
-          throw new CLIException(format("(-) Failed to get transmitter from MIDI-in device (%s)", in.getName()), e);
+          throw failedToRetrieveTransmitterFromMidiIn(e, inMidiDevice.getDeviceInfo());
         } finally {
           System.err.println("closing receiver");
         }
-      } finally {
-        midiIn.close();
       }
-    } finally {
-      midiOut.close();
     }
   }
 }

@@ -197,12 +197,4 @@ public abstract class MidiDeviceScanner {
 			}
 		};
 	}
-
-	public static void main(String[] args) {
-		chooseInputDevices(System.out, Pattern.compile("Real")).scan();
-		System.out.println();
-		chooseOutputDevices(System.out, Pattern.compile("Ger")).scan();
-		System.out.println();
-		listAllDevices(System.out).scan();
-	}
 }
