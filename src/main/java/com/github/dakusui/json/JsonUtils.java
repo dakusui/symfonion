@@ -8,10 +8,10 @@ import java.util.Map.Entry;
 import static java.util.Objects.requireNonNull;
 
 public class JsonUtils {
-  static final ThreadLocal<JsonParser> jsonParser;
+  static final ThreadLocal<JsonParser> JSON_PARSER;
   
   static {
-    jsonParser = new ThreadLocal<>();
+    JSON_PARSER = new ThreadLocal<>();
   }
   
   public static String summarizeJsonElement(JsonElement jsonElement) {
@@ -35,7 +35,7 @@ public class JsonUtils {
     }
   
   enum JsonTypes {
-    Object {
+    OBJECT {
       @Override
       JsonObject _validate(JsonElement value) throws JsonTypeMismatchException {
         if (!value.isJsonObject()) {
@@ -44,7 +44,7 @@ public class JsonUtils {
         return value.getAsJsonObject();
       }
     },
-    Array {
+    ARRAY {
       @Override
       JsonArray _validate(JsonElement value) throws JsonTypeMismatchException {
         if (!value.isJsonArray()) {
@@ -54,7 +54,7 @@ public class JsonUtils {
       }
       
     },
-    Primitive {
+    PRIMITIVE {
       @Override
       JsonPrimitive _validate(JsonElement value)
           throws JsonTypeMismatchException {
@@ -64,7 +64,7 @@ public class JsonUtils {
         return value.getAsJsonPrimitive();
       }
     },
-    Null {
+    NULL {
       @Override
       JsonNull _validate(JsonElement value) throws JsonTypeMismatchException {
         if (!value.isJsonNull()) {
@@ -173,7 +173,7 @@ public class JsonUtils {
                                                    JsonObject defaultValue, Object... path)
       throws JsonTypeMismatchException,
       JsonInvalidPathException {
-    return (JsonObject) JsonTypes.Object.validate(asJsonElementWithDefault(
+    return (JsonObject) JsonTypes.OBJECT.validate(asJsonElementWithDefault(
         base, defaultValue, path));
   }
   
@@ -223,8 +223,8 @@ public class JsonUtils {
     JsonArray ret;
     JsonElement elem = asJsonElement(base, path);
     if (elem.isJsonObject()) {
-      throw new JsonTypeMismatchException(elem, JsonTypes.Array,
-          JsonTypes.Null, JsonTypes.Primitive);
+      throw new JsonTypeMismatchException(elem, JsonTypes.ARRAY,
+          JsonTypes.NULL, JsonTypes.PRIMITIVE);
     }
     if (elem.isJsonArray()) {
       ret = elem.getAsJsonArray();
@@ -243,7 +243,7 @@ public class JsonUtils {
   public static JsonArray asJsonArrayWithDefault(JsonElement base,
                                                  JsonArray defaultValue, Object... path) throws JsonTypeMismatchException,
       JsonInvalidPathException {
-    return (JsonArray) JsonTypes.Array.validate(asJsonElementWithDefault(base,
+    return (JsonArray) JsonTypes.ARRAY.validate(asJsonElementWithDefault(base,
         defaultValue, path));
   }
   
@@ -261,7 +261,7 @@ public class JsonUtils {
   public static String asString(JsonElement base, Object... path)
       throws JsonTypeMismatchException,
       JsonInvalidPathException {
-    JsonPrimitive prim = (JsonPrimitive) JsonTypes.Primitive
+    JsonPrimitive prim = (JsonPrimitive) JsonTypes.PRIMITIVE
         .validate(asJsonElement(base, path));
     if (prim == null) {
       return null;
@@ -276,7 +276,7 @@ public class JsonUtils {
     if (defaultValue != null) {
       dv = new JsonPrimitive(defaultValue);
     }
-    JsonPrimitive prim = (JsonPrimitive) JsonTypes.Primitive
+    JsonPrimitive prim = (JsonPrimitive) JsonTypes.PRIMITIVE
         .validate(asJsonElementWithDefault(base, dv, path));
     if (prim == null) {
       return null;
