@@ -7,6 +7,7 @@ import javax.sound.midi.MidiDevice;
 import javax.sound.midi.MidiUnavailableException;
 import java.io.File;
 
+import static com.github.dakusui.symfonion.cli.CliUtils.composeErrMsg;
 import static java.lang.String.format;
 
 public class ExceptionThrower {
@@ -86,4 +87,8 @@ public class ExceptionThrower {
   public static CLIException failedToOpenMidiOut(MidiUnavailableException e, MidiDevice.Info outMidiDeviceInfo) {
     throw new CLIException(format("(-) Failed to open MIDI-out device (%s)", outMidiDeviceInfo.getName()), e);
   }
+
+	public static CLIException failedToAccessMidiDevice(String deviceType, MidiUnavailableException e, MidiDevice.Info[] matchedInfos) {
+		throw new CLIException(composeErrMsg(format("Failed to access MIDI-%s device:'%s'.", deviceType, matchedInfos[0].getName()), "O"), e);
+	}
 }

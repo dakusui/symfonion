@@ -5,6 +5,7 @@ import com.github.dakusui.symfonion.cli.Route;
 import com.github.dakusui.symfonion.cli.Subcommand;
 import com.github.dakusui.symfonion.exceptions.CLIException;
 import com.github.dakusui.symfonion.utils.midi.MidiDeviceScanner;
+import com.github.dakusui.symfonion.utils.midi.MidiUtils;
 
 import javax.sound.midi.*;
 import java.io.IOException;
@@ -29,7 +30,7 @@ public class PatchBay implements Subcommand {
       throw new CLIException(composeErrMsg(format("MIDI-in port '%s' is specified, but it is not defined by '-I' option.", inPortName), "r", "--route"));
     }
     Pattern inRegex = inDefs.get(inPortName);
-    MidiDeviceScanner inScanner = MidiDeviceScanner.chooseInputDevices(System.out, inRegex);
+    MidiDeviceScanner inScanner = MidiUtils.chooseInputDevices(System.out, inRegex);
     inScanner.scan();
     MidiDevice.Info[] matchedInDevices = inScanner.getMatchedDevices();
     if (matchedInDevices.length != 1) {
@@ -43,7 +44,7 @@ public class PatchBay implements Subcommand {
       throw new CLIException(composeErrMsg(format("MIDI-out port '%s' is specified, but it is not defined by '-O' option.", inPortName), "r", "route"));
     }
     Pattern outRegex = outDefs.get(outPortName);
-    MidiDeviceScanner outScanner = MidiDeviceScanner.chooseOutputDevices(System.out, outRegex);
+    MidiDeviceScanner outScanner = MidiUtils.chooseOutputDevices(System.out, outRegex);
     outScanner.scan();
     MidiDevice.Info[] matchedOutDevices = outScanner.getMatchedDevices();
     if (matchedOutDevices.length != 1) {
