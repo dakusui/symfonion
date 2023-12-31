@@ -1,124 +1,44 @@
 package com.github.dakusui.symfonion.utils.midi;
 
+import com.github.dakusui.symfonion.cli.MidiRouteRequest;
 import com.github.dakusui.symfonion.exceptions.CliException;
 
 import javax.sound.midi.MidiDevice;
 import javax.sound.midi.MidiSystem;
 import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.function.Function;
-import java.util.function.Predicate;
+import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
+import static com.github.dakusui.valid8j.ValidationFluents.all;
+import static com.github.dakusui.valid8j_pcond.fluent.Statement.objectValue;
 import static java.lang.String.format;
-import static java.util.Collections.emptyList;
 
 public enum MidiUtils {
   ;
 
-  public record MidiDeviceRecord(boolean matched, Io io, MidiDevice.Info info) {
-    public enum Io {
-      IN,
-      OUT,
-      UNKNOWN;
-
-      static Io of(MidiDevice.Info midiDeviceInfo) {
-        if (isMidiDeviceForInput(midiDeviceInfo))
-          return IN;
-        if (isMidiDeviceForOutput(midiDeviceInfo))
-          return OUT;
-        return UNKNOWN;
-      }
-    }
-
-    public static MidiDeviceRecord fromMidiDeviceInfo(MidiDevice.Info midiDeviceInfo, Predicate<MidiDevice.Info> cond) {
-      return new MidiDeviceRecord(cond.test(midiDeviceInfo), Io.of(midiDeviceInfo), midiDeviceInfo);
-    }
+  public static MidiDeviceManager createMidiDeviceManager() {
+    return createMidiDeviceManager(MidiDeviceReportFormatter.createDefaultReportFormatter(), Arrays.stream(MidiSystem.getMidiDeviceInfo())
+    );
   }
 
-
-  public static class MidiDeviceReportComposer {
-    public interface Formatter {
-      List<String> header(MidiDevice.Info info, String title);
-
-      String formatRecord(MidiDeviceRecord record);
-
-      List<String> footer();
-    }
-
-    final List<MidiDeviceRecord> records;
-    final Formatter recordFormatter;
-
-
-    public MidiDeviceReportComposer(Formatter formatter) {
-      this.recordFormatter = formatter;
-      this.records = new LinkedList<>();
-    }
-
-    public MidiDeviceReportComposer add(MidiDeviceRecord record) {
-      this.records.add(record);
-      return this;
-    }
-
-    public List<String> build() {
-      MidiDevice.Info dummyInfoForHeader = new MidiDevice.Info("name", "vendor", "description", "version") {
-      };
-      return new ArrayList<>() {
-        {
-          this.addAll(MidiDeviceReportComposer.this.recordFormatter.header(dummyInfoForHeader, "Available MIDI devices"));
-          this.addAll(MidiDeviceReportComposer.this.records.stream()
-              .map(MidiDeviceReportComposer.this.recordFormatter::formatRecord)
-              .toList());
-          this.addAll(MidiDeviceReportComposer.this.recordFormatter.footer());
-        }
-      };
-    }
+  public static MidiDeviceManager createMidiDeviceManager(Stream<MidiDevice.Info> midiDeviceInfoStream) {
+    return createMidiDeviceManager(MidiDeviceReportFormatter.createDefaultReportFormatter(), midiDeviceInfoStream
+    );
   }
 
-  public static MidiDeviceReportComposer createMidiDeviceReportComposer(Function<String, String> titleFormatter, Function<MidiDeviceRecord, String> recordFormatter, Predicate<MidiDevice.Info> cond, Stream<MidiDevice.Info> midiDeviceInfoStream) {
-    return createMidiDeviceReportComposer(titleFormatter, recordFormatter, (MidiDevice.Info i) -> MidiDeviceRecord.fromMidiDeviceInfo(i, cond), midiDeviceInfoStream);
-  }
-
-  private static MidiDeviceReportComposer createMidiDeviceReportComposer(Function<String, String> titleFormatter, Function<MidiDeviceRecord, String> recordFormatter, Function<MidiDevice.Info, MidiDeviceRecord> midiDeviceRecordFactory, Stream<MidiDevice.Info> midiDeviceInfoStream) {
-    return createMidiDeviceReportComposer(new MidiDeviceReportComposer.Formatter() {
-      @Override
-      public List<String> header(MidiDevice.Info info, String title) {
-        return List.of(
-            titleFormatter.apply(title),
-            recordFormatter.apply(new MidiDeviceRecord(false, MidiDeviceRecord.Io.UNKNOWN, info)),
-            "---------------------------------------------------------------------------"
-        );
-      }
-
-      @Override
-      public String formatRecord(MidiDeviceRecord record) {
-        return recordFormatter.apply(record);
-      }
-
-      @Override
-      public List<String> footer() {
-        return emptyList();
-      }
-    }, midiDeviceRecordFactory, midiDeviceInfoStream);
-  }
-
-  private static MidiDeviceReportComposer createMidiDeviceReportComposer(MidiDeviceReportComposer.Formatter reportFormatter, Function<MidiDevice.Info, MidiDeviceRecord> midiDeviceRecordFactory, Stream<MidiDevice.Info> midiDeviceInfoStream) {
-    MidiDeviceReportComposer reportComposer = new MidiDeviceReportComposer(reportFormatter);
-    midiDeviceInfoStream.map(midiDeviceRecordFactory).forEach(reportComposer::add);
+  private static MidiDeviceManager createMidiDeviceManager(MidiDeviceReportFormatter reportFormatter, Stream<MidiDevice.Info> midiDeviceInfoStream) {
+    MidiDeviceManager reportComposer = new MidiDeviceManager(reportFormatter);
+    midiDeviceInfoStream.forEach(reportComposer::add);
     return reportComposer;
+  }
+
+  public record MidiRoute(MidiDevice.Info in, List<MidiDevice> outDevices) {
   }
 
 
   public static String formatMidiDeviceInfo(MidiDevice.Info info) {
-    return String.format(
-        "%-25s %-15s %-35s",
-        info == null ? "name" : info.getName(),
-        info == null ? "version" : info.getVersion(),
-        info == null ? "vendor" : info.getVendor()
-    );
+    return String.format("%-25s %-15s %-35s", info.getName(), info.getVersion(), info.getVendor());
   }
 
   public static boolean isMidiDeviceForInput(MidiDevice.Info device) {
@@ -145,6 +65,23 @@ public enum MidiUtils {
     } catch (Exception ignored) {
     }
     return tmp != null;
+  }
+
+  public static Optional<MidiRoute> findRouteFor(MidiRouteRequest routeRequest, Map<String, Pattern> inDefs, Map<String, Pattern> outDefs, List<MidiDevice.Info> deviceInfoList) {
+    assert all(
+        objectValue(routeRequest).then().isNotNull().$(),
+        objectValue(routeRequest).invoke("in").then().isNotNull().$(),
+        objectValue(routeRequest).invoke("out").then().isNotNull().$(),
+        objectValue(inDefs).then().isNotNull().$(),
+        objectValue(inDefs).invoke("containsKey", routeRequest.in()).asBoolean().then().isTrue().$(),
+        objectValue(outDefs).then().isNotNull().$(),
+        objectValue(outDefs).invoke("containsKey", routeRequest.out()).asBoolean().then().isTrue().$(),
+        objectValue(deviceInfoList).then().isNotNull().$());
+    return findRouteFor(inDefs.get(routeRequest.in()), outDefs.get(routeRequest.out()), deviceInfoList);
+  }
+
+  public static Optional<MidiRoute> findRouteFor(Pattern regexForMidiInDevice, Pattern regexForMidiOutDevice, List<MidiDevice.Info> deviceInfoList) {
+    return Optional.empty();
   }
 
 

@@ -31,7 +31,7 @@ public class Cli {
   private Subcommand subcommand = PresetSubcommand.VERSION;
   private File source;
   private File sink = new File("a.midi");
-  private RouteRequest routeRequest = null;
+  private MidiRouteRequest routeRequest = null;
   private Map<String, Pattern> midiins = new HashMap<>();
   private Map<String, Pattern> midiouts = new HashMap<>();
   private final Symfonion symfonion;
@@ -181,7 +181,7 @@ public class Cli {
         throw new CliException(composeErrMsg("Route information is not given or specified multiple times.", "r", "route"));
       }
 
-      this.routeRequest = new RouteRequest(cmd.getOptionValues('r')[0], cmd.getOptionValues('r')[1]);
+      this.routeRequest = new MidiRouteRequest(cmd.getOptionValues('r')[0], cmd.getOptionValues('r')[1]);
     } else {
       @SuppressWarnings("unchecked")
       List<String> leftovers = cmd.getArgList();
@@ -227,15 +227,31 @@ public class Cli {
     return this.sink;
   }
 
+  /**
+   * Returns a map that defines MIDI-in port names.
+   * A key in the returned map is a port name used in a symfonion song file.
+   * The value associated with it is a regular expression that should specify a MIDI device.
+   * The regular expression should be defined so that it matches one and only one MIDI-in device available in the system.
+   *
+   * @return A map that defines MIDI-in port names.
+   */
   public Map<String, Pattern> getMidiInDefinitions() {
     return this.midiins;
   }
 
+  /**
+   * Returns a map that defines MIDI-out port names.
+   * A key in the returned map is a port name used in a symfonion song file.
+   * The value associated with it is a regular expression that should specify a MIDI device.
+   * The regular expression should be defined so that it matches one and only one MIDI-out device available in the system.
+   *
+   * @return A map that defines MIDI-out port names.
+   */
   public Map<String, Pattern> getMidiOutDefinitions() {
     return this.midiouts;
   }
 
-  public RouteRequest getRouteRequest() {
+  public MidiRouteRequest getRouteRequest() {
     return this.routeRequest;
   }
 

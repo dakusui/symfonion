@@ -1,7 +1,7 @@
 package com.github.dakusui.symfonion.cli.subcommands;
 
 import com.github.dakusui.symfonion.cli.Cli;
-import com.github.dakusui.symfonion.cli.RouteRequest;
+import com.github.dakusui.symfonion.cli.MidiRouteRequest;
 import com.github.dakusui.symfonion.cli.Subcommand;
 import com.github.dakusui.symfonion.exceptions.CliException;
 import com.github.dakusui.symfonion.utils.midi.MidiDeviceScanner;
@@ -20,7 +20,7 @@ import static java.lang.String.format;
 public class PatchBay implements Subcommand {
   @Override
   public void invoke(Cli cli, PrintStream ps) throws CliException {
-    RouteRequest route = cli.getRouteRequest();
+    MidiRouteRequest route = cli.getRouteRequest();
     String inPortName = route.in();
     String outPortName = route.out();
 
