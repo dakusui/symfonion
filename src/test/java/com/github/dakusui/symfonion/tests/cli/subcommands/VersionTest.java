@@ -16,7 +16,7 @@ public class VersionTest {
   @Test
   public void whenExecuteVersion_thenWorksFind() throws ParseException, IOException {
     ByteArrayOutputStream out = new ByteArrayOutputStream();
-    new Version().invoke(new Cli(), new PrintStream(out));
+    new Version().invoke(new Cli(), new PrintStream(out), System.in);
     String s = out.toString(UTF_8);
     System.out.println(s);
   }

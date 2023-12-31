@@ -6,7 +6,7 @@ import java.util.List;
 import static java.util.Collections.emptyList;
 
 public interface MidiDeviceReportFormatter {
-  static MidiDeviceReportFormatter createDefaultReportFormatter() {
+  static MidiDeviceReportFormatter createDefaultInstance() {
     return new MidiDeviceReportFormatter() {
       @Override
       public List<String> header(MidiDevice.Info info, String title) {

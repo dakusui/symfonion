@@ -14,7 +14,7 @@ public class HelpTest {
   @Test
   public void whenHelp_thenLooksOk() throws ParseException {
     ByteArrayOutputStream out = new ByteArrayOutputStream();
-    new Help().invoke(new Cli(), new PrintStream(out));
+    new Help().invoke(new Cli(), new PrintStream(out), System.in);
     String s = out.toString(UTF_8);
     System.out.println(s);
   }

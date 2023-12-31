@@ -113,7 +113,7 @@ public class Utils {
   }
 
   /**
-   * This method was copied from "https://stackoverflow.com/questions/22694884/filter-java-stream-to-1-and-only-1-element/22695424#22695424" and renamed.
+   * This method was copied from <a href="https://stackoverflow.com/questions/22694884/filter-java-stream-to-1-and-only-1-element/22695424#22695424">stackoverflow.com</a> and renamed.
    *
    * @param <E> Type of the element to be collected.
    * @return A collector
@@ -124,28 +124,8 @@ public class Utils {
     });
   }
 
-  private static <E> Collector<E, AtomicReference<E>, E> onlyElement(Supplier<? extends RuntimeException> noSuchElement, BiFunction<E, E, ? extends RuntimeException> multipleElements) {
-    return Collector.of(
-        AtomicReference::new,
-        (ref, e) -> {
-          if (!ref.compareAndSet(null, e)) {
-            throw multipleElements.apply(ref.get(), e);
-          }
-        },
-        (ref1, ref2) -> {
-          if (ref1.get() == null) {
-            return ref2;
-          } else if (ref2.get() != null) {
-            throw multipleElements.apply(ref1.get(), ref2.get());
-          } else {
-            return ref1;
-          }
-        },
-        ref -> Optional.ofNullable(ref.get()).orElseThrow(noSuchElement),
-        Collector.Characteristics.UNORDERED);
-  }
 
-  private static <E> Collector<E, AtomicReference<E>, Optional<E>> onlyElement(BiFunction<E, E, ? extends RuntimeException> multipleElements) {
+  public static <E> Collector<E, AtomicReference<E>, Optional<E>> onlyElement(BiFunction<E, E, ? extends RuntimeException> multipleElements) {
     return Collector.of(
         AtomicReference::new,
         (ref, e) -> {

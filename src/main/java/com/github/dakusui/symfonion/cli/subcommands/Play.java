@@ -8,6 +8,7 @@ import com.github.dakusui.symfonion.core.Symfonion;
 
 import javax.sound.midi.*;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.*;
 
@@ -16,7 +17,7 @@ import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.interrupt
 
 public class Play implements Subcommand {
   @Override
-  public void invoke(Cli cli, PrintStream ps) throws SymfonionException, IOException {
+  public void invoke(Cli cli, PrintStream ps, InputStream inputStream) throws SymfonionException, IOException {
     Symfonion symfonion = cli.getSymfonion();
 
     Song song = symfonion.load(cli.getSourceFile().getAbsolutePath());

@@ -103,7 +103,7 @@ public class Cli {
     options.addOption("V", "version", false, "print the version information.");
     options.addOption("h", "help", false, "print the command line usage.");
     options.addOption("l", "list", false, "list the available midi devices.");
-    options.addOption("p", "play", true, "play the specifiled file.");
+    options.addOption("p", "play", true, "play the specified file.");
     options.addOption("c", "compile", true,
         "compile the specified file to a standard midi file.");
     {
@@ -268,7 +268,7 @@ public class Cli {
     int ret;
     try {
       Cli cli = new Cli(args);
-      cli.subcommand.invoke(cli, stdout);
+      cli.subcommand.invoke(cli, stdout, System.in);
       ret = 0;
     } catch (ParseException e) {
       printError(stderr, e);

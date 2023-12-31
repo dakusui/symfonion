@@ -1,15 +1,13 @@
 package com.github.dakusui.symfonion.utils.midi;
 
+import com.github.dakusui.symfonion.exceptions.ExceptionThrower;
 import com.github.dakusui.symfonion.utils.Utils;
 
 import javax.sound.midi.MidiDevice;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
+import javax.sound.midi.MidiSystem;
+import javax.sound.midi.MidiUnavailableException;
+import java.util.*;
 import java.util.function.Predicate;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class MidiDeviceManager {
@@ -24,6 +22,17 @@ public class MidiDeviceManager {
     this.records = new LinkedList<>();
   }
 
+
+  public static MidiDeviceManager from(MidiDeviceReportFormatter reportFormatter) {
+    return from(reportFormatter, MidiUtils.streamMidiDeviceInfo());
+  }
+
+  public static MidiDeviceManager from(MidiDeviceReportFormatter reportFormatter, Stream<MidiDevice.Info> midiDeviceInfoStream) {
+    MidiDeviceManager reportComposer = new MidiDeviceManager(reportFormatter);
+    midiDeviceInfoStream.forEach(reportComposer::add);
+    return reportComposer;
+  }
+
   public MidiDeviceManager add(MidiDevice.Info info) {
     return this.add(MidiDeviceRecord.fromMidiDeviceInfo(info));
   }
@@ -33,9 +42,6 @@ public class MidiDeviceManager {
     return this;
   }
 
-  public Optional<MidiDeviceRecord> lookUp(Pattern regex) {
-    return streamRecords().filter(r -> regex.matcher(r.info().getName()).matches()).collect(Utils.onlyElement());
-  }
 
   public Stream<MidiDeviceRecord> find(Predicate<MidiDeviceRecord> cond) {
     return streamRecords().filter(cond);
@@ -43,6 +49,20 @@ public class MidiDeviceManager {
 
   private Stream<MidiDeviceRecord> streamRecords() {
     return this.records.stream();
+  }
+
+  public MidiDevice openMidiDevice(MidiDeviceRecord deviceRecord) {
+    return openMidiDevice(deviceRecord.info(), deviceRecord.io());
+  }
+
+  public MidiDevice openMidiDevice(MidiDevice.Info info, MidiDeviceRecord.Io io) {
+    try {
+      MidiDevice ret = MidiSystem.getMidiDevice(info);
+      ret.open();
+      return ret;
+    } catch (MidiUnavailableException e) {
+      throw ExceptionThrower.failedToOpenMidiDevice(e, info, io);
+    }
   }
 
   public List<String> composeReport(Predicate<MidiDeviceRecord> cond, final MidiDeviceReportFormatter reportFormatter, final String title) {

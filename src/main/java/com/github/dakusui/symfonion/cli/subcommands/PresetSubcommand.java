@@ -2,9 +2,9 @@ package com.github.dakusui.symfonion.cli.subcommands;
 
 import com.github.dakusui.symfonion.cli.Cli;
 import com.github.dakusui.symfonion.cli.Subcommand;
-import com.github.dakusui.symfonion.exceptions.SymfonionException;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 
@@ -24,9 +24,9 @@ public enum PresetSubcommand implements Subcommand {
     this.subcommandClass = requireNonNull(subcommandClass);
   }
   
-  final public void invoke(Cli cli, PrintStream ps) throws IOException {
+  final public void invoke(Cli cli, PrintStream ps, InputStream inputStream) throws IOException {
     try {
-      ((Subcommand) this.subcommandClass.getConstructors()[0].newInstance()).invoke(cli, ps);
+      ((Subcommand) this.subcommandClass.getConstructors()[0].newInstance()).invoke(cli, ps, inputStream);
     } catch (InstantiationException | IllegalAccessException e) {
       throw new RuntimeException(e);
     } catch (InvocationTargetException e) {

@@ -14,7 +14,7 @@ public class ListDevicesTest {
   @Test
   public void whenListDevices_thenLooksOk() throws ParseException {
     ByteArrayOutputStream out = new ByteArrayOutputStream();
-    new ListDevices().invoke(new Cli(), new PrintStream(out));
+    new ListDevices().invoke(new Cli(), new PrintStream(out), System.in);
     String s = out.toString(UTF_8);
     System.out.println(s);
   }

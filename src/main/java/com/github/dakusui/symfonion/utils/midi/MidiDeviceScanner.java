@@ -61,7 +61,6 @@ public abstract class MidiDeviceScanner {
 
   private final PrintStream ps;
   private MidiDevice.Info[] matchedDevices = null;
-
   protected abstract void start(MidiDevice.Info[] allDevices);
 
   protected abstract boolean matches(MidiDevice.Info device);

@@ -63,7 +63,7 @@ public class CliTest {
 	public void whenList() throws SymfonionException, ParseException, IOException {
 		Cli r = new Cli("--list");
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		r.getMode().invoke(r, new PrintStream(out));
+		r.getMode().invoke(r, new PrintStream(out), System.in);
 
 		System.err.println(out.toString(StandardCharsets.UTF_8));
 	}
