@@ -82,14 +82,6 @@ public class ExceptionThrower {
     throw new CliException(format("(-) Failed to get transmitter from MIDI-in device (%s)", inMidiDeviceInfo.getName()), e);
   }
 
-  public static CliException failedToOpenMidiIn(MidiUnavailableException e, MidiDevice.Info inMidiDeviceInfo) {
-    throw failedToOpenMidiDevice(e, inMidiDeviceInfo, MidiDeviceRecord.Io.IN);
-  }
-
-  public static CliException failedToOpenMidiOut(MidiUnavailableException e, MidiDevice.Info outMidiDeviceInfo) {
-    throw failedToOpenMidiDevice(e, outMidiDeviceInfo, MidiDeviceRecord.Io.OUT);
-  }
-
 	public static CliException failedToOpenMidiDevice(MidiUnavailableException ee, MidiDevice.Info midiDeviceInfo, MidiDeviceRecord.Io io) {
 		throw new CliException(format("(-) Failed to open MIDI-%s device (%s)", midiDeviceInfo.getName(), io.name().toLowerCase()), ee);
 	}
@@ -99,7 +91,7 @@ public class ExceptionThrower {
 	}
 
 	public static RuntimeException multipleMidiDevices(MidiDeviceRecord e1, MidiDeviceRecord e2, Predicate<MidiDeviceRecord> cond) {
-		throw new CliException(String.format("Multiple midi devices (at least: '%s', '%s')are found for: '%s'", e1, e2, cond));
+		throw new CliException(String.format("Multiple midi devices (at least: '%s', '%s') are found for: '%s'", e1, e2, cond));
 	}
 
 	public static RuntimeException noSuchMidiDeviceWasFound(Predicate<MidiDeviceRecord> cond) {

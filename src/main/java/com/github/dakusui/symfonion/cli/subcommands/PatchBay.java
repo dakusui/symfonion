@@ -37,7 +37,7 @@ public class PatchBay implements Subcommand {
 
     String outPortName = route.out();
     Map<String, Pattern> midiOutDefinitions = requireMidiOutDefinitionsContainsOutputPortName(cli.getMidiOutDefinitions(), outPortName);
-    Pattern regexForMidiOut = midiOutDefinitions.get(inPortName);
+    Pattern regexForMidiOut = midiOutDefinitions.get(outPortName);
 
     MidiDeviceManager midiDeviceManager = MidiDeviceManager.from(MidiDeviceReportFormatter.createDefaultInstance());
 
@@ -73,21 +73,26 @@ public class PatchBay implements Subcommand {
 
   private static MidiDeviceRecord findMidiDevice(Predicate<MidiDeviceRecord> whereMidiDeviceIsInputAndMatchesRegex, MidiDeviceManager midiDeviceManager) {
     return midiDeviceManager.find(whereMidiDeviceIsInputAndMatchesRegex)
-        .collect(onlyElement((e1, e2) -> ExceptionThrower.multipleMidiDevices(e1, e2, whereMidiDeviceIsInputAndMatchesRegex)))
-        .orElseThrow(() -> ExceptionThrower.noSuchMidiDeviceWasFound(whereMidiDeviceIsInputAndMatchesRegex));
+        .collect(onlyElement((e1, e2) -> multipleMidiDevices(e1, e2, whereMidiDeviceIsInputAndMatchesRegex)))
+        .orElseThrow(() -> noSuchMidiDeviceWasFound(whereMidiDeviceIsInputAndMatchesRegex));
   }
 
   private static Predicate<MidiDeviceRecord> isMidiDeviceForInput() {
-    return Printables.predicate("isMidiDeviceForInput", r -> MidiUtils.isMidiDeviceForInput(r.info()));
+    return printablePredicate("isMidiDeviceForInput", r -> MidiUtils.isMidiDeviceForInput(r.info()));
   }
 
   private static Predicate<MidiDeviceRecord> isMidiDeviceForOutput() {
-    return Printables.predicate("isMidiDeviceForOutput", r -> MidiUtils.isMidiDeviceForOutput(r.info()));
+    return printablePredicate("isMidiDeviceForOutput", r -> MidiUtils.isMidiDeviceForOutput(r.info()));
   }
 
-  private static Predicate<MidiDeviceRecord> midiDeviceInfoMatches(Pattern regexForMidiIn) {
-    return Printables.predicate(".info.name.matches[" + regexForMidiIn + "]", r1 -> regexForMidiIn.matcher(r1.info().getName()).matches());
+  private static Predicate<MidiDeviceRecord> midiDeviceInfoMatches(Pattern regexForDeviceName) {
+    return printablePredicate(".info.name.matches[" + regexForDeviceName + "]", r -> regexForDeviceName.matcher(r.info().getName()).matches());
   }
+
+  private static <T> Predicate<T> printablePredicate(String name, Predicate<T> p) {
+    return Printables.predicate(name, p);
+  }
+
 
   private static Map<String, Pattern> requireMidiInDefinitionsContainsInputPortName(Map<String, Pattern> midiOutDefinitions, String inPortName) {
     if (!midiOutDefinitions.containsKey(inPortName)) {
