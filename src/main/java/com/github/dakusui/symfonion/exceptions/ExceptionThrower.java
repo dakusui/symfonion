@@ -76,19 +76,19 @@ public class ExceptionThrower {
     throw new SymfonionRuntimeException(e.getMessage(), e);
   }
 
-  public static CLIException failedToRetrieveTransmitterFromMidiIn(MidiUnavailableException e, MidiDevice.Info inMidiDeviceInfo) {
-    throw new CLIException(format("(-) Failed to get transmitter from MIDI-in device (%s)", inMidiDeviceInfo.getName()), e);
+  public static CliException failedToRetrieveTransmitterFromMidiIn(MidiUnavailableException e, MidiDevice.Info inMidiDeviceInfo) {
+    throw new CliException(format("(-) Failed to get transmitter from MIDI-in device (%s)", inMidiDeviceInfo.getName()), e);
   }
 
-  public static CLIException failedToOpenMidiIn(MidiUnavailableException ee, MidiDevice.Info inMidiDeviceInfo) {
-    throw new CLIException(format("(-) Failed to open MIDI-in device (%s)", inMidiDeviceInfo.getName()), ee);
+  public static CliException failedToOpenMidiIn(MidiUnavailableException ee, MidiDevice.Info inMidiDeviceInfo) {
+    throw new CliException(format("(-) Failed to open MIDI-in device (%s)", inMidiDeviceInfo.getName()), ee);
   }
 
-  public static CLIException failedToOpenMidiOut(MidiUnavailableException e, MidiDevice.Info outMidiDeviceInfo) {
-    throw new CLIException(format("(-) Failed to open MIDI-out device (%s)", outMidiDeviceInfo.getName()), e);
+  public static CliException failedToOpenMidiOut(MidiUnavailableException e, MidiDevice.Info outMidiDeviceInfo) {
+    throw new CliException(format("(-) Failed to open MIDI-out device (%s)", outMidiDeviceInfo.getName()), e);
   }
 
-	public static CLIException failedToAccessMidiDevice(String deviceType, MidiUnavailableException e, MidiDevice.Info[] matchedInfos) {
-		throw new CLIException(composeErrMsg(format("Failed to access MIDI-%s device:'%s'.", deviceType, matchedInfos[0].getName()), "O"), e);
+	public static CliException failedToAccessMidiDevice(String deviceType, MidiUnavailableException e, MidiDevice.Info[] matchedInfos) {
+		throw new CliException(composeErrMsg(format("Failed to access MIDI-%s device:'%s'.", deviceType, matchedInfos[0].getName()), "O"), e);
 	}
 }

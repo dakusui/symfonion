@@ -1,6 +1,6 @@
 package com.github.dakusui.symfonion.cli;
 
-import com.github.dakusui.symfonion.exceptions.CLIException;
+import com.github.dakusui.symfonion.exceptions.CliException;
 import com.github.dakusui.symfonion.song.Keyword;
 import org.apache.commons.cli.CommandLine;
 
@@ -40,14 +40,14 @@ public enum CliUtils {
     }
   
   static String getSingleOptionValueFromCommandLine(CommandLine cmd, String optionName)
-      throws CLIException {
+      throws CliException {
     String ret = cmd.getOptionValue(optionName);
     int sz = cmd.getOptionProperties(optionName).size();
     if (sz != 1) {
       String msg = composeErrMsg(format(
               "This option requires one and only one value. (found %d times)", sz),
           optionName, null);
-      throw new CLIException(msg);
+      throw new CliException(msg);
     }
     return ret;
   }
