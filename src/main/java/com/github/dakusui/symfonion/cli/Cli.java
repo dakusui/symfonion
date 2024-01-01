@@ -43,10 +43,10 @@ public class Cli {
   }
 
   public Map<String, MidiDevice> prepareMidiOutDevices(PrintStream ps) {
-    return prepareMidiDevices(ps, "out", this.getMidiOutDefinitions());
+    return prepareMidiDevices(ps, this.getMidiOutDefinitions());
   }
 
-  private static Map<String, MidiDevice> prepareMidiDevices(PrintStream ps, String deviceType, Map<String, Pattern> portDefinitions) {
+  private static Map<String, MidiDevice> prepareMidiDevices(PrintStream ps, Map<String, Pattern> portDefinitions) {
     Map<String, MidiDevice> devices = new HashMap<>();
     for (String portName : portDefinitions.keySet()) {
       Pattern regex = portDefinitions.get(portName);
@@ -60,7 +60,7 @@ public class Cli {
       try {
         devices.put(portName, MidiSystem.getMidiDevice(matchedInfos[0]));
       } catch (MidiUnavailableException e) {
-        throw failedToAccessMidiDevice(deviceType, e, matchedInfos);
+        throw failedToAccessMidiDevice("out", e, matchedInfos);
       }
     }
     return devices;

@@ -1,14 +1,20 @@
 package com.github.dakusui.symfonion.utils.midi;
 
 import com.github.dakusui.symfonion.exceptions.ExceptionThrower;
-import com.github.dakusui.symfonion.utils.Utils;
+import com.github.dakusui.valid8j_pcond.forms.Printables;
 
 import javax.sound.midi.MidiDevice;
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.MidiUnavailableException;
 import java.util.*;
+import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
+
+import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.multipleMidiDevices;
+import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.noSuchMidiDeviceWasFound;
+import static com.github.dakusui.symfonion.utils.Utils.onlyElement;
 
 public class MidiDeviceManager {
 
@@ -22,6 +28,12 @@ public class MidiDeviceManager {
     this.records = new LinkedList<>();
   }
 
+  public MidiDeviceRecord lookUp(Predicate<MidiDeviceRecord> whereClause) {
+    return this.find(whereClause)
+        .collect(onlyElement((e1, e2) -> multipleMidiDevices(e1, e2, whereClause)))
+        .orElseThrow(() -> noSuchMidiDeviceWasFound(whereClause));
+  }
+
 
   public static MidiDeviceManager from(MidiDeviceReportFormatter reportFormatter) {
     return from(reportFormatter, MidiUtils.streamMidiDeviceInfo());
@@ -31,6 +43,30 @@ public class MidiDeviceManager {
     MidiDeviceManager reportComposer = new MidiDeviceManager(reportFormatter);
     midiDeviceInfoStream.forEach(reportComposer::add);
     return reportComposer;
+  }
+
+  public static Predicate<MidiDeviceRecord> matchesPortNameInDefinitions(String inPortName, Map<String, Pattern> midiInDefinitions) {
+    return midiDeviceInfoMatches(midiInDefinitions.get(inPortName));
+  }
+
+  private static Predicate<MidiDeviceRecord> midiDeviceInfoMatches(Pattern regexForDeviceName) {
+    return printablePredicate(".info.name.matches[" + regexForDeviceName + "]", r -> regexForDeviceName.matcher(r.info().getName()).matches());
+  }
+
+  public static Predicate<MidiDeviceRecord> isMidiDeviceForInput() {
+    return printablePredicate("isMidiDeviceForInput", r -> MidiUtils.isMidiDeviceForInput(r.info()));
+  }
+
+  public static Predicate<MidiDeviceRecord> isMidiDeviceForOutput() {
+    return printablePredicate("isMidiDeviceForOutput", r -> MidiUtils.isMidiDeviceForOutput(r.info()));
+  }
+
+  private static <T> Predicate<T> printablePredicate(String name, Predicate<T> p) {
+    return Printables.predicate(name, p);
+  }
+
+  public static MidiDeviceRecord lookUpMidiDevice(Predicate<MidiDeviceRecord> whereClause, MidiDeviceManager midiDeviceManager) {
+    return midiDeviceManager.lookUp(whereClause);
   }
 
   public MidiDeviceManager add(MidiDevice.Info info) {
@@ -81,5 +117,14 @@ public class MidiDeviceManager {
         this.addAll(reportFormatter.footer().stream().map(s -> reportFormatter.formatResult(false, s)).toList());
       }
     };
+  }
+
+  public static Predicate<MidiDeviceRecord> matchesMidiDeviceInfo(MidiDevice.Info info) {
+    return Printables.predicate("matches[" + info + "]", (r) -> Objects.equals(r.info(), info) || (areEqualInfoItems(r.info(), info)));
+  }
+
+  private static boolean areEqualInfoItems(MidiDevice.Info a, MidiDevice.Info b) {
+    Function<MidiDevice.Info, String> infoFormatter = i -> String.format("%s::%s::%s::%s", i.getName(), i.getVendor(), i.getDescription(), i.getVersion());
+    return Objects.equals(infoFormatter.apply(a), infoFormatter.apply(b));
   }
 }

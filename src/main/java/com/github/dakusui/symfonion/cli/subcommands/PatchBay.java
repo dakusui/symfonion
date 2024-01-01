@@ -4,20 +4,16 @@ import com.github.dakusui.symfonion.cli.Cli;
 import com.github.dakusui.symfonion.cli.MidiRouteRequest;
 import com.github.dakusui.symfonion.cli.Subcommand;
 import com.github.dakusui.symfonion.exceptions.CliException;
-import com.github.dakusui.symfonion.exceptions.ExceptionThrower;
 import com.github.dakusui.symfonion.exceptions.SymfonionException;
 import com.github.dakusui.symfonion.utils.midi.MidiDeviceManager;
 import com.github.dakusui.symfonion.utils.midi.MidiDeviceRecord;
 import com.github.dakusui.symfonion.utils.midi.MidiDeviceReportFormatter;
-import com.github.dakusui.symfonion.utils.midi.MidiUtils;
-import com.github.dakusui.valid8j_pcond.forms.Printables;
 
 import javax.sound.midi.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.Map;
-import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
 import static com.github.dakusui.symfonion.cli.CliUtils.composeErrMsg;
@@ -33,16 +29,14 @@ public class PatchBay implements Subcommand {
 
     String inPortName = route.in();
     Map<String, Pattern> midiInDefinitions = requireMidiInDefinitionsContainsInputPortName(cli.getMidiInDefinitions(), inPortName);
-    Pattern regexForMidiIn = midiInDefinitions.get(inPortName);
 
     String outPortName = route.out();
     Map<String, Pattern> midiOutDefinitions = requireMidiOutDefinitionsContainsOutputPortName(cli.getMidiOutDefinitions(), outPortName);
-    Pattern regexForMidiOut = midiOutDefinitions.get(outPortName);
 
     MidiDeviceManager midiDeviceManager = MidiDeviceManager.from(MidiDeviceReportFormatter.createDefaultInstance());
 
-    MidiDeviceRecord midiInDevice = findMidiDevice(and(isMidiDeviceForInput(), midiDeviceInfoMatches(regexForMidiIn)), midiDeviceManager);
-    MidiDeviceRecord midiOutDevice = findMidiDevice(and(isMidiDeviceForOutput(), midiDeviceInfoMatches(regexForMidiOut)), midiDeviceManager);
+    MidiDeviceRecord midiInDevice = MidiDeviceManager.lookUpMidiDevice(and(MidiDeviceManager.isMidiDeviceForInput(), MidiDeviceManager.matchesPortNameInDefinitions(inPortName, midiInDefinitions)), midiDeviceManager);
+    MidiDeviceRecord midiOutDevice = MidiDeviceManager.lookUpMidiDevice(and(MidiDeviceManager.isMidiDeviceForOutput(), MidiDeviceManager.matchesPortNameInDefinitions(outPortName, midiOutDefinitions)), midiDeviceManager);
 
     route(midiInDevice, midiOutDevice, midiDeviceManager, ps, inputStream);
   }
@@ -68,29 +62,6 @@ public class PatchBay implements Subcommand {
         }
       }
     }
-  }
-
-
-  private static MidiDeviceRecord findMidiDevice(Predicate<MidiDeviceRecord> whereMidiDeviceIsInputAndMatchesRegex, MidiDeviceManager midiDeviceManager) {
-    return midiDeviceManager.find(whereMidiDeviceIsInputAndMatchesRegex)
-        .collect(onlyElement((e1, e2) -> multipleMidiDevices(e1, e2, whereMidiDeviceIsInputAndMatchesRegex)))
-        .orElseThrow(() -> noSuchMidiDeviceWasFound(whereMidiDeviceIsInputAndMatchesRegex));
-  }
-
-  private static Predicate<MidiDeviceRecord> isMidiDeviceForInput() {
-    return printablePredicate("isMidiDeviceForInput", r -> MidiUtils.isMidiDeviceForInput(r.info()));
-  }
-
-  private static Predicate<MidiDeviceRecord> isMidiDeviceForOutput() {
-    return printablePredicate("isMidiDeviceForOutput", r -> MidiUtils.isMidiDeviceForOutput(r.info()));
-  }
-
-  private static Predicate<MidiDeviceRecord> midiDeviceInfoMatches(Pattern regexForDeviceName) {
-    return printablePredicate(".info.name.matches[" + regexForDeviceName + "]", r -> regexForDeviceName.matcher(r.info().getName()).matches());
-  }
-
-  private static <T> Predicate<T> printablePredicate(String name, Predicate<T> p) {
-    return Printables.predicate(name, p);
   }
 
 
