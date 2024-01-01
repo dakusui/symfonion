@@ -58,7 +58,7 @@ public class Bar {
       this.groove = g;
       JsonObject patternsJsonObject = JsonUtils.asJsonObject(jsonObject, Keyword.$patterns);
       if (patternsJsonObject == null) {
-        throw requiredElementMissingException(jsonObject, json, Keyword.$patterns);
+        throw requiredElementMissingException(jsonObject, Keyword.$patterns);
       }
       for (Entry<String, JsonElement> stringJsonElementEntry : patternsJsonObject.entrySet()) {
         String partName = stringJsonElementEntry.getKey();

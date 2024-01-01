@@ -146,8 +146,8 @@ public class ExceptionThrower {
     throw new SymfonionIllegalFormatException(actualJSON, contextValueOf(JSON_ELEMENT_ROOT), acceptableExample);
   }
 
-  public static SymfonionIllegalFormatException illegalFormatException(JsonElement actualJSON, JsonObject root, String acceptableExample) throws SymfonionIllegalFormatException {
-    throw new SymfonionIllegalFormatException(actualJSON, contextValueOf(JSON_ELEMENT_ROOT), acceptableExample);
+  public static SymfonionMissingElementException requiredElementMissingException(JsonElement actualJSON, Object relPath) throws SymfonionMissingElementException {
+    throw new SymfonionMissingElementException(actualJSON, contextValueOf(JSON_ELEMENT_ROOT), relPath);
   }
 
   public static SymfonionMissingElementException requiredElementMissingException(JsonElement actualJSON, JsonObject root, Object relPath) throws SymfonionMissingElementException {
