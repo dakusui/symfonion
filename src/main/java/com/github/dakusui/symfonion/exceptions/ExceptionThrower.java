@@ -8,7 +8,6 @@ import javax.sound.midi.MidiDevice;
 import javax.sound.midi.MidiUnavailableException;
 import java.io.Closeable;
 import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.function.Predicate;
 
@@ -120,31 +119,31 @@ public class ExceptionThrower {
   }
 
   public static SymfonionReferenceException noteMapNotFoundException(JsonElement problemCausingJsonNode, String missingReference) throws SymfonionException {
-    throw new SymfonionReferenceException(missingReference, "notemap", problemCausingJsonNode, get(JSON_ELEMENT_ROOT));
+    throw new SymfonionReferenceException(missingReference, "notemap", problemCausingJsonNode, contextValueOf(JSON_ELEMENT_ROOT));
   }
 
   public static SymfonionReferenceException noteNotDefinedException(JsonElement problemCausingJsonNode, String missingReference, String notemapName) throws SymfonionException {
-    throw new SymfonionReferenceException(missingReference, format("note in %s", notemapName), problemCausingJsonNode, get(JSON_ELEMENT_ROOT));
+    throw new SymfonionReferenceException(missingReference, format("note in %s", notemapName), problemCausingJsonNode, contextValueOf(JSON_ELEMENT_ROOT));
   }
 
-  public static SymfonionReferenceException grooveNotDefinedException(JsonElement problemCausingJsonNode, JsonObject root, String missingReference) throws SymfonionException {
-    throw new SymfonionReferenceException(missingReference, "groove", problemCausingJsonNode, root);
+  public static SymfonionReferenceException grooveNotDefinedException(JsonElement problemCausingJsonNode, String missingReference) throws SymfonionException {
+    throw new SymfonionReferenceException(missingReference, "groove", problemCausingJsonNode, contextValueOf(JSON_ELEMENT_ROOT));
   }
 
-  public static SymfonionReferenceException partNotFound(JsonElement problemCausingJsonNode, JsonObject root, String missingReference) throws SymfonionException {
-    throw new SymfonionReferenceException(missingReference, "part", problemCausingJsonNode, root);
+  public static SymfonionReferenceException partNotFound(JsonElement problemCausingJsonNode, String missingReference) throws SymfonionException {
+    throw new SymfonionReferenceException(missingReference, "part", problemCausingJsonNode, contextValueOf(JSON_ELEMENT_ROOT));
   }
 
   public static SymfonionReferenceException patternNotFound(JsonElement problemCausingJsonNode, JsonObject root, String missingReference) throws SymfonionException {
     throw new SymfonionReferenceException(missingReference, "pattern", problemCausingJsonNode, root);
   }
 
-  public static SymfonionTypeMismatchException typeMismatchException(JsonElement actualJSON, JsonObject root, String... expectedTypes) throws SymfonionSyntaxException {
-    throw new SymfonionTypeMismatchException(expectedTypes, actualJSON, actualJSON, root);
+  public static SymfonionTypeMismatchException typeMismatchException(JsonElement actualJSON, String... expectedTypes) throws SymfonionSyntaxException {
+    throw new SymfonionTypeMismatchException(expectedTypes, actualJSON, actualJSON, contextValueOf(JSON_ELEMENT_ROOT));
   }
 
   public static SymfonionIllegalFormatException illegalFormatException(JsonElement actualJSON, JsonObject root, String acceptableExample) throws SymfonionIllegalFormatException {
-    throw new SymfonionIllegalFormatException(actualJSON, root, acceptableExample);
+    throw new SymfonionIllegalFormatException(actualJSON, contextValueOf(JSON_ELEMENT_ROOT), acceptableExample);
   }
 
   public static SymfonionMissingElementException requiredElementMissingException(JsonElement actualJSON, JsonObject root, Object relPath) throws SymfonionMissingElementException {
@@ -174,8 +173,8 @@ public class ExceptionThrower {
 
   public static CliException failedToOpenMidiDevice(MidiUnavailableException ee) {
     throw new CliException(format("(-) Failed to open MIDI-%s device (%s)",
-        ExceptionThrower.<MidiDevice.Info>get(ContextKey.MIDI_DEVICE_INFO),
-        ExceptionThrower.<MidiDeviceRecord.Io>get(ContextKey.MIDI_DEVICE_INFO_IO).name().toLowerCase()),
+        ExceptionThrower.<MidiDevice.Info>contextValueOf(ContextKey.MIDI_DEVICE_INFO),
+        ExceptionThrower.<MidiDeviceRecord.Io>contextValueOf(ContextKey.MIDI_DEVICE_INFO_IO).name().toLowerCase()),
         ee);
   }
 
@@ -199,7 +198,7 @@ public class ExceptionThrower {
     throw new RuntimeException();
   }
 
-  private static <T> T get(ContextKey contextKey) {
+  private static <T> T contextValueOf(ContextKey contextKey) {
     return currentContext().get(contextKey);
   }
 

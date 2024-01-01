@@ -15,6 +15,7 @@ import java.util.*;
 import java.util.Map.Entry;
 
 import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.*;
+import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.ContextKey.JSON_ELEMENT_ROOT;
 import static com.github.dakusui.symfonion.exceptions.SymfonionTypeMismatchException.ARRAY;
 
 public class Bar {
@@ -36,51 +37,53 @@ public class Bar {
   }
   
   private void init(JsonObject jsonObject, JsonObject root) throws SymfonionException, JsonException {
-    try {
-      this.beats = Utils.parseFraction(JsonUtils.asString(jsonObject, Keyword.$beats));
-    } catch (FractionFormatException e) {
-      throw illegalFormatException(
-          JsonUtils.asJsonElement(jsonObject, Keyword.$beats),
-          root,
-          SymfonionIllegalFormatException.FRACTION_EXAMPLE);
-    }
-    this.beats = this.beats == null ? Fraction.one : this.beats;
-    this.groove = Groove.DEFAULT_INSTANCE;
-    Groove g = Groove.DEFAULT_INSTANCE;
-    if (JsonUtils.hasPath(jsonObject, Keyword.$groove)) {
-      String grooveName = JsonUtils.asString(jsonObject, Keyword.$groove.name());
-      g = grooves.get(grooveName);
-      if (g == null) {
-        throw grooveNotDefinedException(JsonUtils.asJsonElement(jsonObject, Keyword.$groove), root, grooveName);
+    try (Context ignored = context($(JSON_ELEMENT_ROOT, root))) {
+      try {
+        this.beats = Utils.parseFraction(JsonUtils.asString(jsonObject, Keyword.$beats));
+      } catch (FractionFormatException e) {
+        throw illegalFormatException(
+            JsonUtils.asJsonElement(jsonObject, Keyword.$beats),
+            root,
+            SymfonionIllegalFormatException.FRACTION_EXAMPLE);
       }
-    }
-    this.groove = g;
-    JsonObject patternsJsonObject = JsonUtils.asJsonObject(jsonObject, Keyword.$patterns);
-    if (patternsJsonObject == null) {
-      throw requiredElementMissingException(jsonObject, json, Keyword.$patterns);
-    }
-    for (Entry<String, JsonElement> stringJsonElementEntry : patternsJsonObject.entrySet()) {
-      String partName = stringJsonElementEntry.getKey();
-      List<List<Pattern>> patterns = new LinkedList<List<Pattern>>();
-      JsonArray partPatternsJsonArray = JsonUtils.asJsonArray(patternsJsonObject, partName);
-      if (!partPatternsJsonArray.isJsonArray()) {
-        throw typeMismatchException(partPatternsJsonArray, json, ARRAY);
-      }
-      int len = partPatternsJsonArray.size();
-      for (int j = 0; j < len; j++) {
-        JsonElement jsonPatterns = partPatternsJsonArray.get(j);
-        String patternNames = jsonPatterns.getAsString();
-        List<Pattern> p = new LinkedList<Pattern>();
-        for (String each : patternNames.split(";")) {
-          Pattern cur = this.patterns.get(each);
-          if (cur == null) {
-            throw patternNotFound(jsonPatterns, this.rootJsonObject(), patternNames);
-          }
-          p.add(cur);
+      this.beats = this.beats == null ? Fraction.one : this.beats;
+      this.groove = Groove.DEFAULT_INSTANCE;
+      Groove g = Groove.DEFAULT_INSTANCE;
+      if (JsonUtils.hasPath(jsonObject, Keyword.$groove)) {
+        String grooveName = JsonUtils.asString(jsonObject, Keyword.$groove.name());
+        g = grooves.get(grooveName);
+        if (g == null) {
+          throw grooveNotDefinedException(JsonUtils.asJsonElement(jsonObject, Keyword.$groove), grooveName);
         }
-        patterns.add(p);
       }
-      patternLists.put(partName, patterns);
+      this.groove = g;
+      JsonObject patternsJsonObject = JsonUtils.asJsonObject(jsonObject, Keyword.$patterns);
+      if (patternsJsonObject == null) {
+        throw requiredElementMissingException(jsonObject, json, Keyword.$patterns);
+      }
+      for (Entry<String, JsonElement> stringJsonElementEntry : patternsJsonObject.entrySet()) {
+        String partName = stringJsonElementEntry.getKey();
+        List<List<Pattern>> patterns = new LinkedList<List<Pattern>>();
+        JsonArray partPatternsJsonArray = JsonUtils.asJsonArray(patternsJsonObject, partName);
+        if (!partPatternsJsonArray.isJsonArray()) {
+          throw typeMismatchException(partPatternsJsonArray, ARRAY);
+        }
+        int len = partPatternsJsonArray.size();
+        for (int j = 0; j < len; j++) {
+          JsonElement jsonPatterns = partPatternsJsonArray.get(j);
+          String patternNames = jsonPatterns.getAsString();
+          List<Pattern> p = new LinkedList<Pattern>();
+          for (String each : patternNames.split(";")) {
+            Pattern cur = this.patterns.get(each);
+            if (cur == null) {
+              throw patternNotFound(jsonPatterns, this.rootJsonObject(), patternNames);
+            }
+            p.add(cur);
+          }
+          patterns.add(p);
+        }
+        patternLists.put(partName, patterns);
+      }
     }
   }
   

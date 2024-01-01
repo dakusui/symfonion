@@ -112,7 +112,7 @@ public class Groove {
     Groove ret = new Groove();
     for (JsonElement elem : grooveDef) {
       if (!elem.isJsonObject()) {
-        throw typeMismatchException(elem, root, OBJECT);
+        throw typeMismatchException(elem, OBJECT);
       }
       JsonObject cur = elem.getAsJsonObject();
       String len = JsonUtils.asString(cur, Keyword.$length);

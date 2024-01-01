@@ -34,7 +34,7 @@ public class Song {
     private static Context loadMidiDeviceProfile(JsonObject json, Context logiasContext) throws SymfonionException, JsonException {
       JsonElement tmp = JsonUtils.asJsonObjectWithDefault(json, new JsonObject(), Keyword.$settings);
       if (!tmp.isJsonObject()) {
-        throw typeMismatchException(tmp, json, OBJECT);
+        throw typeMismatchException(tmp, OBJECT);
       }
       String profileName = JsonUtils.asStringWithDefault(tmp.getAsJsonObject(), "", Keyword.$mididevice);
       Logias logias = new Logias(logiasContext);
@@ -54,14 +54,14 @@ public class Song {
       List<Bar> bars = new LinkedList<>();
       JsonElement tmp = JsonUtils.asJsonElement(json, Keyword.$sequence);
       if (!tmp.isJsonArray()) {
-        throw typeMismatchException(tmp, json, ARRAY);
+        throw typeMismatchException(tmp, ARRAY);
       }
       JsonArray seqJson = tmp.getAsJsonArray();
       int len = seqJson.getAsJsonArray().size();
       for (int i = 0; i < len; i++) {
         JsonElement barJson = seqJson.get(i);
         if (!barJson.isJsonObject()) {
-          throw typeMismatchException(seqJson, json, OBJECT);
+          throw typeMismatchException(seqJson, OBJECT);
         }
         Bar bar = new Bar(barJson.getAsJsonObject(), json, grooves, patterns);
         bars.add(bar);
@@ -129,17 +129,19 @@ public class Song {
     }
 
     public Song build() throws JsonException, SymfonionException {
-      Map<String, NoteMap> noteMaps = initNoteMaps(json);
-      Map<String, Groove> grooves = initGrooves(json);
-      Map<String, Pattern> patterns = initPatterns(json, noteMaps);
-      return new Song(
-          loadMidiDeviceProfile(json, logiasContext),
-          initParts(this.json),
-          patterns,
-          noteMaps,
-          grooves,
-          initSequence(json, grooves, patterns)
-      );
+      try (ExceptionThrower.Context ignored = context($(JSON_ELEMENT_ROOT, json))) {
+        Map<String, NoteMap> noteMaps = initNoteMaps(json);
+        Map<String, Groove> grooves = initGrooves(json);
+        Map<String, Pattern> patterns = initPatterns(json, noteMaps);
+        return new Song(
+            loadMidiDeviceProfile(json, logiasContext),
+            initParts(this.json),
+            patterns,
+            noteMaps,
+            grooves,
+            initSequence(json, grooves, patterns)
+        );
+      }
     }
   }
 

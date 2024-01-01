@@ -64,7 +64,7 @@ public class Stroke {
           throw illegalFormatException(lenJSON, root, NOTELENGTH_EXAMPLE);
         }
       } else {
-        throw typeMismatchException(lenJSON, root, PRIMITIVE);
+        throw typeMismatchException(lenJSON, PRIMITIVE);
       }
     }
     if (JsonUtils.hasPath(obj, Keyword.$gate)) {
