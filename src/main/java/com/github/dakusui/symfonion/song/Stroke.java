@@ -61,7 +61,7 @@ public class Stroke {
       if (lenJSON.isJsonPrimitive()) {
         len = Utils.parseNoteLength(lenJSON.getAsString());
         if (len == null) {
-          throw illegalFormatException(lenJSON, root, NOTELENGTH_EXAMPLE);
+          throw illegalFormatException(lenJSON, NOTELENGTH_EXAMPLE);
         }
       } else {
         throw typeMismatchException(lenJSON, PRIMITIVE);

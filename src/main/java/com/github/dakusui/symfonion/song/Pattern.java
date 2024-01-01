@@ -2,8 +2,8 @@ package com.github.dakusui.symfonion.song;
 
 import com.github.dakusui.json.JsonException;
 import com.github.dakusui.json.JsonUtils;
-import com.github.dakusui.symfonion.utils.Fraction;
 import com.github.dakusui.symfonion.exceptions.SymfonionException;
+import com.github.dakusui.symfonion.utils.Fraction;
 import com.github.dakusui.symfonion.utils.Utils;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
