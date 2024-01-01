@@ -3,6 +3,7 @@ package com.github.dakusui.symfonion.song;
 import com.github.dakusui.json.*;
 import com.github.dakusui.symfonion.core.MidiCompiler;
 import com.github.dakusui.symfonion.core.MidiCompilerContext;
+import com.github.dakusui.symfonion.exceptions.ExceptionThrower;
 import com.github.dakusui.symfonion.utils.Fraction;
 import com.github.dakusui.symfonion.exceptions.SymfonionException;
 import com.github.dakusui.symfonion.utils.Utils;
@@ -180,32 +181,34 @@ public class Stroke {
   private String parseNotes(String s, List<Note> notes) throws SymfonionException {
     Matcher m = notesPattern.matcher(s);
     int i;
-    for (i = 0; m.find(i); i = m.end()) {
-      if (i != m.start()) {
-        throw new SymfonionException("Error:" + s.substring(0, i) + "[" + s.substring(i, m.start()) + "]" + s.substring(m.start()));
+    try (ExceptionThrower.Context context = ExceptionThrower.context(ExceptionThrower.$(ExceptionThrower.ContextKey.JSON_ELEMENT_ROOT, this.rootObjectNode))) {
+      for (i = 0; m.find(i); i = m.end()) {
+        if (i != m.start()) {
+          throw new SymfonionException("Error:" + s.substring(0, i) + "[" + s.substring(i, m.start()) + "]" + s.substring(m.start()));
+        }
+        int n_ = this.noteMap.note(m.group(1), this.strokeJson);
+        if (n_ >= 0) {
+          int n =
+              n_ +
+                  Utils.count('#', m.group(2)) - Utils.count('b', m.group(2)) +
+                  Utils.count('>', m.group(3)) * 12 - Utils.count('<', m.group(3)) * 12;
+          int a = Utils.count('+', m.group(4)) - Utils.count('-', m.group(4));
+          Note nn = new Note(n, a);
+          notes.add(nn);
+        }
       }
-      int n_ = this.noteMap.note(m.group(1), this.strokeJson, this.rootObjectNode);
-      if (n_ >= 0) {
-        int n =
-            n_ +
-                Utils.count('#', m.group(2)) - Utils.count('b', m.group(2)) +
-                Utils.count('>', m.group(3)) * 12 - Utils.count('<', m.group(3)) * 12;
-        int a = Utils.count('+', m.group(4)) - Utils.count('-', m.group(4));
-        Note nn = new Note(n, a);
-        notes.add(nn);
+      Matcher n = Utils.lengthPattern.matcher(s);
+      String ret = null;
+      if (n.find(i)) {
+        ret = s.substring(n.start(), n.end());
+        i = n.end();
       }
+      if (i != s.length()) {
+        String msg = s.substring(0, i) + "`" + s.substring(i) + "' isn't a valid note expression. Notes must be like 'C', 'CEG8.', and so on.";
+        throw illegalFormatException(this.strokeJson, this.rootObjectNode, msg);
+      }
+      return ret;
     }
-    Matcher n = Utils.lengthPattern.matcher(s);
-    String ret = null;
-    if (n.find(i)) {
-      ret = s.substring(n.start(), n.end());
-      i = n.end();
-    }
-    if (i != s.length()) {
-      String msg = s.substring(0, i) + "`" + s.substring(i) + "' isn't a valid note expression. Notes must be like 'C', 'CEG8.', and so on.";
-      throw illegalFormatException(this.strokeJson, this.rootObjectNode, msg);
-    }
-    return ret;
   }
   
   static interface EventCreator {

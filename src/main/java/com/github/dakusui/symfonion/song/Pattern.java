@@ -84,7 +84,7 @@ public class Pattern {
       String noteMapName = JsonUtils.asString(json, Keyword.$notemap);
       noteMap = noteMaps.get(noteMapName);
       if (noteMap == null) {
-        throw noteMapNotFoundException(asJsonElement(json, Keyword.$notemap), root, noteMapName);
+        throw noteMapNotFoundException(asJsonElement(json, Keyword.$notemap), noteMapName);
       }
     }
     Pattern ret = new Pattern(noteMap);
