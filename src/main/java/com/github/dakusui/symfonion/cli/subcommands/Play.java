@@ -2,10 +2,9 @@ package com.github.dakusui.symfonion.cli.subcommands;
 
 import com.github.dakusui.symfonion.cli.Cli;
 import com.github.dakusui.symfonion.cli.Subcommand;
+import com.github.dakusui.symfonion.core.Symfonion;
 import com.github.dakusui.symfonion.exceptions.SymfonionException;
 import com.github.dakusui.symfonion.song.Song;
-import com.github.dakusui.symfonion.core.Symfonion;
-import com.github.dakusui.symfonion.utils.midi.MidiDeviceManager;
 
 import javax.sound.midi.*;
 import java.io.IOException;
@@ -17,20 +16,6 @@ import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.deviceExc
 import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.interrupted;
 
 public class Play implements Subcommand {
-  public static class SequencerManager {
-    final List<Sequencer> playingSequencers = new LinkedList<>();
-    final Map<String, Sequencer> sequencers = new HashMap<>();
-
-    final MidiDeviceManager deviceManager;
-
-    public SequencerManager(MidiDeviceManager deviceManager) {
-      this.deviceManager = deviceManager;
-    }
-
-    public Sequencer openSequencerFor(String portName) {
-      return null;
-    }
-  }
 
   @Override
   public void invoke(Cli cli, PrintStream ps, InputStream inputStream) throws IOException {

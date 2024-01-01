@@ -97,4 +97,12 @@ public class ExceptionThrower {
 	public static RuntimeException noSuchMidiDeviceWasFound(Predicate<MidiDeviceRecord> cond) {
 		throw new CliException(String.format("No such MIDI device was found for: '%s'", cond));
 	}
+
+	public static RuntimeException failedToGetTransmitter() {
+		throw new RuntimeException();
+	}
+
+	public static RuntimeException failedToSetSequence() {
+		throw new RuntimeException();
+	}
 }

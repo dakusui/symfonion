@@ -14,11 +14,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.Map;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
 import static com.github.dakusui.symfonion.cli.CliUtils.composeErrMsg;
 import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.*;
 import static com.github.dakusui.symfonion.utils.Utils.onlyElement;
+import static com.github.dakusui.symfonion.utils.midi.MidiDeviceManager.isMidiDeviceForInput;
+import static com.github.dakusui.symfonion.utils.midi.MidiDeviceManager.matchesPortNameInDefinitions;
 import static com.github.dakusui.valid8j_pcond.forms.Predicates.and;
 import static java.lang.String.format;
 
@@ -35,10 +38,18 @@ public class PatchBay implements Subcommand {
 
     MidiDeviceManager midiDeviceManager = MidiDeviceManager.from(MidiDeviceReportFormatter.createDefaultInstance());
 
-    MidiDeviceRecord midiInDevice = MidiDeviceManager.lookUpMidiDevice(and(MidiDeviceManager.isMidiDeviceForInput(), MidiDeviceManager.matchesPortNameInDefinitions(inPortName, midiInDefinitions)), midiDeviceManager);
-    MidiDeviceRecord midiOutDevice = MidiDeviceManager.lookUpMidiDevice(and(MidiDeviceManager.isMidiDeviceForOutput(), MidiDeviceManager.matchesPortNameInDefinitions(outPortName, midiOutDefinitions)), midiDeviceManager);
+    MidiDeviceRecord midiInDevice = MidiDeviceManager.lookUpMidiDevice(isInputPortAndMatchesPortName(inPortName, midiInDefinitions), midiDeviceManager);
+    MidiDeviceRecord midiOutDevice = MidiDeviceManager.lookUpMidiDevice(isOutputPortAndMatchesPortName(outPortName, midiOutDefinitions), midiDeviceManager);
 
     route(midiInDevice, midiOutDevice, midiDeviceManager, ps, inputStream);
+  }
+
+  private static Predicate<MidiDeviceRecord> isOutputPortAndMatchesPortName(String outPortName, Map<String, Pattern> midiOutDefinitions) {
+    return and(MidiDeviceManager.isMidiDeviceForOutput(), matchesPortNameInDefinitions(outPortName, midiOutDefinitions));
+  }
+
+  private static Predicate<MidiDeviceRecord> isInputPortAndMatchesPortName(String inPortName, Map<String, Pattern> midiInDefinitions) {
+    return and(isMidiDeviceForInput(), matchesPortNameInDefinitions(inPortName, midiInDefinitions));
   }
 
   public static void route(MidiDeviceRecord input, MidiDeviceRecord output, MidiDeviceManager deviceManager, PrintStream ps, InputStream inputStream) {
