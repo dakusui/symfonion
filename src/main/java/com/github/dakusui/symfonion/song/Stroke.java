@@ -181,7 +181,7 @@ public class Stroke {
   private String parseNotes(String s, List<Note> notes) throws SymfonionException {
     Matcher m = notesPattern.matcher(s);
     int i;
-    try (ExceptionThrower.Context context = ExceptionThrower.context(ExceptionThrower.$(ExceptionThrower.ContextKey.JSON_ELEMENT_ROOT, this.rootObjectNode))) {
+    try (ExceptionThrower.Context ignored = ExceptionThrower.context(ExceptionThrower.$(ExceptionThrower.ContextKey.JSON_ELEMENT_ROOT, this.rootObjectNode))) {
       for (i = 0; m.find(i); i = m.end()) {
         if (i != m.start()) {
           throw new SymfonionException("Error:" + s.substring(0, i) + "[" + s.substring(i, m.start()) + "]" + s.substring(m.start()));
@@ -205,7 +205,7 @@ public class Stroke {
       }
       if (i != s.length()) {
         String msg = s.substring(0, i) + "`" + s.substring(i) + "' isn't a valid note expression. Notes must be like 'C', 'CEG8.', and so on.";
-        throw illegalFormatException(this.strokeJson, this.rootObjectNode, msg);
+        throw illegalFormatException(this.strokeJson, msg);
       }
       return ret;
     }

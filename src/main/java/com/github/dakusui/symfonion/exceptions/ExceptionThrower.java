@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.function.Predicate;
 
 import static com.github.dakusui.symfonion.cli.CliUtils.composeErrMsg;
-import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.ContextKey.JSON_ELEMENT_ROOT;
+import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.ContextKey.*;
 import static com.github.dakusui.valid8j.ValidationFluents.all;
 import static com.github.dakusui.valid8j.ValidationFluents.that;
 import static com.github.dakusui.valid8j_pcond.fluent.Statement.objectValue;
@@ -134,12 +134,16 @@ public class ExceptionThrower {
     throw new SymfonionReferenceException(missingReference, "part", problemCausingJsonNode, contextValueOf(JSON_ELEMENT_ROOT));
   }
 
-  public static SymfonionReferenceException patternNotFound(JsonElement problemCausingJsonNode, JsonObject root, String missingReference) throws SymfonionException {
-    throw new SymfonionReferenceException(missingReference, "pattern", problemCausingJsonNode, root);
+  public static SymfonionReferenceException patternNotFound(JsonElement problemCausingJsonNode, String missingReference) throws SymfonionException {
+    throw new SymfonionReferenceException(missingReference, "pattern", problemCausingJsonNode, contextValueOf(JSON_ELEMENT_ROOT));
   }
 
   public static SymfonionTypeMismatchException typeMismatchException(JsonElement actualJSON, String... expectedTypes) throws SymfonionSyntaxException {
     throw new SymfonionTypeMismatchException(expectedTypes, actualJSON, actualJSON, contextValueOf(JSON_ELEMENT_ROOT));
+  }
+
+  public static SymfonionIllegalFormatException illegalFormatException(JsonElement actualJSON, String acceptableExample) throws SymfonionIllegalFormatException {
+    throw new SymfonionIllegalFormatException(actualJSON, contextValueOf(JSON_ELEMENT_ROOT), acceptableExample);
   }
 
   public static SymfonionIllegalFormatException illegalFormatException(JsonElement actualJSON, JsonObject root, String acceptableExample) throws SymfonionIllegalFormatException {
@@ -173,8 +177,8 @@ public class ExceptionThrower {
 
   public static CliException failedToOpenMidiDevice(MidiUnavailableException ee) {
     throw new CliException(format("(-) Failed to open MIDI-%s device (%s)",
-        ExceptionThrower.<MidiDevice.Info>contextValueOf(ContextKey.MIDI_DEVICE_INFO),
-        ExceptionThrower.<MidiDeviceRecord.Io>contextValueOf(ContextKey.MIDI_DEVICE_INFO_IO).name().toLowerCase()),
+        ExceptionThrower.<MidiDevice.Info>contextValueOf(MIDI_DEVICE_INFO),
+        ExceptionThrower.<MidiDeviceRecord.Io>contextValueOf(MIDI_DEVICE_INFO_IO).name().toLowerCase()),
         ee);
   }
 

@@ -121,7 +121,7 @@ public class Groove {
       
       Fraction f = Utils.parseNoteLength(len);
       if (f == null) {
-        throw illegalFormatException(JsonUtils.asJsonElement(cur, Keyword.$length), root, NOTELENGTH_EXAMPLE);
+        throw illegalFormatException(JsonUtils.asJsonElement(cur, Keyword.$length), NOTELENGTH_EXAMPLE);
       }
       ret.add(f, ticks, accent);
     }
