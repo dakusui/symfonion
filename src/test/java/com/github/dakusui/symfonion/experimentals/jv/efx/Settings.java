@@ -1,4 +1,4 @@
-package com.github.dakusui.symfonion.jv.efx;
+package com.github.dakusui.symfonion.experimentals.jv.efx;
 
 public class Settings {
   enum SignalSink {

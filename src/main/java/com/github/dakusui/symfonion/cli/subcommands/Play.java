@@ -3,7 +3,6 @@ package com.github.dakusui.symfonion.cli.subcommands;
 import com.github.dakusui.symfonion.cli.Cli;
 import com.github.dakusui.symfonion.cli.Subcommand;
 import com.github.dakusui.symfonion.core.Symfonion;
-import com.github.dakusui.symfonion.exceptions.ExceptionThrower;
 import com.github.dakusui.symfonion.exceptions.SymfonionException;
 import com.github.dakusui.symfonion.song.Song;
 
@@ -26,9 +25,9 @@ public class Play implements Subcommand {
       Song song = symfonion.load(cli.getSourceFile().getAbsolutePath());
       Map<String, Sequence> sequences = symfonion.compile(song);
       ps.println();
-      Map<String, MidiDevice> devices = cli.prepareMidiOutDevices(ps);
+      Map<String, MidiDevice> midiOutDevices = cli.prepareMidiOutDevices(ps);
       ps.println();
-      play(devices, sequences);
+      play(midiOutDevices, sequences);
     }
   }
 
@@ -36,26 +35,39 @@ public class Play implements Subcommand {
     Map<String, Sequencer> ret = new HashMap<>();
     final List<Sequencer> playingSequencers = new LinkedList<>();
     for (String portName : portNames) {
-      prepareSequencer(portName, devices, sequences, playingSequencers, ret);
+      prepareSequencer(ret, portName, devices, sequences, playingSequencers);
     }
     return ret;
   }
 
-  private static void prepareSequencer(String portName, Map<String, MidiDevice> devices, Map<String, Sequence> sequences, List<Sequencer> playingSequencers, Map<String, Sequencer> sequencers) throws MidiUnavailableException, InvalidMidiDataException {
+  private static void prepareSequencer(Map<String, Sequencer> sequencers, String portName, Map<String, MidiDevice> devices, Map<String, Sequence> sequences, List<Sequencer> playingSequencers) throws MidiUnavailableException, InvalidMidiDataException {
     final Sequencer sequencer = MidiSystem.getSequencer();
     playingSequencers.add(sequencer);
-    sequencer.open();
     sequencers.put(portName, sequencer);
-    MidiDevice dev = devices.get(portName);
-    if (dev != null) {
-      dev.open();
-      for (Transmitter tr : sequencer.getTransmitters()) {
-        tr.setReceiver(null);
-      }
-      sequencer.getTransmitter().setReceiver(dev.getReceiver());
+    MidiDevice midiOutDevice = devices.get(portName);
+    Sequence sequence = sequences.get(portName);
+    extracted(sequencer, midiOutDevice, sequence);
+    sequencer.addMetaEventListener(createMetaEventListener(playingSequencers, sequencer));
+  }
+
+  private static void extracted(Sequencer sequencer, MidiDevice midiOutDevice, Sequence sequence) throws MidiUnavailableException, InvalidMidiDataException {
+    sequencer.open();
+    if (midiOutDevice != null) {
+      midiOutDevice.open();
+      assignDeviceReceiverToSequencer(sequencer, midiOutDevice);
     }
-    sequencer.setSequence(sequences.get(portName));
-    sequencer.addMetaEventListener(new MetaEventListener() {
+    sequencer.setSequence(sequence);
+  }
+
+  private static void assignDeviceReceiverToSequencer(Sequencer sequencer, MidiDevice dev) throws MidiUnavailableException {
+    for (Transmitter tr : sequencer.getTransmitters()) {
+      tr.setReceiver(null);
+    }
+    sequencer.getTransmitter().setReceiver(dev.getReceiver());
+  }
+
+  private static MetaEventListener createMetaEventListener(List<Sequencer> playingSequencers, Sequencer sequencer) {
+    return new MetaEventListener() {
       final Sequencer seq = sequencer;
 
       @Override
@@ -74,7 +86,7 @@ public class Play implements Subcommand {
           }
         }
       }
-    });
+    };
   }
 
   private static void startSequencers(List<String> portNames, Map<String, Sequencer> sequencers) {
@@ -84,11 +96,11 @@ public class Play implements Subcommand {
     }
   }
 
-  private static void cleanUpSequencers(List<String> portNames, Map<String, MidiDevice> devices, Map<String, Sequencer> sequencers) {
+  private static void cleanUpSequencers(List<String> portNames, Map<String, MidiDevice> midiOutDevices, Map<String, Sequencer> sequencers) {
     List<String> tmp = new LinkedList<>(portNames);
     Collections.reverse(portNames);
     for (String portName : tmp) {
-      MidiDevice dev = devices.get(portName);
+      MidiDevice dev = midiOutDevices.get(portName);
       if (dev != null) {
         dev.close();
       }
@@ -99,17 +111,17 @@ public class Play implements Subcommand {
     }
   }
 
-  private static synchronized void play(Map<String, MidiDevice> devices, Map<String, Sequence> sequences) throws SymfonionException {
+  private static synchronized void play(Map<String, MidiDevice> midiOutDevices, Map<String, Sequence> sequences) throws SymfonionException {
     List<String> portNames = new LinkedList<>(sequences.keySet());
     Map<String, Sequencer> sequencers;
     try {
-      sequencers = prepareSequencers(portNames, devices, sequences);
+      sequencers = prepareSequencers(portNames, midiOutDevices, sequences);
       try {
         startSequencers(portNames, sequencers);
         Play.class.wait();
       } finally {
         System.out.println("Finished playing.");
-        cleanUpSequencers(portNames, devices, sequencers);
+        cleanUpSequencers(portNames, midiOutDevices, sequencers);
       }
     } catch (MidiUnavailableException e) {
       throw deviceException("Midi device was not available.", e);

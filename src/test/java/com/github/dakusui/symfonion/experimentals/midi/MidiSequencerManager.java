@@ -1,4 +1,4 @@
-package com.github.dakusui.symfonion.utils.midi;
+package com.github.dakusui.symfonion.experimentals.midi;
 
 import com.github.dakusui.symfonion.cli.subcommands.Play;
 import com.github.dakusui.symfonion.utils.midi.MidiDeviceManager;
