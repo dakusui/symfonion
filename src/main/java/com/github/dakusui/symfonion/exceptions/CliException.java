@@ -1,5 +1,6 @@
 package com.github.dakusui.symfonion.exceptions;
 
+import java.io.File;
 import java.io.Serial;
 
 public class CliException extends SymfonionException {
@@ -10,11 +11,11 @@ public class CliException extends SymfonionException {
 	private static final long serialVersionUID = 952596486373752642L;
 
 	public CliException(String msg, Throwable e) {
-		super(msg, e);
+		super(msg, e, null);
 	}
 
 	public CliException(String msg) {
-		super(msg);
+		super(msg, null);
 	}
 
 }

@@ -4,6 +4,7 @@ import com.github.dakusui.json.JsonUtils;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import java.io.File;
 import java.io.Serial;
 
 public class SymfonionMissingElementException extends SymfonionSyntaxException {
@@ -14,8 +15,8 @@ public class SymfonionMissingElementException extends SymfonionSyntaxException {
   @Serial
   private static final long serialVersionUID = -3887808558721595868L;
   
-  public SymfonionMissingElementException(JsonElement actualJSON, JsonObject root, Object relPath) {
-    super(formatMessage(actualJSON, relPath), actualJSON, root);
+  public SymfonionMissingElementException(JsonElement actualJSON, JsonObject root, Object relPath, File sourceFile) {
+    super(formatMessage(actualJSON, relPath), actualJSON, root, sourceFile);
   }
   
   private static String formatMessage(JsonElement actualJSON, Object relPath) {

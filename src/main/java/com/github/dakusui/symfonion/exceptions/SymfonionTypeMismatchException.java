@@ -1,5 +1,6 @@
 package com.github.dakusui.symfonion.exceptions;
 
+import java.io.File;
 import java.io.Serial;
 import java.util.Arrays;
 
@@ -20,8 +21,8 @@ public class SymfonionTypeMismatchException extends SymfonionSyntaxException {
 	private static final long serialVersionUID = 6798033658231719409L;
 
 
-	public SymfonionTypeMismatchException(String[] expectedTypes, JsonElement actualJSON, JsonElement problemCausingJsonNode, JsonObject root) {
-		super(formatMessage(expectedTypes, actualJSON), problemCausingJsonNode, root);
+	public SymfonionTypeMismatchException(String[] expectedTypes, JsonElement actualJSON, JsonElement problemCausingJsonNode, JsonObject root, File sourceFile) {
+		super(formatMessage(expectedTypes, actualJSON), problemCausingJsonNode, root, sourceFile);
 	}
 	
 	private static String formatMessage(String[] expectedTypes, JsonElement actualJSON) {

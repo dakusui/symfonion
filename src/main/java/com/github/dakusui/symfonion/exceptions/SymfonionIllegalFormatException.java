@@ -4,6 +4,7 @@ import com.github.dakusui.json.JsonUtils;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import java.io.File;
 import java.io.Serial;
 
 public class SymfonionIllegalFormatException extends SymfonionSyntaxException {
@@ -16,8 +17,8 @@ public class SymfonionIllegalFormatException extends SymfonionSyntaxException {
 	@Serial
 	private static final long serialVersionUID = 8614872945878002862L;
 
-	public SymfonionIllegalFormatException(JsonElement problemCausingJsonNode, JsonObject root, String acceptableExample) {
-		super(formatMessage(acceptableExample, problemCausingJsonNode), problemCausingJsonNode, root);
+	public SymfonionIllegalFormatException(JsonElement problemCausingJsonNode, JsonObject root, String acceptableExample, File sourceFile) {
+		super(formatMessage(acceptableExample, problemCausingJsonNode), problemCausingJsonNode, root, sourceFile);
 	}
 
 	private static String formatMessage(String acceptableExample,
@@ -26,6 +27,6 @@ public class SymfonionIllegalFormatException extends SymfonionSyntaxException {
 	}
 
 	static public void main(String[] args) {
-		System.out.println(new JsonObject().toString());
+		System.out.println(new JsonObject());
 	}
 }

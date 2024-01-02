@@ -3,11 +3,10 @@ package com.github.dakusui.symfonion.song;
 import com.github.dakusui.json.*;
 import com.github.dakusui.symfonion.core.MidiCompiler;
 import com.github.dakusui.symfonion.core.MidiCompilerContext;
-import com.github.dakusui.symfonion.exceptions.ExceptionThrower;
-import com.github.dakusui.symfonion.utils.Fraction;
 import com.github.dakusui.symfonion.exceptions.SymfonionException;
-import com.github.dakusui.symfonion.utils.Utils;
 import com.github.dakusui.symfonion.song.Pattern.Parameters;
+import com.github.dakusui.symfonion.utils.Fraction;
+import com.github.dakusui.symfonion.utils.Utils;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -19,8 +18,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
 
-import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.illegalFormatException;
-import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.typeMismatchException;
+import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.*;
+import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.ContextKey.JSON_ELEMENT_ROOT;
 import static com.github.dakusui.symfonion.exceptions.SymfonionIllegalFormatException.NOTE_LENGTH_EXAMPLE;
 import static com.github.dakusui.symfonion.exceptions.SymfonionTypeMismatchException.PRIMITIVE;
 
@@ -182,10 +181,10 @@ public class Stroke {
   private String parseNotes(String s, List<Note> notes) throws SymfonionException {
     Matcher m = notesPattern.matcher(s);
     int i;
-    try (ExceptionThrower.Context ignored = ExceptionThrower.context(ExceptionThrower.$(ExceptionThrower.ContextKey.JSON_ELEMENT_ROOT, this.rootObjectNode))) {
+    try (Context ignored = context($(JSON_ELEMENT_ROOT, this.rootObjectNode))) {
       for (i = 0; m.find(i); i = m.end()) {
         if (i != m.start()) {
-          throw new SymfonionException("Error:" + s.substring(0, i) + "[" + s.substring(i, m.start()) + "]" + s.substring(m.start()));
+          throw syntaxErrorInNotePattern(s, i, m);
         }
         int n_ = this.noteMap.note(m.group(1), this.strokeJson);
         if (n_ >= 0) {
@@ -211,8 +210,8 @@ public class Stroke {
       return ret;
     }
   }
-  
-  static interface EventCreator {
+
+  interface EventCreator {
     void createEvent(int v, long pos) throws InvalidMidiDataException;
   }
   
@@ -256,48 +255,13 @@ public class Stroke {
         compiler.sysexEventProcessed();
       }
     }
-    renderValues(volume, absolutePosition, strokeLen, compiler, new EventCreator() {
-      @Override
-      public void createEvent(int v, long pos) throws InvalidMidiDataException {
-        track.add(compiler.createVolumeChangeEvent(ch, v, pos));
-      }
-    });
-    renderValues(pan, absolutePosition, strokeLen, compiler, new EventCreator() {
-      @Override
-      public void createEvent(int v, long pos) throws InvalidMidiDataException {
-        track.add(compiler.createPanChangeEvent(ch, v, pos));
-      }
-    });
-    renderValues(reverb, absolutePosition, strokeLen, compiler, new EventCreator() {
-      @Override
-      public void createEvent(int v, long pos) throws InvalidMidiDataException {
-        track.add(compiler.createReverbEvent(ch, v, pos));
-      }
-    });
-    renderValues(chorus, absolutePosition, strokeLen, compiler, new EventCreator() {
-      @Override
-      public void createEvent(int v, long pos) throws InvalidMidiDataException {
-        track.add(compiler.createChorusEvent(ch, v, pos));
-      }
-    });
-    renderValues(pitch, absolutePosition, strokeLen, compiler, new EventCreator() {
-      @Override
-      public void createEvent(int v, long pos) throws InvalidMidiDataException {
-        track.add(compiler.createPitchBendEvent(ch, v, pos));
-      }
-    });
-    renderValues(modulation, absolutePosition, strokeLen, compiler, new EventCreator() {
-      @Override
-      public void createEvent(int v, long pos) throws InvalidMidiDataException {
-        track.add(compiler.createModulationEvent(ch, v, pos));
-      }
-    });
-    renderValues(aftertouch, absolutePosition, strokeLen, compiler, new EventCreator() {
-      @Override
-      public void createEvent(int v, long pos) throws InvalidMidiDataException {
-        track.add(compiler.createAfterTouchChangeEvent(ch, v, pos));
-      }
-    });
+    renderValues(volume, absolutePosition, strokeLen, compiler, (v, pos) -> track.add(compiler.createVolumeChangeEvent(ch, v, pos)));
+    renderValues(pan, absolutePosition, strokeLen, compiler, (v, pos) -> track.add(compiler.createPanChangeEvent(ch, v, pos)));
+    renderValues(reverb, absolutePosition, strokeLen, compiler, (v, pos) -> track.add(compiler.createReverbEvent(ch, v, pos)));
+    renderValues(chorus, absolutePosition, strokeLen, compiler, (v, pos) -> track.add(compiler.createChorusEvent(ch, v, pos)));
+    renderValues(pitch, absolutePosition, strokeLen, compiler, (v, pos) -> track.add(compiler.createPitchBendEvent(ch, v, pos)));
+    renderValues(modulation, absolutePosition, strokeLen, compiler, (v, pos) -> track.add(compiler.createModulationEvent(ch, v, pos)));
+    renderValues(aftertouch, absolutePosition, strokeLen, compiler, (v, pos) -> track.add(compiler.createAfterTouchChangeEvent(ch, v, pos)));
     int transpose = context.params().transpose();
     int arpegiodelay = context.params().arpegio();
     int delta = 0;

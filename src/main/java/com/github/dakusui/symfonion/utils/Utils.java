@@ -70,7 +70,7 @@ public class Utils {
     } catch (FileNotFoundException e) {
       throw fileNotFoundException(f, e);
     } catch (IOException e) {
-      throw loadFileException(f, e);
+      throw loadFileException(e);
     }
     return b.toString();
   }

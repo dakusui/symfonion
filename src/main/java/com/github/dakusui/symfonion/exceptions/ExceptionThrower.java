@@ -10,6 +10,7 @@ import java.io.Closeable;
 import java.io.File;
 import java.util.HashMap;
 import java.util.function.Predicate;
+import java.util.regex.Matcher;
 
 import static com.github.dakusui.symfonion.cli.CliUtils.composeErrMsg;
 import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.ContextKey.*;
@@ -22,8 +23,8 @@ public class ExceptionThrower {
   public enum ContextKey {
     MIDI_DEVICE_INFO(MidiDevice.Info.class),
     MIDI_DEVICE_INFO_IO(String.class),
-    JSON_ELEMENT_ROOT(JsonObject.class)
-    ;
+    JSON_ELEMENT_ROOT(JsonObject.class),
+    SOURCE_FILE(File.class);
     private final Class<?> type;
 
     ContextKey(Class<?> type) {
@@ -58,11 +59,22 @@ public class ExceptionThrower {
       return this.parent;
     }
 
+    /**
+     *
+     */
     @SuppressWarnings({"unchecked"})
     <T> T get(ContextKey key) {
       assert that(objectValue(key).then().isNotNull().$());
+      // In production, we do not want to produce a NullPointerException, even if the key is null.
+      // Just return null in such a situation.
+      if (key == null)
+        return null;
       if (!this.values.containsKey(key)) {
         assert that(objectValue(this).invoke("parent").then().isNotNull());
+        // In production, we do not want to produce a NullPointerException, even if a value associated with the key doesn't exist.
+        // Just return null, in such a situation.
+        if (this.parent() == null)
+          return null;
         return this.parent().get(key);
       }
       return (T) this.values.get(key);
@@ -102,59 +114,59 @@ public class ExceptionThrower {
   }
 
   public static SymfonionException compilationException(String msg, Throwable e) throws SymfonionException {
-    throw new SymfonionException(msg, e);
+    throw new SymfonionException(msg, e, contextValueOf(SOURCE_FILE));
   }
 
   public static SymfonionException fileNotFoundException(File file, Throwable e) throws SymfonionException {
-    throw new SymfonionException(format("%s: File not found (%s)", file, e.getMessage()));
+    throw new SymfonionException(format("%s: File not found (%s)", file, e.getMessage()), file);
   }
 
-  public static SymfonionException loadFileException(File file, Throwable e) throws SymfonionException {
-    throw new SymfonionException(format("%s: %s", file, e.getMessage()));
+  public static SymfonionException loadFileException(Throwable e) throws SymfonionException {
+    throw new SymfonionException(format("%s: %s", contextValueOf(SOURCE_FILE), e.getMessage()), contextValueOf(SOURCE_FILE));
   }
 
   public static SymfonionException loadResourceException(String resourceName, Throwable e) throws SymfonionException {
-    throw new SymfonionException(format("%s: Failed to read resource (%s)", resourceName, e.getMessage()));
+    throw new SymfonionException(format("%s: Failed to read resource (%s)", resourceName, e.getMessage()), contextValueOf(SOURCE_FILE));
   }
 
   public static SymfonionReferenceException noteMapNotFoundException(JsonElement problemCausingJsonNode, String missingReference) throws SymfonionException {
-    throw new SymfonionReferenceException(missingReference, "notemap", problemCausingJsonNode, contextValueOf(JSON_ELEMENT_ROOT));
+    throw new SymfonionReferenceException(missingReference, "notemap", problemCausingJsonNode, contextValueOf(JSON_ELEMENT_ROOT), contextValueOf(SOURCE_FILE));
   }
 
   public static SymfonionReferenceException noteNotDefinedException(JsonElement problemCausingJsonNode, String missingReference, String notemapName) throws SymfonionException {
-    throw new SymfonionReferenceException(missingReference, format("note in %s", notemapName), problemCausingJsonNode, contextValueOf(JSON_ELEMENT_ROOT));
+    throw new SymfonionReferenceException(missingReference, format("note in %s", notemapName), problemCausingJsonNode, contextValueOf(JSON_ELEMENT_ROOT), contextValueOf(SOURCE_FILE));
   }
 
   public static SymfonionReferenceException grooveNotDefinedException(JsonElement problemCausingJsonNode, String missingReference) throws SymfonionException {
-    throw new SymfonionReferenceException(missingReference, "groove", problemCausingJsonNode, contextValueOf(JSON_ELEMENT_ROOT));
+    throw new SymfonionReferenceException(missingReference, "groove", problemCausingJsonNode, contextValueOf(JSON_ELEMENT_ROOT), contextValueOf(SOURCE_FILE));
   }
 
   public static SymfonionReferenceException partNotFound(JsonElement problemCausingJsonNode, String missingReference) throws SymfonionException {
-    throw new SymfonionReferenceException(missingReference, "part", problemCausingJsonNode, contextValueOf(JSON_ELEMENT_ROOT));
+    throw new SymfonionReferenceException(missingReference, "part", problemCausingJsonNode, contextValueOf(JSON_ELEMENT_ROOT), contextValueOf(SOURCE_FILE));
   }
 
   public static SymfonionReferenceException patternNotFound(JsonElement problemCausingJsonNode, String missingReference) throws SymfonionException {
-    throw new SymfonionReferenceException(missingReference, "pattern", problemCausingJsonNode, contextValueOf(JSON_ELEMENT_ROOT));
+    throw new SymfonionReferenceException(missingReference, "pattern", problemCausingJsonNode, contextValueOf(JSON_ELEMENT_ROOT), contextValueOf(SOURCE_FILE));
   }
 
   public static SymfonionTypeMismatchException typeMismatchException(JsonElement actualJSON, String... expectedTypes) throws SymfonionSyntaxException {
-    throw new SymfonionTypeMismatchException(expectedTypes, actualJSON, actualJSON, contextValueOf(JSON_ELEMENT_ROOT));
+    throw new SymfonionTypeMismatchException(expectedTypes, actualJSON, actualJSON, contextValueOf(JSON_ELEMENT_ROOT), contextValueOf(SOURCE_FILE));
   }
 
   public static SymfonionIllegalFormatException illegalFormatException(JsonElement actualJSON, String acceptableExample) throws SymfonionIllegalFormatException {
-    throw new SymfonionIllegalFormatException(actualJSON, contextValueOf(JSON_ELEMENT_ROOT), acceptableExample);
+    throw new SymfonionIllegalFormatException(actualJSON, contextValueOf(JSON_ELEMENT_ROOT), acceptableExample, contextValueOf(SOURCE_FILE));
   }
 
   public static SymfonionMissingElementException requiredElementMissingException(JsonElement actualJSON, Object relPath) throws SymfonionMissingElementException {
-    throw new SymfonionMissingElementException(actualJSON, contextValueOf(JSON_ELEMENT_ROOT), relPath);
+    throw new SymfonionMissingElementException(actualJSON, contextValueOf(JSON_ELEMENT_ROOT), relPath, contextValueOf(SOURCE_FILE));
   }
 
   public static SymfonionMissingElementException requiredElementMissingException(JsonElement actualJSON, JsonObject root, Object relPath) throws SymfonionMissingElementException {
-    throw new SymfonionMissingElementException(actualJSON, root, relPath);
+    throw new SymfonionMissingElementException(actualJSON, root, relPath, contextValueOf(SOURCE_FILE));
   }
 
   public static SymfonionException deviceException(String msg, Throwable e) throws SymfonionException {
-    throw new SymfonionException(msg, e);
+    throw new SymfonionException(msg, e, contextValueOf(SOURCE_FILE));
   }
 
   public static RuntimeException runtimeException(String msg, Throwable e) {
@@ -177,8 +189,7 @@ public class ExceptionThrower {
   public static CliException failedToOpenMidiDevice(MidiUnavailableException ee) {
     throw new CliException(format("(-) Failed to open MIDI-%s device (%s)",
         ExceptionThrower.<MidiDevice.Info>contextValueOf(MIDI_DEVICE_INFO),
-        ExceptionThrower.<String>contextValueOf(MIDI_DEVICE_INFO_IO).toLowerCase()),
-        ee);
+        ExceptionThrower.<String>contextValueOf(MIDI_DEVICE_INFO_IO).toLowerCase()), ee);
   }
 
   public static CliException failedToAccessMidiDevice(String deviceType, MidiUnavailableException e, MidiDevice.Info[] matchedInfos) {
@@ -215,5 +226,9 @@ public class ExceptionThrower {
     class GivenKeyIsNull {
     }
     return key != null ? key.type : GivenKeyIsNull.class;
+  }
+
+  public static SymfonionException syntaxErrorInNotePattern(String s, int i, Matcher m) {
+    return new SymfonionException("Error:" + s.substring(0, i) + "[" + s.substring(i, m.start()) + "]" + s.substring(m.start()), contextValueOf(SOURCE_FILE));
   }
 }
