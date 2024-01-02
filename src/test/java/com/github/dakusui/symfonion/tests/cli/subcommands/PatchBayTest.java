@@ -17,7 +17,7 @@ import static com.github.dakusui.thincrest_pcond.forms.Predicates.containsString
 
 public class PatchBayTest {
   @Test
-  public void whenHelp_thenLooksOk() throws ParseException, IOException {
+  public void whenPatchBay_thenOutputLooksOk() throws ParseException, IOException {
     assumeMidiDevicesPresent();
 
     TestUtils.OutputCapturingPrintStream out = TestUtils.outputCapturingPrintStream();
