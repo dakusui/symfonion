@@ -3,8 +3,6 @@ package com.github.dakusui.symfonion.tests.cli.subcommands;
 import com.github.dakusui.symfonion.cli.Cli;
 import com.github.dakusui.symfonion.cli.subcommands.Help;
 import com.github.dakusui.testutils.TestUtils;
-import com.github.dakusui.thincrest_pcond.experimentals.cursor.Cursors;
-import com.github.dakusui.thincrest_pcond.forms.Predicates;
 import org.apache.commons.cli.ParseException;
 import org.junit.After;
 import org.junit.Before;
@@ -14,7 +12,10 @@ import java.io.PrintStream;
 
 import static com.github.dakusui.testutils.TestUtils.immediatelyClosingInputStream;
 import static com.github.dakusui.testutils.TestUtils.outputCapturingPrintStream;
+import static com.github.dakusui.testutils.midi.MidiTestUtils.assumeMidiDevicesPresent;
 import static com.github.dakusui.thincrest.TestAssertions.assertThat;
+import static com.github.dakusui.thincrest_pcond.experimentals.cursor.Cursors.findElements;
+import static com.github.dakusui.thincrest_pcond.forms.Predicates.containsString;
 
 public class HelpTest {
   private PrintStream systemOut;
@@ -25,19 +26,21 @@ public class HelpTest {
   }
   @Test
   public void whenHelp_thenLooksOk() throws ParseException {
+    assumeMidiDevicesPresent();
+
     TestUtils.OutputCapturingPrintStream out = outputCapturingPrintStream();
     System.setOut(out);
     new Help().invoke(new Cli(), out, immediatelyClosingInputStream());
 
-    assertThat(out.toStringList(), Cursors.findElements(
-        Predicates.containsString("usage: SYNTAX"),
-        Predicates.containsString("-c,--compile"),
-        Predicates.containsString("-V,--version")
+    assertThat(out.toStringList(), findElements(
+        containsString("usage: SYNTAX"),
+        containsString("-c,--compile"),
+        containsString("-V,--version")
     ));
   }
 
   @After
-  public void resotreSystem_out() {
+  public void restoreSystem_out() {
     System.setOut(this.systemOut);
   }
 }

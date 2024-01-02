@@ -2,8 +2,8 @@ package com.github.dakusui.symfonion.song;
 
 import com.github.dakusui.json.JsonException;
 import com.github.dakusui.json.JsonUtils;
-import com.github.dakusui.symfonion.utils.Fraction;
 import com.github.dakusui.symfonion.exceptions.SymfonionException;
+import com.github.dakusui.symfonion.utils.Fraction;
 import com.github.dakusui.symfonion.utils.Utils;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -30,15 +30,15 @@ public class Pattern {
     int velocitydelta = 10;
     int arpegio;
     
-    public Parameters(JsonObject json, JsonObject root) throws SymfonionException, JsonException {
-      init(json, root);
+    public Parameters(JsonObject json) throws SymfonionException, JsonException {
+      init(json);
     }
     
     public double gate() {
       return this.gate;
     }
     
-    private void init(JsonObject json, JsonObject root) throws SymfonionException, JsonException {
+    private void init(JsonObject json) throws SymfonionException, JsonException {
       if (json == null) {
         json = JsonUtils.toJson("{}").getAsJsonObject();
       }
@@ -49,7 +49,6 @@ public class Pattern {
       if (this.length == null) {
         throw illegalFormatException(
             asJsonElement(json, Keyword.$length),
-            root,
             NOTELENGTH_EXAMPLE
         );
       }
@@ -84,7 +83,7 @@ public class Pattern {
       String noteMapName = JsonUtils.asString(json, Keyword.$notemap);
       noteMap = noteMaps.get(noteMapName);
       if (noteMap == null) {
-        throw noteMapNotFoundException(asJsonElement(json, Keyword.$notemap), root, noteMapName);
+        throw noteMapNotFoundException(asJsonElement(json, Keyword.$notemap), noteMapName);
       }
     }
     Pattern ret = new Pattern(noteMap);
@@ -102,8 +101,8 @@ public class Pattern {
   
   protected void init(JsonObject json, JsonObject root) throws SymfonionException, JsonException {
     // Initialize 'body'.
-    this.body = new LinkedList<Stroke>();
-    this.params = new Parameters(json, root);
+    this.body = new LinkedList<>();
+    this.params = new Parameters(json);
     JsonArray bodyJSON;
     if (asJsonElement(json, Keyword.$body).isJsonPrimitive()) {
       bodyJSON = new JsonArray();
