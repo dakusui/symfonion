@@ -9,14 +9,14 @@ import java.util.function.Function;
 
 import static com.github.dakusui.thincrest_pcond.forms.Printables.function;
 
-public enum SongTo {
+public enum FromSong {
   ;
   
-  public static Function<Map<String, Sequence>, Sequence> sequence(String portName) {
+  public static Function<Map<String, Sequence>, Sequence> toSequence(String portName) {
     return function("get[" + portName + "]", m -> m.get(portName));
   }
   
-  public static Function<Map<String, Sequence>, Set<String>> keySet() {
+  public static Function<Map<String, Sequence>, Set<String>> toKeySet() {
     return Cliche.keySet();
   }
 }

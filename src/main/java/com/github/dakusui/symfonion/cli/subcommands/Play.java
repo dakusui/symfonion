@@ -46,17 +46,17 @@ public class Play implements Subcommand {
     sequencers.put(portName, sequencer);
     MidiDevice midiOutDevice = devices.get(portName);
     Sequence sequence = sequences.get(portName);
-    extracted(sequencer, midiOutDevice, sequence);
+    sequencer.open();
+    connectMidiDeviceToSequencer(midiOutDevice, sequencer);
+    sequencer.setSequence(sequence);
     sequencer.addMetaEventListener(createMetaEventListener(playingSequencers, sequencer));
   }
 
-  private static void extracted(Sequencer sequencer, MidiDevice midiOutDevice, Sequence sequence) throws MidiUnavailableException, InvalidMidiDataException {
-    sequencer.open();
+  private static void connectMidiDeviceToSequencer(MidiDevice midiOutDevice, Sequencer sequencer) throws MidiUnavailableException {
     if (midiOutDevice != null) {
       midiOutDevice.open();
       assignDeviceReceiverToSequencer(sequencer, midiOutDevice);
     }
-    sequencer.setSequence(sequence);
   }
 
   private static void assignDeviceReceiverToSequencer(Sequencer sequencer, MidiDevice dev) throws MidiUnavailableException {

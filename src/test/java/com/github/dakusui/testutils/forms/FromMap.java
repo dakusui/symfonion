@@ -6,10 +6,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-public enum MapTo {
+public enum FromMap {
   ;
   
-  public static <K, V> Function<Map<K, V>, List<K>> keyList() {
+  public static <K, V> Function<Map<K, V>, List<K>> toKeyList() {
     return Printables.function("keyList", map -> map.keySet().stream().toList());
   }
 }

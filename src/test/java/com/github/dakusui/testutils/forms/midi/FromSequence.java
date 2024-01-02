@@ -8,14 +8,14 @@ import java.util.function.Function;
 
 import static com.github.dakusui.thincrest_pcond.forms.Printables.function;
 
-public enum SequenceTo {
+public enum FromSequence {
   ;
   
-  public static Function<Sequence, List<Track>> trackList() {
+  public static Function<Sequence, List<Track>> toTrackList() {
     return function("Sequence#getTracks", seq -> Arrays.asList(seq.getTracks()));
   }
   
-  public static Function<Sequence, Long> tickLength() {
+  public static Function<Sequence, Long> toTickLength() {
     return function("Sequence#getTickLength", Sequence::getTickLength);
   }
 }
