@@ -25,22 +25,22 @@ import static com.github.dakusui.symfonion.exceptions.SymfonionTypeMismatchExcep
 
 public class Stroke {
   private static final int UNDEFINED_NUM = -1;
-  private Fraction length;
+  private final Fraction length;
   static java.util.regex.Pattern notesPattern = java.util.regex.Pattern.compile("([A-Zac-z])([#b]*)([><]*)([\\+\\-]*)?");
-  List<NoteSet> notes = new LinkedList<NoteSet>();
-  private double gate;
-  private NoteMap noteMap;
-  private int[] volume = null;
-  private int[] pan = null;
-  private int[] reverb = null;
-  private int[] chorus;
-  private int[] pitch = null;
-  private int[] modulation = null;
-  private int pgno = UNDEFINED_NUM;
+  List<NoteSet> notes = new LinkedList<>();
+  private final double gate;
+  private final NoteMap noteMap;
+  private final int[] volume;
+  private final int[] pan;
+  private final int[] reverb;
+  private final int[] chorus;
+  private final int[] pitch;
+  private final int[] modulation;
+  private final int pgno;
   private String bkno = null;
-  private int tempo = UNDEFINED_NUM;
-  private JsonArray sysex;
-  private int[] aftertouch;
+  private final int tempo;
+  private final JsonArray sysex;
+  private final int[] aftertouch;
   private final JsonElement strokeJson;
   private final JsonObject rootObjectNode;
   

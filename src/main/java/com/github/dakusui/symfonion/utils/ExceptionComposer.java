@@ -10,5 +10,4 @@ public record ExceptionComposer(JsonObject rootObjectNode, File sourceFile) {
     Object r = new ExceptionComposer(null, null).rootObjectNode();
     System.out.println(r);
   }
-  
 }

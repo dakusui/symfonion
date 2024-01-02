@@ -15,6 +15,18 @@ import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.deviceExc
 import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.interrupted;
 
 public class Play implements Subcommand {
+  @Override
+  public void invoke(Cli cli, PrintStream ps) throws SymfonionException, IOException {
+    Symfonion symfonion = cli.getSymfonion();
+
+    Song song = symfonion.load(cli.getSourceFile().getAbsolutePath());
+    Map<String, Sequence> sequences = symfonion.compile(song);
+    ps.println();
+    Map<String, MidiDevice> devices = cli.prepareMidiOutDevices(ps);
+    ps.println();
+    play(devices, sequences);
+  }
+
     private static Map<String, Sequencer> prepareSequencers(List<String> portNames, Map<String, MidiDevice> devices, Map<String, Sequence> sequences) throws MidiUnavailableException, InvalidMidiDataException {
       Map<String, Sequencer> ret = new HashMap<>();
       final List<Sequencer> playingSequencers = new LinkedList<>();
@@ -97,17 +109,5 @@ public class Play implements Subcommand {
       } catch (InterruptedException e) {
         throw deviceException("Operation was interrupted.", e);
       }
-    }
-
-    @Override
-    public void invoke(Cli cli, PrintStream ps) throws SymfonionException, IOException {
-        Symfonion symfonion = cli.getSymfonion();
-
-        Song song = symfonion.load(cli.getSourceFile().getAbsolutePath());
-        Map<String, Sequence> sequences = symfonion.compile(song);
-        ps.println();
-        Map<String, MidiDevice> devices = cli.prepareMidiOutDevices(ps);
-        ps.println();
-        play(devices, sequences);
     }
 }

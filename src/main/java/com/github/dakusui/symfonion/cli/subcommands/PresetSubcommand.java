@@ -24,7 +24,7 @@ public enum PresetSubcommand implements Subcommand {
     this.subcommandClass = requireNonNull(subcommandClass);
   }
   
-  final public void invoke(Cli cli, PrintStream ps) throws SymfonionException, IOException {
+  final public void invoke(Cli cli, PrintStream ps) throws IOException {
     try {
       ((Subcommand) this.subcommandClass.getConstructors()[0].newInstance()).invoke(cli, ps);
     } catch (InstantiationException | IllegalAccessException e) {

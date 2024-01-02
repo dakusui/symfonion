@@ -3,9 +3,11 @@ package com.github.dakusui.symfonion.cli;
 import com.github.dakusui.logias.lisp.Context;
 import com.github.dakusui.symfonion.cli.subcommands.PresetSubcommand;
 import com.github.dakusui.symfonion.exceptions.CLIException;
+import com.github.dakusui.symfonion.exceptions.ExceptionThrower;
 import com.github.dakusui.symfonion.utils.midi.MidiDeviceScanner;
 import com.github.dakusui.symfonion.core.Symfonion;
 import com.github.dakusui.symfonion.exceptions.SymfonionException;
+import com.github.dakusui.symfonion.utils.midi.MidiUtils;
 import org.apache.commons.cli.*;
 
 import javax.sound.midi.*;
@@ -22,10 +24,11 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import static com.github.dakusui.symfonion.cli.CliUtils.composeErrMsg;
+import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.failedToAccessMidiDevice;
 import static java.lang.String.format;
 
 public class Cli {
-  
+
   private Subcommand subcommand = PresetSubcommand.VERSION;
   private File source;
   private File sink = new File("a.midi");
@@ -34,82 +37,65 @@ public class Cli {
   private Map<String, Pattern> midiouts = new HashMap<>();
   private final Symfonion symfonion;
   private Options options;
-  
+
   public Cli(String... args) throws ParseException, CLIException {
     this.init(args);
     this.symfonion = createSymfonion();
   }
-  
-  public Map<String, MidiDevice> prepareMidiOutDevices(PrintStream ps)
-      throws CLIException {
+
+  public Map<String, MidiDevice> prepareMidiOutDevices(PrintStream ps) {
     return prepareMidiDevices(ps, "out", this.getMidiOutDefinitions());
   }
-  
+
   @SuppressWarnings("UnusedDeclaration")
   protected Map<String, MidiDevice> prepareMidiInDevices(PrintStream ps)
       throws CLIException {
     return prepareMidiDevices(ps, "in", this.getMidiOutDefinitions());
   }
-  
-  private static Map<String, MidiDevice> prepareMidiDevices(PrintStream ps,
-                                                     String deviceType, Map<String, Pattern> portDefinitions)
-      throws CLIException {
+
+  private static Map<String, MidiDevice> prepareMidiDevices(PrintStream ps, String deviceType, Map<String, Pattern> portDefinitions) {
     Map<String, MidiDevice> devices = new HashMap<>();
-    for (String portname : portDefinitions.keySet()) {
-      Pattern regex = portDefinitions.get(portname);
-      MidiDeviceScanner scanner = MidiDeviceScanner.chooseOutputDevices(ps,
-          regex);
+    for (String portName : portDefinitions.keySet()) {
+      Pattern regex = portDefinitions.get(portName);
+      ////
+      // BEGIN: Trying to find an output device whose name matches the given regex
+      MidiDeviceScanner scanner = MidiUtils.chooseOutputDevices(ps, regex);
       scanner.scan();
-      MidiDevice.Info[] matchedInfos = getInfos(portname, scanner, regex);
+      MidiDevice.Info[] matchedInfos = MidiUtils.getInfos(portName, scanner, regex);
+      // END
+      ////
       try {
-        devices.put(portname, MidiSystem.getMidiDevice(matchedInfos[0]));
+        devices.put(portName, MidiSystem.getMidiDevice(matchedInfos[0]));
       } catch (MidiUnavailableException e) {
-        String msg = composeErrMsg(format("Failed to access MIDI-%s device:'%s'.", deviceType, matchedInfos[0].getName()), "O");
-        throw new CLIException(msg, e);
+        throw failedToAccessMidiDevice(deviceType, e, matchedInfos);
       }
     }
     return devices;
   }
-  
-  private static MidiDevice.Info[] getInfos(String portname, MidiDeviceScanner scanner, Pattern regex) throws CLIException {
-    MidiDevice.Info[] matchedInfos = scanner.getMatchedDevices();
-    if (matchedInfos.length > 1) {
-      String msg = format(
-          "Device for port '%s' (regex:%s) wasn't identical (%d)", portname,
-          regex, matchedInfos.length);
-      throw new CLIException(msg);
-    } else if (matchedInfos.length == 0) {
-      String msg = format(
-          "No matching device was found for port '%s' (regex:%s)", portname,
-          regex);
-      throw new CLIException(msg);
-    }
-    return matchedInfos;
-  }
-  
+
   public Options getOptions() {
     return this.options;
   }
-  
+
   public Symfonion getSymfonion() {
     return this.symfonion;
   }
-  
+
   public void init(String... args) throws ParseException, CLIException {
     this.options = buildOptions();
     this.analyzeCommandLine(parseArgs(this.options, args));
   }
-  
+
   protected Symfonion createSymfonion() {
     return new Symfonion(Context.ROOT.createChild());
   }
-  
+
   static CommandLine parseArgs(Options options, String[] args) throws ParseException {
     CommandLineParser parser = new GnuParser();
-    
+
     return parser.parse(options, args);
   }
-  
+
   /**
    * Returns an {@code Options} object which represents the specification of this CLI command.
    *
@@ -118,7 +104,7 @@ public class Cli {
   private static Options buildOptions() {
     // create Options object
     Options options = new Options();
-    
+
     // //
     // Behavior options
     options.addOption("V", "version", false, "print the version information.");
@@ -135,7 +121,7 @@ public class Cli {
       option.setDescription("run a midi patch bay.");
       options.addOption(option);
     }
-    
+
     // //
     // I/O options
     {
@@ -160,7 +146,7 @@ public class Cli {
     }
     return options;
   }
-  
+
   public void analyzeCommandLine(CommandLine cmd) throws CLIException {
     if (cmd.hasOption('O')) {
       this.midiouts = parseSpecifiedOptionsInCommandLineAsPortNamePatterns(cmd, "O");
@@ -201,7 +187,7 @@ public class Cli {
       if (props.size() != 1) {
         throw new CLIException(composeErrMsg("Route information is not given or specified multiple times.", "r", "route"));
       }
-      
+
       this.route = new Route(cmd.getOptionValues('r')[0], cmd.getOptionValues('r')[1]);
     } else {
       @SuppressWarnings("unchecked")
@@ -216,7 +202,7 @@ public class Cli {
       }
     }
   }
-  
+
   private static Map<String, Pattern> parseSpecifiedOptionsInCommandLineAsPortNamePatterns(CommandLine cmd, String optionName) throws CLIException {
     Properties props = cmd.getOptionProperties(optionName);
     Map<String, Pattern> ret = new HashMap<>();
@@ -235,31 +221,31 @@ public class Cli {
     }
     return ret;
   }
-  
+
   public Subcommand getMode() {
     return this.subcommand;
   }
-  
+
   public File getSourceFile() {
     return this.source;
   }
-  
+
   public File getSinkFile() {
     return this.sink;
   }
-  
+
   public Map<String, Pattern> getMidiInDefinitions() {
     return this.midiins;
   }
-  
+
   public Map<String, Pattern> getMidiOutDefinitions() {
     return this.midiouts;
   }
-  
+
   public Route getRoute() {
     return this.route;
   }
-  
+
   public static void main(String... args) {
     if (args.length == 0 && !GraphicsEnvironment.isHeadless()) {
       fallbackToSimpleGUI();
@@ -268,7 +254,7 @@ public class Cli {
       System.exit(exitCode);
     }
   }
-  
+
   public static int invoke(PrintStream stdout, PrintStream stderr, String... args) {
     int ret;
     try {
@@ -290,11 +276,11 @@ public class Cli {
     }
     return ret;
   }
-  
+
   private static void printError(PrintStream ps, Throwable t) {
     ps.printf("symfonion: %s%n", t.getMessage());
   }
-  
+
   private static String filenameFromFileChooser() {
     JFileChooser chooser = new JFileChooser();
     chooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
@@ -304,7 +290,7 @@ public class Cli {
     }
     return null;
   }
-  
+
   private static void fallbackToSimpleGUI() {
     String selectedFile = filenameFromFileChooser();
     if (selectedFile == null) {
@@ -324,30 +310,30 @@ public class Cli {
       frame.setVisible(true);
       PrintStream ps = new PrintStream(new OutputStream() {
         private final StringBuilder sb = new StringBuilder();
-        
+
         @Override
         public void flush() {
         }
-        
+
         @Override
         public void close() {
         }
-        
+
         @Override
         public void write(int b) {
           if (b == '\r')
             return;
-          
+
           if (b == '\n') {
             final String text = sb + "\n";
             SwingUtilities.invokeLater(() -> textArea.append(text));
             sb.setLength(0);
             return;
           }
-          
+
           sb.append((char) b);
         }
-        
+
       });
       System.setOut(ps);
       System.setErr(ps);
