@@ -38,9 +38,9 @@ public class Symfonion {
         this.json = loadSymfonionFile(fileName, new HashMap<>());
         ret = new Song.Builder(logiasContext, json).build();
       } catch (JsonSyntaxException e) {
-        throw loadFileException(new File(fileName), e.getCause());
+        throw loadFileException(e.getCause());
       } catch (IllegalStateException e) {
-        throw loadFileException(new File(fileName), e);
+        throw loadFileException(e);
       } catch (JsonPathNotFoundException e) {
         throw requiredElementMissingException(e.getProblemCausingNode(), this.json, JsonUtils.formatPath(e.getPath()));
       } catch (JsonException e) {

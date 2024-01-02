@@ -114,8 +114,8 @@ public class ExceptionThrower {
     throw new SymfonionException(format("%s: File not found (%s)", file, e.getMessage()), file);
   }
 
-  public static SymfonionException loadFileException(File file, Throwable e) throws SymfonionException {
-    throw new SymfonionException(format("%s: %s", file, e.getMessage()), file);
+  public static SymfonionException loadFileException(Throwable e) throws SymfonionException {
+    throw new SymfonionException(format("%s: %s", contextValueOf(SOURCE_FILE), e.getMessage()), contextValueOf(SOURCE_FILE));
   }
 
   public static SymfonionException loadResourceException(String resourceName, Throwable e) throws SymfonionException {
