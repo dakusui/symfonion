@@ -21,8 +21,7 @@ public class ReferenceErrorTest extends ErrorTest {
 			}
 
 	@Test
-	public void missingnotemap() throws IOException, SymfonionException,
-			ParseException {
+	public void missingnotemap() throws IOException, SymfonionException {
 				String resourceName = "missingreferences/02_notemapnotfound.json";
 				assertEquals(
 						fmt("symfonion: %s: jsonpath: $patterns.melody1.$notemap: error: '$normal_notfound' undefined notemap symbol\n"),

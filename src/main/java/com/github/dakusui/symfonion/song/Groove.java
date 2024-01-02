@@ -112,7 +112,7 @@ public class Groove {
     Groove ret = new Groove();
     for (JsonElement elem : grooveDef) {
       if (!elem.isJsonObject()) {
-        throw typeMismatchException(elem, root, OBJECT);
+        throw typeMismatchException(elem, OBJECT);
       }
       JsonObject cur = elem.getAsJsonObject();
       String len = JsonUtils.asString(cur, Keyword.$length);
@@ -121,7 +121,7 @@ public class Groove {
       
       Fraction f = Utils.parseNoteLength(len);
       if (f == null) {
-        throw illegalFormatException(JsonUtils.asJsonElement(cur, Keyword.$length), root, NOTELENGTH_EXAMPLE);
+        throw illegalFormatException(JsonUtils.asJsonElement(cur, Keyword.$length), NOTELENGTH_EXAMPLE);
       }
       ret.add(f, ticks, accent);
     }

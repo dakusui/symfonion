@@ -12,8 +12,9 @@ import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
-import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.multipleMidiDevices;
-import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.noSuchMidiDeviceWasFound;
+import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.*;
+import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.ContextKey.MIDI_DEVICE_INFO;
+import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.ContextKey.MIDI_DEVICE_INFO_IO;
 import static com.github.dakusui.symfonion.utils.Utils.onlyElement;
 
 public class MidiDeviceManager {
@@ -88,16 +89,18 @@ public class MidiDeviceManager {
   }
 
   public MidiDevice openMidiDevice(MidiDeviceRecord deviceRecord) {
-    return openMidiDevice(deviceRecord.info(), deviceRecord.io());
+    try (ExceptionThrower.Context ignored = context($(MIDI_DEVICE_INFO, deviceRecord.info()), $(MIDI_DEVICE_INFO_IO, deviceRecord.io()))) {
+      return openMidiDevice(deviceRecord.info());
+    }
   }
 
-  public MidiDevice openMidiDevice(MidiDevice.Info info, MidiDeviceRecord.Io io) {
+  public MidiDevice openMidiDevice(MidiDevice.Info info) {
     try {
       MidiDevice ret = MidiSystem.getMidiDevice(info);
       ret.open();
       return ret;
     } catch (MidiUnavailableException e) {
-      throw ExceptionThrower.failedToOpenMidiDevice(e, info, io);
+      throw ExceptionThrower.failedToOpenMidiDevice(e);
     }
   }
 
@@ -117,10 +120,6 @@ public class MidiDeviceManager {
         this.addAll(reportFormatter.footer().stream().map(s -> reportFormatter.formatResult(false, s)).toList());
       }
     };
-  }
-
-  public static Predicate<MidiDeviceRecord> matchesMidiDeviceInfo(MidiDevice.Info info) {
-    return Printables.predicate("matches[" + info + "]", (r) -> Objects.equals(r.info(), info) || (areEqualInfoItems(r.info(), info)));
   }
 
   private static boolean areEqualInfoItems(MidiDevice.Info a, MidiDevice.Info b) {

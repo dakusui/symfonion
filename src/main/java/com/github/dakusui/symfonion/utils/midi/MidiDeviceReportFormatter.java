@@ -20,7 +20,7 @@ public interface MidiDeviceReportFormatter {
 
       @Override
       public String formatRecord(MidiDeviceRecord record) {
-        return String.format("%1s%1s %s", record.io() == MidiDeviceRecord.Io.IN ? "I" : "", record.io() == MidiDeviceRecord.Io.OUT ? "O" : "", MidiUtils.formatMidiDeviceInfo(record.info()));
+        return String.format("%1s%1s %s", record.in() ? "I" : "", record.out() ? "O" : "", MidiUtils.formatMidiDeviceInfo(record.info()));
       }
 
       @Override
