@@ -121,9 +121,4 @@ public class MidiDeviceManager {
       }
     };
   }
-
-  private static boolean areEqualInfoItems(MidiDevice.Info a, MidiDevice.Info b) {
-    Function<MidiDevice.Info, String> infoFormatter = i -> String.format("%s::%s::%s::%s", i.getName(), i.getVendor(), i.getDescription(), i.getVersion());
-    return Objects.equals(infoFormatter.apply(a), infoFormatter.apply(b));
-  }
 }

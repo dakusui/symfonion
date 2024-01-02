@@ -1,6 +1,7 @@
 package com.github.dakusui.symfonion.exceptions;
 
 import java.io.File;
+import java.io.Serial;
 
 import com.github.dakusui.json.JsonUtils;
 import com.google.gson.JsonElement;
@@ -11,12 +12,12 @@ public class SymfonionSyntaxException extends SymfonionException {
 	/**
 	 * Serial version UID
 	 */
+	@Serial
 	private static final long serialVersionUID = 5992346365176153504L;
 	
 	private final JsonElement problemCausingJsonNode;
 	private final JsonObject root;
-	private String jsonpath;
-	
+
 	public SymfonionSyntaxException(String message, JsonElement problemCausingJsonNode, JsonObject root) {
 		super(message);
 		this.problemCausingJsonNode = problemCausingJsonNode;

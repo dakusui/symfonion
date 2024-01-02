@@ -165,9 +165,9 @@ public class ExceptionThrower {
     throw new FractionFormatException(fraction);
   }
 
-  public static SymfonionRuntimeException interrupted(InterruptedException e) {
+  public static SymfonionInterruptedException interrupted(InterruptedException e) {
     Thread.currentThread().interrupt();
-    throw new SymfonionRuntimeException(e.getMessage(), e);
+    throw new SymfonionInterruptedException(e.getMessage(), e);
   }
 
   public static CliException failedToRetrieveTransmitterFromMidiIn(MidiUnavailableException e, MidiDevice.Info inMidiDeviceInfo) {

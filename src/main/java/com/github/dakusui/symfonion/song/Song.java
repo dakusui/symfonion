@@ -121,7 +121,7 @@ public class Song {
         Iterator<String> i = JsonUtils.keyIterator(groovesJSON);
         while (i.hasNext()) {
           String name = i.next();
-          Groove cur = Groove.createGroove(JsonUtils.asJsonArray(groovesJSON, name), json);
+          Groove cur = Groove.createGroove(JsonUtils.asJsonArray(groovesJSON, name));
           grooves.put(name, cur);
         }
       }

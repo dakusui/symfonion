@@ -1,13 +1,13 @@
 package com.github.dakusui.symfonion.song;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
 import com.github.dakusui.json.JsonUtils;
 import com.github.dakusui.symfonion.exceptions.SymfonionException;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.noteNotDefinedException;
 
@@ -15,7 +15,7 @@ import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.noteNotDe
 public class NoteMap {
 	public static final NoteMap defaultNoteMap = new NoteMap(Keyword.$normal.name()); 
 	public static final NoteMap defaultPercussionMap = new NoteMap(Keyword.$percussion.name()); 
-	protected Map<String, Integer> map = new HashMap<String, Integer>();
+	protected Map<String, Integer> map = new HashMap<>();
 	private String name;
 	static {
 		defaultNoteMap.map.put("C", 60);

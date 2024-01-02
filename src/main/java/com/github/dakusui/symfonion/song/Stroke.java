@@ -21,7 +21,7 @@ import java.util.regex.Matcher;
 
 import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.illegalFormatException;
 import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.typeMismatchException;
-import static com.github.dakusui.symfonion.exceptions.SymfonionIllegalFormatException.NOTELENGTH_EXAMPLE;
+import static com.github.dakusui.symfonion.exceptions.SymfonionIllegalFormatException.NOTE_LENGTH_EXAMPLE;
 import static com.github.dakusui.symfonion.exceptions.SymfonionTypeMismatchException.PRIMITIVE;
 
 public class Stroke {
@@ -61,7 +61,7 @@ public class Stroke {
       if (lenJSON.isJsonPrimitive()) {
         len = Utils.parseNoteLength(lenJSON.getAsString());
         if (len == null) {
-          throw illegalFormatException(lenJSON, NOTELENGTH_EXAMPLE);
+          throw illegalFormatException(lenJSON, NOTE_LENGTH_EXAMPLE);
         }
       } else {
         throw typeMismatchException(lenJSON, PRIMITIVE);
@@ -75,6 +75,7 @@ public class Stroke {
     if (JsonUtils.hasPath(obj, Keyword.$bank)) {
       this.bkno = JsonUtils.asString(obj, Keyword.$bank);
       // Checks if this.bkno can be parsed as a double value.
+      assert this.bkno != null;
       //noinspection ResultOfMethodCallIgnored
       Double.parseDouble(this.bkno);
     }

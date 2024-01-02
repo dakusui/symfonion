@@ -235,7 +235,7 @@ public class JsonUtilTest {
     try {
       JsonUtils.asJsonObjectWithDefault(this.obj, new JsonObject(), "key7", 4);
       fail();
-    } catch (JsonIndexOutOfBoudsException e) {
+    } catch (JsonIndexOutOfBoundsException e) {
       passed = true;
     }
     assertTrue(passed);

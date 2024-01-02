@@ -19,8 +19,8 @@ public class GrooveTest {
 		Groove.Unit unit;
 		
 		unit = groove.resolve(Fraction.zero);
-		assertEquals(0, unit.pos);
-		assertEquals(1, unit.accentDelta);
+		assertEquals(0, unit.pos());
+		assertEquals(1, unit.accentDelta());
 	}
 	
 	@Test
@@ -29,8 +29,8 @@ public class GrooveTest {
 		Groove.Unit unit;
 		
 		unit = groove.resolve(new Fraction(1, 32));
-		assertEquals(12, unit.pos);
-		assertEquals(0, unit.accentDelta);
+		assertEquals(12, unit.pos());
+		assertEquals(0, unit.accentDelta());
 	}
 	
 	@Test
@@ -39,8 +39,8 @@ public class GrooveTest {
 		Groove.Unit unit;
 		
 		unit = groove.resolve(parseNoteLength("8"));
-		assertEquals(48, unit.pos);
-		assertEquals(3, unit.accentDelta);
+		assertEquals(48, unit.pos());
+		assertEquals(3, unit.accentDelta());
 	}
 
 	@Test
@@ -49,8 +49,8 @@ public class GrooveTest {
 		Groove.Unit unit;
 		
 		unit = groove.resolve(parseNoteLength("8."));
-		assertEquals(72, unit.pos);
-		assertEquals(4, unit.accentDelta);
+		assertEquals(72, unit.pos());
+		assertEquals(4, unit.accentDelta());
 	}
 	
 	@Test
@@ -59,8 +59,8 @@ public class GrooveTest {
 		Groove.Unit unit;
 		
 		unit = groove.resolve(parseNoteLength("4"));
-		assertEquals(96, unit.pos);
-		assertEquals(0, unit.accentDelta);
+		assertEquals(96, unit.pos());
+		assertEquals(0, unit.accentDelta());
 	}
 	
 	@Test
@@ -69,8 +69,8 @@ public class GrooveTest {
 		Groove.Unit unit;
 		
 		unit = groove.resolve(parseNoteLength("2"));
-		assertEquals(192, unit.pos);
-		assertEquals(0, unit.accentDelta);
+		assertEquals(192, unit.pos());
+		assertEquals(0, unit.accentDelta());
 	}
 
 	Groove testGrooveA() throws SymfonionException {
@@ -89,8 +89,8 @@ public class GrooveTest {
 		Groove.Unit unit;
 		
 		unit = groove.resolve(Fraction.zero);
-		assertEquals(0, unit.pos);
-		assertEquals(1, unit.accentDelta);
+		assertEquals(0, unit.pos());
+		assertEquals(1, unit.accentDelta());
 	}
 	
 	@Test
@@ -99,8 +99,8 @@ public class GrooveTest {
 		Groove.Unit unit;
 		
 		unit = groove.resolve(new Fraction(1, 32));
-		assertEquals(13, unit.pos);
-		assertEquals(0, unit.accentDelta);
+		assertEquals(13, unit.pos());
+		assertEquals(0, unit.accentDelta());
 	}
 	
 	@Test
@@ -109,8 +109,8 @@ public class GrooveTest {
 		Groove.Unit unit;
 		
 		unit = groove.resolve(parseNoteLength("16"));
-		assertEquals(26, unit.pos);
-		assertEquals(2, unit.accentDelta);
+		assertEquals(26, unit.pos());
+		assertEquals(2, unit.accentDelta());
 	}
 
 	@Test
@@ -119,8 +119,8 @@ public class GrooveTest {
 		Groove.Unit unit;
 		
 		unit = groove.resolve(parseNoteLength("8"));
-		assertEquals(48, unit.pos);
-		assertEquals(3, unit.accentDelta);
+		assertEquals(48, unit.pos());
+		assertEquals(3, unit.accentDelta());
 	}
 
 	@Test
@@ -129,8 +129,8 @@ public class GrooveTest {
 		Groove.Unit unit;
 		
 		unit = groove.resolve(parseNoteLength("8."));
-		assertEquals(73, unit.pos);
-		assertEquals(4, unit.accentDelta);
+		assertEquals(73, unit.pos());
+		assertEquals(4, unit.accentDelta());
 	}
 	
 	@Test
@@ -139,8 +139,8 @@ public class GrooveTest {
 		Groove.Unit unit;
 		
 		unit = groove.resolve(parseNoteLength("4"));
-		assertEquals(96, unit.pos);
-		assertEquals(0, unit.accentDelta);
+		assertEquals(96, unit.pos());
+		assertEquals(0, unit.accentDelta());
 	}
 	
 	@Test
@@ -149,8 +149,8 @@ public class GrooveTest {
 		Groove.Unit unit;
 		
 		unit = groove.resolve(parseNoteLength("2"));
-		assertEquals(192, unit.pos);
-		assertEquals(0, unit.accentDelta);
+		assertEquals(192, unit.pos());
+		assertEquals(0, unit.accentDelta());
 	}
 
 	Groove testGrooveB() throws SymfonionException {

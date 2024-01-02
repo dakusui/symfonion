@@ -10,8 +10,8 @@ import com.google.gson.JsonObject;
 
 public class Part {
   int channel;
-  private String name;
-  private String portName;
+  private final String name;
+  private final String portName;
 
   public Part(String name, JsonObject json) throws SymfonionException, JsonTypeMismatchException, JsonFormatException, JsonInvalidPathException {
     this.name = name;

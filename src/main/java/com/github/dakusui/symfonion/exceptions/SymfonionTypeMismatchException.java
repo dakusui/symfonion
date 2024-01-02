@@ -1,5 +1,6 @@
 package com.github.dakusui.symfonion.exceptions;
 
+import java.io.Serial;
 import java.util.Arrays;
 
 import com.github.dakusui.json.JsonUtils;
@@ -15,6 +16,7 @@ public class SymfonionTypeMismatchException extends SymfonionSyntaxException {
 	/**
 	 * Serial version UID.
 	 */
+	@Serial
 	private static final long serialVersionUID = 6798033658231719409L;
 
 

@@ -2,25 +2,27 @@ package com.github.dakusui.json;
 
 import com.google.gson.JsonElement;
 
+import java.io.Serial;
 import java.util.Arrays;
 
 public class JsonInvalidPathException extends JsonException {
 	/**
-	 * 
+	 * A serial version UID string.
 	 */
+	@Serial
 	private static final long serialVersionUID = 7832147182391783569L;
 
 	protected String formatMessage(JsonElement base, Object[] path) {
 		return String.format("This element doesn't have path: %s", Arrays.toString(path));
 	}
 	
-	private JsonElement base;
+	private final JsonElement base;
 
-	private Object[] path;
+	private final Object[] path;
 
-	private int index;
+	private final int index;
 
-	private String message;
+	private final String message;
 
 	public JsonInvalidPathException(JsonElement base, Object[] path, int index) {
 		super(base);
