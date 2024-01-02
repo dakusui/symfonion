@@ -79,8 +79,6 @@ public class Symfonion {
     Map<String, Sequence> ret;
     try {
       ret = compiler.compile(song);
-    } catch (SymfonionException e) {
-      throw e;
     } catch (InvalidMidiDataException e) {
       throw compilationException("Failed to compile a song.", e);
     }
