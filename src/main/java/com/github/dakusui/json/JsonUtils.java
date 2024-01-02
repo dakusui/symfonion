@@ -129,7 +129,7 @@ public class JsonUtils {
           }
         }
         if (index < 0 || index >= base.getAsJsonArray().size()) {
-          throw new JsonIndexOutOfBoudsException(base, path, from);
+          throw new JsonIndexOutOfBoundsException(base, path, from);
         }
         newbase = base.getAsJsonArray().get(index);
       } else if (base.isJsonPrimitive()) {

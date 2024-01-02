@@ -1,5 +1,6 @@
-package com.github.dakusui.symfonion.cli.subcommands;
+package com.github.dakusui.symfonion.utils.midi;
 
+import com.github.dakusui.symfonion.cli.subcommands.Play;
 import com.github.dakusui.symfonion.utils.midi.MidiDeviceManager;
 
 import javax.sound.midi.*;

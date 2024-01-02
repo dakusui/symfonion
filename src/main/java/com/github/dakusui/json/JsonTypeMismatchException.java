@@ -3,6 +3,7 @@ package com.github.dakusui.json;
 import com.github.dakusui.json.JsonUtils.JsonTypes;
 import com.google.gson.JsonElement;
 
+import java.io.Serial;
 import java.util.Arrays;
 
 import static com.github.dakusui.json.JsonUtils.summarizeJsonElement;
@@ -15,19 +16,20 @@ import static com.github.dakusui.json.JsonUtils.summarizeJsonElement;
  */
 public class JsonTypeMismatchException extends JsonException {
 	/**
-	 * Serial version UID
+	 * A serial version UID string.
 	 */
+	@Serial
 	private static final long serialVersionUID = -4922304198740292631L;
 
 	/**
 	 * An array of strings that describe types or values that are allowed on the path
 	 */
-	private JsonUtils.JsonTypes[] expectedTypes;
+	private final JsonUtils.JsonTypes[] expectedTypes;
 
 	/**
 	 * A string that describes the reason why the element is considered invalid.
 	 */
-	private String reason;
+	private final String reason;
 
 	/**
 	 * Creates an object of this class.
@@ -35,7 +37,7 @@ public class JsonTypeMismatchException extends JsonException {
 	 * @param elem A JSON element whose value is found invalid.
 	 * @param expectedTypes Strings which describe expected values.
 	 */
-	public JsonTypeMismatchException(JsonElement elem, JsonUtils.JsonTypes... expectedTypes) {
+	JsonTypeMismatchException(JsonElement elem, JsonUtils.JsonTypes... expectedTypes) {
 		this(elem, null, expectedTypes);
 	}
 
@@ -56,7 +58,7 @@ public class JsonTypeMismatchException extends JsonException {
 	 * @param expectedTypes Strings which describe expected values.
 	 * @param reason A string that describes the reason why <code>elem</code> was considered invalid.
 	 */
-	public JsonTypeMismatchException(JsonElement elem, String reason, JsonUtils.JsonTypes... expectedTypes) {
+	JsonTypeMismatchException(JsonElement elem, String reason, JsonUtils.JsonTypes... expectedTypes) {
 		super(elem);
 		this.expectedTypes = expectedTypes;
 		this.reason = reason;

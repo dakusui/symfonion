@@ -48,11 +48,6 @@ public class JVController {
 			midiout.close();
 		}
 	}
-	MidiMessage createShortMessage() throws Exception {
-		ShortMessage ret = new ShortMessage();
-		ret.setMessage(ShortMessage.NOTE_ON, 0, 60, 100);
-		return ret;
-	}
 
 	MidiMessage createDataSetSysExMessage(int address, byte... body) throws InvalidMidiDataException, IOException {
 		SysexMessage ret = new SysexMessage();

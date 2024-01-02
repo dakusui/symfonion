@@ -3,7 +3,7 @@ package com.github.dakusui.symfonion.song;
 public enum Keyword {
 	$accent, 
 	$aftertouch,
-	$arpegio, 
+	$arpeggio,
 	$bank,
 	$beats,
 	$body,

@@ -19,7 +19,7 @@ public class SymfonionMissingElementException extends SymfonionSyntaxException {
   }
   
   private static String formatMessage(JsonElement actualJSON, Object relPath) {
-    if (relPath instanceof Number) {
+    if (relPath instanceof Integer) {
       return String.format("%s at this path requires %dth element", JsonUtils.summarizeJsonElement(actualJSON), relPath);
     }
     return String.format("%s at this path requires child element %s", JsonUtils.summarizeJsonElement(actualJSON), relPath);

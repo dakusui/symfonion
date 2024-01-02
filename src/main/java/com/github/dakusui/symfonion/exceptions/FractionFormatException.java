@@ -1,16 +1,21 @@
 package com.github.dakusui.symfonion.exceptions;
 
+import java.io.Serial;
+
+import static java.lang.String.format;
+
 public class FractionFormatException extends Exception {
 
 	/**
-	 * Serial verision UID.
+	 * A serial version UID string.
 	 */
+	@Serial
 	private static final long serialVersionUID = -8791776177337740280L;
-	private String fraction;
+	private final String fraction;
 	
 	
 	public FractionFormatException(String fraction) {
-		super(String.format("'{}' is an invalid fraction", fraction));
+		super(format("'%s' is an invalid fraction", fraction));
 		this.fraction = fraction;
 	}
 	

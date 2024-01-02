@@ -3,10 +3,10 @@ package com.github.dakusui.symfonion.song;
 import com.github.dakusui.json.JsonException;
 import com.github.dakusui.json.JsonInvalidPathException;
 import com.github.dakusui.json.JsonUtils;
-import com.github.dakusui.symfonion.utils.*;
 import com.github.dakusui.symfonion.exceptions.FractionFormatException;
 import com.github.dakusui.symfonion.exceptions.SymfonionException;
-import com.github.dakusui.symfonion.exceptions.SymfonionIllegalFormatException;
+import com.github.dakusui.symfonion.utils.Fraction;
+import com.github.dakusui.symfonion.utils.Utils;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -25,9 +25,9 @@ public class Bar {
   private final Map<String, Pattern> patterns;
   private final JsonObject rootJsonObject;
   Fraction beats;
-  Map<String, List<List<Pattern>>> patternLists = new HashMap<String, List<List<Pattern>>>();
+  Map<String, List<List<Pattern>>> patternLists = new HashMap<>();
   Groove groove;
-  private JsonObject json = null;
+  private final JsonObject json;
 
 
   public Bar(JsonObject jsonObject, JsonObject root, Map<String, Groove> grooves, Map<String, Pattern> patterns) throws SymfonionException, JsonException {
@@ -62,7 +62,7 @@ public class Bar {
       }
       for (Entry<String, JsonElement> stringJsonElementEntry : patternsJsonObject.entrySet()) {
         String partName = stringJsonElementEntry.getKey();
-        List<List<Pattern>> patterns = new LinkedList<List<Pattern>>();
+        List<List<Pattern>> patterns = new LinkedList<>();
         JsonArray partPatternsJsonArray = JsonUtils.asJsonArray(patternsJsonObject, partName);
         if (!partPatternsJsonArray.isJsonArray()) {
           throw typeMismatchException(partPatternsJsonArray, ARRAY);
@@ -71,7 +71,7 @@ public class Bar {
         for (int j = 0; j < len; j++) {
           JsonElement jsonPatterns = partPatternsJsonArray.get(j);
           String patternNames = jsonPatterns.getAsString();
-          List<Pattern> p = new LinkedList<Pattern>();
+          List<Pattern> p = new LinkedList<>();
           for (String each : patternNames.split(";")) {
             Pattern cur = this.patterns.get(each);
             if (cur == null) {

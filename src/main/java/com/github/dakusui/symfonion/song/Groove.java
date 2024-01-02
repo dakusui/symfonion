@@ -15,45 +15,25 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.*;
-import static com.github.dakusui.symfonion.exceptions.SymfonionIllegalFormatException.NOTELENGTH_EXAMPLE;
+import static com.github.dakusui.symfonion.exceptions.SymfonionIllegalFormatException.NOTE_LENGTH_EXAMPLE;
 import static com.github.dakusui.symfonion.exceptions.SymfonionTypeMismatchException.OBJECT;
 
 public class Groove {
   public static final Groove DEFAULT_INSTANCE = new Groove();
-  
-  static class Beat {
-    final long ticks;
-    final int accent;
-    final Fraction length;
-    
-    public Beat(Fraction length, long ticks, int accent) {
-      this.length = length;
-      this.ticks = ticks;
-      this.accent = accent;
-    }
+
+  record Beat(Fraction length, long ticks, int accent) {
   }
-  
-  public static class Unit {
-    public final long pos;
-    public final int accentDelta;
-    
-    public Unit(long pos, int accentDelta) {
-      this.pos = pos;
-      this.accentDelta = accentDelta;
-    }
-    
-    public long pos() {
-      return this.pos;
-    }
-    
+
+  public record Unit(long pos, int accentDelta) {
+
     public int accent() {
-      return this.accentDelta;
+        return this.accentDelta;
+      }
     }
-  }
   
-  List<Beat> beats = new LinkedList<Beat>();
+  List<Beat> beats = new LinkedList<>();
   
-  private int resolution;
+  private final int resolution;
   
   public Groove() {
     this(384);
@@ -108,7 +88,7 @@ public class Groove {
     beats.add(new Beat(length, ticks, accent));
   }
   
-  public static Groove createGroove(JsonArray grooveDef, JsonObject root) throws SymfonionException, JsonTypeMismatchException, JsonInvalidPathException, JsonFormatException {
+  public static Groove createGroove(JsonArray grooveDef) throws SymfonionException, JsonTypeMismatchException, JsonInvalidPathException, JsonFormatException {
     Groove ret = new Groove();
     for (JsonElement elem : grooveDef) {
       if (!elem.isJsonObject()) {
@@ -121,7 +101,7 @@ public class Groove {
       
       Fraction f = Utils.parseNoteLength(len);
       if (f == null) {
-        throw illegalFormatException(JsonUtils.asJsonElement(cur, Keyword.$length), NOTELENGTH_EXAMPLE);
+        throw illegalFormatException(JsonUtils.asJsonElement(cur, Keyword.$length), NOTE_LENGTH_EXAMPLE);
       }
       ret.add(f, ticks, accent);
     }

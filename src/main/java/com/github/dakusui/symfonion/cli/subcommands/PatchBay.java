@@ -9,7 +9,10 @@ import com.github.dakusui.symfonion.utils.midi.MidiDeviceManager;
 import com.github.dakusui.symfonion.utils.midi.MidiDeviceRecord;
 import com.github.dakusui.symfonion.utils.midi.MidiDeviceReportFormatter;
 
-import javax.sound.midi.*;
+import javax.sound.midi.MidiDevice;
+import javax.sound.midi.MidiUnavailableException;
+import javax.sound.midi.Receiver;
+import javax.sound.midi.Transmitter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
@@ -18,8 +21,7 @@ import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
 import static com.github.dakusui.symfonion.cli.CliUtils.composeErrMsg;
-import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.*;
-import static com.github.dakusui.symfonion.utils.Utils.onlyElement;
+import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.failedToRetrieveTransmitterFromMidiIn;
 import static com.github.dakusui.symfonion.utils.midi.MidiDeviceManager.isMidiDeviceForInput;
 import static com.github.dakusui.symfonion.utils.midi.MidiDeviceManager.matchesPortNameInDefinitions;
 import static com.github.dakusui.valid8j_pcond.forms.Predicates.and;

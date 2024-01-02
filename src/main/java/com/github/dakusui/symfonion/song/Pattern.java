@@ -17,7 +17,7 @@ import java.util.Map;
 import static com.github.dakusui.json.JsonUtils.asJsonElement;
 import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.illegalFormatException;
 import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.noteMapNotFoundException;
-import static com.github.dakusui.symfonion.exceptions.SymfonionIllegalFormatException.NOTELENGTH_EXAMPLE;
+import static com.github.dakusui.symfonion.exceptions.SymfonionIllegalFormatException.NOTE_LENGTH_EXAMPLE;
 
 
 public class Pattern {
@@ -26,9 +26,9 @@ public class Pattern {
     double gate = 0.8;
     Fraction length = QUARTER;
     int transpose = 0;
-    int velocitybase = 64;
-    int velocitydelta = 10;
-    int arpegio;
+    int velocityBase = 64;
+    int velocityDelta = 10;
+    int arpeggio;
     
     public Parameters(JsonObject json) throws SymfonionException, JsonException {
       init(json);
@@ -42,18 +42,18 @@ public class Pattern {
       if (json == null) {
         json = JsonUtils.toJson("{}").getAsJsonObject();
       }
-      this.velocitybase = JsonUtils.asIntWithDefault(json, 64, Keyword.$velocitybase);
-      this.velocitydelta = JsonUtils.asIntWithDefault(json, 5, Keyword.$velocitydelta);
+      this.velocityBase = JsonUtils.asIntWithDefault(json, 64, Keyword.$velocitybase);
+      this.velocityDelta = JsonUtils.asIntWithDefault(json, 5, Keyword.$velocitydelta);
       this.gate = JsonUtils.asDoubleWithDefault(json, 0.8, Keyword.$gate);
       this.length = Utils.parseNoteLength(JsonUtils.asStringWithDefault(json, "4", Keyword.$length));
       if (this.length == null) {
         throw illegalFormatException(
             asJsonElement(json, Keyword.$length),
-            NOTELENGTH_EXAMPLE
+            NOTE_LENGTH_EXAMPLE
         );
       }
       this.transpose = JsonUtils.asIntWithDefault(json, 0, Keyword.$transpose);
-      this.arpegio = JsonUtils.asIntWithDefault(json, 0, Keyword.$arpegio);
+      this.arpeggio = JsonUtils.asIntWithDefault(json, 0, Keyword.$arpeggio);
     }
     
     public Fraction length() {
@@ -65,15 +65,15 @@ public class Pattern {
     }
     
     public int velocitybase() {
-      return this.velocitybase;
+      return this.velocityBase;
     }
     
     public int velocitydelta() {
-      return this.velocitydelta;
+      return this.velocityDelta;
     }
     
     public int arpegio() {
-      return this.arpegio;
+      return this.arpeggio;
     }
   }
   
@@ -92,7 +92,7 @@ public class Pattern {
   }
   
   List<Stroke> body = null;
-  NoteMap noteMap = null;
+  NoteMap noteMap;
   Parameters params = null;
   
   Pattern(NoteMap noteMap) {
