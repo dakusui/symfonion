@@ -20,10 +20,6 @@ import static com.github.dakusui.valid8j_pcond.fluent.Statement.objectValue;
 import static java.lang.String.format;
 
 public class ExceptionThrower {
-  public static SymfonionException syntaxErrorInNotePattern(String s, int i, Matcher m) {
-    return new SymfonionException("Error:" + s.substring(0, i) + "[" + s.substring(i, m.start()) + "]" + s.substring(m.start()), contextValueOf(SOURCE_FILE));
-  }
-
   public enum ContextKey {
     MIDI_DEVICE_INFO(MidiDevice.Info.class),
     MIDI_DEVICE_INFO_IO(String.class),
@@ -63,11 +59,22 @@ public class ExceptionThrower {
       return this.parent;
     }
 
+    /**
+     *
+     */
     @SuppressWarnings({"unchecked"})
     <T> T get(ContextKey key) {
       assert that(objectValue(key).then().isNotNull().$());
+      // In production, we do not want to produce a NullPointerException, even if the key is null.
+      // Just return null in such a situation.
+      if (key == null)
+        return null;
       if (!this.values.containsKey(key)) {
         assert that(objectValue(this).invoke("parent").then().isNotNull());
+        // In production, we do not want to produce a NullPointerException, even if a value associated with the key doesn't exist.
+        // Just return null, in such a situation.
+        if (this.parent() == null)
+          return null;
         return this.parent().get(key);
       }
       return (T) this.values.get(key);
@@ -219,5 +226,9 @@ public class ExceptionThrower {
     class GivenKeyIsNull {
     }
     return key != null ? key.type : GivenKeyIsNull.class;
+  }
+
+  public static SymfonionException syntaxErrorInNotePattern(String s, int i, Matcher m) {
+    return new SymfonionException("Error:" + s.substring(0, i) + "[" + s.substring(i, m.start()) + "]" + s.substring(m.start()), contextValueOf(SOURCE_FILE));
   }
 }
