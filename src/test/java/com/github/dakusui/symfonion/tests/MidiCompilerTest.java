@@ -5,10 +5,12 @@ import com.github.dakusui.symfonion.testutils.forms.FromSong;
 import com.github.dakusui.symfonion.testutils.json.StrokeBuilder;
 import com.github.dakusui.symfonion.testutils.json.SymfonionJsonTestUtils;
 import com.github.dakusui.testutils.TestUtils;
-import com.github.dakusui.testutils.forms.*;
-import com.github.dakusui.testutils.forms.midi.IfMidiMessage;
-import com.github.dakusui.testutils.forms.midi.FromSequence;
+import com.github.dakusui.testutils.forms.AllOf;
+import com.github.dakusui.testutils.forms.FromList;
+import com.github.dakusui.testutils.forms.FromStream;
+import com.github.dakusui.testutils.forms.Transform;
 import com.github.dakusui.testutils.forms.midi.FromTrack;
+import com.github.dakusui.testutils.forms.midi.IfMidiMessage;
 import com.github.dakusui.thincrest_pcond.validator.Validator;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -26,6 +28,9 @@ import java.util.stream.Stream;
 
 import static com.github.dakusui.symfonion.testutils.SymfonionTestCase.createNegativeTestCase;
 import static com.github.dakusui.symfonion.testutils.SymfonionTestCase.createPositiveTestCase;
+import static com.github.dakusui.testutils.forms.midi.FromSequence.toTickLength;
+import static com.github.dakusui.testutils.forms.midi.FromSequence.toTrackList;
+import static com.github.dakusui.testutils.forms.midi.FromTrack.*;
 import static com.github.dakusui.testutils.forms.midi.IfMidiMessage.*;
 import static com.github.dakusui.testutils.json.JsonTestUtils.*;
 import static com.github.dakusui.testutils.midi.Controls.VOLUME;
@@ -92,13 +97,13 @@ public class MidiCompilerTest {
                     ListTo.size().isEqualTo(1),
                     ListTo.<String>elementAt(0).isEqualTo("port1")),
                 Transform.$(FromSong.toSequence("port1")).allOf(
-                    Transform.$(FromSequence.toTrackList()).allOf(
+                    Transform.$(toTrackList()).allOf(
                         ListTo.size().isEqualTo(1),
                         ListTo.<Track>elementAt(0).allOf(
-                            Transform.$(FromTrack.toSize()).isEqualTo(1),
-                            Transform.$(FromTrack.toMidiEventAt(0)).isNotNull(),
-                            Transform.$(FromTrack.toTicks()).isEqualTo(0L))),
-                    Transform.$(FromSequence.toTickLength()).isEqualTo(0L)
+                            Transform.$(toSize()).isEqualTo(1),
+                            Transform.$(toMidiEventAt(0)).isNotNull(),
+                            Transform.$(toTicks()).isEqualTo(0L))),
+                    Transform.$(toTickLength()).isEqualTo(0L)
                 ))),
 
 
@@ -118,13 +123,13 @@ public class MidiCompilerTest {
                     ListTo.size().isEqualTo(1),
                     ListTo.<String>elementAt(0).isEqualTo("port1")),
                 Transform.$(FromSong.toSequence("port1")).allOf(
-                    Transform.$(FromSequence.toTrackList()).allOf(
+                    Transform.$(toTrackList()).allOf(
                         ListTo.size().isEqualTo(1),
                         ListTo.<Track>elementAt(0).allOf(
-                            Transform.$(FromTrack.toSize()).isEqualTo(6),
-                            Transform.$(FromTrack.toMidiEventAt(0)).isNotNull(),
-                            Transform.$(FromTrack.toTicks()).isEqualTo(96L))),
-                    Transform.$(FromSequence.toTickLength()).isEqualTo(96L))
+                            Transform.$(toSize()).isEqualTo(6),
+                            Transform.$(toMidiEventAt(0)).isNotNull(),
+                            Transform.$(toTicks()).isEqualTo(96L))),
+                    Transform.$(toTickLength()).isEqualTo(96L))
             )),
 
         createPositiveTestCase(
@@ -145,13 +150,13 @@ public class MidiCompilerTest {
                     ListTo.size().isEqualTo(1),
                     ListTo.<String>elementAt(0).isEqualTo("port1")),
                 Transform.$(FromSong.toSequence("port1")).allOf(
-                    Transform.$(FromSequence.toTrackList()).allOf(
+                    Transform.$(toTrackList()).allOf(
                         ListTo.size().isEqualTo(1),
                         ListTo.<Track>elementAt(0).allOf(
-                            Transform.$(FromTrack.toSize()).isEqualTo(33),
-                            Transform.$(FromTrack.toMidiEventAt(0)).isNotNull(),
-                            Transform.$(FromTrack.toTicks()).isEqualTo(379L))),
-                    Transform.$(FromSequence.toTickLength()).isEqualTo(379L))
+                            Transform.$(toSize()).isEqualTo(33),
+                            Transform.$(toMidiEventAt(0)).isNotNull(),
+                            Transform.$(toTicks()).isEqualTo(379L))),
+                    Transform.$(toTickLength()).isEqualTo(379L))
             )),
 
         createPositiveTestCase(
@@ -162,12 +167,12 @@ public class MidiCompilerTest {
                 MapTo.<String>keyList().allOf(
                     ListTo.size().isEqualTo(1),
                     ListTo.<String>elementAt(0).isEqualTo("port1")),
-                Transform.$(FromSong.toSequence("port1").andThen(FromSequence.toTrackList())).allOf(
+                Transform.$(FromSong.toSequence("port1").andThen(toTrackList())).allOf(
                     ListTo.size().isEqualTo(1),
-                    Transform.$(FromList.<Track>toElementAt(0)).allOf(
-                        Transform.$(FromTrack.toSize()).isEqualTo(33),
-                        Transform.$(FromTrack.toMidiEventAt(0)).isNotNull(),
-                        Transform.$(FromTrack.toTicks()).isEqualTo(379L))))),
+                    ListTo.<Track>elementAt(0).allOf(
+                        Transform.$(toSize()).isEqualTo(33),
+                        Transform.$(toMidiEventAt(0)).isNotNull(),
+                        Transform.$(toTicks()).isEqualTo(379L))))),
 
         createPositiveTestCase(
             TestUtils.name("sixteen notes are given in two string elements", "compile", "number of events and tick length seem ok"),
@@ -177,12 +182,12 @@ public class MidiCompilerTest {
                 MapTo.<String>keyList().allOf(
                     ListTo.size().isEqualTo(1),
                     ListTo.<String>elementAt(0).isEqualTo("port1")),
-                Transform.$(FromSong.toSequence("port1").andThen(FromSequence.toTrackList())).allOf(
+                Transform.$(FromSong.toSequence("port1").andThen(toTrackList())).allOf(
                     ListTo.size().isEqualTo(1),
-                    Transform.$(FromList.<Track>toElementAt(0)).allOf(
-                        Transform.$(FromTrack.toSize()).isEqualTo(33),
-                        Transform.$(FromTrack.toMidiEventAt(0)).isNotNull(),
-                        Transform.$(FromTrack.toTicks()).isEqualTo(379L))))),
+                    ListTo.<Track>elementAt(0).allOf(
+                        Transform.$(toSize()).isEqualTo(33),
+                        Transform.$(toMidiEventAt(0)).isNotNull(),
+                        Transform.$(toTicks()).isEqualTo(379L))))),
 
         createPositiveTestCase(
             TestUtils.name("sixteenth note with short gate (0.25)", "compile", "number of events and tick length seem ok"),
@@ -192,18 +197,18 @@ public class MidiCompilerTest {
                 MapTo.<String>keyList().allOf(
                     ListTo.size().isEqualTo(1),
                     ListTo.<String>elementAt(0).isEqualTo("port1")),
-                Transform.$(FromSong.toSequence("port1").andThen(FromSequence.toTrackList())).allOf(
+                Transform.$(FromSong.toSequence("port1").andThen(toTrackList())).allOf(
                     ListTo.size().isEqualTo(1),
-                    Transform.$(FromList.<Track>toElementAt(0)).allOf(
-                        Transform.$(FromTrack.toSize()).isEqualTo(4),
-                        Transform.$(FromTrack.toMidiEventAt(0)).isNotNull(),
-                        Transform.$(FromTrack.toTicks()).isEqualTo(7L))))),
+                    ListTo.<Track>elementAt(0).allOf(
+                        Transform.$(toSize()).isEqualTo(4),
+                        Transform.$(toMidiEventAt(0)).isNotNull(),
+                        Transform.$(toTicks()).isEqualTo(7L))))),
 
         createPositiveTestCase(
             TestUtils.name("a note and controls (program change, volume, pan, chorus, reverb, modulation, and pitch)", "compile", "note on/off, program change, and volume are included."),
             SymfonionJsonTestUtils.composeSymfonionSongJsonObject(
                 "port2", array(new StrokeBuilder().notes("C16").program(65).volume(99).pan(101).chorus(102).reverb(103).modulation(104).pitch(105).gate(0.25).build()), SymfonionJsonTestUtils.sixteenBeatsGroove()),
-            Transform.$(FromSong.toSequence("port2").andThen(FromSequence.toTrackList()).andThen(FromList.toElementAt(0))).allOf(
+            Transform.$(FromSong.toSequence("port2").andThen(toTrackList()).andThen(FromList.toElementAt(0))).allOf(
                 Transform.$(FromTrack.toMidiMessageStream(IfMidiMessage.isNoteOn())).check(anyMatch(note(isEqualTo(C3)))),
                 Transform.$(FromTrack.toMidiMessageStream(IfMidiMessage.isNoteOff())).check(anyMatch(note(isEqualTo(C3)))),
                 Transform.$(FromTrack.toMidiMessageStream(IfMidiMessage.isProgramChange())).check(anyMatch(programNumber(isEqualTo((byte) 65)))),
@@ -214,7 +219,7 @@ public class MidiCompilerTest {
             TestUtils.name("a note and an 'arrayable' control (volume)", "compile", "arrayable control expanded."),
             SymfonionJsonTestUtils.composeSymfonionSongJsonObject(
                 "port2", array(new StrokeBuilder().notes("C4").volume(array(10, 20, 30, 40, 50, 60, 70, 80, 90, 100)).build()), SymfonionJsonTestUtils.sixteenBeatsGroove()),
-            Transform.$(FromSong.toSequence("port2").andThen(FromSequence.toTrackList()).andThen(FromList.toElementAt(0))).allOf(
+            Transform.$(FromSong.toSequence("port2").andThen(toTrackList()).andThen(FromList.toElementAt(0))).allOf(
                 Transform.$(FromTrack.toMidiMessageStream(IfMidiMessage.isNoteOn())).check(anyMatch(note(isEqualTo(C3)))),
                 Transform.$(FromTrack.toMidiMessageStream(IfMidiMessage.isNoteOff())).check(anyMatch(note(isEqualTo(C3)))),
                 Transform.$(FromTrack.toMidiMessageStream(IfMidiMessage.isControlChange().and(control(isEqualTo(VOLUME)))))
@@ -226,7 +231,7 @@ public class MidiCompilerTest {
             TestUtils.name("a note and an 'arrayable' control (volume) with nulls", "compile", "arrayable control expanded replacing nulls with intermediate values."),
             SymfonionJsonTestUtils.composeSymfonionSongJsonObject(
                 "port2", array(new StrokeBuilder().notes("C4").volume(array(10, null, null, null, null, null, null, null, null, 100)).build()), SymfonionJsonTestUtils.sixteenBeatsGroove()),
-            Transform.$(FromSong.toSequence("port2").andThen(FromSequence.toTrackList()).andThen(FromList.toElementAt(0))).allOf(
+            Transform.$(FromSong.toSequence("port2").andThen(toTrackList()).andThen(FromList.toElementAt(0))).allOf(
                 Transform.$(FromTrack.toMidiMessageStream(IfMidiMessage.isNoteOn())).check(anyMatch(note(isEqualTo(C3)))),
                 Transform.$(FromTrack.toMidiMessageStream(IfMidiMessage.isNoteOff())).check(anyMatch(note(isEqualTo(C3)))),
                 Transform.$(FromTrack.toMidiMessageStream(IfMidiMessage.isControlChange().and(control(isEqualTo(VOLUME)))))
