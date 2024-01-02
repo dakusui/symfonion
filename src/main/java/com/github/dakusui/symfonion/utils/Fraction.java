@@ -2,9 +2,14 @@ package com.github.dakusui.symfonion.utils;
 
 
 
+import com.github.dakusui.symfonion.exceptions.FractionFormatException;
+
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.throwFractionFormatException;
 import static com.github.dakusui.valid8j.Requires.requireArgument;
 import static com.github.dakusui.valid8j_pcond.forms.Predicates.isEqualTo;
 import static com.github.dakusui.valid8j_pcond.forms.Predicates.not;
@@ -15,6 +20,7 @@ import static com.github.dakusui.valid8j_pcond.forms.Predicates.not;
  * there is basically a constructor (which reduces)
  */
 public record Fraction(int numerator, int denominator) implements Cloneable, Serializable {
+  public static final Pattern fractionPattern = Pattern.compile("([0-9]+)/([1-9][0-9]*)");
   @Serial
   private static final long serialVersionUID = 9185757132113L;
 
@@ -37,6 +43,20 @@ public record Fraction(int numerator, int denominator) implements Cloneable, Ser
     }
     this.numerator = n;
     this.denominator = d;
+  }
+
+  public static Fraction parseFraction(String str) throws FractionFormatException {
+    if (str == null) {
+      return null;
+    }
+    Matcher m = fractionPattern.matcher(str);
+    if (!m.matches()) {
+      throw throwFractionFormatException(str);
+    }
+    return new Fraction(
+        Integer.parseInt(m.group(1)),
+        Integer.parseInt(m.group(2))
+    );
   }
 
   @Override

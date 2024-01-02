@@ -1,6 +1,5 @@
 package com.github.dakusui.symfonion.utils;
 
-import com.github.dakusui.symfonion.exceptions.FractionFormatException;
 import com.github.dakusui.symfonion.exceptions.SymfonionException;
 import com.github.dakusui.valid8j_pcond.forms.Printables;
 
@@ -10,7 +9,6 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collector;
 
 import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.*;
@@ -19,30 +17,23 @@ import static com.github.dakusui.valid8j_pcond.forms.Predicates.isNotNull;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 
-public class Utils {
-  public static final Pattern fractionPattern = Pattern.compile("([0-9]+)/([1-9][0-9]*)");
+public enum Utils {
+  ;
   public static final java.util.regex.Pattern lengthPattern = java.util.regex.Pattern.compile("([1-9][0-9]*)(\\.*)");
 
+  /**
+   * Count occurrences of a given character {@code ch} in a string {@code s}.
+   *
+   * @param ch A character to count its occurrences.
+   * @param s A string in which the number of {@code ch} should be counted.
+   * @return The number of occurrences of {@code ch} in string {@code s}.
+   */
   public static int count(char ch, String s) {
     int ret = 0;
     for (int i = s.indexOf(ch); i >= 0; i = s.indexOf(ch, i + 1)) {
       ret++;
     }
     return ret;
-  }
-
-  public static Fraction parseFraction(String str) throws FractionFormatException {
-    if (str == null) {
-      return null;
-    }
-    Matcher m = fractionPattern.matcher(str);
-    if (!m.matches()) {
-      throw throwFractionFormatException(str);
-    }
-    return new Fraction(
-        Integer.parseInt(m.group(1)),
-        Integer.parseInt(m.group(2))
-    );
   }
 
   public static String loadResource(String resourceName) throws SymfonionException {
@@ -56,16 +47,10 @@ public class Utils {
     return b.toString();
   }
 
-  private static Predicate<InputStream> resourceIsNotNull(String resourceName) {
-    return Printables.predicate(() -> "isNotNull[resourceLoadedFrom[" + resourceName + "]]", isNotNull());
-  }
-
   public static String loadFile(String fileName) throws SymfonionException {
     StringBuffer b = new StringBuffer(4096);
     File f = new File(fileName);
-    try {
-
-      InputStream is = new BufferedInputStream(new FileInputStream(f));
+    try (InputStream is = new BufferedInputStream(new FileInputStream(f))){
       loadFromInputStream(b, is);
     } catch (FileNotFoundException e) {
       throw fileNotFoundException(f, e);
@@ -144,4 +129,9 @@ public class Utils {
         ref -> Optional.ofNullable(ref.get()),
         Collector.Characteristics.UNORDERED);
   }
+
+  private static Predicate<InputStream> resourceIsNotNull(String resourceName) {
+    return Printables.predicate(() -> "isNotNull[resourceLoadedFrom[" + resourceName + "]]", isNotNull());
+  }
+
 }
