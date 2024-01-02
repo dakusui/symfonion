@@ -18,13 +18,13 @@ import static com.github.dakusui.thincrest_pcond.forms.Predicates.containsString
 public class PatchBayTest {
   @Test
   public void whenHelp_thenLooksOk() throws ParseException, IOException {
-    assumeMidiDevicesPresent();
     TestUtils.OutputCapturingPrintStream out = TestUtils.outputCapturingPrintStream();
     new PatchBay().invoke(new Cli("-r", "in=out", "-I", "in=Real.*", "-O", "out=Gervill"), out, immediatelyClosingInputStream());
 
     for (String s: out.toStringList())
       System.err.println(s);
 
+    assumeMidiDevicesPresent();
     assertThat(out.toStringList(), findElements(
         containsString("MIDI patch-bay mode"),
         containsString("closing transmitter"),

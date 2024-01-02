@@ -3,6 +3,7 @@ package com.github.dakusui.symfonion.tests.cli.subcommands;
 import com.github.dakusui.symfonion.cli.Cli;
 import com.github.dakusui.symfonion.cli.subcommands.Help;
 import com.github.dakusui.testutils.TestUtils;
+import com.github.dakusui.testutils.midi.MidiTestUtils;
 import com.github.dakusui.thincrest_pcond.experimentals.cursor.Cursors;
 import com.github.dakusui.thincrest_pcond.forms.Predicates;
 import org.apache.commons.cli.ParseException;
@@ -29,6 +30,7 @@ public class HelpTest {
     System.setOut(out);
     new Help().invoke(new Cli(), out, immediatelyClosingInputStream());
 
+    MidiTestUtils.assumeMidiDevicesPresent();
     assertThat(out.toStringList(), Cursors.findElements(
         Predicates.containsString("usage: SYNTAX"),
         Predicates.containsString("-c,--compile"),
