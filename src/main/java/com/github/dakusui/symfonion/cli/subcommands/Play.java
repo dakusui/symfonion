@@ -3,6 +3,7 @@ package com.github.dakusui.symfonion.cli.subcommands;
 import com.github.dakusui.symfonion.cli.Cli;
 import com.github.dakusui.symfonion.cli.Subcommand;
 import com.github.dakusui.symfonion.core.Symfonion;
+import com.github.dakusui.symfonion.exceptions.ExceptionThrower;
 import com.github.dakusui.symfonion.exceptions.SymfonionException;
 import com.github.dakusui.symfonion.song.Song;
 
@@ -12,21 +13,23 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.*;
 
-import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.deviceException;
-import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.interrupted;
+import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.*;
+import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.ContextKey.SOURCE_FILE;
 
 public class Play implements Subcommand {
 
   @Override
   public void invoke(Cli cli, PrintStream ps, InputStream inputStream) throws IOException {
-    Symfonion symfonion = cli.getSymfonion();
+    try (Context ignored = context($(SOURCE_FILE, cli.getSourceFile()))) {
+      Symfonion symfonion = cli.getSymfonion();
 
-    Song song = symfonion.load(cli.getSourceFile().getAbsolutePath());
-    Map<String, Sequence> sequences = symfonion.compile(song);
-    ps.println();
-    Map<String, MidiDevice> devices = cli.prepareMidiOutDevices(ps);
-    ps.println();
-    play(devices, sequences);
+      Song song = symfonion.load(cli.getSourceFile().getAbsolutePath());
+      Map<String, Sequence> sequences = symfonion.compile(song);
+      ps.println();
+      Map<String, MidiDevice> devices = cli.prepareMidiOutDevices(ps);
+      ps.println();
+      play(devices, sequences);
+    }
   }
 
   private static Map<String, Sequencer> prepareSequencers(List<String> portNames, Map<String, MidiDevice> devices, Map<String, Sequence> sequences) throws MidiUnavailableException, InvalidMidiDataException {

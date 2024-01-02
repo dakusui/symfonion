@@ -18,8 +18,8 @@ public class SymfonionSyntaxException extends SymfonionException {
 	private final JsonElement problemCausingJsonNode;
 	private final JsonObject root;
 
-	public SymfonionSyntaxException(String message, JsonElement problemCausingJsonNode, JsonObject root) {
-		super(message);
+	public SymfonionSyntaxException(String message, JsonElement problemCausingJsonNode, JsonObject root, File sourceFile) {
+		super(message, sourceFile);
 		this.problemCausingJsonNode = problemCausingJsonNode;
 		this.root = root;
 	}

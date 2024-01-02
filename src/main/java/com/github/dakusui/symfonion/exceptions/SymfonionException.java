@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.Serial;
 
 public class SymfonionException extends RuntimeException {
+  private final File sourceFile;
 
   /**
    * A serial version uid.
@@ -11,27 +12,23 @@ public class SymfonionException extends RuntimeException {
   @Serial
   private static final long serialVersionUID = -1999577216046615241L;
 
-  public SymfonionException(String message, Throwable cause) {
+  public SymfonionException(String message, Throwable cause, File sourceFile) {
     super(message, cause);
+    this.sourceFile = sourceFile;
   }
 
-  public SymfonionException(String message) {
+  public SymfonionException(String message, File sourceFile) {
     super(message);
+    this.sourceFile = sourceFile;
   }
 
-  public SymfonionException(Throwable cause) {
+  public SymfonionException(Throwable cause, File sourceFile) {
     super(cause);
+    this.sourceFile = sourceFile;
   }
 
-  private File sourceFile = null;
 
   public File getSourceFile() {
     return sourceFile;
   }
-
-
-  public void setSourceFile(File sourceFile) {
-    this.sourceFile = sourceFile;
-  }
-
 }

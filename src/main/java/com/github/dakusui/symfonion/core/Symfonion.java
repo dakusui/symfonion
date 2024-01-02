@@ -5,6 +5,7 @@ import com.github.dakusui.json.JsonInvalidPathException;
 import com.github.dakusui.json.JsonPathNotFoundException;
 import com.github.dakusui.json.JsonUtils;
 import com.github.dakusui.logias.lisp.Context;
+import com.github.dakusui.symfonion.exceptions.ExceptionThrower;
 import com.github.dakusui.symfonion.exceptions.SymfonionException;
 import com.github.dakusui.symfonion.utils.Utils;
 import com.github.dakusui.symfonion.song.Keyword;
@@ -32,7 +33,7 @@ public class Symfonion {
   public Song load(String fileName)  {
     Song ret;
     this.fileName = fileName;
-    try {
+    try (ExceptionThrower.Context ignored = ExceptionThrower.context($(ContextKey.SOURCE_FILE, new File(this.fileName)))) {
       try {
         this.json = loadSymfonionFile(fileName, new HashMap<>());
         ret = new Song.Builder(logiasContext, json).build();
@@ -46,7 +47,6 @@ public class Symfonion {
         throw new RuntimeException(e.getMessage(), e);
       }
     } catch (SymfonionException e) {
-      e.setSourceFile(new File(this.fileName));
       throw e;
     }
     return ret;
@@ -80,7 +80,6 @@ public class Symfonion {
     try {
       ret = compiler.compile(song);
     } catch (SymfonionException e) {
-      e.setSourceFile(new File(this.fileName));
       throw e;
     } catch (InvalidMidiDataException e) {
       throw compilationException("Failed to compile a song.", e);

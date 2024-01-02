@@ -3,6 +3,7 @@ package com.github.dakusui.symfonion.exceptions;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import java.io.File;
 import java.io.Serial;
 
 public class SymfonionReferenceException extends SymfonionSyntaxException {
@@ -12,8 +13,8 @@ public class SymfonionReferenceException extends SymfonionSyntaxException {
   @Serial
   private static final long serialVersionUID = 3554220091863267192L;
   
-  public SymfonionReferenceException(String missingReference, String type, JsonElement problemCausingJsonNode, JsonObject root) {
-    super(formatMessage(missingReference, type),  problemCausingJsonNode, root);
+  public SymfonionReferenceException(String missingReference, String type, JsonElement problemCausingJsonNode, JsonObject root, File sourceFile) {
+    super(formatMessage(missingReference, type),  problemCausingJsonNode, root, sourceFile);
   }
   
   
