@@ -23,12 +23,12 @@ public abstract class MidiDeviceScanner {
     @Override
     protected void start(Info[] allDevices) {
       PrintStream ps = getPrintStream();
-      ps.println("     " + getHeader());
+      ps.println("     " + getTitle());
       ps.printf("  io %s%n", MidiUtils.formatMidiDeviceInfo(null));
       ps.println("--------------------------------------------------------------------------------");
     }
 
-    protected abstract String getHeader();
+    protected abstract String getTitle();
 
     @Override
     protected boolean matches(Info device) {
@@ -61,7 +61,6 @@ public abstract class MidiDeviceScanner {
 
   private final PrintStream ps;
   private MidiDevice.Info[] matchedDevices = null;
-
   protected abstract void start(MidiDevice.Info[] allDevices);
 
   protected abstract boolean matches(MidiDevice.Info device);

@@ -11,12 +11,13 @@ import javax.sound.midi.MidiSystem;
 import javax.sound.midi.Sequence;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.Map;
 
 public class Compile implements Subcommand {
     @Override
-    public void invoke(Cli cli, PrintStream ps) throws SymfonionException, IOException {
+    public void invoke(Cli cli, PrintStream ps, InputStream inputStream) throws SymfonionException, IOException {
         Symfonion symfonion = cli.getSymfonion();
         Song song = symfonion.load(cli.getSourceFile().getAbsolutePath());
         Map<String, Sequence> sequences = symfonion.compile(song);
@@ -26,7 +27,6 @@ public class Compile implements Subcommand {
             String outfile = cli.getSinkFile().getAbsolutePath();
             File outputFile = CliUtils.composeOutputFile(outfile, portName);
             MidiSystem.write(seq, 1, outputFile);
-
         }
     }
 }

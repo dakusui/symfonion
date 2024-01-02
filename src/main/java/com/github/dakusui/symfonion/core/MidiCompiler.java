@@ -20,23 +20,24 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.partNotFound;
+import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.*;
+import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.ContextKey.JSON_ELEMENT_ROOT;
 
 public class MidiCompiler {
-  
+
   private final Context logiasContext;
 
   public MidiCompiler(Context logiasContext) {
     this.logiasContext = (logiasContext);
   }
-  
+
   /**
    * Compiles a {@link Song} object into a map from a port name to {@link Sequence} object.
    *
    * @param song An object that holds user-provided music data.
    * @return A map from a port name to {@code Sequence} object.
    * @throws InvalidMidiDataException Won't be thrown.
-   * @throws SymfonionException Undefined part name is referenced by a bar.
+   * @throws SymfonionException       Undefined part name is referenced by a bar.
    */
   public Map<String, Sequence> compile(Song song) throws InvalidMidiDataException, SymfonionException {
     System.err.println("Now compiling...");
@@ -61,58 +62,60 @@ public class MidiCompiler {
     long barPositionInTicks = 0; //= resolution / 4;
     int barid = 0;
     for (Bar bar : song.bars()) {
-      barStarted(barid);
-      Groove groove = bar.groove();
-      for (String partName : bar.partNames()) {
-        partStarted(partName);
-        Track track = tracks.get(partName);
-        if (track == null) {
-          aborted();
-          throw partNotFound(bar.lookUpJsonNode(partName), bar.rootJsonObject(), partName);
-        }
-        int channel = song.part(partName).channel();
-        for (List<Pattern> patterns : bar.part(partName)) {
-          ////
-          // relativePosition is a relative position from the beginning
-          // of the bar the pattern belongs to.
-          Fraction relPosInBar = Fraction.zero;
-          for (Pattern each : patterns) {
-            Parameters params = each.parameters();
-            patternStarted();
-            for (Stroke stroke : each.strokes()) {
-              try {
-                Fraction endingPos = Fraction.add(relPosInBar, stroke.length());
-
-                stroke.compile(
-                    this,
-                    new MidiCompilerContext(
-                        track,
-                        channel,
-                        params,
-                        relPosInBar,
-                        barPositionInTicks,
-                        groove
-                    )
-                );
-
-                relPosInBar = endingPos;
-                ////
-                // Breaks if relative position goes over the length of the bar.
-                if (Fraction.compare(relPosInBar, bar.beats()) >= 0) {
-                  break;
-                }
-              } finally {
-                strokeEnded();
-              }
-            }
-            patternEnded();
+      try (var ignored = context($(JSON_ELEMENT_ROOT, bar.rootJsonObject()))) {
+        barStarted(barid);
+        Groove groove = bar.groove();
+        for (String partName : bar.partNames()) {
+          partStarted(partName);
+          Track track = tracks.get(partName);
+          if (track == null) {
+            aborted();
+            throw partNotFound(bar.lookUpJsonNode(partName), partName);
           }
+          int channel = song.part(partName).channel();
+          for (List<Pattern> patterns : bar.part(partName)) {
+            ////
+            // relativePosition is a relative position from the beginning
+            // of the bar the pattern belongs to.
+            Fraction relPosInBar = Fraction.zero;
+            for (Pattern each : patterns) {
+              Parameters params = each.parameters();
+              patternStarted();
+              for (Stroke stroke : each.strokes()) {
+                try {
+                  Fraction endingPos = Fraction.add(relPosInBar, stroke.length());
+
+                  stroke.compile(
+                      this,
+                      new MidiCompilerContext(
+                          track,
+                          channel,
+                          params,
+                          relPosInBar,
+                          barPositionInTicks,
+                          groove
+                      )
+                  );
+
+                  relPosInBar = endingPos;
+                  ////
+                  // Breaks if relative position goes over the length of the bar.
+                  if (Fraction.compare(relPosInBar, bar.beats()) >= 0) {
+                    break;
+                  }
+                } finally {
+                  strokeEnded();
+                }
+              }
+              patternEnded();
+            }
+          }
+          partEnded();
         }
-        partEnded();
+        barEnded();
+        barid++;
+        barPositionInTicks += (long) (bar.beats().doubleValue() * resolution);
       }
-      barEnded();
-      barid++;
-      barPositionInTicks += (long) (bar.beats().doubleValue() * resolution);
     }
     System.err.println("Compilation finished.");
     return ret;
@@ -135,10 +138,10 @@ public class MidiCompiler {
   }
 
   protected MidiEvent createNoteEvent(int nCommand,
-      int ch,
-      int nKey,
-      int nVelocity,
-      long lTick) throws InvalidMidiDataException {
+                                      int ch,
+                                      int nKey,
+                                      int nVelocity,
+                                      long lTick) throws InvalidMidiDataException {
     ShortMessage message = new ShortMessage();
     message.setMessage(nCommand,
         ch,

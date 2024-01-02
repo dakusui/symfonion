@@ -44,12 +44,12 @@ public class NoteMap {
 		}
 	}
 	
-	public int note(String notename, JsonElement problemCausingJsonNode, JsonObject rootJsonObject) throws SymfonionException {
+	public int note(String notename, JsonElement problemCausingJsonNode) throws SymfonionException {
 		if ("r".equals(notename)) {
 			return -1;
 		}
 		if (!this.map.containsKey(notename)) {
-			throw noteNotDefinedException(problemCausingJsonNode, rootJsonObject, notename, this.name);
+			throw noteNotDefinedException(problemCausingJsonNode, notename, this.name);
 		}
 		return this.map.get(notename);
 	}

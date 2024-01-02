@@ -17,7 +17,7 @@ public class PlayTest {
   @Ignore
   public void whenPlay_thenLooksOk() throws ParseException, IOException {
     ByteArrayOutputStream out = new ByteArrayOutputStream();
-    new Play().invoke(new Cli(), new PrintStream(out));
+    new Play().invoke(new Cli(), new PrintStream(out), System.in);
     String s = out.toString(UTF_8);
     System.out.println(s);
   }

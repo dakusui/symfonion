@@ -2,8 +2,7 @@ package com.github.dakusui.symfonion.cli;
 
 import com.github.dakusui.logias.lisp.Context;
 import com.github.dakusui.symfonion.cli.subcommands.PresetSubcommand;
-import com.github.dakusui.symfonion.exceptions.CLIException;
-import com.github.dakusui.symfonion.exceptions.ExceptionThrower;
+import com.github.dakusui.symfonion.exceptions.CliException;
 import com.github.dakusui.symfonion.utils.midi.MidiDeviceScanner;
 import com.github.dakusui.symfonion.core.Symfonion;
 import com.github.dakusui.symfonion.exceptions.SymfonionException;
@@ -32,28 +31,22 @@ public class Cli {
   private Subcommand subcommand = PresetSubcommand.VERSION;
   private File source;
   private File sink = new File("a.midi");
-  private Route route = null;
+  private MidiRouteRequest routeRequest = null;
   private Map<String, Pattern> midiins = new HashMap<>();
   private Map<String, Pattern> midiouts = new HashMap<>();
   private final Symfonion symfonion;
   private Options options;
 
-  public Cli(String... args) throws ParseException, CLIException {
+  public Cli(String... args) throws ParseException, CliException {
     this.init(args);
     this.symfonion = createSymfonion();
   }
 
   public Map<String, MidiDevice> prepareMidiOutDevices(PrintStream ps) {
-    return prepareMidiDevices(ps, "out", this.getMidiOutDefinitions());
+    return prepareMidiDevices(ps, this.getMidiOutDefinitions());
   }
 
-  @SuppressWarnings("UnusedDeclaration")
-  protected Map<String, MidiDevice> prepareMidiInDevices(PrintStream ps)
-      throws CLIException {
-    return prepareMidiDevices(ps, "in", this.getMidiOutDefinitions());
-  }
-
-  private static Map<String, MidiDevice> prepareMidiDevices(PrintStream ps, String deviceType, Map<String, Pattern> portDefinitions) {
+  private static Map<String, MidiDevice> prepareMidiDevices(PrintStream ps, Map<String, Pattern> portDefinitions) {
     Map<String, MidiDevice> devices = new HashMap<>();
     for (String portName : portDefinitions.keySet()) {
       Pattern regex = portDefinitions.get(portName);
@@ -67,7 +60,7 @@ public class Cli {
       try {
         devices.put(portName, MidiSystem.getMidiDevice(matchedInfos[0]));
       } catch (MidiUnavailableException e) {
-        throw failedToAccessMidiDevice(deviceType, e, matchedInfos);
+        throw failedToAccessMidiDevice("out", e, matchedInfos);
       }
     }
     return devices;
@@ -81,7 +74,7 @@ public class Cli {
     return this.symfonion;
   }
 
-  public void init(String... args) throws ParseException, CLIException {
+  public void init(String... args) throws ParseException, CliException {
     this.options = buildOptions();
     this.analyzeCommandLine(parseArgs(this.options, args));
   }
@@ -110,7 +103,7 @@ public class Cli {
     options.addOption("V", "version", false, "print the version information.");
     options.addOption("h", "help", false, "print the command line usage.");
     options.addOption("l", "list", false, "list the available midi devices.");
-    options.addOption("p", "play", true, "play the specifiled file.");
+    options.addOption("p", "play", true, "play the specified file.");
     options.addOption("c", "compile", true,
         "compile the specified file to a standard midi file.");
     {
@@ -147,7 +140,7 @@ public class Cli {
     return options;
   }
 
-  public void analyzeCommandLine(CommandLine cmd) throws CLIException {
+  public void analyzeCommandLine(CommandLine cmd) throws CliException {
     if (cmd.hasOption('O')) {
       this.midiouts = parseSpecifiedOptionsInCommandLineAsPortNamePatterns(cmd, "O");
     }
@@ -157,7 +150,7 @@ public class Cli {
     if (cmd.hasOption('o')) {
       String sinkFilename = CliUtils.getSingleOptionValueFromCommandLine(cmd, "o");
       if (sinkFilename == null) {
-        throw new CLIException(composeErrMsg("Output filename is required by this option.", "o"));
+        throw new CliException(composeErrMsg("Output filename is required by this option.", "o"));
       }
       this.sink = new File(sinkFilename);
     }
@@ -171,24 +164,24 @@ public class Cli {
       this.subcommand = PresetSubcommand.PLAY;
       String sourceFilename = CliUtils.getSingleOptionValueFromCommandLine(cmd, "p");
       if (sourceFilename == null) {
-        throw new CLIException(composeErrMsg("Input filename is required by this option.", "p"));
+        throw new CliException(composeErrMsg("Input filename is required by this option.", "p"));
       }
       this.source = new File(sourceFilename);
     } else if (cmd.hasOption("c") || cmd.hasOption("compile")) {
       this.subcommand = PresetSubcommand.COMPILE;
       String sourceFilename = CliUtils.getSingleOptionValueFromCommandLine(cmd, "c");
       if (sourceFilename == null) {
-        throw new CLIException(composeErrMsg("Input filename is required by this option.", "c"));
+        throw new CliException(composeErrMsg("Input filename is required by this option.", "c"));
       }
       this.source = new File(sourceFilename);
     } else if (cmd.hasOption("r") || cmd.hasOption("route")) {
       this.subcommand = PresetSubcommand.ROUTE;
       Properties props = cmd.getOptionProperties("r");
       if (props.size() != 1) {
-        throw new CLIException(composeErrMsg("Route information is not given or specified multiple times.", "r", "route"));
+        throw new CliException(composeErrMsg("Route information is not given or specified multiple times.", "r", "route"));
       }
 
-      this.route = new Route(cmd.getOptionValues('r')[0], cmd.getOptionValues('r')[1]);
+      this.routeRequest = new MidiRouteRequest(cmd.getOptionValues('r')[0], cmd.getOptionValues('r')[1]);
     } else {
       @SuppressWarnings("unchecked")
       List<String> leftovers = cmd.getArgList();
@@ -198,12 +191,12 @@ public class Cli {
         this.subcommand = PresetSubcommand.PLAY;
         this.source = new File(leftovers.getFirst());
       } else {
-        throw new CLIException(composeErrMsg(format("Unrecognized arguments:%s", leftovers.subList(2, leftovers.size())), "-"));
+        throw new CliException(composeErrMsg(format("Unrecognized arguments:%s", leftovers.subList(2, leftovers.size())), "-"));
       }
     }
   }
 
-  private static Map<String, Pattern> parseSpecifiedOptionsInCommandLineAsPortNamePatterns(CommandLine cmd, String optionName) throws CLIException {
+  private static Map<String, Pattern> parseSpecifiedOptionsInCommandLineAsPortNamePatterns(CommandLine cmd, String optionName) throws CliException {
     Properties props = cmd.getOptionProperties(optionName);
     Map<String, Pattern> ret = new HashMap<>();
     for (Object key : props.keySet()) {
@@ -213,7 +206,7 @@ public class Cli {
         Pattern portpattern = Pattern.compile(p);
         ret.put(portname, portpattern);
       } catch (PatternSyntaxException e) {
-        throw new CLIException(composeErrMsg(
+        throw new CliException(composeErrMsg(
             format("Regular expression '%s' for '%s' isn't valid.", portname, p),
             optionName,
             null), e);
@@ -234,16 +227,32 @@ public class Cli {
     return this.sink;
   }
 
+  /**
+   * Returns a map that defines MIDI-in port names.
+   * A key in the returned map is a port name used in a symfonion song file.
+   * The value associated with it is a regular expression that should specify a MIDI device.
+   * The regular expression should be defined so that it matches one and only one MIDI-in device available in the system.
+   *
+   * @return A map that defines MIDI-in port names.
+   */
   public Map<String, Pattern> getMidiInDefinitions() {
     return this.midiins;
   }
 
+  /**
+   * Returns a map that defines MIDI-out port names.
+   * A key in the returned map is a port name used in a symfonion song file.
+   * The value associated with it is a regular expression that should specify a MIDI device.
+   * The regular expression should be defined so that it matches one and only one MIDI-out device available in the system.
+   *
+   * @return A map that defines MIDI-out port names.
+   */
   public Map<String, Pattern> getMidiOutDefinitions() {
     return this.midiouts;
   }
 
-  public Route getRoute() {
-    return this.route;
+  public MidiRouteRequest getRouteRequest() {
+    return this.routeRequest;
   }
 
   public static void main(String... args) {
@@ -259,12 +268,12 @@ public class Cli {
     int ret;
     try {
       Cli cli = new Cli(args);
-      cli.subcommand.invoke(cli, stdout);
+      cli.subcommand.invoke(cli, stdout, System.in);
       ret = 0;
     } catch (ParseException e) {
       printError(stderr, e);
       ret = 1;
-    } catch (CLIException e) {
+    } catch (CliException e) {
       printError(stderr, e);
       ret = 2;
     } catch (SymfonionException e) {

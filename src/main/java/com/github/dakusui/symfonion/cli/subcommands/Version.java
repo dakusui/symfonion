@@ -37,7 +37,7 @@ public class Version implements Subcommand {
     }
     
     @Override
-    public void invoke(Cli cli, PrintStream ps) throws SymfonionException, IOException {
+    public void invoke(Cli cli, PrintStream ps, InputStream inputStream) throws SymfonionException, IOException {
         ps.println("SyMFONION " + version());
         ps.println(license());
     }

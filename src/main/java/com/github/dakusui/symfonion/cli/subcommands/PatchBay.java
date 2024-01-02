@@ -1,102 +1,92 @@
 package com.github.dakusui.symfonion.cli.subcommands;
 
 import com.github.dakusui.symfonion.cli.Cli;
-import com.github.dakusui.symfonion.cli.Route;
+import com.github.dakusui.symfonion.cli.MidiRouteRequest;
 import com.github.dakusui.symfonion.cli.Subcommand;
-import com.github.dakusui.symfonion.exceptions.CLIException;
-import com.github.dakusui.symfonion.utils.midi.MidiDeviceScanner;
-import com.github.dakusui.symfonion.utils.midi.MidiUtils;
+import com.github.dakusui.symfonion.exceptions.CliException;
+import com.github.dakusui.symfonion.exceptions.SymfonionException;
+import com.github.dakusui.symfonion.utils.midi.MidiDeviceManager;
+import com.github.dakusui.symfonion.utils.midi.MidiDeviceRecord;
+import com.github.dakusui.symfonion.utils.midi.MidiDeviceReportFormatter;
 
 import javax.sound.midi.*;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.Map;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
 import static com.github.dakusui.symfonion.cli.CliUtils.composeErrMsg;
 import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.*;
+import static com.github.dakusui.symfonion.utils.Utils.onlyElement;
+import static com.github.dakusui.symfonion.utils.midi.MidiDeviceManager.isMidiDeviceForInput;
+import static com.github.dakusui.symfonion.utils.midi.MidiDeviceManager.matchesPortNameInDefinitions;
+import static com.github.dakusui.valid8j_pcond.forms.Predicates.and;
 import static java.lang.String.format;
 
 public class PatchBay implements Subcommand {
   @Override
-  public void invoke(Cli cli, PrintStream ps) throws CLIException {
-    Route route = cli.getRoute();
+  public void invoke(Cli cli, PrintStream ps, InputStream inputStream) throws SymfonionException, IOException {
+    MidiRouteRequest route = cli.getRouteRequest();
+
     String inPortName = route.in();
+    Map<String, Pattern> midiInDefinitions = requireMidiInDefinitionsContainsInputPortName(cli.getMidiInDefinitions(), inPortName);
+
     String outPortName = route.out();
+    Map<String, Pattern> midiOutDefinitions = requireMidiOutDefinitionsContainsOutputPortName(cli.getMidiOutDefinitions(), outPortName);
 
-    Map<String, Pattern> inDefs = cli.getMidiInDefinitions();
+    MidiDeviceManager midiDeviceManager = MidiDeviceManager.from(MidiDeviceReportFormatter.createDefaultInstance());
 
-    if (!inDefs.containsKey(inPortName)) {
-      throw new CLIException(composeErrMsg(format("MIDI-in port '%s' is specified, but it is not defined by '-I' option.", inPortName), "r", "--route"));
-    }
-    Pattern inRegex = inDefs.get(inPortName);
-    MidiDeviceScanner inScanner = MidiUtils.chooseInputDevices(System.out, inRegex);
-    inScanner.scan();
-    MidiDevice.Info[] matchedInDevices = inScanner.getMatchedDevices();
-    if (matchedInDevices.length != 1) {
-      throw new CLIException(composeErrMsg(format("MIDI-in device for %s(%s) is not found or found more than one.", inPortName, inRegex), "I", null));
-    }
+    MidiDeviceRecord midiInDevice = MidiDeviceManager.lookUpMidiDevice(isInputPortAndMatchesPortName(inPortName, midiInDefinitions), midiDeviceManager);
+    MidiDeviceRecord midiOutDevice = MidiDeviceManager.lookUpMidiDevice(isOutputPortAndMatchesPortName(outPortName, midiOutDefinitions), midiDeviceManager);
 
-    ps.println();
-
-    Map<String, Pattern> outDefs = cli.getMidiOutDefinitions();
-    if (!outDefs.containsKey(outPortName)) {
-      throw new CLIException(composeErrMsg(format("MIDI-out port '%s' is specified, but it is not defined by '-O' option.", inPortName), "r", "route"));
-    }
-    Pattern outRegex = outDefs.get(outPortName);
-    MidiDeviceScanner outScanner = MidiUtils.chooseOutputDevices(System.out, outRegex);
-    outScanner.scan();
-    MidiDevice.Info[] matchedOutDevices = outScanner.getMatchedDevices();
-    if (matchedOutDevices.length != 1) {
-      throw new CLIException(composeErrMsg(format("MIDI-out device for %s(%s) is not found or found more than one.", outPortName, outRegex), "I", null));
-    }
-    ps.println();
-    MidiDevice inMidiDevice;
-    try {
-      inMidiDevice = MidiSystem.getMidiDevice(matchedInDevices[0]);
-    } catch (MidiUnavailableException e) {
-      throw failedToOpenMidiIn(e, matchedInDevices[0]);
-    }
-    MidiDevice outMidiDevice;
-    try {
-      outMidiDevice= MidiSystem.getMidiDevice(matchedOutDevices[0]);
-    } catch (MidiUnavailableException e) {
-      throw failedToOpenMidiOut(e, matchedInDevices[0]);
-    }
-    patchBay(inMidiDevice, outMidiDevice);
+    route(midiInDevice, midiOutDevice, midiDeviceManager, ps, inputStream);
   }
 
-  public static void patchBay(MidiDevice inMidiDevice, MidiDevice outMidiDevice)
-      throws CLIException {
-    try {
-      outMidiDevice.open();
-    } catch (MidiUnavailableException e) {
-      throw failedToOpenMidiOut(e, outMidiDevice.getDeviceInfo());
-    }
-    try (outMidiDevice) {
-      try {
-        inMidiDevice.open();
-      } catch (MidiUnavailableException ee) {
-        throw failedToOpenMidiIn(ee, inMidiDevice.getDeviceInfo());
-      }
-      try (inMidiDevice) {
+  private static Predicate<MidiDeviceRecord> isOutputPortAndMatchesPortName(String outPortName, Map<String, Pattern> midiOutDefinitions) {
+    return and(MidiDeviceManager.isMidiDeviceForOutput(), matchesPortNameInDefinitions(outPortName, midiOutDefinitions));
+  }
+
+  private static Predicate<MidiDeviceRecord> isInputPortAndMatchesPortName(String inPortName, Map<String, Pattern> midiInDefinitions) {
+    return and(isMidiDeviceForInput(), matchesPortNameInDefinitions(inPortName, midiInDefinitions));
+  }
+
+  public static void route(MidiDeviceRecord input, MidiDeviceRecord output, MidiDeviceManager deviceManager, PrintStream ps, InputStream inputStream) {
+    try (MidiDevice outMidiDevice = deviceManager.openMidiDevice(output)) {
+      try (MidiDevice inMidiDevice = deviceManager.openMidiDevice(input)) {
         try (Receiver r = outMidiDevice.getReceiver()) {
           try (Transmitter t = inMidiDevice.getTransmitter()) {
             t.setReceiver(r);
-            System.err.println("Now in MIDI patch-bay mode. Hit enter to quit.");
+            ps.println("Now in MIDI patch-bay mode. Hit enter to quit.");
             //noinspection ResultOfMethodCallIgnored
-            System.in.read();
+            inputStream.read();
           } catch (IOException e) {
-            System.err.println("quitting due to an error.");
+            ps.println("quitting due to an error.");
           } finally {
-            System.err.println("closing transmitter");
+            ps.println("closing transmitter");
           }
         } catch (MidiUnavailableException e) {
           throw failedToRetrieveTransmitterFromMidiIn(e, inMidiDevice.getDeviceInfo());
         } finally {
-          System.err.println("closing receiver");
+          ps.println("closing receiver");
         }
       }
     }
+  }
+
+
+  private static Map<String, Pattern> requireMidiInDefinitionsContainsInputPortName(Map<String, Pattern> midiOutDefinitions, String inPortName) {
+    if (!midiOutDefinitions.containsKey(inPortName)) {
+      throw new CliException(composeErrMsg(format("MIDI-in port '%s' is specified, but it is not defined by '-I' option.", inPortName), "r", "--route"));
+    }
+    return midiOutDefinitions;
+  }
+
+  private static Map<String, Pattern> requireMidiOutDefinitionsContainsOutputPortName(Map<String, Pattern> midiOutDefinitions, String outPortName) {
+    if (!midiOutDefinitions.containsKey(outPortName)) {
+      throw new CliException(composeErrMsg(format("MIDI-out port '%s' is specified, but it is not defined by '-O' option.", outPortName), "r", "route"));
+    }
+    return midiOutDefinitions;
   }
 }

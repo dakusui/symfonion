@@ -25,7 +25,7 @@ public class CompileTest {
             "port1",
             json("C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;"),
             sixteenBeatsGroove()).toString());
-    new Compile().invoke(new Cli("-c", f.getAbsolutePath()), new PrintStream(out));
+    new Compile().invoke(new Cli("-c", f.getAbsolutePath()), new PrintStream(out), System.in);
     String s = out.toString(UTF_8);
     System.out.println(s);
   }

@@ -1,7 +1,12 @@
 package com.github.dakusui.testutils;
 
 import java.io.*;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.List;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 public enum TestUtils {
   ;
@@ -32,6 +37,49 @@ public enum TestUtils {
       return ret;
     } catch (IOException e) {
       throw new RuntimeException(e);
+    }
+  }
+
+  public static InputStream immediatelyClosingInputStream() {
+    return new InputStream() {
+      @Override
+      public int read() {
+        return -1;
+      }
+    };
+  }
+
+  public static OutputCapturingPrintStream outputCapturingPrintStream() {
+    return new OutputCapturingPrintStream();
+  }
+
+  public static class OutputCapturingPrintStream extends PrintStream {
+    private final ByteArrayOutputStream baos;
+
+    public OutputCapturingPrintStream() {
+      super(new ByteArrayOutputStream());
+      this.baos = (ByteArrayOutputStream) this.out;
+    }
+
+    public byte[] toByteArray() {
+      return this.baos.toByteArray();
+    }
+
+    public String toString(Charset charset) {
+      return new String(toByteArray(), charset);
+    }
+
+    @Override
+    public String toString() {
+      return this.toString(UTF_8);
+    }
+
+    public List<String> toStringList(Charset charset) {
+      return Arrays.asList(this.toString(charset).split("\n"));
+    }
+
+    public List<String> toStringList() {
+      return toStringList(UTF_8);
     }
   }
 }
