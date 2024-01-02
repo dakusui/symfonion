@@ -89,7 +89,7 @@ public class MidiDeviceManager {
   }
 
   public MidiDevice openMidiDevice(MidiDeviceRecord deviceRecord) {
-    try (ExceptionThrower.Context c = context($(MIDI_DEVICE_INFO, deviceRecord.info()), $(MIDI_DEVICE_INFO_IO, deviceRecord.io()))) {
+    try (ExceptionThrower.Context ignored = context($(MIDI_DEVICE_INFO, deviceRecord.info()), $(MIDI_DEVICE_INFO_IO, deviceRecord.io()))) {
       return openMidiDevice(deviceRecord.info());
     }
   }

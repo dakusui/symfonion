@@ -21,8 +21,6 @@ public class PatchBayTest {
   @Test
   public void whenPatchBay_thenOutputLooksOk() throws ParseException, IOException {
     assumeMidiDevicesPresent();
-    if (true)
-      throw new RuntimeException(Arrays.toString(MidiSystem.getMidiDeviceInfo()));
 
     TestUtils.OutputCapturingPrintStream out = TestUtils.outputCapturingPrintStream();
     new PatchBay().invoke(new Cli("-r", "in=out", "-I", "in=Real.*", "-O", "out=Gervill"), out, immediatelyClosingInputStream());

@@ -1,5 +1,6 @@
 package com.github.dakusui.testutils.midi;
 
+import com.github.dakusui.symfonion.utils.midi.MidiUtils;
 import org.junit.AssumptionViolatedException;
 
 import javax.sound.midi.MidiDevice;
@@ -23,7 +24,7 @@ public class MidiTestUtils {
     MidiDevice.Info[] infos = MidiSystem.getMidiDeviceInfo();
     List<String> missingDevices = new LinkedList<>();
     for (String requiredDeviceName : asList("Gervill", "Real Time Sequencer"))
-      if (Arrays.stream(infos).noneMatch(i -> Objects.equals(requiredDeviceName, i.getName())))
+      if (Arrays.stream(infos).noneMatch(i -> Objects.equals(requiredDeviceName, i.getName()) && MidiUtils.isMidiDeviceForOutput(i)))
         missingDevices.add(requiredDeviceName);
     if (!missingDevices.isEmpty())
       throw new AssumptionViolatedException("MIDI-devices: " + missingDevices + " were not found in this system. Known devices are: " + Arrays.toString(infos));

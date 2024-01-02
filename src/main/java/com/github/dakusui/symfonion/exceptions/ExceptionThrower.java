@@ -21,8 +21,7 @@ import static java.lang.String.format;
 public class ExceptionThrower {
   public enum ContextKey {
     MIDI_DEVICE_INFO(MidiDevice.Info.class),
-    MIDI_DEVICE_INFO_IO(MidiDeviceRecord.Io.class),
-
+    MIDI_DEVICE_INFO_IO(String.class),
     JSON_ELEMENT_ROOT(JsonObject.class)
     ;
     private final Class<?> type;
@@ -178,7 +177,7 @@ public class ExceptionThrower {
   public static CliException failedToOpenMidiDevice(MidiUnavailableException ee) {
     throw new CliException(format("(-) Failed to open MIDI-%s device (%s)",
         ExceptionThrower.<MidiDevice.Info>contextValueOf(MIDI_DEVICE_INFO),
-        ExceptionThrower.<MidiDeviceRecord.Io>contextValueOf(MIDI_DEVICE_INFO_IO).name().toLowerCase()),
+        ExceptionThrower.<String>contextValueOf(MIDI_DEVICE_INFO_IO).toLowerCase()),
         ee);
   }
 
