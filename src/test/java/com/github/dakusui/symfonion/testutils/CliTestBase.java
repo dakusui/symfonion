@@ -1,6 +1,7 @@
 package com.github.dakusui.symfonion.testutils;
 
 import java.io.*;
+import java.util.Objects;
 
 import com.github.dakusui.symfonion.cli.Cli;
 import com.github.dakusui.testutils.forms.core.AllOf;
@@ -26,7 +27,14 @@ public class CliTestBase extends TestBase {
                     
           STDERR:
           %s
-          """, this.exitCode(), this.out(), this.err());
+          """,
+          insertOneWhiteSpaceBeforeEveryLine(Objects.toString(this.exitCode())),
+          insertOneWhiteSpaceBeforeEveryLine(this.out()),
+          insertOneWhiteSpaceBeforeEveryLine(this.err()));
+    }
+
+    private static String insertOneWhiteSpaceBeforeEveryLine(String message) {
+      return " " + message.replaceAll("\n", "\n ");
     }
   }
 
@@ -46,7 +54,7 @@ public class CliTestBase extends TestBase {
 
   @Before
   public void createWorkFile() throws IOException {
-    this.workFile = File.createTempFile("symfonion-test", "json");
+    this.workFile = File.createTempFile("symfonion-test", ".json");
   }
 
   protected Result compileResourceWithCli(String resourceName) throws IOException, SymfonionException {
@@ -71,6 +79,7 @@ public class CliTestBase extends TestBase {
   }
 
   public static void assertActualObjectToStringValueContainsExpectedString(String expected, Result actual) {
+    System.err.println(actual.toString());
     assertThat(
         actual,
         AllOf.$(

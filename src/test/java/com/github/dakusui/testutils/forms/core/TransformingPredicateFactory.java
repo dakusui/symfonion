@@ -2,8 +2,10 @@ package com.github.dakusui.testutils.forms.core;
 
 import com.github.dakusui.testutils.forms.java.util.stream.StreamTo;
 import com.github.dakusui.thincrest_pcond.core.printable.PrintablePredicateFactory;
+import com.github.dakusui.thincrest_pcond.experimentals.cursor.Cursors;
 import com.github.dakusui.thincrest_pcond.forms.Predicates;
 
+import java.awt.*;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -71,6 +73,21 @@ public class TransformingPredicateFactory<P, O> extends PrintablePredicateFactor
 
     public Predicate<O> checkCount(Predicate<Long> cond) {
       return this.check(Predicates.<Stream<E>, Long>transform(StreamTo.count()).check(cond));
+    }
+  }
+
+  public static class ForString<O> extends TransformingPredicateFactory<String, O> {
+
+    public ForString(PrintablePredicateFactory.TransformingPredicate.Factory<String, O> base) {
+      super(base);
+    }
+
+    public Predicate<O> matches(String regex) {
+      return this.check(Predicates.matchesRegex(regex));
+    }
+
+    public Predicate<O> findSubstrings(String... substrings) {
+      return this.check(Cursors.findSubstrings(substrings));
     }
   }
 }

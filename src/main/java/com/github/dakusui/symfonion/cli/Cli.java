@@ -141,6 +141,9 @@ public record Cli(Subcommand subcommand, File source, File sink, MidiRouteReques
     } catch (IOException e) {
       e.printStackTrace(stderr);
       ret = 4;
+    } catch (Exception e) {
+      e.printStackTrace(stderr);
+      ret = 5;
     }
     return ret;
   }
