@@ -205,7 +205,7 @@ public class JsonUtils {
                 elem,
                 String
                     .format(
-                        "A primitive, an array whose lenghth is less than or equal to %d, or an object are acceptble",
+                        "A primitive, an array whose length is less than or equal to %d, or an object are acceptable",
                         prioritizedKeys.length));
           }
         }
@@ -409,14 +409,21 @@ public class JsonUtils {
 
   private static String jsonpath(List<Object> path) {
     StringBuilder buf = new StringBuilder();
-    for (Object obj : path) {
-      if (obj instanceof Number) {
-        buf.append("[").append(obj).append("]");
+    for (Object each : path) {
+      if (each instanceof Number) {
+        buf.append("[").append(each).append("]");
       } else {
-        buf.append(".").append(obj);
+        buf.append(".").append(quoteIfNonAlphanumericalIsContained(each));
       }
     }
     return buf.toString();
+  }
+
+  private static String quoteIfNonAlphanumericalIsContained(Object obj) {
+    if (obj instanceof String s) {
+      return s.matches("[a-zA-Z_][a-zA-Z0-9_]+") ? s : ('"' + s + '"');
+    }
+    return Objects.toString(obj);
   }
 
   public static JsonElement toJson(String str) {
