@@ -244,7 +244,7 @@ A "$body" of a pattern is a list of 'strokes' and each stroke is a dictionary li
 
 Relationships between patterns, strokes, and notes are described in the figure below.
 
-[ditaa]
+[ditaa, separation=false]
 ----
 
        +-------+   body+----------------+1     n+----------+
