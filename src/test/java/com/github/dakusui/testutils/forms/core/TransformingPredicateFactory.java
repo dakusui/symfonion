@@ -2,7 +2,7 @@ package com.github.dakusui.testutils.forms.core;
 
 import com.github.dakusui.testutils.forms.java.util.stream.StreamTo;
 import com.github.dakusui.thincrest_pcond.core.printable.PrintablePredicateFactory;
-import com.github.dakusui.valid8j_pcond.forms.Predicates;
+import com.github.dakusui.thincrest_pcond.forms.Predicates;
 
 import java.util.List;
 import java.util.function.Predicate;

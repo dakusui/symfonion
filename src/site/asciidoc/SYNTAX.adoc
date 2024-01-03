@@ -331,7 +331,8 @@ Some of non-note messages, for example '$volume', can have arrays as their value
     }
 ----
 
-If this stroke is a quarter note, 4 volume messages (control change #7) each of whose length is equal to sixteenth note are sent one after another. The values of of the messages will be 0, 10, 20, and 40.
+If this stroke is a quarter note, 4 volume messages (control change #7) each of whose length is equal to sixteenth note are sent one after another.
+The values of the messages will be 0, 10, 20, and 40.
 
 You can omit values in between concrete values like this,
 
@@ -344,13 +345,32 @@ You can omit values in between concrete values like this,
     },
     {
         "$notes":"C",
-        "$volume":[0,,,80,,,100]
+        "$volume":[0,,,80,,,,100]
     }
 ]
 ----
 
-SyMFONION fills the gap by using linearization.
-And if you give an integer to "$volume" attribute, its considered as an array which has only one value. In other words, strokes in the example below are equivalent to each other.
+SyMFONION fills the gap by linear interpolation.
+
+This feature is implemented using GSON's behavior, where missing values are interpreted as `null`.
+`null`s will be replaced with appropriate values by SyMFONION.
+However, this is parser dependent semantics and such data is considered "malformed" JSON, strictly speaking.
+
+You can use a string contains only dots (`...`) instead.
+
+[source, json]
+----
+{
+    "$notes":"C",
+    "$volume":[0,"..",80,"...",100]
+}
+----
+
+One `.` will be interpreted as one `null`, which will be interpolated by SyMFONION.
+
+
+If you give an integer to "$volume" attribute, its considered as an array which has only one value.
+In other words, strokes in the example below are equivalent to each other.
 
 [source, json]
 ----
