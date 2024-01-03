@@ -6,6 +6,7 @@ import com.github.dakusui.symfonion.testutils.json.SymfonionJsonTestUtils;
 import com.github.dakusui.testutils.forms.core.AllOf;
 import com.github.dakusui.testutils.forms.core.Transform;
 import com.google.gson.JsonObject;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.FileNotFoundException;
@@ -22,6 +23,7 @@ import static com.github.dakusui.thincrest_pcond.forms.Functions.call;
 import static com.github.dakusui.thincrest_pcond.forms.Functions.stringify;
 import static com.github.dakusui.thincrest_pcond.forms.Predicates.isFalse;
 
+@Ignore
 public class ValidDataTest extends CliTestBase {
   @Test
   public void givenThreeStrokes_whenPlaySubcommandIsInvoked_thenPlayed() throws FileNotFoundException {

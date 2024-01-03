@@ -9,31 +9,31 @@ import static java.util.Objects.requireNonNull;
 
 public class JsonUtils {
   static final ThreadLocal<JsonParser> JSON_PARSER;
-  
+
   static {
     JSON_PARSER = new ThreadLocal<>();
   }
-  
+
   public static String summarizeJsonElement(JsonElement jsonElement) {
-        if (jsonElement == null || jsonElement.isJsonNull()) {
-            return "null";
-        }
-        if (jsonElement.isJsonPrimitive()) {
-            return jsonElement.getAsString() + "(primitive)";
-        }
-        if (jsonElement.isJsonArray()) {
-            return "array(size=" + jsonElement.getAsJsonArray().size() + ")";
-        }
-        if (jsonElement.isJsonObject()) {
-            return "object(" + jsonElement.getAsJsonObject().entrySet().size() + " entries)";
-        }
-        return jsonElement.toString() + "(unknown)";
+    if (jsonElement == null || jsonElement.isJsonNull()) {
+      return "null";
     }
-  
+    if (jsonElement.isJsonPrimitive()) {
+      return jsonElement.getAsString() + "(primitive)";
+    }
+    if (jsonElement.isJsonArray()) {
+      return "array(size=" + jsonElement.getAsJsonArray().size() + ")";
+    }
+    if (jsonElement.isJsonObject()) {
+      return "object(" + jsonElement.getAsJsonObject().entrySet().size() + " entries)";
+    }
+    return jsonElement.toString() + "(unknown)";
+  }
+
   public static String findPathOf(JsonElement target, JsonObject root) {
-      return buildPathInfo(root).get(target);
-    }
-  
+    return buildPathInfo(root).get(target);
+  }
+
   enum JsonTypes {
     OBJECT {
       @Override
@@ -52,7 +52,7 @@ public class JsonUtils {
         }
         return value.getAsJsonArray();
       }
-      
+
     },
     PRIMITIVE {
       @Override
@@ -73,10 +73,10 @@ public class JsonUtils {
         return value.getAsJsonNull();
       }
     };
-    
+
     abstract JsonElement _validate(JsonElement value)
         throws JsonTypeMismatchException;
-    
+
     JsonElement validate(JsonElement value) throws JsonTypeMismatchException {
       if (value == null) {
         return null;
@@ -84,7 +84,7 @@ public class JsonUtils {
       return _validate(value);
     }
   }
-  
+
   private static JsonElement asJsonElementWithDefault(JsonElement base, JsonElement defaultValue, int from, Object[] path)
       throws JsonInvalidPathException {
     JsonElement ret = _asJsonElement(base, defaultValue, from, path);
@@ -96,7 +96,7 @@ public class JsonUtils {
     }
     return ret;
   }
-  
+
   private static JsonElement asJsonElement(JsonElement base, int from, Object[] path) throws JsonInvalidPathException {
     JsonElement ret = _asJsonElement(base, null, from, path);
     if (ret == null) {
@@ -104,7 +104,7 @@ public class JsonUtils {
     }
     return ret;
   }
-  
+
   private static JsonElement _asJsonElement(JsonElement base,
                                             JsonElement defaultValue, int from, Object[] path)
       throws JsonInvalidPathException {
@@ -139,9 +139,9 @@ public class JsonUtils {
         return null;
       }
     }
-    
+
     JsonElement ret = _asJsonElement(newbase, defaultValue, from + 1, path);
-    
+
     if (ret == null) {
       if (defaultValue != null) {
         return defaultValue;
@@ -149,7 +149,7 @@ public class JsonUtils {
     }
     return ret;
   }
-  
+
   private static Integer parseInt(Object object) {
     Integer ret = null;
     try {
@@ -157,10 +157,10 @@ public class JsonUtils {
       ret = Integer.parseInt(str);
     } catch (NumberFormatException ignored) {
     }
-    
+
     return ret;
   }
-  
+
   public static boolean hasPath(JsonElement base, Object... path) {
     try {
       return _asJsonElement(base, null, 0, path) != null;
@@ -168,7 +168,7 @@ public class JsonUtils {
       return false;
     }
   }
-  
+
   public static JsonObject asJsonObjectWithDefault(JsonObject base,
                                                    JsonObject defaultValue, Object... path)
       throws JsonTypeMismatchException,
@@ -176,13 +176,13 @@ public class JsonUtils {
     return (JsonObject) JsonTypes.OBJECT.validate(asJsonElementWithDefault(
         base, defaultValue, path));
   }
-  
+
   public static JsonObject asJsonObject(JsonObject base, Object... path)
       throws JsonTypeMismatchException,
       JsonInvalidPathException {
     return asJsonObjectWithDefault(base, null, path);
   }
-  
+
   public static JsonObject asJsonObjectWithPromotion(JsonElement base,
                                                      String[] prioritizedKeys, Object... path)
       throws JsonInvalidPathException,
@@ -216,7 +216,7 @@ public class JsonUtils {
     }
     return ret;
   }
-  
+
   public static JsonArray asJsonArrayWithPromotion(JsonElement base,
                                                    Object... path) throws
       JsonInvalidPathException, JsonTypeMismatchException {
@@ -234,30 +234,30 @@ public class JsonUtils {
     }
     return ret;
   }
-  
+
   public static JsonArray asJsonArray(JsonElement base, Object... path)
       throws JsonException {
     return asJsonArrayWithDefault(base, null, path);
   }
-  
+
   public static JsonArray asJsonArrayWithDefault(JsonElement base,
                                                  JsonArray defaultValue, Object... path) throws JsonTypeMismatchException,
       JsonInvalidPathException {
     return (JsonArray) JsonTypes.ARRAY.validate(asJsonElementWithDefault(base,
         defaultValue, path));
   }
-  
+
   public static JsonElement asJsonElementWithDefault(JsonElement base,
                                                      JsonElement defaultValue, Object... path)
       throws JsonInvalidPathException {
     return asJsonElementWithDefault(base, defaultValue, 0, path);
   }
-  
+
   public static JsonElement asJsonElement(JsonElement base, Object... path)
       throws JsonInvalidPathException {
     return asJsonElement(base, 0, path);
   }
-  
+
   public static String asString(JsonElement base, Object... path)
       throws JsonTypeMismatchException,
       JsonInvalidPathException {
@@ -268,7 +268,7 @@ public class JsonUtils {
     }
     return prim.getAsString();
   }
-  
+
   public static String asStringWithDefault(JsonElement base,
                                            String defaultValue, Object... path) throws JsonTypeMismatchException,
       JsonInvalidPathException {
@@ -283,7 +283,7 @@ public class JsonUtils {
     }
     return prim.getAsString();
   }
-  
+
   public static int asInt(JsonElement base, Object... path)
       throws JsonTypeMismatchException,
       JsonFormatException, JsonInvalidPathException {
@@ -293,7 +293,7 @@ public class JsonUtils {
       throw new JsonFormatException(asJsonElement(base, path));
     }
   }
-  
+
   public static int asIntWithDefault(JsonElement base, int defaultValue,
                                      Object... path) throws JsonTypeMismatchException,
       JsonFormatException, JsonInvalidPathException {
@@ -303,7 +303,7 @@ public class JsonUtils {
       throw new JsonFormatException(asJsonElement(base, path));
     }
   }
-  
+
   public static long asLong(JsonElement base, Object... path)
       throws JsonTypeMismatchException,
       JsonFormatException, JsonInvalidPathException {
@@ -313,7 +313,7 @@ public class JsonUtils {
       throw new JsonFormatException(asJsonElement(base, path));
     }
   }
-  
+
   @SuppressWarnings("UnusedDeclaration")
   public static long asLongWithDefault(JsonElement base, long defaultValue,
                                        Object... path) throws JsonTypeMismatchException,
@@ -324,7 +324,7 @@ public class JsonUtils {
       throw new JsonFormatException(asJsonElement(base, path));
     }
   }
-  
+
   @SuppressWarnings("UnusedDeclaration")
   public static float asFloat(JsonElement base, Object... path)
       throws JsonTypeMismatchException,
@@ -335,7 +335,7 @@ public class JsonUtils {
       throw new JsonFormatException(asJsonElement(base, path));
     }
   }
-  
+
   @SuppressWarnings("UnusedDeclaration")
   public static float asFloatWithDefault(JsonElement base, float defaultValue,
                                          Object... path) throws JsonTypeMismatchException,
@@ -346,7 +346,7 @@ public class JsonUtils {
       throw new JsonFormatException(asJsonElement(base, path));
     }
   }
-  
+
   public static double asDouble(JsonElement base, Object... path)
       throws JsonException {
     try {
@@ -355,7 +355,7 @@ public class JsonUtils {
       throw new JsonFormatException(asJsonElement(base, path));
     }
   }
-  
+
   public static double asDoubleWithDefault(JsonElement base,
                                            double defaultValue, Object... path) throws JsonTypeMismatchException,
       JsonFormatException, JsonInvalidPathException {
@@ -365,7 +365,7 @@ public class JsonUtils {
       throw new JsonFormatException(asJsonElement(base, path));
     }
   }
-  
+
   public static Map<JsonElement, String> buildPathInfo(JsonObject root) {
     Map<JsonElement, String> ret = new HashMap<>();
     ret.put(root, ".");
@@ -373,7 +373,7 @@ public class JsonUtils {
     buildPathInfo(ret, path, root);
     return ret;
   }
-  
+
   private static void buildPathInfo(Map<JsonElement, String> map,
                                     List<Object> path, JsonElement elem) {
     if (!elem.isJsonNull()) {
@@ -385,7 +385,7 @@ public class JsonUtils {
       map.put(elem, jsonpath(path));
     }
   }
-  
+
   private static void buildPathInfo(Map<JsonElement, String> map,
                                     List<Object> path, JsonArray arr) {
     int len = arr.size();
@@ -395,7 +395,7 @@ public class JsonUtils {
       path.removeLast();
     }
   }
-  
+
   private static void buildPathInfo(Map<JsonElement, String> map,
                                     List<Object> path, JsonObject obj) {
     for (Entry<String, JsonElement> ent : obj.entrySet()) {
@@ -406,49 +406,42 @@ public class JsonUtils {
       path.removeLast();
     }
   }
-  
+
   private static String jsonpath(List<Object> path) {
     StringBuilder buf = new StringBuilder();
-    boolean firstTime = true;
     for (Object obj : path) {
       if (obj instanceof Number) {
-        buf.append("[");
-        buf.append(obj);
-        buf.append("]");
+        buf.append("[").append(obj).append("]");
       } else {
-        if (!firstTime) {
-          buf.append(".");
-        }
-        buf.append(obj);
+        buf.append(".").append(obj);
       }
-      firstTime = false;
     }
     return buf.toString();
   }
-  
+
   public static JsonElement toJson(String str) {
     return JsonParser.parseString(str);
   }
-  
+
   public static Iterator<String> keyIterator(final JsonObject json) {
     return new Iterator<>() {
       final Iterator<Entry<String, JsonElement>> iEntries = json.entrySet()
           .iterator();
-      
+
       public boolean hasNext() {
         return iEntries.hasNext();
       }
-      
+
       public String next() {
         return iEntries.next().getKey();
       }
-      
+
       public void remove() {
         iEntries.remove();
       }
     };
   }
-  
+
   public static String formatPath(Object... relPath) {
     StringBuilder ret = new StringBuilder();
     for (Object obj : relPath) {
@@ -458,11 +451,11 @@ public class JsonUtils {
     }
     return ret.toString();
   }
-  
+
   public static JsonObject merge(JsonObject left, JsonObject right) throws JsonInvalidPathException {
     return merge(left, right, new LinkedList<>());
   }
-  
+
   public static JsonObject merge(JsonObject left, JsonObject right, List<Object> relPath) throws JsonInvalidPathException {
     JsonObject ret = new JsonObject();
     for (Entry<String, JsonElement> each : left.entrySet()) {
