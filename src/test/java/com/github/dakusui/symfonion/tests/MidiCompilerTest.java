@@ -241,7 +241,7 @@ public class MidiCompilerTest extends TestBase {
             )),
 
         createPositiveTestCase(
-            TestUtils.name("a note and an 'arrayable' control (volume) with nulls", "compile", "arrayable control expanded replacing nulls with intermediate values."),
+            TestUtils.name("a note and an 'arrayable' control (volume) with nulls", "compile", "arrayable control expanded replacing dots with intermediate values."),
             SymfonionJsonTestUtils.composeSymfonionSongJsonObject(
                 "port2", array(new StrokeBuilder().notes("C4").volume(array(10, "........", 100)).build()), SymfonionJsonTestUtils.sixteenBeatsGroove()),
             Transform.$(FromSong.toSequence("port2").andThen(trackList()).andThen(elementAt(0))).allOf(
