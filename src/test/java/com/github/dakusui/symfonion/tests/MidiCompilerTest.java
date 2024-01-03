@@ -1,6 +1,7 @@
 package com.github.dakusui.symfonion.tests;
 
 import com.github.dakusui.symfonion.testutils.SymfonionTestCase;
+import com.github.dakusui.symfonion.testutils.TestBase;
 import com.github.dakusui.symfonion.testutils.forms.FromSong;
 import com.github.dakusui.symfonion.testutils.json.StrokeBuilder;
 import com.github.dakusui.symfonion.testutils.json.SymfonionJsonTestUtils;
@@ -39,7 +40,7 @@ import static com.github.dakusui.testutils.midi.Notes.C3;
 import static com.github.dakusui.thincrest_pcond.forms.Predicates.*;
 
 @RunWith(Parameterized.class)
-public class MidiCompilerTest {
+public class MidiCompilerTest extends TestBase {
 
   @BeforeClass
   public static void beforeAll() {

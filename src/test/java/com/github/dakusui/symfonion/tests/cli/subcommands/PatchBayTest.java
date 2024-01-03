@@ -2,6 +2,7 @@ package com.github.dakusui.symfonion.tests.cli.subcommands;
 
 import com.github.dakusui.symfonion.cli.Cli;
 import com.github.dakusui.symfonion.cli.subcommands.PatchBay;
+import com.github.dakusui.symfonion.testutils.TestBase;
 import com.github.dakusui.testutils.TestUtils;
 import org.apache.commons.cli.ParseException;
 import org.junit.Test;
@@ -14,7 +15,7 @@ import static com.github.dakusui.thincrest.TestAssertions.assertThat;
 import static com.github.dakusui.thincrest_pcond.experimentals.cursor.Cursors.findElements;
 import static com.github.dakusui.thincrest_pcond.forms.Predicates.containsString;
 
-public class PatchBayTest {
+public class PatchBayTest extends TestBase {
   @Test
   public void whenPatchBay_thenOutputLooksOk() throws ParseException, IOException {
     assumeRequiredMidiDevicesPresent();

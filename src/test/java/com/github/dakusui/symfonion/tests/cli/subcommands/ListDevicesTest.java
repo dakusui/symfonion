@@ -2,6 +2,8 @@ package com.github.dakusui.symfonion.tests.cli.subcommands;
 
 import com.github.dakusui.symfonion.cli.Cli;
 import com.github.dakusui.symfonion.cli.subcommands.ListDevices;
+import com.github.dakusui.symfonion.testutils.CliTestBase;
+import com.github.dakusui.symfonion.testutils.TestBase;
 import org.apache.commons.cli.ParseException;
 import org.junit.Test;
 
@@ -10,7 +12,7 @@ import java.io.PrintStream;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-public class ListDevicesTest {
+public class ListDevicesTest extends TestBase {
   @Test
   public void whenListDevices_thenLooksOk() throws ParseException {
     ByteArrayOutputStream out = new ByteArrayOutputStream();

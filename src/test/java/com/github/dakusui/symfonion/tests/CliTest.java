@@ -9,10 +9,11 @@ import com.github.dakusui.symfonion.cli.Cli;
 import com.github.dakusui.symfonion.cli.subcommands.PresetSubcommand;
 import com.github.dakusui.symfonion.exceptions.CliException;
 import com.github.dakusui.symfonion.exceptions.SymfonionException;
+import com.github.dakusui.symfonion.testutils.TestBase;
 import org.apache.commons.cli.ParseException;
 import org.junit.Test;
 
-public class CliTest {
+public class CliTest extends TestBase {
 	@Test
 	public void help_01() throws CliException, ParseException {
 		Cli r = new Cli("-h");
