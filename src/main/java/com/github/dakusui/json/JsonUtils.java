@@ -368,7 +368,7 @@ public class JsonUtils {
   
   public static Map<JsonElement, String> buildPathInfo(JsonObject root) {
     Map<JsonElement, String> ret = new HashMap<>();
-    ret.put(root, "/");
+    ret.put(root, ".");
     List<Object> path = new LinkedList<>();
     buildPathInfo(ret, path, root);
     return ret;

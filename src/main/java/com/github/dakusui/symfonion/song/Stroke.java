@@ -3,7 +3,9 @@ package com.github.dakusui.symfonion.song;
 import com.github.dakusui.json.*;
 import com.github.dakusui.symfonion.core.MidiCompiler;
 import com.github.dakusui.symfonion.core.MidiCompilerContext;
+import com.github.dakusui.symfonion.exceptions.ExceptionThrower;
 import com.github.dakusui.symfonion.exceptions.SymfonionException;
+import com.github.dakusui.symfonion.exceptions.SymfonionIllegalFormatException;
 import com.github.dakusui.symfonion.song.Pattern.Parameters;
 import com.github.dakusui.symfonion.utils.Fraction;
 import com.github.dakusui.symfonion.utils.Utils;
@@ -129,7 +131,7 @@ public class Stroke {
     return ret;
   }
 
-  private static JsonArray expandDots(JsonArray arr) {
+  private static JsonArray expandDots(JsonArray arr) throws SymfonionIllegalFormatException {
     JsonArray ret = new JsonArray();
     for (int i = 0; i < arr.size(); i++) {
       JsonElement cur = arr.get(i);
@@ -143,14 +145,14 @@ public class Stroke {
             if (s.charAt(j) == '.')
               ret.add(JsonNull.INSTANCE);
             else
-              throw new RuntimeException();
+              throw syntaxErrorWhenExpandingDotsIn(arr);
           }
         } else
           throw new RuntimeException();
       } else if (cur.isJsonNull())
         ret.add(cur);
       else
-        throw new RuntimeException();
+        throw ExceptionThrower.typeMismatchWhenExpandingDotsIn(arr);
     }
     return ret;
   }

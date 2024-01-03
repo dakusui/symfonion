@@ -15,15 +15,15 @@ public class SymfonionMissingElementException extends SymfonionSyntaxException {
   @Serial
   private static final long serialVersionUID = -3887808558721595868L;
   
-  public SymfonionMissingElementException(JsonElement actualJSON, JsonObject root, Object relPath, File sourceFile) {
-    super(formatMessage(actualJSON, relPath), actualJSON, root, sourceFile);
+  public SymfonionMissingElementException(JsonElement problemCausingJsonNode, Object relativePathFromProblemCausingJsonNode, JsonObject root, File sourceFile) {
+    super(formatMessage(problemCausingJsonNode, relativePathFromProblemCausingJsonNode), problemCausingJsonNode, root, sourceFile);
   }
   
-  private static String formatMessage(JsonElement actualJSON, Object relPath) {
+  private static String formatMessage(JsonElement problemCausingJsonNode, Object relPath) {
     if (relPath instanceof Integer) {
-      return String.format("%s at this path requires %dth element", JsonUtils.summarizeJsonElement(actualJSON), relPath);
+      return String.format("%s at this path requires %dth element", JsonUtils.summarizeJsonElement(problemCausingJsonNode), relPath);
     }
-    return String.format("%s at this path requires child element %s", JsonUtils.summarizeJsonElement(actualJSON), relPath);
+    return String.format("%s at this path requires child element %s", JsonUtils.summarizeJsonElement(problemCausingJsonNode), relPath);
   }
   
 }

@@ -1,6 +1,8 @@
 package com.github.dakusui.symfonion.tests;
 
 import com.github.dakusui.symfonion.testutils.CliTestBase;
+import com.github.dakusui.symfonion.testutils.json.StrokeBuilder;
+import com.github.dakusui.symfonion.testutils.json.SymfonionJsonTestUtils;
 import com.github.dakusui.testutils.forms.core.AllOf;
 import com.github.dakusui.testutils.forms.core.Transform;
 import com.google.gson.JsonObject;
@@ -22,7 +24,7 @@ import static com.github.dakusui.thincrest_pcond.forms.Predicates.isFalse;
 
 public class ValidDataTest extends CliTestBase {
   @Test
-  public void test() throws FileNotFoundException {
+  public void givenThreeStrokes_whenPlaySubcommandIsInvoked_thenPlayed() throws FileNotFoundException {
     assumeRequiredMidiDevicesPresent();
     assumeThat(isRunUnderPitest(), isFalse());
     JsonObject song = object(
@@ -42,9 +44,58 @@ public class ValidDataTest extends CliTestBase {
                 $("$groove", json("16beats"))
             ))));
 
-    Result result = invokeCliWithArguments("-p", writeContentToTempFile(Objects.toString(song)).getAbsolutePath(), "-Oport1=Gervill");
+    Result result = invokeCliWithArguments("-p", writeContentToTempFile(Objects.toString(song)).getAbsolutePath(), "-o", "x.midi", "-Oport1=Gervill");
 
-    System.out.println(result);
+    System.err.println("[source]");
+    System.err.println("----");
+    System.err.println(result);
+    System.err.println("----");
+
+    assertThat(
+        result,
+        AllOf.$(
+            Transform.$(call("exitCode")).isEqualTo(0),
+            Transform.$(call("out").andThen(stringify())).check(
+                findSubstrings("*", "Gervill", "Real Time Sequencer"))));
+  }
+
+  @Test
+  public void givenArrayedVolumeHavingBrokenDotsSyntax_whenCompileThroughCli_thenErrorMessageLooksOkay() throws FileNotFoundException {
+    assumeRequiredMidiDevicesPresent();
+    assumeThat(isRunUnderPitest(), isFalse());
+    JsonObject song = SymfonionJsonTestUtils.composeSymfonionSongJsonObject(
+        "port2", array(new StrokeBuilder().notes("C4").volume(array(10, ".X.", 100)).build()), SymfonionJsonTestUtils.sixteenBeatsGroove());
+
+
+    Result result = invokeCliWithArguments("-c", writeContentToTempFile(Objects.toString(song)).getAbsolutePath());
+
+    System.err.println("[source]");
+    System.err.println("----");
+    System.err.println(result);
+    System.err.println("----");
+
+    assertThat(
+        result,
+        AllOf.$(
+            Transform.$(call("exitCode")).isEqualTo(0),
+            Transform.$(call("out").andThen(stringify())).check(
+                findSubstrings("*", "Gervill", "Real Time Sequencer"))));
+  }
+
+  @Test
+  public void givenArrayedVolumeHavingInvalidType_whenCompileThroughCli_thenErrorMessageLooksOkay() throws FileNotFoundException {
+    assumeRequiredMidiDevicesPresent();
+    assumeThat(isRunUnderPitest(), isFalse());
+    JsonObject song = SymfonionJsonTestUtils.composeSymfonionSongJsonObject(
+        "port2", array(new StrokeBuilder().notes("C4").volume(array(10, object(), 100)).build()), SymfonionJsonTestUtils.sixteenBeatsGroove());
+
+
+    Result result = invokeCliWithArguments("-c", writeContentToTempFile(Objects.toString(song)).getAbsolutePath());
+
+    System.err.println("[source]");
+    System.err.println("----");
+    System.err.println(result);
+    System.err.println("----");
 
     assertThat(
         result,

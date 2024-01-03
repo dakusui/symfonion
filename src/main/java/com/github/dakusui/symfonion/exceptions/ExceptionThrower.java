@@ -1,6 +1,7 @@
 package com.github.dakusui.symfonion.exceptions;
 
 import com.github.dakusui.symfonion.utils.midi.MidiDeviceRecord;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
@@ -137,6 +138,10 @@ public class ExceptionThrower {
     throw new SymfonionReferenceException(missingReference, format("note in %s", notemapName), problemCausingJsonNode, contextValueOf(JSON_ELEMENT_ROOT), contextValueOf(SOURCE_FILE));
   }
 
+  public static SymfonionException syntaxErrorInNotePattern(String s, int i, Matcher m) {
+    return new SymfonionException("Error:" + s.substring(0, i) + "[" + s.substring(i, m.start()) + "]" + s.substring(m.start()), contextValueOf(SOURCE_FILE));
+  }
+
   public static SymfonionReferenceException grooveNotDefinedException(JsonElement problemCausingJsonNode, String missingReference) throws SymfonionException {
     throw new SymfonionReferenceException(missingReference, "groove", problemCausingJsonNode, contextValueOf(JSON_ELEMENT_ROOT), contextValueOf(SOURCE_FILE));
   }
@@ -154,15 +159,31 @@ public class ExceptionThrower {
   }
 
   public static SymfonionIllegalFormatException illegalFormatException(JsonElement actualJSON, String acceptableExample) throws SymfonionIllegalFormatException {
-    throw new SymfonionIllegalFormatException(actualJSON, contextValueOf(JSON_ELEMENT_ROOT), acceptableExample, contextValueOf(SOURCE_FILE));
+    throw new SymfonionIllegalFormatException(actualJSON, acceptableExample, contextValueOf(JSON_ELEMENT_ROOT), contextValueOf(SOURCE_FILE));
   }
 
-  public static SymfonionMissingElementException requiredElementMissingException(JsonElement actualJSON, Object relPath) throws SymfonionMissingElementException {
-    throw new SymfonionMissingElementException(actualJSON, contextValueOf(JSON_ELEMENT_ROOT), relPath, contextValueOf(SOURCE_FILE));
+  public static SymfonionIllegalFormatException syntaxErrorWhenExpandingDotsIn(JsonArray errorContainingJsonArray) {
+    return new SymfonionIllegalFormatException(
+        errorContainingJsonArray,
+        "In this array, a string containing only dots such as '[1, \"...\",3]' will be expanded and interpolation of integer values will happen.",
+        contextValueOf(JSON_ELEMENT_ROOT),
+        contextValueOf(SOURCE_FILE) );
+  }
+
+  public static SymfonionIllegalFormatException typeMismatchWhenExpandingDotsIn(JsonArray errorContainingJsonArray) {
+    return new SymfonionIllegalFormatException(
+        errorContainingJsonArray,
+        "This array, only integers, nulls, and strings containing only dots (...) are allowed.",
+        contextValueOf(JSON_ELEMENT_ROOT),
+        contextValueOf(SOURCE_FILE) );
+  }
+
+  public static SymfonionMissingElementException requiredElementMissingException(JsonElement problemCausingJsonNode, Object relativePathFromProblemCausingJsonNode) throws SymfonionMissingElementException {
+    throw new SymfonionMissingElementException(problemCausingJsonNode, relativePathFromProblemCausingJsonNode, contextValueOf(JSON_ELEMENT_ROOT), contextValueOf(SOURCE_FILE));
   }
 
   public static SymfonionMissingElementException requiredElementMissingException(JsonElement actualJSON, JsonObject root, Object relPath) throws SymfonionMissingElementException {
-    throw new SymfonionMissingElementException(actualJSON, root, relPath, contextValueOf(SOURCE_FILE));
+    throw new SymfonionMissingElementException(actualJSON, relPath, root, contextValueOf(SOURCE_FILE));
   }
 
   public static SymfonionException deviceException(String msg, Throwable e) throws SymfonionException {
@@ -226,9 +247,5 @@ public class ExceptionThrower {
     class GivenKeyIsNull {
     }
     return key != null ? key.type : GivenKeyIsNull.class;
-  }
-
-  public static SymfonionException syntaxErrorInNotePattern(String s, int i, Matcher m) {
-    return new SymfonionException("Error:" + s.substring(0, i) + "[" + s.substring(i, m.start()) + "]" + s.substring(m.start()), contextValueOf(SOURCE_FILE));
   }
 }

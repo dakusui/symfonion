@@ -8,25 +8,24 @@ import java.io.File;
 import java.io.Serial;
 
 public class SymfonionIllegalFormatException extends SymfonionSyntaxException {
-	public static final String FRACTION_EXAMPLE = "This value must be a fraction. e.g. '1/2', '1/4', and so on.";
-	public static final String NOTE_LENGTH_EXAMPLE = "This value must be a note length. e.g. '4', '8.', '16'";
-	
-	/**
-	 * Serial version UID
-	 */
-	@Serial
-	private static final long serialVersionUID = 8614872945878002862L;
+  public static final String FRACTION_EXAMPLE = "This value must be a fraction. e.g. '1/2', '1/4', and so on.";
+  public static final String NOTE_LENGTH_EXAMPLE = "This value must be a note length. e.g. '4', '8.', '16'";
 
-	public SymfonionIllegalFormatException(JsonElement problemCausingJsonNode, JsonObject root, String acceptableExample, File sourceFile) {
-		super(formatMessage(acceptableExample, problemCausingJsonNode), problemCausingJsonNode, root, sourceFile);
-	}
+  /**
+   * Serial version UID
+   */
+  @Serial
+  private static final long serialVersionUID = 8614872945878002862L;
 
-	private static String formatMessage(String acceptableExample,
-			JsonElement location) {
-		return String.format("%s is invalid. (%s)", JsonUtils.summarizeJsonElement(location), acceptableExample);
-	}
+  public SymfonionIllegalFormatException(JsonElement problemCausingJsonNode, String explanationOfAcceptableValue, JsonObject root, File sourceFile) {
+    super(formatMessage(explanationOfAcceptableValue, problemCausingJsonNode), problemCausingJsonNode, root, sourceFile);
+  }
 
-	static public void main(String[] args) {
-		System.out.println(new JsonObject());
-	}
+  private static String formatMessage(String acceptableExample, JsonElement problemContainingNode) {
+    return String.format("%s is invalid. (%s)", JsonUtils.summarizeJsonElement(problemContainingNode), acceptableExample);
+  }
+
+  static public void main(String[] args) {
+    System.out.println(new JsonObject());
+  }
 }
