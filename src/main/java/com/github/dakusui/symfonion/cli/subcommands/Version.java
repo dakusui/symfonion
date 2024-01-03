@@ -1,6 +1,5 @@
 package com.github.dakusui.symfonion.cli.subcommands;
 
-import com.github.dakusui.symfonion.cli.Cli;
 import com.github.dakusui.symfonion.cli.CliRecord;
 import com.github.dakusui.symfonion.cli.Subcommand;
 import com.github.dakusui.symfonion.exceptions.SymfonionException;
@@ -26,7 +25,7 @@ public class Version implements Subcommand {
       String path = "/META-INF/maven/com.github.dakusui/symfonion/pom.properties";
       Properties props = new Properties();
       String version = "(N/A)";
-      InputStream stream = Cli.class.getResourceAsStream(path);
+      InputStream stream = CliRecord.class.getResourceAsStream(path);
       if (stream != null) {
         try {
           props.load(stream);

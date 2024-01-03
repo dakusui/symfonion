@@ -1,12 +1,11 @@
 package com.github.dakusui.symfonion.cli.subcommands;
 
-import com.github.dakusui.symfonion.cli.Cli;
 import com.github.dakusui.symfonion.cli.CliRecord;
 import com.github.dakusui.symfonion.cli.CliUtils;
 import com.github.dakusui.symfonion.cli.Subcommand;
+import com.github.dakusui.symfonion.core.Symfonion;
 import com.github.dakusui.symfonion.exceptions.ExceptionThrower;
 import com.github.dakusui.symfonion.exceptions.SymfonionException;
-import com.github.dakusui.symfonion.core.Symfonion;
 import com.github.dakusui.symfonion.song.Song;
 
 import javax.sound.midi.MidiSystem;

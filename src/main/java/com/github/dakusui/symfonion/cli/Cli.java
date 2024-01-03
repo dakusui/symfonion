@@ -1,23 +1,16 @@
 package com.github.dakusui.symfonion.cli;
 
-import com.github.dakusui.logias.lisp.Context;
 import com.github.dakusui.symfonion.cli.subcommands.PresetSubcommand;
 import com.github.dakusui.symfonion.exceptions.CliException;
 import com.github.dakusui.symfonion.core.Symfonion;
-import com.github.dakusui.symfonion.exceptions.SymfonionException;
 import org.apache.commons.cli.*;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.io.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
 
 import static com.github.dakusui.symfonion.cli.CliUtils.composeErrMsg;
 import static java.lang.String.format;
@@ -35,7 +28,7 @@ public class Cli {
 
   public Cli(String... args) throws ParseException, CliException {
     this.init(args);
-    this.symfonion = createSymfonion();
+    this.symfonion = CliRecord.createSymfonion();
   }
 
   public Options getOptions() {
@@ -47,77 +40,16 @@ public class Cli {
   }
 
   public void init(String... args) throws ParseException, CliException {
-    this.options = buildOptions();
-    this.analyzeCommandLine(parseArgs(this.options, args));
-  }
-
-  static Symfonion createSymfonion() {
-    return new Symfonion(Context.ROOT.createChild());
-  }
-
-  static CommandLine parseArgs(Options options, String[] args) throws ParseException {
-    CommandLineParser parser = new GnuParser();
-
-    return parser.parse(options, args);
-  }
-
-  /**
-   * Returns an {@code Options} object which represents the specification of this CLI command.
-   *
-   * @return an {@code Options} object for this {@code CLI} class.
-   */
-  static Options buildOptions() {
-    // create Options object
-    Options options = new Options();
-
-    // //
-    // Behavior options
-    options.addOption("V", "version", false, "print the version information.");
-    options.addOption("h", "help", false, "print the command line usage.");
-    options.addOption("l", "list", false, "list the available midi devices.");
-    options.addOption("p", "play", true, "play the specified file.");
-    options.addOption("c", "compile", true,
-        "compile the specified file to a standard midi file.");
-    {
-      Option option = OptionBuilder.create("r");
-      option.setLongOpt("route");
-      option.setValueSeparator('=');
-      option.setArgs(2);
-      option.setDescription("run a midi patch bay.");
-      options.addOption(option);
-    }
-
-    // //
-    // I/O options
-    {
-      Option option = OptionBuilder.create("O");
-      option.setValueSeparator('=');
-      option.setArgs(2);
-      option.setDescription("specify midi out port.");
-      options.addOption(option);
-    }
-    {
-      Option option = OptionBuilder.create("I");
-      option.setValueSeparator('=');
-      option.setArgs(2);
-      option.setDescription("specify midi in port.");
-      options.addOption(option);
-    }
-    {
-      Option option = OptionBuilder.create("o");
-      option.setArgs(1);
-      option.setDescription("specify a file to which a compiled standard midi file is output.");
-      options.addOption(option);
-    }
-    return options;
+    this.options = CliRecord.buildOptions();
+    this.analyzeCommandLine(CliRecord.parseArgs(this.options, args));
   }
 
   public void analyzeCommandLine(CommandLine cmd) throws CliException {
     if (cmd.hasOption('O')) {
-      this.midiOutRegexPatterns = parseSpecifiedOptionsInCommandLineAsPortNamePatterns(cmd, "O");
+      this.midiOutRegexPatterns = CliRecord.parseSpecifiedOptionsInCommandLineAsPortNamePatterns(cmd, "O");
     }
     if (cmd.hasOption('I')) {
-      this.midiInRegexPatterns = parseSpecifiedOptionsInCommandLineAsPortNamePatterns(cmd, "I");
+      this.midiInRegexPatterns = CliRecord.parseSpecifiedOptionsInCommandLineAsPortNamePatterns(cmd, "I");
     }
     if (cmd.hasOption('o')) {
       String sinkFilename = CliUtils.getSingleOptionValueFromCommandLine(cmd, "o");
@@ -168,25 +100,6 @@ public class Cli {
     }
   }
 
-  static Map<String, Pattern> parseSpecifiedOptionsInCommandLineAsPortNamePatterns(CommandLine cmd, String optionName) throws CliException {
-    Properties props = cmd.getOptionProperties(optionName);
-    Map<String, Pattern> ret = new HashMap<>();
-    for (Object key : props.keySet()) {
-      String portName = key.toString();
-      String p = props.getProperty(portName);
-      try {
-        Pattern portpattern = Pattern.compile(p);
-        ret.put(portName, portpattern);
-      } catch (PatternSyntaxException e) {
-        throw new CliException(composeErrMsg(
-            format("Regular expression '%s' for '%s' isn't valid.", portName, p),
-            optionName,
-            null), e);
-      }
-    }
-    return ret;
-  }
-
   public Subcommand getMode() {
     return this.subcommand;
   }
@@ -227,96 +140,4 @@ public class Cli {
     return this.routeRequest;
   }
 
-  public static void main(String... args) {
-    if (args.length == 0 && !GraphicsEnvironment.isHeadless()) {
-      fallbackToSimpleGUI();
-    } else {
-      int exitCode = invoke(System.out, System.err, args);
-      System.exit(exitCode);
-    }
-  }
-
-  public static int invoke(PrintStream stdout, PrintStream stderr, String... args) {
-    int ret;
-    try {
-      CliRecord cli = new CliRecord.Builder(args).build();
-      cli.subcommand().invoke(cli, stdout, System.in);
-      ret = 0;
-    } catch (ParseException e) {
-      printError(stderr, e);
-      ret = 1;
-    } catch (CliException e) {
-      printError(stderr, e);
-      ret = 2;
-    } catch (SymfonionException e) {
-      printError(stderr, e);
-      ret = 3;
-    } catch (IOException e) {
-      e.printStackTrace(stderr);
-      ret = 4;
-    }
-    return ret;
-  }
-
-  private static void printError(PrintStream ps, Throwable t) {
-    ps.printf("symfonion: %s%n", t.getMessage());
-  }
-
-  private static String filenameFromFileChooser() {
-    JFileChooser chooser = new JFileChooser();
-    chooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
-    int result = chooser.showOpenDialog(new JFrame());
-    if (result == JFileChooser.APPROVE_OPTION) {
-      return chooser.getSelectedFile().getAbsolutePath();
-    }
-    return null;
-  }
-
-  private static void fallbackToSimpleGUI() {
-    String selectedFile = filenameFromFileChooser();
-    if (selectedFile != null) {
-      String[] args = new String[]{selectedFile};
-      final JTextArea textArea = new JTextArea();
-      JFrame frame = new JFrame("symfonion output");
-      frame.addWindowListener(new WindowAdapter() {
-        public void windowClosing(WindowEvent e) {
-          System.exit(0);
-        }
-      });
-      frame.add(textArea);
-      frame.pack();
-      frame.setSize(800, 600);
-      frame.setVisible(true);
-      PrintStream ps = new PrintStream(new OutputStream() {
-        private final StringBuilder sb = new StringBuilder();
-
-        @Override
-        public void flush() {
-        }
-
-        @Override
-        public void close() {
-        }
-
-        @Override
-        public void write(int b) {
-          if (b == '\r')
-            return;
-
-          if (b == '\n') {
-            final String text = sb + "\n";
-            SwingUtilities.invokeLater(() -> textArea.append(text));
-            sb.setLength(0);
-            return;
-          }
-
-          sb.append((char) b);
-        }
-
-      });
-      System.setOut(ps);
-      System.setErr(ps);
-      invoke(System.out, System.err, args);
-    }
-  }
 }

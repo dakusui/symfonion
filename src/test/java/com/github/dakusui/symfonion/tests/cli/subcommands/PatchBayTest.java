@@ -1,6 +1,5 @@
 package com.github.dakusui.symfonion.tests.cli.subcommands;
 
-import com.github.dakusui.symfonion.cli.Cli;
 import com.github.dakusui.symfonion.cli.CliRecord;
 import com.github.dakusui.symfonion.cli.subcommands.PatchBay;
 import com.github.dakusui.symfonion.testutils.TestBase;
