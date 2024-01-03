@@ -1,4 +1,4 @@
-package com.github.dakusui.testutils.forms.midi;
+package com.github.dakusui.testutils.forms.javax.sound.midi;
 
 import com.github.dakusui.testutils.midi.PrintableMidiMessage;
 
@@ -13,18 +13,18 @@ import java.util.stream.Stream;
 import static com.github.dakusui.thincrest_pcond.forms.Predicates.alwaysTrue;
 import static com.github.dakusui.thincrest_pcond.forms.Printables.function;
 
-public enum FromTrack {
+public enum TrackTo {
   ;
   
-  public static Function<Track, Integer> toSize() {
+  public static Function<Track, Integer> size() {
     return function("Track#size", Track::size);
   }
   
-  public static Function<Track, MidiEvent> toMidiEventAt(int index) {
+  public static Function<Track, MidiEvent> midiEventAt(int index) {
     return function(() -> "Track#get[" + index + "]", t -> t.get(index));
   }
   
-  public static Function<Track, Long> toTicks() {
+  public static Function<Track, Long> ticks() {
     return function(() -> "Track#ticks", Track::ticks);
   }
   
@@ -42,11 +42,11 @@ public enum FromTrack {
     }.stream());
   }
   
-  public static Function<Track, Stream<MidiMessage>> toMidiMessageStream() {
-    return toMidiMessageStream(alwaysTrue());
+  public static Function<Track, Stream<MidiMessage>> midiMessageStream() {
+    return midiMessageStream(alwaysTrue());
   }
   
-  public static Function<Track, Stream<MidiMessage>> toMidiMessageStream(Predicate<MidiMessage> cond) {
+  public static Function<Track, Stream<MidiMessage>> midiMessageStream(Predicate<MidiMessage> cond) {
     return function(() -> midiEventStream() + "->map[.message]->filter[" + cond + "]",
         (Track track) -> midiEventStream()
             .apply(track)

@@ -1,18 +1,18 @@
-package com.github.dakusui.testutils.forms;
+package com.github.dakusui.testutils.forms.java.util;
 
 import com.github.dakusui.thincrest_pcond.forms.Printables;
 
 import java.util.List;
 import java.util.function.Function;
 
-public enum FromList {
+public enum ListTo {
   ;
   
-  public static Function<List<?>, Integer> toSize() {
+  public static Function<List<?>, Integer> size() {
     return Printables.function("listSize", List::size);
   }
   
-  public static <E> Function<List<E>, E> toElementAt(int i) {
+  public static <E> Function<List<E>, E> elementAt(int i) {
     return Printables.function("listElementAt[" + i + "]", (List<E> list) -> list.get(i));
   }
 }

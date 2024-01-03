@@ -1,6 +1,6 @@
 package com.github.dakusui.symfonion.testutils.forms;
 
-import com.github.dakusui.testutils.forms.Cliche;
+import com.github.dakusui.testutils.forms.core.Cliche;
 
 import javax.sound.midi.Sequence;
 import java.util.Map;

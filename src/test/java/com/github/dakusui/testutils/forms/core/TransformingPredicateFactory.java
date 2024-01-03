@@ -1,11 +1,14 @@
-package com.github.dakusui.testutils.forms;
+package com.github.dakusui.testutils.forms.core;
 
+import com.github.dakusui.testutils.forms.java.util.stream.StreamTo;
 import com.github.dakusui.thincrest_pcond.core.printable.PrintablePredicateFactory;
 import com.github.dakusui.valid8j_pcond.forms.Predicates;
 
 import java.util.List;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
+import static com.github.dakusui.thincrest_pcond.core.printable.PrintablePredicateFactory.transform;
 import static com.github.dakusui.valid8j.Requires.requireNonNull;
 
 public class TransformingPredicateFactory<P, O> extends PrintablePredicateFactory.TransformingPredicate.Factory<P, O> {
@@ -47,6 +50,27 @@ public class TransformingPredicateFactory<P, O> extends PrintablePredicateFactor
 
     public Predicate<O> isEmpty() {
       return check(Predicates.isEmpty());
+    }
+  }
+
+  public static class ForStream<E, O> extends TransformingPredicateFactory<Stream<E>, O> {
+    public ForStream(PrintablePredicateFactory.TransformingPredicate.Factory<Stream<E>, O> base) {
+      super(base);
+    }
+
+    public Predicate<O> anyMatch(Predicate<E> cond) {
+      return check(Predicates.anyMatch(cond));
+    }
+
+    public Predicate<O> noneMatch(Predicate<E> cond) {
+      return check(Predicates.noneMatch(cond));
+    }
+    public Predicate<O> allMatch(Predicate<E> cond) {
+      return check(Predicates.allMatch(cond));
+    }
+
+    public Predicate<O> checkCount(Predicate<Long> cond) {
+      return this.check(Predicates.<Stream<E>, Long>transform(StreamTo.count()).check(cond));
     }
   }
 }

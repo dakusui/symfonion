@@ -1,4 +1,4 @@
-package com.github.dakusui.testutils.forms.midi;
+package com.github.dakusui.testutils.forms.javax.sound.midi;
 
 import javax.sound.midi.Sequence;
 import javax.sound.midi.Track;
@@ -8,14 +8,14 @@ import java.util.function.Function;
 
 import static com.github.dakusui.thincrest_pcond.forms.Printables.function;
 
-public enum FromSequence {
+public enum SequenceTo {
   ;
   
-  public static Function<Sequence, List<Track>> toTrackList() {
+  public static Function<Sequence, List<Track>> trackList() {
     return function("Sequence#getTracks", seq -> Arrays.asList(seq.getTracks()));
   }
   
-  public static Function<Sequence, Long> toTickLength() {
+  public static Function<Sequence, Long> tickLength() {
     return function("Sequence#getTickLength", Sequence::getTickLength);
   }
 }

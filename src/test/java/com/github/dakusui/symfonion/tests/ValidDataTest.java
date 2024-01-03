@@ -1,8 +1,8 @@
 package com.github.dakusui.symfonion.tests;
 
 import com.github.dakusui.symfonion.testutils.CliTestBase;
-import com.github.dakusui.testutils.forms.AllOf;
-import com.github.dakusui.testutils.forms.Transform;
+import com.github.dakusui.testutils.forms.core.AllOf;
+import com.github.dakusui.testutils.forms.core.Transform;
 import com.google.gson.JsonObject;
 import org.junit.Test;
 

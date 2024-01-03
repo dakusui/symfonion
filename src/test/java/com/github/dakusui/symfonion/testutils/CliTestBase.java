@@ -3,7 +3,7 @@ package com.github.dakusui.symfonion.testutils;
 import java.io.*;
 
 import com.github.dakusui.symfonion.cli.Cli;
-import com.github.dakusui.testutils.forms.Transform;
+import com.github.dakusui.testutils.forms.core.Transform;
 import org.junit.Before;
 
 import com.github.dakusui.symfonion.exceptions.SymfonionException;
