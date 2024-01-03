@@ -24,7 +24,7 @@ public abstract class MidiDeviceScanner {
     protected void start(Info[] allDevices) {
       PrintStream ps = getPrintStream();
       ps.println("     " + getTitle());
-      ps.printf("  io %s%n", MidiUtils.formatMidiDeviceInfo(null));
+      //ps.printf("  io %s%n", MidiUtils.formatMidiDeviceInfo(null));
       ps.println("--------------------------------------------------------------------------------");
     }
 

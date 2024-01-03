@@ -28,6 +28,7 @@ import java.util.stream.Stream;
 
 import static com.github.dakusui.symfonion.testutils.SymfonionTestCase.createNegativeTestCase;
 import static com.github.dakusui.symfonion.testutils.SymfonionTestCase.createPositiveTestCase;
+import static com.github.dakusui.symfonion.testutils.json.SymfonionJsonTestUtils.sixteenBeatsGrooveFlat;
 import static com.github.dakusui.testutils.forms.midi.FromSequence.toTickLength;
 import static com.github.dakusui.testutils.forms.midi.FromSequence.toTrackList;
 import static com.github.dakusui.testutils.forms.midi.FromTrack.*;
@@ -138,7 +139,7 @@ public class MidiCompilerTest {
                 $("$settings", object()),
                 $("$parts", object($("piano", object($("$channel", json(0)), $("$port", json("port1")))))),
                 $("$patterns", object($("C16x16", object($("$body", array(json("C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;"))))))),
-                $("$grooves", object($("16beats", SymfonionJsonTestUtils.sixteenBeatsGrooveFlat()))),
+                $("$grooves", object($("16beats", sixteenBeatsGrooveFlat()))),
                 $("$sequence", array(
                     merge(
                         object($("$beats", json("8/4"))),

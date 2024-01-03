@@ -302,9 +302,7 @@ public class Cli {
 
   private static void fallbackToSimpleGUI() {
     String selectedFile = filenameFromFileChooser();
-    if (selectedFile == null) {
-      System.exit(0);
-    } else {
+    if (selectedFile != null) {
       String[] args = new String[]{selectedFile};
       final JTextArea textArea = new JTextArea();
       JFrame frame = new JFrame("symfonion output");

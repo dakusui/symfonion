@@ -13,26 +13,28 @@ import static com.github.dakusui.thincrest.TestAssertions.assertThat;
 import static com.github.dakusui.thincrest_pcond.forms.Functions.call;
 import static com.github.dakusui.thincrest_pcond.forms.Predicates.containsString;
 
-public class CliTestBase {
-  public record StdOutErr(String out, String err) {
+public class CliTestBase extends TestBase {
+  public record Result(int exitCode, String out, String err) {
     @Override
     public String toString() {
       return String.format("""
+          EXIT_CODE:
+          %s
           STDOUT:
           %s
           
           STDERR:
           %s
-          """, this.out(), this.err());
+          """, this.exitCode(), this.out(), this.err());
     }
   }
   private File workFile;
   
-  File writeResourceToTempFile(String resourceName) throws IOException, SymfonionException {
+  public File writeResourceToTempFile(String resourceName) throws IOException, SymfonionException {
     return writeContentToTempFile(Utils.loadResource(resourceName));
   }
 
-  File writeContentToTempFile(String content) throws FileNotFoundException {
+  public File writeContentToTempFile(String content) throws FileNotFoundException {
     File ret = this.getWorkFile();
     try (PrintStream ps = new PrintStream(ret)) {
       ps.print(content);
@@ -45,17 +47,17 @@ public class CliTestBase {
     this.workFile = File.createTempFile("symfonion-test", "json");
   }
   
-  protected StdOutErr compileResourceWithCli(String resourceName) throws IOException, SymfonionException {
+  protected Result compileResourceWithCli(String resourceName) throws IOException, SymfonionException {
     this.workFile = writeResourceToTempFile(resourceName);
-    return invokeCliWithResource("-c", workFile.getAbsolutePath());
+    return invokeCliWithArguments("-c", workFile.getAbsolutePath());
   }
 
-  protected StdOutErr invokeCliWithResource(String... args) {
+  protected Result invokeCliWithArguments(String... args) {
     ByteArrayOutputStream stdout, stderr;
     PrintStream ps1 = new PrintStream(stdout = new ByteArrayOutputStream());
     PrintStream ps2 = new PrintStream(stderr = new ByteArrayOutputStream());
-    Cli.invoke(ps1, ps2, args);
-    return new StdOutErr(stdout.toString(), stderr.toString());
+    int exitCode = Cli.invoke(ps1, ps2, args);
+    return new Result(exitCode, stdout.toString(), stderr.toString());
   }
 
   protected String fmt(String fmt) {
