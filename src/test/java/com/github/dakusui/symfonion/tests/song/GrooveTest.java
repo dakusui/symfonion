@@ -3,6 +3,7 @@ package com.github.dakusui.symfonion.tests.song;
 import static org.junit.Assert.*;
 
 import com.github.dakusui.symfonion.song.Groove;
+import com.github.dakusui.symfonion.testutils.TestBase;
 import org.junit.Test;
 
 import com.github.dakusui.symfonion.utils.Fraction;
@@ -11,7 +12,7 @@ import com.github.dakusui.symfonion.utils.Utils;
 
 import static com.github.dakusui.symfonion.utils.Utils.parseNoteLength;
 
-public class GrooveTest {
+public class GrooveTest extends TestBase {
 
 	@Test
 	public void test_A01() throws SymfonionException {

@@ -1,7 +1,5 @@
 package com.github.dakusui.symfonion.cli;
 
-import com.github.dakusui.symfonion.exceptions.SymfonionException;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;

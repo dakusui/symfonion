@@ -11,8 +11,8 @@ public interface MidiDeviceReportFormatter {
       @Override
       public List<String> header(MidiDevice.Info info, String title) {
         return List.of(
-            "  " + title,
-            String.format("  %s", MidiUtils.formatMidiDeviceInfo(info)),
+            "   " + title,
+            String.format("   %s", MidiUtils.formatMidiDeviceInfo(info)),
             "-------------------------------------------------------------------------"
         );
       }

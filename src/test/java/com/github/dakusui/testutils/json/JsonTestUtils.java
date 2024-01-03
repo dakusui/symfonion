@@ -16,7 +16,7 @@ public enum JsonTestUtils {
   }
   
   public static JsonArray array(Object... objects) {
-    return array((JsonElement[]) Arrays.stream(objects)
+    return array(Arrays.stream(objects)
         .map(JsonTestUtils::json)
         .toArray(JsonElement[]::new));
   }

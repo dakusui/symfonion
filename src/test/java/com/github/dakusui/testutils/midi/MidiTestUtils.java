@@ -20,7 +20,7 @@ public class MidiTestUtils {
     return String.format("message: %-20s: %s", message.getClass().getSimpleName(), toHex(message.getMessage()));
   }
 
-  public static void assumeMidiDevicesPresent() {
+  public static void assumeRequiredMidiDevicesPresent() {
     MidiDevice.Info[] infos = MidiSystem.getMidiDeviceInfo();
     List<String> missingDevices = new LinkedList<>();
     for (String requiredDeviceName : asList("Gervill", "Real Time Sequencer"))

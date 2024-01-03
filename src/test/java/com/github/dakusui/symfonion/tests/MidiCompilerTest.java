@@ -1,14 +1,15 @@
 package com.github.dakusui.symfonion.tests;
 
 import com.github.dakusui.symfonion.testutils.SymfonionTestCase;
-import com.github.dakusui.symfonion.testutils.forms.SongTo;
+import com.github.dakusui.symfonion.testutils.TestBase;
+import com.github.dakusui.symfonion.testutils.forms.FromSong;
 import com.github.dakusui.symfonion.testutils.json.StrokeBuilder;
 import com.github.dakusui.symfonion.testutils.json.SymfonionJsonTestUtils;
 import com.github.dakusui.testutils.TestUtils;
-import com.github.dakusui.testutils.forms.*;
-import com.github.dakusui.testutils.forms.midi.IfMidiMessage;
-import com.github.dakusui.testutils.forms.midi.SequenceTo;
-import com.github.dakusui.testutils.forms.midi.TrackTo;
+import com.github.dakusui.testutils.forms.core.AllOf;
+import com.github.dakusui.testutils.forms.java.util.FromList;
+import com.github.dakusui.testutils.forms.java.util.FromMap;
+import com.github.dakusui.testutils.forms.core.Transform;
 import com.github.dakusui.thincrest_pcond.validator.Validator;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -16,8 +17,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
-import javax.sound.midi.MidiMessage;
-import javax.sound.midi.Sequence;
 import javax.sound.midi.Track;
 import java.util.Arrays;
 import java.util.Collection;
@@ -27,45 +26,52 @@ import java.util.stream.Stream;
 
 import static com.github.dakusui.symfonion.testutils.SymfonionTestCase.createNegativeTestCase;
 import static com.github.dakusui.symfonion.testutils.SymfonionTestCase.createPositiveTestCase;
-import static com.github.dakusui.testutils.forms.midi.IfMidiMessage.*;
+import static com.github.dakusui.symfonion.testutils.json.SymfonionJsonTestUtils.sixteenBeatsGrooveFlat;
+import static com.github.dakusui.testutils.forms.java.util.ListTo.elementAt;
+import static com.github.dakusui.testutils.forms.core.Transform.toListBy;
+import static com.github.dakusui.testutils.forms.core.Transform.toStreamBy;
+import static com.github.dakusui.testutils.forms.javax.sound.midi.SequenceTo.tickLength;
+import static com.github.dakusui.testutils.forms.javax.sound.midi.SequenceTo.trackList;
+import static com.github.dakusui.testutils.forms.javax.sound.midi.TrackTo.*;
+import static com.github.dakusui.testutils.forms.javax.sound.midi.IfMidiMessage.*;
 import static com.github.dakusui.testutils.json.JsonTestUtils.*;
 import static com.github.dakusui.testutils.midi.Controls.VOLUME;
 import static com.github.dakusui.testutils.midi.Notes.C3;
 import static com.github.dakusui.thincrest_pcond.forms.Predicates.*;
 
 @RunWith(Parameterized.class)
-public class MidiCompilerTest {
-  
+public class MidiCompilerTest extends TestBase {
+
   @BeforeClass
   public static void beforeAll() {
     Validator.reconfigure(c -> c.summarizedStringLength(120));
   }
-  
+
   private final SymfonionTestCase testCase;
-  
+
   public MidiCompilerTest(SymfonionTestCase testCase) {
     this.testCase = testCase;
   }
-  
+
   @Test
   public void exercise() {
     this.testCase.executeAndVerify();
   }
-  
+
   @Parameters(name = "{index}: {0}")
   public static Collection<Object[]> parameters() {
     return Stream.concat(
         positiveTestCases().stream().map(c -> new Object[]{c}),
         negativeTestCases().stream().map(c -> new Object[]{c})).collect(Collectors.toList());
   }
-  
+
   public static List<SymfonionTestCase> positiveTestCases() {
     return Arrays.asList(
         createPositiveTestCase(
             TestUtils.name("top level attributes are all empty", "compile", "empty song"),
             SymfonionJsonTestUtils.rootJsonObjectBase(),
-            Transform.$(SongTo.keySet()).check(isEmpty())),
-        
+            Transform.$(FromSong.toKeySet()).check(isEmpty())),
+
         createPositiveTestCase(
             TestUtils.name("no pattern in sequence is given", "compile", "empty song"),
             merge(
@@ -76,8 +82,8 @@ public class MidiCompilerTest {
                             $("$beats", json("8/4")),
                             $("$patterns", object()))
                     )))),
-            Transform.$(SongTo.keySet()).check(isEmpty())),
-        
+            Transform.$(FromSong.toKeySet()).check(isEmpty())),
+
         createPositiveTestCase(
             TestUtils.name("pattern contains no explicit event", "compile", "one message (end of sequence) is found"),
             merge(
@@ -89,20 +95,20 @@ public class MidiCompilerTest {
                         object($("$patterns", object($("piano", array()))))
                     ))))),
             AllOf.$(
-                Transform.$(MapTo.<String, Sequence>keyList()).allOf(
-                    Transform.$(ListTo.size()).check(isEqualTo(1)),
-                    Transform.$(ListTo.<String>elementAt(0)).check(isEqualTo("port1"))),
-                Transform.$(SongTo.sequence("port1")).allOf(
-                    Transform.$(SequenceTo.trackList()).checkAllOf(
-                        Transform.$(ListTo.size()).check(isEqualTo(1)),
-                        Transform.$(ListTo.<Track>elementAt(0)).checkAllOf(
-                            Transform.$(TrackTo.size()).check(isEqualTo(1)),
-                            Transform.$(TrackTo.midiEventAt(0)).check(isNotNull()),
-                            Transform.$(TrackTo.ticks()).check(isEqualTo(0L)))),
-                    Transform.$(SequenceTo.tickLength()).check(isEqualTo(0L))
+                FromMap.<String>toKeyList().allOf(
+                    FromList.toSize().isEqualTo(1),
+                    FromList.<String>toElementAt(0).isEqualTo("port1")),
+                Transform.$(FromSong.toSequence("port1")).allOf(
+                    Transform.$(trackList()).allOf(
+                        FromList.toSize().isEqualTo(1),
+                        FromList.<Track>toElementAt(0).allOf(
+                            Transform.$(size()).isEqualTo(1),
+                            Transform.$(midiEventAt(0)).isNotNull(),
+                            Transform.$(ticks()).isEqualTo(0L))),
+                    Transform.$(tickLength()).isEqualTo(0L)
                 ))),
-        
-        
+
+
         createPositiveTestCase(
             TestUtils.name("pattern contains note on, note off, program change, and bank change (LSB and MSB)", "compile", "number of events and tick length seem ok"),
             object(
@@ -115,27 +121,26 @@ public class MidiCompilerTest {
                         object($("$patterns", object($("piano", array("pg-change-to-piano"))))))
                 ))),
             allOf(
-                Transform.$(MapTo.<String, Sequence>keyList()).checkAllOf(
-                    Transform.$(ListTo.size()).check(isEqualTo(1)),
-                    Transform.$(ListTo.<String>elementAt(0)).check(isEqualTo("port1"))),
-                Transform.$(SongTo.sequence("port1")).check(
-                    allOf(
-                        Transform.$(SequenceTo.trackList()).check(AllOf.$(
-                            Transform.$(ListTo.size()).check(isEqualTo(1)),
-                            Transform.$(ListTo.<Track>elementAt(0)).check(allOf(
-                                Transform.$(TrackTo.size()).check(isEqualTo(6)),
-                                Transform.$(TrackTo.midiEventAt(0)).check(isNotNull()),
-                                Transform.$(TrackTo.ticks()).check(isEqualTo(96L)))))),
-                        Transform.$(SequenceTo.tickLength()).check(isEqualTo(96L)))
-                ))),
-        
+                FromMap.<String>toKeyList().allOf(
+                    FromList.toSize().isEqualTo(1),
+                    FromList.<String>toElementAt(0).isEqualTo("port1")),
+                Transform.$(FromSong.toSequence("port1")).allOf(
+                    Transform.$(trackList()).allOf(
+                        FromList.toSize().isEqualTo(1),
+                        FromList.<Track>toElementAt(0).allOf(
+                            Transform.$(size()).isEqualTo(6),
+                            Transform.$(midiEventAt(0)).isNotNull(),
+                            Transform.$(ticks()).isEqualTo(96L))),
+                    Transform.$(tickLength()).isEqualTo(96L))
+            )),
+
         createPositiveTestCase(
             TestUtils.name("sixteen notes are given in a single string element", "compile", "number of events and tick length seem ok"),
             object(
                 $("$settings", object()),
                 $("$parts", object($("piano", object($("$channel", json(0)), $("$port", json("port1")))))),
                 $("$patterns", object($("C16x16", object($("$body", array(json("C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;"))))))),
-                $("$grooves", object($("16beats", SymfonionJsonTestUtils.sixteenBeatsGrooveFlat()))),
+                $("$grooves", object($("16beats", sixteenBeatsGrooveFlat()))),
                 $("$sequence", array(
                     merge(
                         object($("$beats", json("8/4"))),
@@ -143,105 +148,100 @@ public class MidiCompilerTest {
                         object($("$groove", json("16beats")))
                     )))),
             AllOf.$(
-                Transform.$(MapTo.<String, Sequence>keyList()).checkAllOf(
-                    Transform.$(ListTo.size()).check(isEqualTo(1)),
-                    Transform.$(ListTo.<String>elementAt(0)).check(isEqualTo("port1"))),
-                Transform.$(SongTo.sequence("port1")).allOf(
-                    Transform.$(SequenceTo.trackList()).allOf(
-                        Transform.$(ListTo.size()).check(isEqualTo(1)),
-                        Transform.$(ListTo.<Track>elementAt(0)).allOf(
-                            Transform.$(TrackTo.size()).check(isEqualTo(33)),
-                            Transform.$(TrackTo.midiEventAt(0)).check(isNotNull()),
-                            Transform.$(TrackTo.ticks()).check(isEqualTo(379L)))),
-                    Transform.$(SequenceTo.tickLength()).check(isEqualTo(379L)))
+                FromMap.<String>toKeyList().allOf(
+                    FromList.toSize().isEqualTo(1),
+                    FromList.<String>toElementAt(0).isEqualTo("port1")),
+                Transform.$(FromSong.toSequence("port1")).allOf(
+                    toListBy(trackList()).allOf(
+                        FromList.toSize().isEqualTo(1),
+                        FromList.<Track>toElementAt(0).allOf(
+                            Transform.$(size()).isEqualTo(33),
+                            Transform.$(midiEventAt(0)).isNotNull(),
+                            Transform.$(ticks()).isEqualTo(379L))),
+                    Transform.$(tickLength()).isEqualTo(379L))
             )),
-        
+
         createPositiveTestCase(
             TestUtils.name("sixteen notes are given in a single string element", "compile", "number of events and tick length seem ok"),
             SymfonionJsonTestUtils.composeSymfonionSongJsonObject(
                 "port1", json("C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;"), SymfonionJsonTestUtils.sixteenBeatsGroove()),
             AllOf.$(
-                Transform.$(MapTo.<String, Sequence>keyList()).allOf(
-                    Transform.$(ListTo.size()).check(isEqualTo(1)),
-                    Transform.$(ListTo.<String>elementAt(0)).check(isEqualTo("port1"))),
-                Transform.$(SongTo.sequence("port1").andThen(SequenceTo.trackList())).allOf(
-                    Transform.$(ListTo.size()).check(isEqualTo(1)),
-                    Transform.$(ListTo.<Track>elementAt(0)).allOf(
-                        Transform.$(TrackTo.size()).check(isEqualTo(33)),
-                        Transform.$(TrackTo.midiEventAt(0)).check(isNotNull()),
-                        Transform.$(TrackTo.ticks()).check(isEqualTo(379L)))))),
-        
+                FromMap.<String>toKeyList().allOf(
+                    FromList.toSize().isEqualTo(1),
+                    FromList.<String>toElementAt(0).isEqualTo("port1")),
+                Transform.$(FromSong.toSequence("port1").andThen(trackList())).allOf(
+                    FromList.toSize().isEqualTo(1),
+                    FromList.<Track>toElementAt(0).allOf(
+                        Transform.$(size()).isEqualTo(33),
+                        Transform.$(midiEventAt(0)).isNotNull(),
+                        Transform.$(ticks()).isEqualTo(379L))))),
+
         createPositiveTestCase(
             TestUtils.name("sixteen notes are given in two string elements", "compile", "number of events and tick length seem ok"),
             SymfonionJsonTestUtils.composeSymfonionSongJsonObject(
                 "port1", array(json("C16;C16;C16;C16;C16;C16;C16;C16;"), json("C16;C16;C16;C16;C16;C16;C16;C16;")), SymfonionJsonTestUtils.sixteenBeatsGroove()),
             AllOf.$(
-                Transform.$(MapTo.<String, Sequence>keyList()).allOf(
-                    Transform.$(ListTo.size()).check(isEqualTo(1)),
-                    Transform.$(ListTo.<String>elementAt(0)).check(isEqualTo("port1"))),
-                Transform.$(SongTo.sequence("port1").andThen(SequenceTo.trackList())).allOf(
-                    Transform.$(ListTo.size()).check(isEqualTo(1)),
-                    Transform.$(ListTo.<Track>elementAt(0)).allOf(
-                        Transform.$(TrackTo.size()).check(isEqualTo(33)),
-                        Transform.$(TrackTo.midiEventAt(0)).check(isNotNull()),
-                        Transform.$(TrackTo.ticks()).check(isEqualTo(379L)))))),
-        
+                FromMap.<String>toKeyList().allOf(
+                    FromList.toSize().isEqualTo(1),
+                    FromList.<String>toElementAt(0).isEqualTo("port1")),
+                Transform.$(FromSong.toSequence("port1").andThen(trackList())).allOf(
+                    FromList.toSize().isEqualTo(1),
+                    FromList.<Track>toElementAt(0).allOf(
+                        Transform.$(size()).isEqualTo(33),
+                        Transform.$(midiEventAt(0)).isNotNull(),
+                        Transform.$(ticks()).isEqualTo(379L))))),
+
         createPositiveTestCase(
             TestUtils.name("sixteenth note with short gate (0.25)", "compile", "number of events and tick length seem ok"),
             SymfonionJsonTestUtils.composeSymfonionSongJsonObject(
                 "port1", array(new StrokeBuilder().notes("C16").program(65).gate(0.25).build()), SymfonionJsonTestUtils.sixteenBeatsGroove()),
             AllOf.$(
-                Transform.$(MapTo.<String, Sequence>keyList()).allOf(
-                    Transform.$(ListTo.size()).check(isEqualTo(1)),
-                    Transform.$(ListTo.<String>elementAt(0)).check(isEqualTo("port1"))),
-                Transform.$(SongTo.sequence("port1").andThen(SequenceTo.trackList())).allOf(
-                    Transform.$(ListTo.size()).check(isEqualTo(1)),
-                    Transform.$(ListTo.<Track>elementAt(0)).allOf(
-                        Transform.$(TrackTo.size()).check(isEqualTo(4)),
-                        Transform.$(TrackTo.midiEventAt(0)).check(isNotNull()),
-                        Transform.$(TrackTo.ticks()).check(isEqualTo(7L)))))),
-        
+                FromMap.<String>toKeyList().allOf(
+                    FromList.toSize().isEqualTo(1),
+                    FromList.<String>toElementAt(0).isEqualTo("port1")),
+                Transform.$(FromSong.toSequence("port1").andThen(trackList())).allOf(
+                    FromList.toSize().isEqualTo(1),
+                    FromList.<Track>toElementAt(0).allOf(
+                        Transform.$(size()).isEqualTo(4),
+                        Transform.$(midiEventAt(0)).isNotNull(),
+                        Transform.$(ticks()).isEqualTo(7L))))),
+
         createPositiveTestCase(
             TestUtils.name("a note and controls (program change, volume, pan, chorus, reverb, modulation, and pitch)", "compile", "note on/off, program change, and volume are included."),
             SymfonionJsonTestUtils.composeSymfonionSongJsonObject(
                 "port2", array(new StrokeBuilder().notes("C16").program(65).volume(99).pan(101).chorus(102).reverb(103).modulation(104).pitch(105).gate(0.25).build()), SymfonionJsonTestUtils.sixteenBeatsGroove()),
-            Transform.$(SongTo.sequence("port2").andThen(SequenceTo.trackList()).andThen(ListTo.elementAt(0))).allOf(
-                Transform.$(TrackTo.midiMessageStream(IfMidiMessage.isNoteOn())).check(anyMatch(note(isEqualTo(C3)))),
-                Transform.$(TrackTo.midiMessageStream(IfMidiMessage.isNoteOff())).check(anyMatch(note(isEqualTo(C3)))),
-                Transform.$(TrackTo.midiMessageStream(IfMidiMessage.isProgramChange())).check(anyMatch(programNumber(isEqualTo((byte) 65)))),
-                Transform.$(TrackTo.midiMessageStream(IfMidiMessage.isControlChange())).check(anyMatch(control(isEqualTo(VOLUME))))
+            Transform.$(FromSong.toSequence("port2").andThen(trackList()).andThen(elementAt(0))).allOf(
+                toStreamBy(midiMessageStream(isNoteOn())).anyMatch(note(isEqualTo(C3))),
+                toStreamBy(midiMessageStream(isNoteOff())).anyMatch(note(isEqualTo(C3))),
+                toStreamBy(midiMessageStream(isProgramChange())).anyMatch(programNumber(isEqualTo((byte) 65))),
+                toStreamBy(midiMessageStream(isControlChange())).anyMatch(control(isEqualTo(VOLUME)))
             )),
-        
+
         createPositiveTestCase(
             TestUtils.name("a note and an 'arrayable' control (volume)", "compile", "arrayable control expanded."),
             SymfonionJsonTestUtils.composeSymfonionSongJsonObject(
                 "port2", array(new StrokeBuilder().notes("C4").volume(array(10, 20, 30, 40, 50, 60, 70, 80, 90, 100)).build()), SymfonionJsonTestUtils.sixteenBeatsGroove()),
-            Transform.$(SongTo.sequence("port2").andThen(SequenceTo.trackList()).andThen(ListTo.elementAt(0))).allOf(
-                Transform.$(TrackTo.midiMessageStream(IfMidiMessage.isNoteOn())).check(anyMatch(note(isEqualTo(C3)))),
-                Transform.$(TrackTo.midiMessageStream(IfMidiMessage.isNoteOff())).check(anyMatch(note(isEqualTo(C3)))),
-                Transform.$(TrackTo.midiMessageStream(IfMidiMessage.isControlChange().and(control(isEqualTo(VOLUME)))))
-                    .check(allMatch(controlData(greaterThanOrEqualTo((byte) 10)))),
-                Transform.$(TrackTo.midiMessageStream(IfMidiMessage.isControlChange().and(control(isEqualTo(VOLUME)))))
-                    .check(Transform.<Stream<MidiMessage>, Long>$(StreamTo.count()).check(isEqualTo(10L)))
+            Transform.$(FromSong.toSequence("port2").andThen(trackList()).andThen(elementAt(0))).allOf(
+                toStreamBy(midiMessageStream(isNoteOn())).anyMatch(note(isEqualTo(C3))),
+                toStreamBy(midiMessageStream(isNoteOff())).anyMatch(note(isEqualTo(C3))),
+                toStreamBy(midiMessageStream(isControlChange().and(control(isEqualTo(VOLUME))))).allMatch(controlData(greaterThanOrEqualTo((byte) 10))),
+                toStreamBy(midiMessageStream(isControlChange().and(control(isEqualTo(VOLUME))))).checkCount(isEqualTo(10L))
             )),
         createPositiveTestCase(
             TestUtils.name("a note and an 'arrayable' control (volume) with nulls", "compile", "arrayable control expanded replacing nulls with intermediate values."),
             SymfonionJsonTestUtils.composeSymfonionSongJsonObject(
                 "port2", array(new StrokeBuilder().notes("C4").volume(array(10, null, null, null, null, null, null, null, null, 100)).build()), SymfonionJsonTestUtils.sixteenBeatsGroove()),
-            Transform.$(SongTo.sequence("port2").andThen(SequenceTo.trackList()).andThen(ListTo.elementAt(0))).allOf(
-                Transform.$(TrackTo.midiMessageStream(IfMidiMessage.isNoteOn())).check(anyMatch(note(isEqualTo(C3)))),
-                Transform.$(TrackTo.midiMessageStream(IfMidiMessage.isNoteOff())).check(anyMatch(note(isEqualTo(C3)))),
-                Transform.$(TrackTo.midiMessageStream(IfMidiMessage.isControlChange().and(control(isEqualTo(VOLUME)))))
-                    .check(allMatch(controlData(greaterThanOrEqualTo((byte) 10)))),
-                Transform.$(TrackTo.midiMessageStream(IfMidiMessage.isControlChange().and(control(isEqualTo(VOLUME)))))
-                    .check(Transform.<Stream<MidiMessage>, Long>$(StreamTo.count()).check(isEqualTo(10L))),
-                Transform.$(TrackTo.midiMessageStream(IfMidiMessage.isControlChange().and(control(isEqualTo(VOLUME)).and(controlData(greaterThanOrEqualTo((byte)50))))))
-                    .check(Transform.<Stream<MidiMessage>, Long>$(StreamTo.count()).check(greaterThan(4L)))
+            Transform.$(FromSong.toSequence("port2").andThen(trackList()).andThen(elementAt(0))).allOf(
+                toStreamBy(midiMessageStream(isNoteOn())).anyMatch(note(isEqualTo(C3))),
+                toStreamBy(midiMessageStream(isNoteOff())).anyMatch(note(isEqualTo(C3))),
+                toStreamBy(midiMessageStream(isControlChange().and(control(isEqualTo(VOLUME))))).allMatch(controlData(greaterThanOrEqualTo((byte) 10))),
+                toStreamBy(midiMessageStream(isControlChange().and(control(isEqualTo(VOLUME))))).checkCount(isEqualTo(10L)),
+                toStreamBy(midiMessageStream(isControlChange().and(control(isEqualTo(VOLUME)).and(controlData(greaterThanOrEqualTo((byte) 50)))))).checkCount(greaterThan(4L))
             ))
     );
-    
+
   }
-  
+
   public static List<SymfonionTestCase> negativeTestCases() {
     return List.of(
         createNegativeTestCase(
@@ -249,5 +249,5 @@ public class MidiCompilerTest {
             object(),
             isNotNull()));
   }
-  
+
 }

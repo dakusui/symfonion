@@ -30,13 +30,13 @@ import static java.lang.String.format;
 public class PatchBay implements Subcommand {
   @Override
   public void invoke(Cli cli, PrintStream ps, InputStream inputStream) throws SymfonionException, IOException {
-    MidiRouteRequest route = cli.getRouteRequest();
+    MidiRouteRequest route = cli.routeRequest();
 
     String inPortName = route.in();
-    Map<String, Pattern> midiInDefinitions = requireMidiInDefinitionsContainsInputPortName(cli.getMidiInDefinitions(), inPortName);
+    Map<String, Pattern> midiInDefinitions = requireMidiInDefinitionsContainsInputPortName(cli.midiInRegexPatterns(), inPortName);
 
     String outPortName = route.out();
-    Map<String, Pattern> midiOutDefinitions = requireMidiOutDefinitionsContainsOutputPortName(cli.getMidiOutDefinitions(), outPortName);
+    Map<String, Pattern> midiOutDefinitions = requireMidiOutDefinitionsContainsOutputPortName(cli.midiOutRegexPatterns(), outPortName);
 
     MidiDeviceManager midiDeviceManager = MidiDeviceManager.from(MidiDeviceReportFormatter.createDefaultInstance());
 

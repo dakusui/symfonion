@@ -11,6 +11,6 @@ public class Help implements Subcommand {
     @Override
     public void invoke(Cli cli, PrintStream ps, InputStream inputStream)  {
         HelpFormatter formatter = new HelpFormatter();
-        formatter.printHelp("SYNTAX", cli.getOptions());
+        formatter.printHelp("SYNTAX", cli.options());
     }
 }

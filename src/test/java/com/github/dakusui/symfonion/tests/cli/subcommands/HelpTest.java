@@ -12,7 +12,7 @@ import java.io.PrintStream;
 
 import static com.github.dakusui.testutils.TestUtils.immediatelyClosingInputStream;
 import static com.github.dakusui.testutils.TestUtils.outputCapturingPrintStream;
-import static com.github.dakusui.testutils.midi.MidiTestUtils.assumeMidiDevicesPresent;
+import static com.github.dakusui.testutils.midi.MidiTestUtils.assumeRequiredMidiDevicesPresent;
 import static com.github.dakusui.thincrest.TestAssertions.assertThat;
 import static com.github.dakusui.thincrest_pcond.experimentals.cursor.Cursors.findElements;
 import static com.github.dakusui.thincrest_pcond.forms.Predicates.containsString;
@@ -26,11 +26,11 @@ public class HelpTest {
   }
   @Test
   public void whenHelp_thenLooksOk() throws ParseException {
-    assumeMidiDevicesPresent();
+    assumeRequiredMidiDevicesPresent();
 
     TestUtils.OutputCapturingPrintStream out = outputCapturingPrintStream();
     System.setOut(out);
-    new Help().invoke(new Cli(), out, immediatelyClosingInputStream());
+    new Help().invoke(new Cli.Builder().build(), out, immediatelyClosingInputStream());
 
     assertThat(out.toStringList(), findElements(
         containsString("usage: SYNTAX"),

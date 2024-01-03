@@ -2,7 +2,7 @@ package com.github.dakusui.symfonion.tests.json;
 
 import com.github.dakusui.json.JsonInvalidPathException;
 import com.github.dakusui.json.JsonUtils;
-import com.github.dakusui.testutils.forms.Transform;
+import com.github.dakusui.testutils.forms.core.Transform;
 import com.github.dakusui.thincrest_pcond.forms.Printables;
 import org.junit.Test;
 

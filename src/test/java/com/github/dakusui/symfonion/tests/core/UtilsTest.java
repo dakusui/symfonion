@@ -1,7 +1,7 @@
 package com.github.dakusui.symfonion.tests.core;
 
 import com.github.dakusui.symfonion.utils.Utils;
-import com.github.dakusui.testutils.forms.Transform;
+import com.github.dakusui.testutils.forms.core.Transform;
 import com.github.dakusui.thincrest.TestAssertions;
 import com.github.dakusui.valid8j_pcond.forms.Functions;
 import org.junit.Test;

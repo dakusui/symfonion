@@ -1,4 +1,4 @@
-package com.github.dakusui.testutils.forms.midi;
+package com.github.dakusui.testutils.forms.javax.sound.midi;
 
 import com.github.dakusui.testutils.midi.PrintableMidiMessage;
 

@@ -6,7 +6,6 @@ import com.github.dakusui.json.JsonUtils;
 import com.github.dakusui.symfonion.exceptions.FractionFormatException;
 import com.github.dakusui.symfonion.exceptions.SymfonionException;
 import com.github.dakusui.symfonion.utils.Fraction;
-import com.github.dakusui.symfonion.utils.Utils;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -41,7 +40,7 @@ public class Bar {
   private void init(JsonObject jsonObject, JsonObject root) throws SymfonionException, JsonException {
     try (Context ignored = context($(JSON_ELEMENT_ROOT, root))) {
       try {
-        this.beats = Utils.parseFraction(JsonUtils.asString(jsonObject, Keyword.$beats));
+        this.beats = Fraction.parseFraction(JsonUtils.asString(jsonObject, Keyword.$beats));
       } catch (FractionFormatException e) {
         throw illegalFormatException(asJsonElement(jsonObject, Keyword.$beats), FRACTION_EXAMPLE);
       }

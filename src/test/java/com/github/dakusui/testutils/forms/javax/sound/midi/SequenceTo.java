@@ -1,4 +1,4 @@
-package com.github.dakusui.testutils.forms.midi;
+package com.github.dakusui.testutils.forms.javax.sound.midi;
 
 import javax.sound.midi.Sequence;
 import javax.sound.midi.Track;

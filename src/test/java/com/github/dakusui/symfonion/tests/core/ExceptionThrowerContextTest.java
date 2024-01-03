@@ -2,7 +2,7 @@ package com.github.dakusui.symfonion.tests.core;
 
 import com.github.dakusui.symfonion.exceptions.ExceptionThrower;
 import com.github.dakusui.symfonion.exceptions.SymfonionMissingElementException;
-import com.github.dakusui.testutils.forms.Transform;
+import com.github.dakusui.testutils.forms.core.Transform;
 import com.github.dakusui.testutils.json.JsonTestUtils;
 import org.junit.Ignore;
 import org.junit.Test;
