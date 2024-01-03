@@ -26,20 +26,20 @@ import static com.github.dakusui.symfonion.cli.CliUtils.composeErrMsg;
 import static java.lang.String.format;
 
 public record Cli(Subcommand subcommand, File source, File sink, MidiRouteRequest routeRequest,
-                        /*
-                         * Returns a map that defines MIDI-in port names.
-                         * A key in the returned map is a port name used in a symfonion song file.
-                         * The value associated with it is a regular expression that should specify a MIDI device.
-                         * The regular expression should be defined so that it matches one and only one MIDI-in device available in the system.
-                         */
-                        Map<String, Pattern> midiInRegexPatterns,
-                        /*
-                         * Returns a map that defines MIDI-out port names.
-                         * A key in the returned map is a port name used in a symfonion song file.
-                         * The value associated with it is a regular expression that should specify a MIDI device.
-                         * The regular expression should be defined so that it matches one and only one MIDI-out device available in the system.
-                         */
-                        Map<String, Pattern> midiOutRegexPatterns,
+    /*
+     * Returns a map that defines MIDI-in port names.
+     * A key in the returned map is a port name used in a symfonion song file.
+     * The value associated with it is a regular expression that should specify a MIDI device.
+     * The regular expression should be defined so that it matches one and only one MIDI-in device available in the system.
+     */
+                  Map<String, Pattern> midiInRegexPatterns,
+    /*
+     * Returns a map that defines MIDI-out port names.
+     * A key in the returned map is a port name used in a symfonion song file.
+     * The value associated with it is a regular expression that should specify a MIDI device.
+     * The regular expression should be defined so that it matches one and only one MIDI-out device available in the system.
+     */
+                  Map<String, Pattern> midiOutRegexPatterns,
                   Options options,
                   Symfonion symfonion) {
 

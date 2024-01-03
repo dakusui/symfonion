@@ -7,9 +7,7 @@ import com.github.dakusui.symfonion.exceptions.SymfonionException;
 import com.github.dakusui.symfonion.song.Pattern.Parameters;
 import com.github.dakusui.symfonion.utils.Fraction;
 import com.github.dakusui.symfonion.utils.Utils;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import com.google.gson.*;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiEvent;
@@ -43,7 +41,7 @@ public class Stroke {
   private final int[] aftertouch;
   private final JsonElement strokeJson;
   private final JsonObject rootObjectNode;
-  
+
   public Stroke(JsonElement strokeJson, JsonObject root, Parameters params, NoteMap noteMap) throws SymfonionException, JsonException {
     String notes;
     Fraction len = params.length();
@@ -114,7 +112,7 @@ public class Stroke {
     }
     this.length = strokeLen;
   }
-  
+
   private int[] getIntArray(JsonObject cur, Keyword kw) throws JsonInvalidPathException, JsonTypeMismatchException, JsonFormatException {
     int[] ret;
     if (!JsonUtils.hasPath(cur, kw)) {
@@ -123,58 +121,90 @@ public class Stroke {
     JsonElement json = JsonUtils.asJsonElement(cur, kw);
     if (json.isJsonArray()) {
       JsonArray arr = json.getAsJsonArray();
-      Integer[] tmp = new Integer[arr.size()];
-      for (int i = 0; i < tmp.length; i++) {
-        if (arr.get(i) == null || arr.get(i).isJsonNull()) {
-          tmp[i] = null;
-        } else {
-          tmp[i] = arr.get(i).getAsInt();
-        }
-      }
-      ret = new int[arr.size()];
-      int start = 0;
-      int end = 0;
-      for (int i = 0; i < tmp.length; i++) {
-        if (tmp[i] != null) {
-          start = ret[i] = tmp[i];
-        } else {
-          int j = i + 1;
-          while (j < tmp.length) {
-            if (tmp[j] != null) {
-              end = tmp[j];
-              ret[j] = end;
-              break;
-            }
-            j++;
-          }
-          int step = (end - start) / (j - i);
-          int curval = start;
-          for (int k = i; k < j; k++) {
-            curval += step;
-            ret[k] = curval;
-          }
-          i = j;
-        }
-      }
+      ret = interpolate(expandDots(arr));
     } else {
       ret = new int[1];
       ret[0] = JsonUtils.asInt(cur, kw);
     }
     return ret;
   }
-  
+
+  private static JsonArray expandDots(JsonArray arr) {
+    JsonArray ret = new JsonArray();
+    for (int i = 0; i < arr.size(); i++) {
+      JsonElement cur = arr.get(i);
+      if (cur.isJsonPrimitive()) {
+        JsonPrimitive p = cur.getAsJsonPrimitive();
+        if (p.isNumber())
+          ret.add(p);
+        else if (p.isString()) {
+          String s = p.getAsString();
+          for (int j = 0; j < s.length(); j++) {
+            if (s.charAt(j) == '.')
+              ret.add(JsonNull.INSTANCE);
+            else
+              throw new RuntimeException();
+          }
+        } else
+          throw new RuntimeException();
+      } else if (cur.isJsonNull())
+        ret.add(cur);
+      else
+        throw new RuntimeException();
+    }
+    return ret;
+  }
+
+  private static int[] interpolate(JsonArray arr) {
+    int[] ret;
+    Integer[] tmp = new Integer[arr.size()];
+    for (int i = 0; i < tmp.length; i++) {
+      if (arr.get(i) == null || arr.get(i).isJsonNull()) {
+        tmp[i] = null;
+      } else {
+        tmp[i] = arr.get(i).getAsInt();
+      }
+    }
+    ret = new int[arr.size()];
+    int start = 0;
+    int end = 0;
+    for (int i = 0; i < tmp.length; i++) {
+      if (tmp[i] != null) {
+        start = ret[i] = tmp[i];
+      } else {
+        int j = i + 1;
+        while (j < tmp.length) {
+          if (tmp[j] != null) {
+            end = tmp[j];
+            ret[j] = end;
+            break;
+          }
+          j++;
+        }
+        int step = (end - start) / (j - i);
+        int curval = start;
+        for (int k = i; k < j; k++) {
+          curval += step;
+          ret[k] = curval;
+        }
+        i = j;
+      }
+    }
+    return ret;
+  }
+
   public Fraction length() {
     return length;
   }
-  
+
   public double gate() {
     return this.gate;
   }
-  
+
   public List<NoteSet> noteSets() {
     return this.notes;
   }
-  
+
   /*
    * Returns the 'length' portion of the string <code>s</code>.
    */
@@ -214,7 +244,7 @@ public class Stroke {
   interface EventCreator {
     void createEvent(int v, long pos) throws InvalidMidiDataException;
   }
-  
+
   private void renderValues(int[] values, long pos, long strokeLen, MidiCompiler compiler, EventCreator creator) throws InvalidMidiDataException {
     if (values == null) {
       return;
@@ -225,7 +255,7 @@ public class Stroke {
       compiler.controlEventProcessed();
     }
   }
-  
+
   public void compile(final MidiCompiler compiler, MidiCompilerContext context) throws InvalidMidiDataException {
     final Track track = context.track();
     final int ch = context.channel();

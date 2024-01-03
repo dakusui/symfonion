@@ -227,10 +227,23 @@ public class MidiCompilerTest extends TestBase {
                 toStreamBy(midiMessageStream(isControlChange().and(control(isEqualTo(VOLUME))))).allMatch(controlData(greaterThanOrEqualTo((byte) 10))),
                 toStreamBy(midiMessageStream(isControlChange().and(control(isEqualTo(VOLUME))))).checkCount(isEqualTo(10L))
             )),
+
         createPositiveTestCase(
             TestUtils.name("a note and an 'arrayable' control (volume) with nulls", "compile", "arrayable control expanded replacing nulls with intermediate values."),
             SymfonionJsonTestUtils.composeSymfonionSongJsonObject(
                 "port2", array(new StrokeBuilder().notes("C4").volume(array(10, null, null, null, null, null, null, null, null, 100)).build()), SymfonionJsonTestUtils.sixteenBeatsGroove()),
+            Transform.$(FromSong.toSequence("port2").andThen(trackList()).andThen(elementAt(0))).allOf(
+                toStreamBy(midiMessageStream(isNoteOn())).anyMatch(note(isEqualTo(C3))),
+                toStreamBy(midiMessageStream(isNoteOff())).anyMatch(note(isEqualTo(C3))),
+                toStreamBy(midiMessageStream(isControlChange().and(control(isEqualTo(VOLUME))))).allMatch(controlData(greaterThanOrEqualTo((byte) 10))),
+                toStreamBy(midiMessageStream(isControlChange().and(control(isEqualTo(VOLUME))))).checkCount(isEqualTo(10L)),
+                toStreamBy(midiMessageStream(isControlChange().and(control(isEqualTo(VOLUME)).and(controlData(greaterThanOrEqualTo((byte) 50)))))).checkCount(greaterThan(4L))
+            )),
+
+        createPositiveTestCase(
+            TestUtils.name("a note and an 'arrayable' control (volume) with nulls", "compile", "arrayable control expanded replacing nulls with intermediate values."),
+            SymfonionJsonTestUtils.composeSymfonionSongJsonObject(
+                "port2", array(new StrokeBuilder().notes("C4").volume(array(10, "........", 100)).build()), SymfonionJsonTestUtils.sixteenBeatsGroove()),
             Transform.$(FromSong.toSequence("port2").andThen(trackList()).andThen(elementAt(0))).allOf(
                 toStreamBy(midiMessageStream(isNoteOn())).anyMatch(note(isEqualTo(C3))),
                 toStreamBy(midiMessageStream(isNoteOff())).anyMatch(note(isEqualTo(C3))),
