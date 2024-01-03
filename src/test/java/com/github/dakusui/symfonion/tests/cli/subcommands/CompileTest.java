@@ -1,6 +1,6 @@
 package com.github.dakusui.symfonion.tests.cli.subcommands;
 
-import com.github.dakusui.symfonion.cli.CliRecord;
+import com.github.dakusui.symfonion.cli.Cli;
 import com.github.dakusui.symfonion.cli.subcommands.Compile;
 import com.github.dakusui.symfonion.testutils.TestBase;
 import org.apache.commons.cli.ParseException;
@@ -26,7 +26,7 @@ public class CompileTest extends TestBase {
             "port1",
             json("C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;"),
             sixteenBeatsGroove()).toString());
-    new Compile().invoke(new CliRecord.Builder("-c", f.getAbsolutePath()).build(), new PrintStream(out), System.in);
+    new Compile().invoke(new Cli.Builder("-c", f.getAbsolutePath()).build(), new PrintStream(out), System.in);
     String s = out.toString(UTF_8);
     System.out.println(s);
   }

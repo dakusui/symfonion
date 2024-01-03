@@ -1,6 +1,6 @@
 package com.github.dakusui.symfonion.cli.subcommands;
 
-import com.github.dakusui.symfonion.cli.CliRecord;
+import com.github.dakusui.symfonion.cli.Cli;
 import com.github.dakusui.symfonion.cli.Subcommand;
 import com.github.dakusui.symfonion.core.Symfonion;
 import com.github.dakusui.symfonion.exceptions.SymfonionException;
@@ -22,7 +22,7 @@ import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.ContextKe
 public class Play implements Subcommand {
 
   @Override
-  public void invoke(CliRecord cli, PrintStream ps, InputStream inputStream) throws IOException {
+  public void invoke(Cli cli, PrintStream ps, InputStream inputStream) throws IOException {
     try (Context ignored = context($(SOURCE_FILE, cli.source()))) {
       Symfonion symfonion = cli.symfonion();
 

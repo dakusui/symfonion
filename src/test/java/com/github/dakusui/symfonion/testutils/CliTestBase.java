@@ -2,7 +2,7 @@ package com.github.dakusui.symfonion.testutils;
 
 import java.io.*;
 
-import com.github.dakusui.symfonion.cli.CliRecord;
+import com.github.dakusui.symfonion.cli.Cli;
 import com.github.dakusui.testutils.forms.core.AllOf;
 import com.github.dakusui.testutils.forms.core.Transform;
 import org.junit.Before;
@@ -58,7 +58,7 @@ public class CliTestBase extends TestBase {
     ByteArrayOutputStream stdout, stderr;
     PrintStream ps1 = new PrintStream(stdout = new ByteArrayOutputStream());
     PrintStream ps2 = new PrintStream(stderr = new ByteArrayOutputStream());
-    int exitCode = CliRecord.invoke(ps1, ps2, args);
+    int exitCode = Cli.invoke(ps1, ps2, args);
     return new Result(exitCode, stdout.toString(), stderr.toString());
   }
 

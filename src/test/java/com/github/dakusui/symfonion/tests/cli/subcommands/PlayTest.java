@@ -1,6 +1,6 @@
 package com.github.dakusui.symfonion.tests.cli.subcommands;
 
-import com.github.dakusui.symfonion.cli.CliRecord;
+import com.github.dakusui.symfonion.cli.Cli;
 import com.github.dakusui.symfonion.cli.subcommands.Play;
 import org.apache.commons.cli.ParseException;
 import org.junit.Ignore;
@@ -17,7 +17,7 @@ public class PlayTest {
   @Ignore
   public void whenPlay_thenLooksOk() throws ParseException, IOException {
     ByteArrayOutputStream out = new ByteArrayOutputStream();
-    new Play().invoke(new CliRecord.Builder().build(), new PrintStream(out), System.in);
+    new Play().invoke(new Cli.Builder().build(), new PrintStream(out), System.in);
     String s = out.toString(UTF_8);
     System.out.println(s);
   }

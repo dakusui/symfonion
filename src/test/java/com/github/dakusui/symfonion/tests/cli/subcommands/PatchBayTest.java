@@ -1,6 +1,6 @@
 package com.github.dakusui.symfonion.tests.cli.subcommands;
 
-import com.github.dakusui.symfonion.cli.CliRecord;
+import com.github.dakusui.symfonion.cli.Cli;
 import com.github.dakusui.symfonion.cli.subcommands.PatchBay;
 import com.github.dakusui.symfonion.testutils.TestBase;
 import com.github.dakusui.testutils.TestUtils;
@@ -21,7 +21,7 @@ public class PatchBayTest extends TestBase {
     assumeRequiredMidiDevicesPresent();
 
     TestUtils.OutputCapturingPrintStream out = TestUtils.outputCapturingPrintStream();
-    new PatchBay().invoke(new CliRecord.Builder("-r", "in=out", "-I", "in=Real.*", "-O", "out=Gervill").build(), out, immediatelyClosingInputStream());
+    new PatchBay().invoke(new Cli.Builder("-r", "in=out", "-I", "in=Real.*", "-O", "out=Gervill").build(), out, immediatelyClosingInputStream());
 
     for (String s: out.toStringList())
       System.err.println(s);

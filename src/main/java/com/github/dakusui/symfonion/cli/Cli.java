@@ -25,7 +25,7 @@ import java.util.regex.PatternSyntaxException;
 import static com.github.dakusui.symfonion.cli.CliUtils.composeErrMsg;
 import static java.lang.String.format;
 
-public record CliRecord(Subcommand subcommand, File source, File sink, MidiRouteRequest routeRequest,
+public record Cli(Subcommand subcommand, File source, File sink, MidiRouteRequest routeRequest,
                         /*
                          * Returns a map that defines MIDI-in port names.
                          * A key in the returned map is a port name used in a symfonion song file.
@@ -40,8 +40,8 @@ public record CliRecord(Subcommand subcommand, File source, File sink, MidiRoute
                          * The regular expression should be defined so that it matches one and only one MIDI-out device available in the system.
                          */
                         Map<String, Pattern> midiOutRegexPatterns,
-                        Options options,
-                        Symfonion symfonion) {
+                  Options options,
+                  Symfonion symfonion) {
 
   /**
    * Returns an {@code Options} object which represents the specification of this CLI command.
@@ -126,7 +126,7 @@ public record CliRecord(Subcommand subcommand, File source, File sink, MidiRoute
   public static int invoke(PrintStream stdout, PrintStream stderr, String... args) {
     int ret;
     try {
-      CliRecord cli = new Builder(args).build();
+      Cli cli = new Builder(args).build();
       cli.subcommand().invoke(cli, stdout, System.in);
       ret = 0;
     } catch (ParseException e) {
@@ -228,7 +228,7 @@ public record CliRecord(Subcommand subcommand, File source, File sink, MidiRoute
       this.args = args;
     }
 
-    public CliRecord build() throws ParseException {
+    public Cli build() throws ParseException {
       Options options1 = buildOptions();
       CommandLine cmd = parseArgs(options1, args);
       if (cmd.hasOption('O')) {
@@ -285,7 +285,7 @@ public record CliRecord(Subcommand subcommand, File source, File sink, MidiRoute
           throw new CliException(composeErrMsg(format("Unrecognized arguments:%s", leftovers.subList(2, leftovers.size())), "-"));
         }
       }
-      return new CliRecord(subcommand, source, sink, routeRequest, midiInRegexPatterns, midiOutRegexPatterns, options1, createSymfonion());
+      return new Cli(subcommand, source, sink, routeRequest, midiInRegexPatterns, midiOutRegexPatterns, options1, createSymfonion());
     }
   }
 }

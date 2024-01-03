@@ -1,6 +1,6 @@
 package com.github.dakusui.symfonion.cli.subcommands;
 
-import com.github.dakusui.symfonion.cli.CliRecord;
+import com.github.dakusui.symfonion.cli.Cli;
 import com.github.dakusui.symfonion.cli.CliUtils;
 import com.github.dakusui.symfonion.cli.Subcommand;
 import com.github.dakusui.symfonion.core.Symfonion;
@@ -20,7 +20,7 @@ import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.$;
 
 public class Compile implements Subcommand {
     @Override
-    public void invoke(CliRecord cli, PrintStream ps, InputStream inputStream) throws SymfonionException, IOException {
+    public void invoke(Cli cli, PrintStream ps, InputStream inputStream) throws SymfonionException, IOException {
         try (ExceptionThrower.Context ignored = ExceptionThrower.context($(ExceptionThrower.ContextKey.SOURCE_FILE, cli.source()))) {
             Symfonion symfonion = cli.symfonion();
             Song song = symfonion.load(cli.source().getAbsolutePath());

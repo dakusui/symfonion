@@ -1,6 +1,6 @@
 package com.github.dakusui.symfonion.tests.cli.subcommands;
 
-import com.github.dakusui.symfonion.cli.CliRecord;
+import com.github.dakusui.symfonion.cli.Cli;
 import com.github.dakusui.symfonion.cli.subcommands.Help;
 import com.github.dakusui.testutils.TestUtils;
 import org.apache.commons.cli.ParseException;
@@ -30,7 +30,7 @@ public class HelpTest {
 
     TestUtils.OutputCapturingPrintStream out = outputCapturingPrintStream();
     System.setOut(out);
-    new Help().invoke(new CliRecord.Builder().build(), out, immediatelyClosingInputStream());
+    new Help().invoke(new Cli.Builder().build(), out, immediatelyClosingInputStream());
 
     assertThat(out.toStringList(), findElements(
         containsString("usage: SYNTAX"),
