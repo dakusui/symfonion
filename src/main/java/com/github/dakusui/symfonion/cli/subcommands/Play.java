@@ -5,12 +5,16 @@ import com.github.dakusui.symfonion.cli.Subcommand;
 import com.github.dakusui.symfonion.core.Symfonion;
 import com.github.dakusui.symfonion.exceptions.SymfonionException;
 import com.github.dakusui.symfonion.song.Song;
+import com.github.dakusui.symfonion.utils.midi.MidiDeviceScanner;
+import com.github.dakusui.symfonion.utils.midi.MidiUtils;
 
 import javax.sound.midi.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.*;
+import java.util.function.Function;
+import java.util.regex.Pattern;
 
 import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.*;
 import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.ContextKey.SOURCE_FILE;
@@ -25,31 +29,52 @@ public class Play implements Subcommand {
       Song song = symfonion.load(cli.getSourceFile().getAbsolutePath());
       Map<String, Sequence> sequences = symfonion.compile(song);
       ps.println();
-      Map<String, MidiDevice> midiOutDevices = cli.prepareMidiOutDevices(ps);
+      Map<String, MidiDevice> midiOutDevices = prepareMidiOutDevices(ps, cli.getMidiOutDefinitions());
       ps.println();
       play(midiOutDevices, sequences);
     }
   }
 
-  private static Map<String, Sequencer> prepareSequencers(List<String> portNames, Map<String, MidiDevice> devices, Map<String, Sequence> sequences) throws MidiUnavailableException, InvalidMidiDataException {
+  public static Map<String, MidiDevice> prepareMidiOutDevices(PrintStream ps, Map<String, Pattern> portDefinitions) {
+    Map<String, MidiDevice> devices = new HashMap<>();
+    for (String portName : portDefinitions.keySet()) {
+      Pattern regex = portDefinitions.get(portName);
+      ////
+      // BEGIN: Trying to find an output device whose name matches the given regex
+      MidiDeviceScanner scanner = MidiUtils.chooseOutputDevices(ps, regex);
+      scanner.scan();
+      MidiDevice.Info[] matchedInfos = MidiUtils.getInfos(portName, scanner, regex);
+      // END
+      ////
+      try {
+        devices.put(portName, MidiSystem.getMidiDevice(matchedInfos[0]));
+      } catch (MidiUnavailableException e) {
+        throw failedToAccessMidiDevice("out", e, matchedInfos);
+      }
+    }
+    return devices;
+  }
+
+  private static Map<String, Sequencer> prepareSequencers(List<String> portNames, Map<String, MidiDevice> midiOutDevices, Map<String, Sequence> sequences) throws MidiUnavailableException, InvalidMidiDataException {
     Map<String, Sequencer> ret = new HashMap<>();
     final List<Sequencer> playingSequencers = new LinkedList<>();
     for (String portName : portNames) {
-      prepareSequencer(ret, portName, devices, sequences, playingSequencers);
+      MidiDevice midiOutDevice = midiOutDevices.get(portName);
+      Sequence sequence = sequences.get(portName);
+      final Sequencer sequencer = prepareSequencer(midiOutDevice, sequence, seq -> createMetaEventListener(playingSequencers, seq));
+      playingSequencers.add(sequencer);
+      ret.put(portName, sequencer);
     }
     return ret;
   }
 
-  private static void prepareSequencer(Map<String, Sequencer> sequencers, String portName, Map<String, MidiDevice> devices, Map<String, Sequence> sequences, List<Sequencer> playingSequencers) throws MidiUnavailableException, InvalidMidiDataException {
+  private static Sequencer prepareSequencer(MidiDevice midiOutDevice, Sequence sequence, Function<Sequencer, MetaEventListener> metaEventListenerFactory) throws MidiUnavailableException, InvalidMidiDataException {
     final Sequencer sequencer = MidiSystem.getSequencer();
-    playingSequencers.add(sequencer);
-    sequencers.put(portName, sequencer);
-    MidiDevice midiOutDevice = devices.get(portName);
-    Sequence sequence = sequences.get(portName);
     sequencer.open();
     connectMidiDeviceToSequencer(midiOutDevice, sequencer);
     sequencer.setSequence(sequence);
-    sequencer.addMetaEventListener(createMetaEventListener(playingSequencers, sequencer));
+    sequencer.addMetaEventListener(metaEventListenerFactory.apply(sequencer));
+    return sequencer;
   }
 
   private static void connectMidiDeviceToSequencer(MidiDevice midiOutDevice, Sequencer sequencer) throws MidiUnavailableException {

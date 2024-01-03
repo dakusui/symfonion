@@ -3,13 +3,10 @@ package com.github.dakusui.symfonion.cli;
 import com.github.dakusui.logias.lisp.Context;
 import com.github.dakusui.symfonion.cli.subcommands.PresetSubcommand;
 import com.github.dakusui.symfonion.exceptions.CliException;
-import com.github.dakusui.symfonion.utils.midi.MidiDeviceScanner;
 import com.github.dakusui.symfonion.core.Symfonion;
 import com.github.dakusui.symfonion.exceptions.SymfonionException;
-import com.github.dakusui.symfonion.utils.midi.MidiUtils;
 import org.apache.commons.cli.*;
 
-import javax.sound.midi.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
@@ -23,7 +20,6 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import static com.github.dakusui.symfonion.cli.CliUtils.composeErrMsg;
-import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.failedToAccessMidiDevice;
 import static java.lang.String.format;
 
 public class Cli {
@@ -32,38 +28,14 @@ public class Cli {
   private File source;
   private File sink = new File("a.midi");
   private MidiRouteRequest routeRequest = null;
-  private Map<String, Pattern> midiins = new HashMap<>();
-  private Map<String, Pattern> midiouts = new HashMap<>();
+  private Map<String, Pattern> midiInRegexPatterns = new HashMap<>();
+  private Map<String, Pattern> midiOutRegexPatterns = new HashMap<>();
   private final Symfonion symfonion;
   private Options options;
 
   public Cli(String... args) throws ParseException, CliException {
     this.init(args);
     this.symfonion = createSymfonion();
-  }
-
-  public Map<String, MidiDevice> prepareMidiOutDevices(PrintStream ps) {
-    return prepareMidiDevices(ps, this.getMidiOutDefinitions());
-  }
-
-  private static Map<String, MidiDevice> prepareMidiDevices(PrintStream ps, Map<String, Pattern> portDefinitions) {
-    Map<String, MidiDevice> devices = new HashMap<>();
-    for (String portName : portDefinitions.keySet()) {
-      Pattern regex = portDefinitions.get(portName);
-      ////
-      // BEGIN: Trying to find an output device whose name matches the given regex
-      MidiDeviceScanner scanner = MidiUtils.chooseOutputDevices(ps, regex);
-      scanner.scan();
-      MidiDevice.Info[] matchedInfos = MidiUtils.getInfos(portName, scanner, regex);
-      // END
-      ////
-      try {
-        devices.put(portName, MidiSystem.getMidiDevice(matchedInfos[0]));
-      } catch (MidiUnavailableException e) {
-        throw failedToAccessMidiDevice("out", e, matchedInfos);
-      }
-    }
-    return devices;
   }
 
   public Options getOptions() {
@@ -142,10 +114,10 @@ public class Cli {
 
   public void analyzeCommandLine(CommandLine cmd) throws CliException {
     if (cmd.hasOption('O')) {
-      this.midiouts = parseSpecifiedOptionsInCommandLineAsPortNamePatterns(cmd, "O");
+      this.midiOutRegexPatterns = parseSpecifiedOptionsInCommandLineAsPortNamePatterns(cmd, "O");
     }
     if (cmd.hasOption('I')) {
-      this.midiins = parseSpecifiedOptionsInCommandLineAsPortNamePatterns(cmd, "I");
+      this.midiInRegexPatterns = parseSpecifiedOptionsInCommandLineAsPortNamePatterns(cmd, "I");
     }
     if (cmd.hasOption('o')) {
       String sinkFilename = CliUtils.getSingleOptionValueFromCommandLine(cmd, "o");
@@ -236,7 +208,7 @@ public class Cli {
    * @return A map that defines MIDI-in port names.
    */
   public Map<String, Pattern> getMidiInDefinitions() {
-    return this.midiins;
+    return this.midiInRegexPatterns;
   }
 
   /**
@@ -248,7 +220,7 @@ public class Cli {
    * @return A map that defines MIDI-out port names.
    */
   public Map<String, Pattern> getMidiOutDefinitions() {
-    return this.midiouts;
+    return this.midiOutRegexPatterns;
   }
 
   public MidiRouteRequest getRouteRequest() {
