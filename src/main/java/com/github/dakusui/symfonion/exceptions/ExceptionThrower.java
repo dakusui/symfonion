@@ -165,7 +165,7 @@ public class ExceptionThrower {
   public static SymfonionIllegalFormatException syntaxErrorWhenExpandingDotsIn(JsonArray errorContainingJsonArray) {
     return new SymfonionIllegalFormatException(
         errorContainingJsonArray,
-        "In this array, a string containing only dots such as '[1, \"...\",3]' will be expanded and interpolation of integer values will happen.",
+        "In this array, a string can contain only dots. E.g. '[1, \"...\",3]'. This will be expanded and interpolation of integer values will happen.",
         contextValueOf(JSON_ELEMENT_ROOT),
         contextValueOf(SOURCE_FILE) );
   }

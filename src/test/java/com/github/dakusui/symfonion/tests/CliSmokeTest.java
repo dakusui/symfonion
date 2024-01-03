@@ -4,9 +4,8 @@ import com.github.dakusui.symfonion.testutils.CliTestBase;
 import com.github.dakusui.symfonion.testutils.json.StrokeBuilder;
 import com.github.dakusui.symfonion.testutils.json.SymfonionJsonTestUtils;
 import com.github.dakusui.testutils.forms.core.AllOf;
-import com.github.dakusui.testutils.forms.core.Transform;
+import com.github.dakusui.testutils.forms.sut.symfonion.ResultTo;
 import com.google.gson.JsonObject;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.FileNotFoundException;
@@ -18,13 +17,15 @@ import static com.github.dakusui.testutils.json.JsonTestUtils.*;
 import static com.github.dakusui.testutils.midi.MidiTestUtils.assumeRequiredMidiDevicesPresent;
 import static com.github.dakusui.thincrest.TestAssertions.assertThat;
 import static com.github.dakusui.thincrest.TestAssertions.assumeThat;
-import static com.github.dakusui.thincrest_pcond.experimentals.cursor.Cursors.findSubstrings;
-import static com.github.dakusui.thincrest_pcond.forms.Functions.call;
-import static com.github.dakusui.thincrest_pcond.forms.Functions.stringify;
 import static com.github.dakusui.thincrest_pcond.forms.Predicates.isFalse;
 
-@Ignore
-public class ValidDataTest extends CliTestBase {
+public class CliSmokeTest extends CliTestBase {
+  /**
+   * Generates three strokes, each of which is a chord. Em, Dm, and C, respectively.
+   * This test plays a generated midi, and you will hear it from your speaker.
+   *
+   * @throws FileNotFoundException This shouldn't be thrown.
+   */
   @Test
   public void givenThreeStrokes_whenPlaySubcommandIsInvoked_thenPlayed() throws FileNotFoundException {
     assumeRequiredMidiDevicesPresent();
@@ -46,7 +47,7 @@ public class ValidDataTest extends CliTestBase {
                 $("$groove", json("16beats"))
             ))));
 
-    Result result = invokeCliWithArguments("-p", writeContentToTempFile(Objects.toString(song)).getAbsolutePath(), "-o", "x.midi", "-Oport1=Gervill");
+    Result result = invokeCliWithArguments("-p", writeContentToTempFile(Objects.toString(song)).getAbsolutePath(), "-Oport1=Gervill");
 
     System.err.println("[source]");
     System.err.println("----");
@@ -56,14 +57,12 @@ public class ValidDataTest extends CliTestBase {
     assertThat(
         result,
         AllOf.$(
-            Transform.$(call("exitCode")).isEqualTo(0),
-            Transform.$(call("out").andThen(stringify())).check(
-                findSubstrings("*", "Gervill", "Real Time Sequencer"))));
+            ResultTo.exitCode().isEqualTo(0),
+            ResultTo.out().findSubstrings("*", "Gervill", "Real Time Sequencer")));
   }
 
   @Test
   public void givenArrayedVolumeHavingBrokenDotsSyntax_whenCompileThroughCli_thenErrorMessageLooksOkay() throws FileNotFoundException {
-    assumeRequiredMidiDevicesPresent();
     assumeThat(isRunUnderPitest(), isFalse());
     JsonObject song = SymfonionJsonTestUtils.composeSymfonionSongJsonObject(
         "port2", array(new StrokeBuilder().notes("C4").volume(array(10, ".X.", 100)).build()), SymfonionJsonTestUtils.sixteenBeatsGroove());
@@ -79,14 +78,17 @@ public class ValidDataTest extends CliTestBase {
     assertThat(
         result,
         AllOf.$(
-            Transform.$(call("exitCode")).isEqualTo(0),
-            Transform.$(call("out").andThen(stringify())).check(
-                findSubstrings("*", "Gervill", "Real Time Sequencer"))));
+            ResultTo.exitCode().isEqualTo(3),
+            ResultTo.err().findSubstrings(
+                "symfonion:",
+                "jsonpath:",
+                ".\"$patterns\".C16x16.\"$body\"[0].\"$volume\"",
+                "In this array, a string can contain only dots. E.g. ",
+                "[10,\".X.\",100]")));
   }
 
   @Test
   public void givenArrayedVolumeHavingInvalidType_whenCompileThroughCli_thenErrorMessageLooksOkay() throws FileNotFoundException {
-    assumeRequiredMidiDevicesPresent();
     assumeThat(isRunUnderPitest(), isFalse());
     JsonObject song = SymfonionJsonTestUtils.composeSymfonionSongJsonObject(
         "port2", array(new StrokeBuilder().notes("C4").volume(array(10, object(), 100)).build()), SymfonionJsonTestUtils.sixteenBeatsGroove());
@@ -102,8 +104,12 @@ public class ValidDataTest extends CliTestBase {
     assertThat(
         result,
         AllOf.$(
-            Transform.$(call("exitCode")).isEqualTo(0),
-            Transform.$(call("out").andThen(stringify())).check(
-                findSubstrings("*", "Gervill", "Real Time Sequencer"))));
+            ResultTo.exitCode().isEqualTo(3),
+            ResultTo.err().findSubstrings(
+                "symfonion:",
+                "jsonpath:",
+                ".\"$patterns\".C16x16.\"$body\"[0].\"$volume\"",
+                "This array, only integers, nulls, and strings containing only dots (...) are allowed.",
+                "[10,{},100]")));
   }
 }

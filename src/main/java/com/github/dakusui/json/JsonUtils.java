@@ -27,7 +27,7 @@ public class JsonUtils {
     if (jsonElement.isJsonObject()) {
       return "object(" + jsonElement.getAsJsonObject().entrySet().size() + " entries)";
     }
-    return jsonElement.toString() + "(unknown)";
+    return jsonElement + "(unknown)";
   }
 
   public static String findPathOf(JsonElement target, JsonObject root) {
@@ -85,7 +85,7 @@ public class JsonUtils {
     }
   }
 
-  private static JsonElement asJsonElementWithDefault(JsonElement base, JsonElement defaultValue, int from, Object[] path)
+  public static JsonElement asJsonElementWithDefault(JsonElement base, JsonElement defaultValue, int from, Object[] path)
       throws JsonInvalidPathException {
     JsonElement ret = _asJsonElement(base, defaultValue, from, path);
     // //
@@ -97,7 +97,7 @@ public class JsonUtils {
     return ret;
   }
 
-  private static JsonElement asJsonElement(JsonElement base, int from, Object[] path) throws JsonInvalidPathException {
+  public static JsonElement asJsonElement(JsonElement base, int from, Object[] path) throws JsonInvalidPathException {
     JsonElement ret = _asJsonElement(base, null, from, path);
     if (ret == null) {
       throw new JsonPathNotFoundException(base, path, from);
