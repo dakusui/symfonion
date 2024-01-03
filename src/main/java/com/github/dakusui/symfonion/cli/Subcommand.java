@@ -15,5 +15,5 @@ public interface Subcommand {
      * @param inputStream An input stream from which this sub-command should read. Usually {@code System.oin}.
      * @throws IOException An IO problem (file-read, write, etc.) happened during execution.
      */
-    void invoke(Cli cli, PrintStream ps, InputStream inputStream) throws IOException;
+    void invoke(CliRecord cli, PrintStream ps, InputStream inputStream) throws IOException;
 }

@@ -6,6 +6,7 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 
 import com.github.dakusui.symfonion.cli.Cli;
+import com.github.dakusui.symfonion.cli.CliRecord;
 import com.github.dakusui.symfonion.cli.subcommands.PresetSubcommand;
 import com.github.dakusui.symfonion.exceptions.CliException;
 import com.github.dakusui.symfonion.exceptions.SymfonionException;
@@ -21,7 +22,7 @@ public class CliTest extends TestBase {
 	}
 
 	@Test
-	public void help_02() throws ParseException, IOException, CliException {
+	public void help_02() throws ParseException, CliException {
 		Cli r = new Cli("--help");
 		assertEquals(PresetSubcommand.HELP, r.getMode());
 	}
@@ -62,9 +63,9 @@ public class CliTest extends TestBase {
 
 	@Test
 	public void whenList() throws SymfonionException, ParseException, IOException {
-		Cli r = new Cli("--list");
+		CliRecord r = new CliRecord.Builder("--list").build();
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		r.getMode().invoke(r, new PrintStream(out), System.in);
+		r.subcommand().invoke(r, new PrintStream(out), System.in);
 
 		System.err.println(out.toString(StandardCharsets.UTF_8));
 	}

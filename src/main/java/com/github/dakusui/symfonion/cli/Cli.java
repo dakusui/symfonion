@@ -51,7 +51,7 @@ public class Cli {
     this.analyzeCommandLine(parseArgs(this.options, args));
   }
 
-  protected Symfonion createSymfonion() {
+  static Symfonion createSymfonion() {
     return new Symfonion(Context.ROOT.createChild());
   }
 
@@ -66,7 +66,7 @@ public class Cli {
    *
    * @return an {@code Options} object for this {@code CLI} class.
    */
-  private static Options buildOptions() {
+  static Options buildOptions() {
     // create Options object
     Options options = new Options();
 
@@ -168,18 +168,18 @@ public class Cli {
     }
   }
 
-  private static Map<String, Pattern> parseSpecifiedOptionsInCommandLineAsPortNamePatterns(CommandLine cmd, String optionName) throws CliException {
+  static Map<String, Pattern> parseSpecifiedOptionsInCommandLineAsPortNamePatterns(CommandLine cmd, String optionName) throws CliException {
     Properties props = cmd.getOptionProperties(optionName);
     Map<String, Pattern> ret = new HashMap<>();
     for (Object key : props.keySet()) {
-      String portname = key.toString();
-      String p = props.getProperty(portname);
+      String portName = key.toString();
+      String p = props.getProperty(portName);
       try {
         Pattern portpattern = Pattern.compile(p);
-        ret.put(portname, portpattern);
+        ret.put(portName, portpattern);
       } catch (PatternSyntaxException e) {
         throw new CliException(composeErrMsg(
-            format("Regular expression '%s' for '%s' isn't valid.", portname, p),
+            format("Regular expression '%s' for '%s' isn't valid.", portName, p),
             optionName,
             null), e);
       }
@@ -239,8 +239,8 @@ public class Cli {
   public static int invoke(PrintStream stdout, PrintStream stderr, String... args) {
     int ret;
     try {
-      Cli cli = new Cli(args);
-      cli.subcommand.invoke(cli, stdout, System.in);
+      CliRecord cli = new CliRecord.Builder(args).build();
+      cli.subcommand().invoke(cli, stdout, System.in);
       ret = 0;
     } catch (ParseException e) {
       printError(stderr, e);

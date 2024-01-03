@@ -1,6 +1,7 @@
 package com.github.dakusui.symfonion.tests.cli.subcommands;
 
 import com.github.dakusui.symfonion.cli.Cli;
+import com.github.dakusui.symfonion.cli.CliRecord;
 import com.github.dakusui.symfonion.cli.subcommands.Version;
 import com.github.dakusui.symfonion.testutils.TestBase;
 import org.apache.commons.cli.ParseException;
@@ -16,7 +17,7 @@ public class VersionTest extends TestBase {
   @Test
   public void whenExecuteVersion_thenWorksFind() throws ParseException, IOException {
     ByteArrayOutputStream out = new ByteArrayOutputStream();
-    new Version().invoke(new Cli(), new PrintStream(out), System.in);
+    new Version().invoke(new CliRecord.Builder().build(), new PrintStream(out), System.in);
     String s = out.toString(UTF_8);
     System.out.println(s);
   }

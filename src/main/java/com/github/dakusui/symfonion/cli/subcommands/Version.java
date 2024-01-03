@@ -1,6 +1,7 @@
 package com.github.dakusui.symfonion.cli.subcommands;
 
 import com.github.dakusui.symfonion.cli.Cli;
+import com.github.dakusui.symfonion.cli.CliRecord;
 import com.github.dakusui.symfonion.cli.Subcommand;
 import com.github.dakusui.symfonion.exceptions.SymfonionException;
 
@@ -37,7 +38,7 @@ public class Version implements Subcommand {
     }
     
     @Override
-    public void invoke(Cli cli, PrintStream ps, InputStream inputStream) throws SymfonionException, IOException {
+    public void invoke(CliRecord cli, PrintStream ps, InputStream inputStream) throws SymfonionException, IOException {
         ps.println("SyMFONION " + version());
         ps.println(license());
     }

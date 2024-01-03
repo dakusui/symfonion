@@ -1,6 +1,6 @@
 package com.github.dakusui.symfonion.cli.subcommands;
 
-import com.github.dakusui.symfonion.cli.Cli;
+import com.github.dakusui.symfonion.cli.CliRecord;
 import com.github.dakusui.symfonion.cli.MidiRouteRequest;
 import com.github.dakusui.symfonion.cli.Subcommand;
 import com.github.dakusui.symfonion.exceptions.CliException;
@@ -29,14 +29,14 @@ import static java.lang.String.format;
 
 public class PatchBay implements Subcommand {
   @Override
-  public void invoke(Cli cli, PrintStream ps, InputStream inputStream) throws SymfonionException, IOException {
-    MidiRouteRequest route = cli.getRouteRequest();
+  public void invoke(CliRecord cli, PrintStream ps, InputStream inputStream) throws SymfonionException, IOException {
+    MidiRouteRequest route = cli.routeRequest();
 
     String inPortName = route.in();
-    Map<String, Pattern> midiInDefinitions = requireMidiInDefinitionsContainsInputPortName(cli.getMidiInDefinitions(), inPortName);
+    Map<String, Pattern> midiInDefinitions = requireMidiInDefinitionsContainsInputPortName(cli.midiInRegexPatterns(), inPortName);
 
     String outPortName = route.out();
-    Map<String, Pattern> midiOutDefinitions = requireMidiOutDefinitionsContainsOutputPortName(cli.getMidiOutDefinitions(), outPortName);
+    Map<String, Pattern> midiOutDefinitions = requireMidiOutDefinitionsContainsOutputPortName(cli.midiOutRegexPatterns(), outPortName);
 
     MidiDeviceManager midiDeviceManager = MidiDeviceManager.from(MidiDeviceReportFormatter.createDefaultInstance());
 
