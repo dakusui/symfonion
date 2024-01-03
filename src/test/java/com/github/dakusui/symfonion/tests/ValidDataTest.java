@@ -12,6 +12,7 @@ import java.util.Objects;
 import static com.github.dakusui.symfonion.testutils.json.SymfonionJsonTestUtils.sixteenBeatsGroove;
 import static com.github.dakusui.testutils.TestUtils.isRunUnderPitest;
 import static com.github.dakusui.testutils.json.JsonTestUtils.*;
+import static com.github.dakusui.testutils.midi.MidiTestUtils.assumeRequiredMidiDevicesPresent;
 import static com.github.dakusui.thincrest.TestAssertions.assertThat;
 import static com.github.dakusui.thincrest.TestAssertions.assumeThat;
 import static com.github.dakusui.thincrest_pcond.experimentals.cursor.Cursors.findSubstrings;
@@ -22,6 +23,7 @@ import static com.github.dakusui.thincrest_pcond.forms.Predicates.isFalse;
 public class ValidDataTest extends CliTestBase {
   @Test
   public void test() throws FileNotFoundException {
+    assumeRequiredMidiDevicesPresent();
     assumeThat(isRunUnderPitest(), isFalse());
     JsonObject song = object(
         $("$settings", object()),
