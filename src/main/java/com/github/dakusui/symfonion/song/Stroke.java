@@ -137,7 +137,7 @@ public class Stroke {
       JsonElement cur = arr.get(i);
       if (cur.isJsonPrimitive()) {
         JsonPrimitive p = cur.getAsJsonPrimitive();
-        if (p.isNumber())
+        if (p.isBoolean() || p.isNumber())
           ret.add(p);
         else if (p.isString()) {
           String s = p.getAsString();
@@ -147,8 +147,7 @@ public class Stroke {
             else
               throw syntaxErrorWhenExpandingDotsIn(arr);
           }
-        } else
-          throw new RuntimeException();
+        }
       } else if (cur.isJsonNull())
         ret.add(cur);
       else
@@ -247,7 +246,8 @@ public class Stroke {
     void createEvent(int v, long pos) throws InvalidMidiDataException;
   }
 
-  private void renderValues(int[] values, long pos, long strokeLen, MidiCompiler compiler, EventCreator creator) throws InvalidMidiDataException {
+  private void renderValues(int[] values, long pos, long strokeLen, MidiCompiler compiler, EventCreator creator) throws
+      InvalidMidiDataException {
     if (values == null) {
       return;
     }
