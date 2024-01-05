@@ -6,6 +6,7 @@ import com.github.dakusui.symfonion.testutils.json.SymfonionJsonTestUtils;
 import com.github.dakusui.thincrest_cliche.core.AllOf;
 import com.github.dakusui.thincrest_cliche.sut.symfonion.ResultTo;
 import com.google.gson.JsonObject;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.FileNotFoundException;
@@ -48,6 +49,60 @@ public class CliSmokeTest extends CliTestBase {
             ))));
 
     Result result = invokeCliWithArguments("-p", writeContentToTempFile(Objects.toString(song)).getAbsolutePath(), "-Oport1=Gervill");
+
+    System.err.println("[source]");
+    System.err.println("----");
+    System.err.println(result);
+    System.err.println("----");
+
+    assertThat(
+        result,
+        AllOf.$(
+            ResultTo.exitCode().isEqualTo(0),
+            ResultTo.out().findSubstrings("*", "Gervill", "Real Time Sequencer")));
+  }
+
+  @Ignore
+  @Test
+  public void givenThreeStrokes_whenPlaySubcommandIsInvoked_thenPlayed2() throws FileNotFoundException {
+    assumeRequiredMidiDevicesPresent();
+    assumeThat(isRunUnderPitest(), isFalse());
+    JsonObject song = object(
+        $("$settings", object()),
+        $("$parts", object(
+            $("piano", object($("$channel", json(0)), $("$port", json("port1")))),
+            $("guitar", object($("$channel", json(1)), $("$port", json("port1")))),
+            $("drums", object($("$channel", json(9)), $("$port", json("port2"))))
+        )),
+        $("$patterns", object(
+            $("R4", object($("$body", json("r4")))),
+            $("pgchg-piano", object($("$body", json("r16")), $("$program", json(1)))),
+            $("pgchg-guitar", object($("$body", json("r16")), $("$program", json(12)))),
+            $("main", object($("$body", array(json("BGE4;AFD4;GEC4"))))),
+            $("sub", object(
+                $("$body", array(json("BGE8;BGE8;AFD8;AFD8;GEC8;GEC8"))))),
+            $("drum-1", object(
+                $("$notemap", json("$percussion")),
+                $("$body", array(json("BH8;H8;BSH8;H8;BH8;H8;BSH8;H8;")))))
+        )),
+        $("$grooves", object($("16beats", sixteenBeatsGroove()))),
+        $("$sequence", array(
+            object(
+                $("$beats", json("4/4")),
+                $("$patterns", object(
+                    $("piano", array("R4", "pgchg-piano")),
+                    $("guitar", array("R4", "pgchg-piano"))))),
+            object(
+                $("$beats", json("16/4")),
+                $("$patterns", object(
+                    $("piano", array("main")),
+                    $("guitar", array("sub")),
+                    $("drums", array("drum-1"))
+                )),
+                $("$groove", json("16beats"))
+            ))));
+
+    Result result = invokeCliWithArguments("-p", writeContentToTempFile(Objects.toString(song)).getAbsolutePath(), "-Oport1=hw:1,0,0", "-Oport2=hw:1,1,0");
 
     System.err.println("[source]");
     System.err.println("----");
