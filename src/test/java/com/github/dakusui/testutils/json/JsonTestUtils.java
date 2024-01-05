@@ -3,7 +3,10 @@ package com.github.dakusui.testutils.json;
 import com.google.gson.*;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 public enum JsonTestUtils {
   ;
@@ -52,7 +55,16 @@ public enum JsonTestUtils {
       return JsonNull.INSTANCE;
     throw new RuntimeException();
   }
-  
+
+  public static JsonPath jsonpath(Object... pathComponents) {
+     return new JsonPath(pathComponents);
+
+   }
+
+  public static String prettyPrintJsonElement(JsonObject summarizedValue) {
+      return new GsonBuilder().setPrettyPrinting().create().toJson(summarizedValue);
+    }
+
   public enum ConflictStrategy {
     
     THROW_EXCEPTION, PREFER_FIRST_OBJ, PREFER_SECOND_OBJ, PREFER_NON_NULL;
@@ -151,5 +163,16 @@ public enum JsonTestUtils {
   }
   
   public record Entry(String key, JsonElement value) {
+  }
+
+  public record JsonPath(Object... pathComponents) {
+    List<Object> toList() {
+      return Arrays.stream(pathComponents).toList();
+    }
+
+    @Override
+    public String toString() {
+      return Arrays.stream(this.pathComponents()).map(Objects::toString).collect(Collectors.joining(".", ".", ""));
+    }
   }
 }

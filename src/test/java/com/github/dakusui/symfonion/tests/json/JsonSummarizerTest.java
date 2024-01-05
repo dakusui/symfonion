@@ -5,19 +5,16 @@ import com.github.dakusui.json.JsonUtils;
 import com.github.dakusui.symfonion.testutils.TestBase;
 import com.github.dakusui.thincrest_cliche.core.AllOf;
 import com.github.dakusui.thincrest_cliche.core.Transform;
-import com.github.dakusui.thincrest_pcond.forms.Printables;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.junit.Test;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
+import static com.github.dakusui.thincrest_cliche.gson.JsonElementTo.jsonArrayAt;
+import static com.github.dakusui.thincrest_cliche.gson.JsonElementTo.jsonObjectAt;
 import static com.github.dakusui.testutils.json.JsonTestUtils.*;
 import static com.github.dakusui.thincrest.TestAssertions.assertThat;
 import static com.github.dakusui.thincrest_pcond.forms.Predicates.isInstanceOf;
@@ -44,7 +41,7 @@ public class JsonSummarizerTest extends TestBase {
                 json("ABC"),
                 json("world"),
                 array(json("XYZ")), array(), object(
-                $("key5231", json("XYZ"))), object())))),
+                    $("key5231", json("XYZ"))), object())))),
         $("hello6", object(
             $("key61", json("world")))),
         $("hello7", object($("key71", json("world")))),
@@ -69,14 +66,14 @@ public class JsonSummarizerTest extends TestBase {
   public void whenCreateSummaryJsonObjectFromPaths_thenSummaryCreated() {
     JsonObject summarizedValue = JsonUtils.createSummaryJsonObjectFromPaths(
         createTestDataJsonObject2(), asList("k1", "k11"));
-    System.out.println(new GsonBuilder().setPrettyPrinting().create().toJson(summarizedValue));
+    System.out.println(prettyPrintJsonElement(summarizedValue));
   }
 
   @Test
   public void whenSummaryObjet_thenItLooksNice() {
     JsonObject testDataJsonObject = createTestDataJsonObject1();
     JsonObject objectSummary = JsonSummarizer.summaryObject(testDataJsonObject, List.of("hello5"), "key52").getAsJsonObject();
-    System.out.println(new GsonBuilder().setPrettyPrinting().create().toJson(objectSummary));
+    System.out.println(prettyPrintJsonElement(objectSummary));
 
     assertThat(
         objectSummary,
@@ -96,33 +93,10 @@ public class JsonSummarizerTest extends TestBase {
 
     assertThat(
         arraySummary,
-        AllOf.$(isNotNull(),
+        AllOf.$(
+            isNotNull(),
             Transform.$(jsonArrayAt(jsonpath("hello5", "key53"))).allOf(
                 isNotNull(),
                 isInstanceOf(JsonArray.class))));
-  }
-
-  private static JsonPath jsonpath(Object... pathComponents) {
-    return new JsonPath(pathComponents);
-
-  }
-
-  private static Function<JsonElement, JsonArray> jsonArrayAt(JsonPath jsonPath) {
-    return Printables.function("jsonElementAt[" + jsonPath + "]", (JsonElement v) -> JsonUtils.asJsonArray(v, jsonPath.pathComponents()));
-  }
-
-  private static Function<JsonObject, JsonObject> jsonObjectAt(JsonPath jsonPath) {
-    return Printables.function("jsonElementAt[" + jsonPath + "]", (JsonObject v) -> JsonUtils.asJsonObject(v, jsonPath.pathComponents()));
-  }
-
-  record JsonPath(Object... pathComponents) {
-    List<Object> toList() {
-      return Arrays.stream(pathComponents).toList();
-    }
-
-    @Override
-    public String toString() {
-      return Arrays.stream(this.pathComponents()).map(Objects::toString).collect(Collectors.joining(".", ".", ""));
-    }
   }
 }
