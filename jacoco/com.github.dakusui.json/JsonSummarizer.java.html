@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>JsonSummarizer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">symfonion</a> &gt; <a href="index.source.html" class="el_package">com.github.dakusui.json</a> &gt; <span class="el_source">JsonSummarizer.java</span></div><h1>JsonSummarizer.java</h1><pre class="source lang-java linenums">package com.github.dakusui.json;
+
+import com.github.dakusui.valid8j_cliche.core.All;
+import com.github.dakusui.valid8j_cliche.core.Transform;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
+
+import java.util.List;
+import java.util.Objects;
+import java.util.function.Predicate;
+
+import static com.github.dakusui.valid8j.Assertions.that;
+import static com.github.dakusui.valid8j_cliche.core.Cliche.statement;
+import static com.github.dakusui.valid8j_cliche.json.JsonObjectTo.keyList;
+import static com.github.dakusui.valid8j_pcond.forms.Predicates.*;
+import static com.github.dakusui.valid8j_pcond.forms.Printables.predicate;
+
+<span class="pc" id="L20">public class JsonSummarizer {</span>
+  public static JsonElement summaryObject(JsonObject root, List&lt;Object&gt; pathToParent, Object focus) {
+<span class="fc" id="L22">    JsonElement previousElement = parentElement(focus, JsonUtils.asJsonElement(root, pathToParent.toArray()));</span>
+<span class="fc bfc" id="L23" title="All 2 branches covered.">    JsonElement ret = focus instanceof String ? new JsonObject() : new JsonArray();</span>
+<span class="fc bfc" id="L24" title="All 2 branches covered.">    for (int i = pathToParent.size() - 1; i &gt;= 0; i--) {</span>
+<span class="fc" id="L25">      Object currentKey = pathToParent.get(i);</span>
+<span class="fc bfc" id="L26" title="All 2 branches covered.">      if (currentKey instanceof String) {</span>
+<span class="fc" id="L27">        ret = new JsonObject();</span>
+<span class="fc" id="L28">        ((JsonObject) ret).add((String) currentKey, previousElement);</span>
+<span class="pc bpc" id="L29" title="1 of 2 branches missed.">      } else if (currentKey instanceof Integer) {</span>
+<span class="fc" id="L30">        ret = new JsonArray();</span>
+<span class="fc" id="L31">        ((JsonArray) ret).add(previousElement);</span>
+      } else
+<span class="nc" id="L33">        assert false;</span>
+<span class="fc" id="L34">      previousElement = ret;</span>
+    }
+<span class="fc" id="L36">    return ret;</span>
+  }
+
+  public static JsonElement collapseForObjectValue(JsonElement element) {
+<span class="fc" id="L40">    JsonElement ret = collapseJsonElement(element);</span>
+<span class="fc bfc" id="L41" title="All 2 branches covered.">    if (ret != null) return ret;</span>
+<span class="fc" id="L42">    return new JsonPrimitive(&quot;...&quot;);</span>
+  }
+
+  private static JsonElement collapseJsonElement(JsonElement element) {
+<span class="fc bfc" id="L46" title="All 2 branches covered.">    if (element.isJsonArray()) {</span>
+<span class="fc" id="L47">      JsonArray ret = new JsonArray();</span>
+<span class="fc bfc" id="L48" title="All 2 branches covered.">      if (!((JsonArray) element).isEmpty())</span>
+<span class="fc" id="L49">        ret.add(&quot;...&quot;);</span>
+<span class="fc" id="L50">      return ret;</span>
+<span class="fc bfc" id="L51" title="All 2 branches covered.">    } else if (element.isJsonObject()) {</span>
+<span class="fc" id="L52">      JsonObject ret = new JsonObject();</span>
+<span class="fc bfc" id="L53" title="All 2 branches covered.">      if (!((JsonObject) element).keySet().isEmpty())</span>
+<span class="fc" id="L54">        ret.add(&quot;...&quot;, new JsonPrimitive(&quot;...&quot;));</span>
+<span class="fc" id="L55">      return ret;</span>
+    }
+<span class="fc" id="L57">    return null;</span>
+  }
+
+  public static JsonElement collapseForArrayElement(JsonElement element) {
+<span class="fc" id="L61">    JsonElement ret = collapseJsonElement(element);</span>
+<span class="fc bfc" id="L62" title="All 2 branches covered.">    if (ret != null) return ret;</span>
+<span class="fc" id="L63">    return element;</span>
+  }
+
+  /**
+   * &lt;pre&gt;
+   *
+   * &lt;/pre&gt;
+   *
+   * @param object input JSON object.
+   * @return A summarized JSON object.
+   */
+  public static JsonObject focusedObject(JsonObject object) {
+<span class="fc" id="L75">    JsonObject ret = new JsonObject();</span>
+<span class="fc" id="L76">    object.keySet().forEach(k -&gt; ret.add(k, collapseForObjectValue(object.get(k))));</span>
+<span class="fc" id="L77">    return ret;</span>
+  }
+
+  public static JsonElement parentElement(Object focus, JsonElement parent) {
+<span class="fc" id="L81">    Predicate&lt;Object&gt; focusIsInstanceOfString = predicate(&quot;focusIsInstanceOfString&quot;, v -&gt; focus instanceof String);</span>
+<span class="fc" id="L82">    Predicate&lt;Object&gt; focusIsInstanceOfInteger = predicate(&quot;focusIsInstanceOfInteger&quot;, v -&gt; focus instanceof Integer);</span>
+<span class="pc bpc" id="L83" title="1 of 2 branches missed.">    assert All.$(</span>
+<span class="fc" id="L84">        statement(focus, isNotNull()),</span>
+<span class="fc" id="L85">        statement(parent, allOf(isNotNull(), or(</span>
+<span class="fc" id="L86">            callp(&quot;isJsonObject&quot;).and(focusIsInstanceOfString),</span>
+<span class="fc" id="L87">            callp(&quot;isJsonArray&quot;).and(focusIsInstanceOfInteger)))));</span>
+<span class="fc bfc" id="L88" title="All 2 branches covered.">    if (parent.isJsonObject())</span>
+<span class="fc" id="L89">      return parentObject((String) focus, (JsonObject) parent);</span>
+<span class="pc bpc" id="L90" title="1 of 2 branches missed.">    if (parent.isJsonArray())</span>
+<span class="fc" id="L91">      return parentArray((Integer) focus, (JsonArray) parent);</span>
+<span class="nc" id="L92">    throw new RuntimeException();</span>
+  }
+
+  public static JsonObject parentObject(String focusedChildKey, JsonObject object) {
+<span class="pc bpc" id="L96" title="1 of 2 branches missed.">    assert All.$(</span>
+<span class="fc" id="L97">        statement(focusedChildKey, isNotNull()),</span>
+<span class="fc" id="L98">        statement(object, allOf(</span>
+<span class="fc" id="L99">            isNotNull(),</span>
+<span class="fc" id="L100">            Transform.$(keyList()).check(contains(focusedChildKey)))));</span>
+<span class="fc" id="L101">    JsonObject ret = new JsonObject();</span>
+<span class="fc" id="L102">    object</span>
+<span class="fc" id="L103">        .keySet()</span>
+<span class="fc bfc" id="L104" title="All 2 branches covered.">        .forEach(k -&gt; ret.add(k, Objects.equals(k, focusedChildKey) ?</span>
+<span class="fc" id="L105">            focusedElement(object.get(k)) :</span>
+<span class="fc" id="L106">            collapseForObjectValue(object.get(k))));</span>
+<span class="fc" id="L107">    return ret;</span>
+  }
+
+  public static JsonArray focusedArray(JsonArray array) {
+<span class="fc" id="L111">    JsonArray ret = new JsonArray();</span>
+<span class="fc" id="L112">    array.forEach(each -&gt; ret.add(collapseForArrayElement(each)));</span>
+<span class="fc" id="L113">    return ret;</span>
+  }
+
+  public static JsonArray parentArray(int focusedChildIndex, JsonArray array) {
+<span class="pc bpc" id="L117" title="1 of 2 branches missed.">    assert All.$(</span>
+<span class="fc" id="L118">        statement(array, isNotNull()),</span>
+<span class="fc" id="L119">        statement(focusedChildIndex, greaterThanOrEqualTo(0).and(lessThan(array.size()))));</span>
+<span class="fc" id="L120">    JsonArray ret = new JsonArray();</span>
+<span class="fc" id="L121">    JsonElement focusedChild = array.get(focusedChildIndex);</span>
+<span class="fc bfc" id="L122" title="All 2 branches covered.">    array.forEach(i -&gt; ret.add(Objects.equals(i, focusedChild) ?</span>
+<span class="fc" id="L123">        focusedElement(i) :</span>
+<span class="fc" id="L124">        collapseForArrayElement(i)));</span>
+<span class="fc" id="L125">    return ret;</span>
+  }
+
+  public static JsonElement focusedElement(JsonElement element) {
+<span class="pc bpc" id="L129" title="1 of 2 branches missed.">    assert that(element, isNotNull());</span>
+    JsonElement ret;
+<span class="fc bfc" id="L131" title="All 2 branches covered.">    if (element.isJsonObject()) {</span>
+<span class="fc" id="L132">      ret = focusedObject((JsonObject) element);</span>
+<span class="fc bfc" id="L133" title="All 2 branches covered.">    } else if (element.isJsonArray()) {</span>
+<span class="fc" id="L134">      ret = focusedArray((JsonArray) element);</span>
+    } else {
+<span class="fc" id="L136">      ret = element;</span>
+    }
+<span class="fc" id="L138">    return ret;</span>
+  }
+
+  static JsonPrimitive compactJsonPrimitive(JsonPrimitive primitive, int headLength, int tailLength) {
+<span class="pc bpc" id="L142" title="1 of 2 branches missed.">    if (primitive.isString()) {</span>
+<span class="fc" id="L143">      String dots = &quot;...&quot;;</span>
+<span class="fc" id="L144">      String s = primitive.getAsString();</span>
+<span class="pc bpc" id="L145" title="1 of 2 branches missed.">      if (headLength + dots.length() + tailLength &gt;= s.length())</span>
+<span class="fc" id="L146">        return primitive;</span>
+<span class="nc" id="L147">      return new JsonPrimitive(s.substring(0, headLength) + dots + s.substring(s.length() - tailLength));</span>
+    }
+<span class="nc" id="L149">    return primitive;</span>
+  }
+
+  static JsonArray compactJsonArray(JsonArray array, int headLength, int tailLength) {
+<span class="pc bpc" id="L153" title="1 of 2 branches missed.">    if (headLength + 1 + tailLength &gt;= array.size())</span>
+<span class="fc" id="L154">      return array;</span>
+<span class="nc" id="L155">    JsonArray ret = new JsonArray();</span>
+<span class="nc bnc" id="L156" title="All 2 branches missed.">    for (int i = 0; i &lt; headLength; i++)</span>
+<span class="nc" id="L157">      ret.add(array.get(i));</span>
+<span class="nc" id="L158">    ret.add(&quot;...&quot;);</span>
+<span class="nc bnc" id="L159" title="All 2 branches missed.">    for (int i = array.size() - tailLength; i &lt; array.size(); i++)</span>
+<span class="nc" id="L160">      ret.add(array.get(i));</span>
+<span class="nc" id="L161">    return ret;</span>
+  }
+
+  static JsonObject compactJsonObject(JsonObject object, int headLength, int tailLength) {
+<span class="pc bpc" id="L165" title="1 of 2 branches missed.">    if (headLength + 1 + tailLength &gt;= object.size())</span>
+<span class="fc" id="L166">      return object;</span>
+<span class="nc" id="L167">    JsonObject ret = new JsonObject();</span>
+<span class="nc" id="L168">    List&lt;String&gt; keys = object.keySet().stream().sorted().toList();</span>
+<span class="nc bnc" id="L169" title="All 2 branches missed.">    for (int i = 0; i &lt; headLength; i++)</span>
+<span class="nc" id="L170">      ret.add(keys.get(i), object.get(keys.get(i)));</span>
+<span class="nc" id="L171">    ret.add(keys.get(headLength) + &quot;...&quot;, new JsonPrimitive(&quot;...&quot;));</span>
+<span class="nc bnc" id="L172" title="All 2 branches missed.">    for (int i = keys.size() - tailLength; i &lt; keys.size(); i++)</span>
+<span class="nc" id="L173">      ret.add(keys.get(i), object.get(keys.get(i)));</span>
+<span class="nc" id="L174">    return ret;</span>
+  }
+
+  static JsonElement compactJsonElement(JsonElement element, int headLength, int tailLength) {
+<span class="fc bfc" id="L178" title="All 2 branches covered.">    if (element.isJsonArray())</span>
+<span class="fc" id="L179">      return compactJsonArray((JsonArray) element, headLength, tailLength);</span>
+<span class="fc bfc" id="L180" title="All 2 branches covered.">    if (element.isJsonObject())</span>
+<span class="fc" id="L181">      return compactJsonObject((JsonObject) element, headLength, tailLength);</span>
+<span class="pc bpc" id="L182" title="1 of 2 branches missed.">    if (element.isJsonPrimitive())</span>
+<span class="fc" id="L183">      return compactJsonPrimitive((JsonPrimitive) element, headLength, tailLength);</span>
+<span class="nc" id="L184">    return element;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

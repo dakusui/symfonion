@@ -1,0 +1,555 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>JsonUtils.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">symfonion</a> &gt; <a href="index.source.html" class="el_package">com.github.dakusui.json</a> &gt; <span class="el_source">JsonUtils.java</span></div><h1>JsonUtils.java</h1><pre class="source lang-java linenums">package com.github.dakusui.json;
+
+import com.google.gson.*;
+
+import java.util.*;
+import java.util.Map.Entry;
+
+import static com.github.dakusui.json.JsonSummarizer.*;
+import static com.github.dakusui.valid8j.Requires.require;
+import static com.github.dakusui.valid8j_pcond.forms.Predicates.callp;
+import static java.util.Objects.requireNonNull;
+
+<span class="nc" id="L13">public class JsonUtils {</span>
+
+  static final ThreadLocal&lt;JsonParser&gt; JSON_PARSER;
+
+  static {
+<span class="fc" id="L18">    JSON_PARSER = new ThreadLocal&lt;&gt;();</span>
+<span class="fc" id="L19">  }</span>
+
+  public static String summarizeJsonElement(JsonElement jsonElement) {
+<span class="pc bpc" id="L22" title="2 of 4 branches missed.">    if (jsonElement == null || jsonElement.isJsonNull()) {</span>
+<span class="nc" id="L23">      return &quot;null&quot;;</span>
+    }
+<span class="fc" id="L25">    JsonElement compact = JsonSummarizer.compactJsonElement(jsonElement, 3, 3);</span>
+
+<span class="fc bfc" id="L27" title="All 2 branches covered.">    if (jsonElement.isJsonPrimitive()) {</span>
+<span class="fc" id="L28">      return compact + &quot; (primitive)&quot;;</span>
+    }
+<span class="fc bfc" id="L30" title="All 2 branches covered.">    if (jsonElement.isJsonArray()) {</span>
+<span class="fc" id="L31">      return focusedArray((JsonArray) compact) + &quot; (array: size=&quot; + jsonElement.getAsJsonArray().size() + &quot;)&quot;;</span>
+    }
+<span class="pc bpc" id="L33" title="1 of 2 branches missed.">    if (jsonElement.isJsonObject()) {</span>
+<span class="fc" id="L34">      return focusedObject((JsonObject) compact) + &quot; (object: &quot; + jsonElement.getAsJsonObject().entrySet().size() + &quot; entries)&quot;;</span>
+    }
+<span class="nc" id="L36">    return compact + &quot; (unknown)&quot;;</span>
+  }
+
+  /**
+   * Returns a string representation of a path to a JSON element {@code target} in {@code root} JSON object node.
+   *
+   * @param target A JSON element whose path in {@code root} is searched for.
+   * @param root   A root JSON object node where {@code target}'s path is searched.
+   * @return A string representation of path to {@code target} in {@code root}.
+   */
+  public static String findPathStringOf(JsonElement target, JsonObject root) {
+<span class="fc" id="L47">    return jsonpathToString(findPathOf(target, root));</span>
+  }
+
+  public static List&lt;Object&gt; findPathOf(JsonElement target, JsonObject root) {
+<span class="fc" id="L51">    return buildPathInfo(root).get(target);</span>
+  }
+
+  @SafeVarargs
+  public static JsonObject createSummaryJsonObjectFromPaths(JsonObject rootJsonObject, List&lt;Object&gt;... paths) {
+<span class="fc" id="L56">    JsonObject ret = new JsonObject();</span>
+<span class="fc bfc" id="L57" title="All 2 branches covered.">    for (List&lt;Object&gt; eachPath : paths) {</span>
+<span class="fc" id="L58">      ret = merge(requireJsonObject(createSummaryJsonElementFromPath(rootJsonObject, eachPath)), ret);</span>
+    }
+<span class="fc" id="L60">    return ret;</span>
+  }
+
+  private static JsonElement createSummaryJsonElementFromPath(JsonObject rootJsonObject, List&lt;Object&gt; path) {
+<span class="fc bfc" id="L64" title="All 2 branches covered.">    return path.isEmpty() ?</span>
+<span class="fc" id="L65">        focusedElement(compactJsonObject(rootJsonObject, 3, 3)) :</span>
+<span class="fc bfc" id="L66" title="All 2 branches covered.">        path.size() == 1 ?</span>
+<span class="fc" id="L67">            summaryTopLevelElement(rootJsonObject, path.getFirst()) :</span>
+<span class="fc" id="L68">            summaryObject(rootJsonObject, path.subList(0, path.size() - 1), path.getLast());</span>
+  }
+
+  private static JsonElement summaryTopLevelElement(JsonObject rootJsonObject, Object topLevelAttribute) {
+<span class="pc bpc" id="L72" title="1 of 2 branches missed.">    assert topLevelAttribute instanceof String;</span>
+<span class="fc" id="L73">    JsonObject ret = new JsonObject();</span>
+<span class="fc" id="L74">    String topLevelAttributeName = (String) topLevelAttribute;</span>
+<span class="fc" id="L75">    ret.add(topLevelAttributeName, focusedElement(asJsonElement(rootJsonObject, topLevelAttribute)));</span>
+<span class="fc" id="L76">    return ret;</span>
+  }
+
+  private static JsonObject requireJsonObject(JsonElement jsonElement) {
+<span class="fc" id="L80">    return require(jsonElement, callp(&quot;isJsonObject&quot;)).getAsJsonObject();</span>
+  }
+
+<span class="fc" id="L83">  enum JsonTypes {</span>
+<span class="fc" id="L84">    OBJECT {</span>
+      @Override
+      JsonObject _validate(JsonElement value) throws JsonTypeMismatchException {
+<span class="pc bpc" id="L87" title="1 of 2 branches missed.">        if (!value.isJsonObject()) {</span>
+<span class="nc" id="L88">          throw new JsonTypeMismatchException(value, this);</span>
+        }
+<span class="fc" id="L90">        return value.getAsJsonObject();</span>
+      }
+    },
+<span class="fc" id="L93">    ARRAY {</span>
+      @Override
+      JsonArray _validate(JsonElement value) throws JsonTypeMismatchException {
+<span class="pc bpc" id="L96" title="1 of 2 branches missed.">        if (!value.isJsonArray()) {</span>
+<span class="nc" id="L97">          throw new JsonTypeMismatchException(value, this);</span>
+        }
+<span class="fc" id="L99">        return value.getAsJsonArray();</span>
+      }
+
+    },
+<span class="fc" id="L103">    PRIMITIVE {</span>
+      @Override
+      JsonPrimitive _validate(JsonElement value)
+          throws JsonTypeMismatchException {
+<span class="pc bpc" id="L107" title="1 of 2 branches missed.">        if (!value.isJsonPrimitive()) {</span>
+<span class="nc" id="L108">          throw new JsonTypeMismatchException(value, this);</span>
+        }
+<span class="fc" id="L110">        return value.getAsJsonPrimitive();</span>
+      }
+    },
+<span class="fc" id="L113">    NULL {</span>
+      @Override
+      JsonNull _validate(JsonElement value) throws JsonTypeMismatchException {
+<span class="nc bnc" id="L116" title="All 2 branches missed.">        if (!value.isJsonNull()) {</span>
+<span class="nc" id="L117">          throw new JsonTypeMismatchException(value, this);</span>
+        }
+<span class="nc" id="L119">        return value.getAsJsonNull();</span>
+      }
+    };
+
+    abstract JsonElement _validate(JsonElement value)
+        throws JsonTypeMismatchException;
+
+    JsonElement validate(JsonElement value) throws JsonTypeMismatchException {
+<span class="fc bfc" id="L127" title="All 2 branches covered.">      if (value == null) {</span>
+<span class="fc" id="L128">        return null;</span>
+      }
+<span class="fc" id="L130">      return _validate(value);</span>
+    }
+  }
+
+  public static JsonElement asJsonElementWithDefault(JsonElement base, JsonElement defaultValue, int from, Object[] path)
+      throws JsonInvalidPathException {
+<span class="fc" id="L136">    JsonElement ret = _asJsonElement(base, defaultValue, from, path);</span>
+    // //
+    // TODO: To workaround test failure. Need to come up with more consistent
+    // policy to handle JsonNull.INSTANCE.
+<span class="fc bfc" id="L140" title="All 4 branches covered.">    if (ret == null || ret == JsonNull.INSTANCE) {</span>
+<span class="fc" id="L141">      ret = defaultValue;</span>
+    }
+<span class="fc" id="L143">    return ret;</span>
+  }
+
+  public static JsonElement asJsonElement(JsonElement base, int from, Object[] path) throws JsonInvalidPathException {
+<span class="fc" id="L147">    JsonElement ret = _asJsonElement(base, null, from, path);</span>
+<span class="fc bfc" id="L148" title="All 2 branches covered.">    if (ret == null) {</span>
+<span class="fc" id="L149">      throw new JsonPathNotFoundException(base, path, from);</span>
+    }
+<span class="fc" id="L151">    return ret;</span>
+  }
+
+  private static JsonElement _asJsonElement(JsonElement base,
+                                            JsonElement defaultValue, int from, Object[] path)
+      throws JsonInvalidPathException {
+<span class="pc bpc" id="L157" title="1 of 4 branches missed.">    if (path.length == from || base == null) {</span>
+<span class="fc" id="L158">      return base;</span>
+    }
+    JsonElement newbase;
+<span class="pc bpc" id="L161" title="1 of 2 branches missed.">    if (path[from] == null) {</span>
+<span class="nc" id="L162">      throw new JsonInvalidPathException(base, path, from); // invalid path;</span>
+    }
+<span class="fc bfc" id="L164" title="All 2 branches covered.">    if (base.isJsonObject()) {</span>
+<span class="fc" id="L165">      newbase = base.getAsJsonObject().get(path[from].toString());</span>
+    } else {
+<span class="pc bpc" id="L167" title="1 of 2 branches missed.">      if (base.isJsonArray()) {</span>
+        Integer index;
+<span class="pc bpc" id="L169" title="2 of 6 branches missed.">        if ((path[from] instanceof Integer) || (path[from] instanceof Long)</span>
+            || (path[from] instanceof Short)) {
+<span class="fc" id="L171">          index = ((Number) path[from]).intValue();</span>
+        } else {
+<span class="fc bfc" id="L173" title="All 2 branches covered.">          if ((index = parseInt(path[from])) == null) {</span>
+<span class="fc" id="L174">            throw new JsonInvalidPathException(base, path, from);</span>
+          }
+        }
+<span class="pc bpc" id="L177" title="1 of 4 branches missed.">        if (index &lt; 0 || index &gt;= base.getAsJsonArray().size()) {</span>
+<span class="fc" id="L178">          throw new JsonIndexOutOfBoundsException(base, path, from);</span>
+        }
+<span class="fc" id="L180">        newbase = base.getAsJsonArray().get(index);</span>
+<span class="pc bnc" id="L181" title="All 2 branches missed.">      } else if (base.isJsonPrimitive()) {</span>
+<span class="nc" id="L182">        return null;</span>
+      } else {
+        // JsonNull
+<span class="nc" id="L185">        return null;</span>
+      }
+    }
+
+<span class="fc" id="L189">    JsonElement ret = _asJsonElement(newbase, defaultValue, from + 1, path);</span>
+
+<span class="fc bfc" id="L191" title="All 2 branches covered.">    if (ret == null) {</span>
+<span class="fc bfc" id="L192" title="All 2 branches covered.">      if (defaultValue != null) {</span>
+<span class="fc" id="L193">        return defaultValue;</span>
+      }
+    }
+<span class="fc" id="L196">    return ret;</span>
+  }
+
+  private static Integer parseInt(Object object) {
+<span class="fc" id="L200">    Integer ret = null;</span>
+    try {
+<span class="fc" id="L202">      String str = object.toString();</span>
+<span class="fc" id="L203">      ret = Integer.parseInt(str);</span>
+<span class="fc" id="L204">    } catch (NumberFormatException ignored) {</span>
+<span class="fc" id="L205">    }</span>
+
+<span class="fc" id="L207">    return ret;</span>
+  }
+
+  public static boolean hasPath(JsonElement base, Object... path) {
+    try {
+<span class="fc bfc" id="L212" title="All 2 branches covered.">      return _asJsonElement(base, null, 0, path) != null;</span>
+<span class="nc" id="L213">    } catch (JsonInvalidPathException e) {</span>
+<span class="nc" id="L214">      return false;</span>
+    }
+  }
+
+  public static JsonObject asJsonObjectWithDefault(JsonObject base,
+                                                   JsonObject defaultValue, Object... path)
+      throws JsonTypeMismatchException,
+      JsonInvalidPathException {
+<span class="fc" id="L222">    return (JsonObject) JsonTypes.OBJECT.validate(asJsonElementWithDefault(</span>
+        base, defaultValue, path));
+  }
+
+  public static JsonObject asJsonObject(JsonObject base, Object... path)
+      throws JsonTypeMismatchException,
+      JsonInvalidPathException {
+<span class="fc" id="L229">    return asJsonObjectWithDefault(base, null, path);</span>
+  }
+
+  public static JsonObject asJsonObjectWithPromotion(JsonElement base,
+                                                     String[] prioritizedKeys, Object... path)
+      throws JsonInvalidPathException,
+      JsonTypeMismatchException {
+    JsonObject ret;
+<span class="fc" id="L237">    JsonElement elem = asJsonElement(base, path);</span>
+<span class="fc bfc" id="L238" title="All 2 branches covered.">    if (elem.isJsonObject()) {</span>
+<span class="fc" id="L239">      ret = elem.getAsJsonObject();</span>
+    } else {
+<span class="fc" id="L241">      JsonArray arr = asJsonArrayWithPromotion(base, path);</span>
+<span class="fc" id="L242">      ret = new JsonObject();</span>
+<span class="fc" id="L243">      int i = 0;</span>
+<span class="fc bfc" id="L244" title="All 2 branches covered.">      for (JsonElement item : arr) {</span>
+<span class="pc bpc" id="L245" title="1 of 2 branches missed.">        if (i &gt;= prioritizedKeys.length) {</span>
+<span class="nc bnc" id="L246" title="All 2 branches missed.">          if (prioritizedKeys.length == 0) {</span>
+<span class="nc" id="L247">            throw new JsonTypeMismatchException(elem,</span>
+                &quot;An object or an empty array are acceptable&quot;);
+          } else {
+<span class="nc" id="L250">            throw new JsonTypeMismatchException(</span>
+                elem,
+                String
+<span class="nc" id="L253">                    .format(</span>
+                        &quot;A primitive, an array whose length is less than or equal to %d, or an object are acceptable&quot;,
+<span class="nc" id="L255">                        prioritizedKeys.length));</span>
+          }
+        }
+<span class="fc" id="L258">        String key = prioritizedKeys[i];</span>
+<span class="fc" id="L259">        ret.add(key, item);</span>
+<span class="fc" id="L260">        i++;</span>
+<span class="fc" id="L261">      }</span>
+    }
+<span class="fc" id="L263">    return ret;</span>
+  }
+
+  public static JsonArray asJsonArrayWithPromotion(JsonElement base,
+                                                   Object... path) throws
+      JsonInvalidPathException, JsonTypeMismatchException {
+    JsonArray ret;
+<span class="fc" id="L270">    JsonElement elem = asJsonElement(base, path);</span>
+<span class="pc bpc" id="L271" title="1 of 2 branches missed.">    if (elem.isJsonObject()) {</span>
+<span class="nc" id="L272">      throw new JsonTypeMismatchException(elem, JsonTypes.ARRAY,</span>
+          JsonTypes.NULL, JsonTypes.PRIMITIVE);
+    }
+<span class="pc bpc" id="L275" title="1 of 2 branches missed.">    if (elem.isJsonArray()) {</span>
+<span class="nc" id="L276">      ret = elem.getAsJsonArray();</span>
+    } else {
+<span class="fc" id="L278">      ret = new JsonArray();</span>
+<span class="fc" id="L279">      ret.add(elem);</span>
+    }
+<span class="fc" id="L281">    return ret;</span>
+  }
+
+  public static JsonArray asJsonArray(JsonElement base, Object... path)
+      throws JsonException {
+<span class="fc" id="L286">    return asJsonArrayWithDefault(base, null, path);</span>
+  }
+
+  public static JsonArray asJsonArrayWithDefault(JsonElement base,
+                                                 JsonArray defaultValue, Object... path) throws JsonTypeMismatchException,
+      JsonInvalidPathException {
+<span class="fc" id="L292">    return (JsonArray) JsonTypes.ARRAY.validate(asJsonElementWithDefault(base,</span>
+        defaultValue, path));
+  }
+
+  public static JsonElement asJsonElementWithDefault(JsonElement base,
+                                                     JsonElement defaultValue, Object... path)
+      throws JsonInvalidPathException {
+<span class="fc" id="L299">    return asJsonElementWithDefault(base, defaultValue, 0, path);</span>
+  }
+
+  public static JsonElement asJsonElement(JsonElement base, Object... path)
+      throws JsonInvalidPathException {
+<span class="fc" id="L304">    return asJsonElement(base, 0, path);</span>
+  }
+
+  public static String asString(JsonElement base, Object... path)
+      throws JsonTypeMismatchException,
+      JsonInvalidPathException {
+<span class="fc" id="L310">    JsonPrimitive prim = (JsonPrimitive) JsonTypes.PRIMITIVE</span>
+<span class="fc" id="L311">        .validate(asJsonElement(base, path));</span>
+<span class="pc bpc" id="L312" title="1 of 2 branches missed.">    if (prim == null) {</span>
+<span class="nc" id="L313">      return null;</span>
+    }
+<span class="fc" id="L315">    return prim.getAsString();</span>
+  }
+
+  public static String asStringWithDefault(JsonElement base,
+                                           String defaultValue, Object... path) throws JsonTypeMismatchException,
+      JsonInvalidPathException {
+<span class="fc" id="L321">    JsonElement dv = null;</span>
+<span class="fc bfc" id="L322" title="All 2 branches covered.">    if (defaultValue != null) {</span>
+<span class="fc" id="L323">      dv = new JsonPrimitive(defaultValue);</span>
+    }
+<span class="fc" id="L325">    JsonPrimitive prim = (JsonPrimitive) JsonTypes.PRIMITIVE</span>
+<span class="fc" id="L326">        .validate(asJsonElementWithDefault(base, dv, path));</span>
+<span class="fc bfc" id="L327" title="All 2 branches covered.">    if (prim == null) {</span>
+<span class="fc" id="L328">      return null;</span>
+    }
+<span class="fc" id="L330">    return prim.getAsString();</span>
+  }
+
+  public static int asInt(JsonElement base, Object... path)
+      throws JsonTypeMismatchException,
+      JsonFormatException, JsonInvalidPathException {
+    try {
+<span class="fc" id="L337">      return Integer.parseInt(requireNonNull(asString(base, path)));</span>
+<span class="nc" id="L338">    } catch (NumberFormatException e) {</span>
+<span class="nc" id="L339">      throw new JsonFormatException(asJsonElement(base, path));</span>
+    }
+  }
+
+  public static int asIntWithDefault(JsonElement base, int defaultValue,
+                                     Object... path) throws JsonTypeMismatchException,
+      JsonFormatException, JsonInvalidPathException {
+    try {
+<span class="fc" id="L347">      return Integer.parseInt(requireNonNull(asStringWithDefault(base, Integer.toString(defaultValue), path)));</span>
+<span class="nc" id="L348">    } catch (NumberFormatException e) {</span>
+<span class="nc" id="L349">      throw new JsonFormatException(asJsonElement(base, path));</span>
+    }
+  }
+
+  public static long asLong(JsonElement base, Object... path)
+      throws JsonTypeMismatchException,
+      JsonFormatException, JsonInvalidPathException {
+    try {
+<span class="fc" id="L357">      return Long.parseLong(requireNonNull(asString(base, path)));</span>
+<span class="nc" id="L358">    } catch (NumberFormatException e) {</span>
+<span class="nc" id="L359">      throw new JsonFormatException(asJsonElement(base, path));</span>
+    }
+  }
+
+  @SuppressWarnings(&quot;UnusedDeclaration&quot;)
+  public static long asLongWithDefault(JsonElement base, long defaultValue,
+                                       Object... path) throws JsonTypeMismatchException,
+      JsonFormatException, JsonInvalidPathException {
+    try {
+<span class="nc" id="L368">      return Long.parseLong(requireNonNull(asStringWithDefault(base, Long.toString(defaultValue), path)));</span>
+<span class="nc" id="L369">    } catch (NumberFormatException e) {</span>
+<span class="nc" id="L370">      throw new JsonFormatException(asJsonElement(base, path));</span>
+    }
+  }
+
+  @SuppressWarnings(&quot;UnusedDeclaration&quot;)
+  public static float asFloat(JsonElement base, Object... path)
+      throws JsonTypeMismatchException,
+      JsonFormatException, JsonInvalidPathException {
+    try {
+<span class="nc" id="L379">      return Float.parseFloat(requireNonNull(asString(base, path)));</span>
+<span class="nc" id="L380">    } catch (NumberFormatException e) {</span>
+<span class="nc" id="L381">      throw new JsonFormatException(asJsonElement(base, path));</span>
+    }
+  }
+
+  @SuppressWarnings(&quot;UnusedDeclaration&quot;)
+  public static float asFloatWithDefault(JsonElement base, float defaultValue,
+                                         Object... path) throws JsonTypeMismatchException,
+      JsonFormatException, JsonInvalidPathException {
+    try {
+<span class="nc" id="L390">      return Float.parseFloat(requireNonNull(asStringWithDefault(base, Float.toString(defaultValue), path)));</span>
+<span class="nc" id="L391">    } catch (NumberFormatException e) {</span>
+<span class="nc" id="L392">      throw new JsonFormatException(asJsonElement(base, path));</span>
+    }
+  }
+
+  public static double asDouble(JsonElement base, Object... path)
+      throws JsonException {
+    try {
+<span class="fc" id="L399">      return Double.parseDouble(requireNonNull(asString(base, path)));</span>
+<span class="nc" id="L400">    } catch (NumberFormatException e) {</span>
+<span class="nc" id="L401">      throw new JsonFormatException(asJsonElement(base, path));</span>
+    }
+  }
+
+  public static double asDoubleWithDefault(JsonElement base,
+                                           double defaultValue, Object... path) throws JsonTypeMismatchException,
+      JsonFormatException, JsonInvalidPathException {
+    try {
+<span class="fc" id="L409">      return Double.parseDouble(requireNonNull(asStringWithDefault(base, Double.toString(defaultValue), path)));</span>
+<span class="nc" id="L410">    } catch (NumberFormatException e) {</span>
+<span class="nc" id="L411">      throw new JsonFormatException(asJsonElement(base, path));</span>
+    }
+  }
+
+  public static Map&lt;JsonElement, List&lt;Object&gt;&gt; buildPathInfo(JsonObject root) {
+<span class="fc" id="L416">    Map&lt;JsonElement, List&lt;Object&gt;&gt; ret = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L417">    ret.put(root, List.of());</span>
+<span class="fc" id="L418">    List&lt;Object&gt; path = new LinkedList&lt;&gt;();</span>
+<span class="fc" id="L419">    buildPathInfo(ret, path, root);</span>
+<span class="fc" id="L420">    return ret;</span>
+  }
+
+  private static void buildPathInfo(Map&lt;JsonElement, List&lt;Object&gt;&gt; map, List&lt;Object&gt; path, JsonElement elem) {
+<span class="fc bfc" id="L424" title="All 2 branches covered.">    if (!elem.isJsonNull()) {</span>
+<span class="fc bfc" id="L425" title="All 2 branches covered.">      if (elem.isJsonArray()) {</span>
+<span class="fc" id="L426">        buildPathInfo(map, path, elem.getAsJsonArray());</span>
+<span class="fc bfc" id="L427" title="All 2 branches covered.">      } else if (elem.isJsonObject()) {</span>
+<span class="fc" id="L428">        buildPathInfo(map, path, elem.getAsJsonObject());</span>
+      }
+<span class="fc" id="L430">      map.put(elem, new ArrayList&lt;&gt;(path));</span>
+    }
+<span class="fc" id="L432">  }</span>
+
+  private static void buildPathInfo(Map&lt;JsonElement, List&lt;Object&gt;&gt; map, List&lt;Object&gt; path, JsonArray arr) {
+<span class="fc" id="L435">    int len = arr.size();</span>
+<span class="fc bfc" id="L436" title="All 2 branches covered.">    for (int i = 0; i &lt; len; i++) {</span>
+<span class="fc" id="L437">      path.add(i);</span>
+<span class="fc" id="L438">      buildPathInfo(map, path, arr.get(i));</span>
+<span class="fc" id="L439">      path.removeLast();</span>
+    }
+<span class="fc" id="L441">  }</span>
+
+  private static void buildPathInfo(Map&lt;JsonElement, List&lt;Object&gt;&gt; map, List&lt;Object&gt; path, JsonObject obj) {
+<span class="fc bfc" id="L444" title="All 2 branches covered.">    for (Entry&lt;String, JsonElement&gt; ent : obj.entrySet()) {</span>
+<span class="fc" id="L445">      String k = ent.getKey();</span>
+<span class="fc" id="L446">      JsonElement elem = ent.getValue();</span>
+<span class="fc" id="L447">      path.add(k);</span>
+<span class="fc" id="L448">      buildPathInfo(map, path, elem);</span>
+<span class="fc" id="L449">      path.removeLast();</span>
+<span class="fc" id="L450">    }</span>
+<span class="fc" id="L451">  }</span>
+
+  private static String jsonpathToString(List&lt;Object&gt; path) {
+<span class="fc" id="L454">    StringBuilder buf = new StringBuilder();</span>
+<span class="fc bfc" id="L455" title="All 2 branches covered.">    for (Object each : path) {</span>
+<span class="fc bfc" id="L456" title="All 2 branches covered.">      if (each instanceof Number) {</span>
+<span class="fc" id="L457">        buf.append(&quot;[&quot;).append(each).append(&quot;]&quot;);</span>
+      } else {
+<span class="fc" id="L459">        buf.append(&quot;.&quot;).append(quoteIfNonAlphanumericalIsContained(each));</span>
+      }
+<span class="fc" id="L461">    }</span>
+<span class="fc bfc" id="L462" title="All 2 branches covered.">    if (buf.isEmpty())</span>
+<span class="fc" id="L463">      buf.append('.');</span>
+<span class="fc" id="L464">    return buf.toString();</span>
+  }
+
+  private static String quoteIfNonAlphanumericalIsContained(Object obj) {
+<span class="pc bpc" id="L468" title="1 of 2 branches missed.">    if (obj instanceof String s) {</span>
+<span class="fc bfc" id="L469" title="All 2 branches covered.">      return s.matches(&quot;[a-zA-Z_][a-zA-Z0-9_]+&quot;) ? s : '&quot;' + escape(s) + '&quot;';</span>
+    }
+<span class="nc" id="L471">    return Objects.toString(obj);</span>
+  }
+
+
+  /**
+   * &lt;a href=&quot;https://stackoverflow.com/a/61628600/820227&quot;&gt;Answer by Dan in stackoverflow.com&lt;/a&gt;
+   * escape()
+   * Escape a give String to make it safe to be printed or stored.
+   *
+   * @param s The input String.
+   * @return The output String.
+   **/
+  private static String escape(String s) {
+<span class="fc" id="L484">    return s.replace(&quot;\\&quot;, &quot;\\\\&quot;)</span>
+<span class="fc" id="L485">        .replace(&quot;\t&quot;, &quot;\\t&quot;)</span>
+<span class="fc" id="L486">        .replace(&quot;\b&quot;, &quot;\\b&quot;)</span>
+<span class="fc" id="L487">        .replace(&quot;\n&quot;, &quot;\\n&quot;)</span>
+<span class="fc" id="L488">        .replace(&quot;\r&quot;, &quot;\\r&quot;)</span>
+<span class="fc" id="L489">        .replace(&quot;\f&quot;, &quot;\\f&quot;)</span>
+<span class="fc" id="L490">        .replace(&quot;\'&quot;, &quot;\\'&quot;)      // &lt;== not necessary</span>
+<span class="fc" id="L491">        .replace(&quot;\&quot;&quot;, &quot;\\\&quot;&quot;);</span>
+  }
+
+  public static JsonElement toJson(String str) {
+<span class="fc" id="L495">    return JsonParser.parseString(str);</span>
+  }
+
+  public static Iterator&lt;String&gt; keyIterator(final JsonObject json) {
+<span class="fc" id="L499">    return new Iterator&lt;&gt;() {</span>
+<span class="fc" id="L500">      final Iterator&lt;Entry&lt;String, JsonElement&gt;&gt; iEntries = json.entrySet()</span>
+<span class="fc" id="L501">          .iterator();</span>
+
+      public boolean hasNext() {
+<span class="fc" id="L504">        return iEntries.hasNext();</span>
+      }
+
+      public String next() {
+<span class="fc" id="L508">        return iEntries.next().getKey();</span>
+      }
+
+      public void remove() {
+<span class="nc" id="L512">        iEntries.remove();</span>
+<span class="nc" id="L513">      }</span>
+    };
+  }
+
+  public static String formatPath(Object... relPath) {
+<span class="fc" id="L518">    StringBuilder ret = new StringBuilder();</span>
+<span class="fc bfc" id="L519" title="All 2 branches covered.">    for (Object obj : relPath) {</span>
+<span class="pc bpc" id="L520" title="1 of 2 branches missed.">      if (!ret.isEmpty())</span>
+<span class="nc" id="L521">        ret.append(&quot;/&quot;);</span>
+<span class="fc" id="L522">      ret.append(obj);</span>
+    }
+<span class="fc" id="L524">    return ret.toString();</span>
+  }
+
+  public static JsonObject merge(JsonObject left, JsonObject right) throws JsonInvalidPathException {
+<span class="fc" id="L528">    return merge(left, right, new LinkedList&lt;&gt;());</span>
+  }
+
+  public static JsonObject merge(JsonObject left, JsonObject right, List&lt;Object&gt; relPath) throws JsonInvalidPathException {
+<span class="fc" id="L532">    JsonObject ret = new JsonObject();</span>
+<span class="fc bfc" id="L533" title="All 2 branches covered.">    for (Entry&lt;String, JsonElement&gt; each : left.entrySet()) {</span>
+<span class="fc bfc" id="L534" title="All 2 branches covered.">      if (right.has(each.getKey())) {</span>
+<span class="pc bpc" id="L535" title="1 of 4 branches missed.">        if (each.getValue().isJsonObject() &amp;&amp; right.get(each.getKey()).isJsonObject()) {</span>
+<span class="fc" id="L536">          ret.add(</span>
+<span class="fc" id="L537">              each.getKey(),</span>
+<span class="fc" id="L538">              merge(each.getValue().getAsJsonObject(), right.get(each.getKey()).getAsJsonObject())</span>
+          );
+        } else {
+<span class="fc" id="L541">          throw new JsonInvalidPathException(right, relPath.toArray());</span>
+        }
+      } else {
+<span class="fc" id="L544">        ret.add(each.getKey(), each.getValue());</span>
+      }
+<span class="fc" id="L546">    }</span>
+<span class="fc bfc" id="L547" title="All 2 branches covered.">    for (Entry&lt;String, JsonElement&gt; each : right.entrySet()) {</span>
+<span class="fc bfc" id="L548" title="All 2 branches covered.">      if (!ret.has(each.getKey())) {</span>
+<span class="fc" id="L549">        ret.add(each.getKey(), each.getValue());</span>
+      }
+<span class="fc" id="L551">    }</span>
+<span class="fc" id="L552">    return ret;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

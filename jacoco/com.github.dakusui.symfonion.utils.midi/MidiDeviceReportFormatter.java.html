@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MidiDeviceReportFormatter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">symfonion</a> &gt; <a href="index.source.html" class="el_package">com.github.dakusui.symfonion.utils.midi</a> &gt; <span class="el_source">MidiDeviceReportFormatter.java</span></div><h1>MidiDeviceReportFormatter.java</h1><pre class="source lang-java linenums">package com.github.dakusui.symfonion.utils.midi;
+
+import javax.sound.midi.MidiDevice;
+import java.util.List;
+
+import static java.util.Collections.emptyList;
+
+public interface MidiDeviceReportFormatter {
+  static MidiDeviceReportFormatter createDefaultInstance() {
+<span class="fc" id="L10">    return new MidiDeviceReportFormatter() {</span>
+      @Override
+      public List&lt;String&gt; header(MidiDevice.Info info, String title) {
+<span class="fc" id="L13">        return List.of(</span>
+            &quot;   &quot; + title,
+<span class="fc" id="L15">            String.format(&quot;   %s&quot;, MidiUtils.formatMidiDeviceInfo(info)),</span>
+            &quot;-------------------------------------------------------------------------&quot;
+        );
+      }
+
+
+      @Override
+      public String formatRecord(MidiDeviceRecord record) {
+<span class="fc bfc" id="L23" title="All 4 branches covered.">        return String.format(&quot;%1s%1s %s&quot;, record.in() ? &quot;I&quot; : &quot;&quot;, record.out() ? &quot;O&quot; : &quot;&quot;, MidiUtils.formatMidiDeviceInfo(record.info()));</span>
+      }
+
+      @Override
+      public List&lt;String&gt; footer() {
+<span class="fc" id="L28">        return emptyList();</span>
+      }
+
+      @Override
+      public String formatResult(boolean matched, String formattedRecord) {
+<span class="pc bpc" id="L33" title="1 of 2 branches missed.">        return String.format(&quot;%1s%s&quot;, matched ? &quot;*&quot; : &quot;&quot;, formattedRecord);</span>
+      }
+    };
+  }
+
+  List&lt;String&gt; header(MidiDevice.Info info, String title);
+
+  String formatRecord(MidiDeviceRecord record);
+
+  List&lt;String&gt; footer();
+
+  String formatResult(boolean matched, String formattedRecord);
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

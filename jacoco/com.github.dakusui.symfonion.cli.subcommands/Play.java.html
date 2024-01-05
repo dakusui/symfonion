@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Play.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">symfonion</a> &gt; <a href="index.source.html" class="el_package">com.github.dakusui.symfonion.cli.subcommands</a> &gt; <span class="el_source">Play.java</span></div><h1>Play.java</h1><pre class="source lang-java linenums">package com.github.dakusui.symfonion.cli.subcommands;
+
+import com.github.dakusui.symfonion.cli.Cli;
+import com.github.dakusui.symfonion.cli.Subcommand;
+import com.github.dakusui.symfonion.core.Symfonion;
+import com.github.dakusui.symfonion.exceptions.SymfonionException;
+import com.github.dakusui.symfonion.song.Song;
+import com.github.dakusui.symfonion.utils.midi.MidiDeviceScanner;
+import com.github.dakusui.symfonion.utils.midi.MidiUtils;
+
+import javax.sound.midi.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintStream;
+import java.util.*;
+import java.util.function.Function;
+import java.util.regex.Pattern;
+
+import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.*;
+import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.ContextKey.SOURCE_FILE;
+
+<span class="fc" id="L22">public class Play implements Subcommand {</span>
+
+  @Override
+  public void invoke(Cli cli, PrintStream ps, InputStream inputStream) throws IOException {
+<span class="fc" id="L26">    try (Context ignored = context($(SOURCE_FILE, cli.source()))) {</span>
+<span class="fc" id="L27">      Symfonion symfonion = cli.symfonion();</span>
+
+<span class="fc" id="L29">      Song song = symfonion.load(cli.source().getAbsolutePath());</span>
+<span class="fc" id="L30">      Map&lt;String, Sequence&gt; sequences = symfonion.compile(song);</span>
+<span class="fc" id="L31">      ps.println();</span>
+<span class="fc" id="L32">      Map&lt;String, MidiDevice&gt; midiOutDevices = prepareMidiOutDevices(ps, cli.midiOutRegexPatterns());</span>
+<span class="fc" id="L33">      ps.println();</span>
+<span class="fc" id="L34">      play(midiOutDevices, sequences);</span>
+    }
+<span class="fc" id="L36">  }</span>
+
+  public static Map&lt;String, MidiDevice&gt; prepareMidiOutDevices(PrintStream ps, Map&lt;String, Pattern&gt; portDefinitions) {
+<span class="fc" id="L39">    Map&lt;String, MidiDevice&gt; devices = new HashMap&lt;&gt;();</span>
+<span class="fc bfc" id="L40" title="All 2 branches covered.">    for (String portName : portDefinitions.keySet()) {</span>
+<span class="fc" id="L41">      Pattern regex = portDefinitions.get(portName);</span>
+      ////
+      // BEGIN: Trying to find an output device whose name matches the given regex
+<span class="fc" id="L44">      MidiDeviceScanner scanner = MidiUtils.chooseOutputDevices(ps, regex);</span>
+<span class="fc" id="L45">      scanner.scan();</span>
+<span class="fc" id="L46">      MidiDevice.Info[] matchedInfos = MidiUtils.getInfos(portName, scanner, regex);</span>
+      // END
+      ////
+      try {
+<span class="fc" id="L50">        devices.put(portName, MidiSystem.getMidiDevice(matchedInfos[0]));</span>
+<span class="nc" id="L51">      } catch (MidiUnavailableException e) {</span>
+<span class="nc" id="L52">        throw failedToAccessMidiDevice(&quot;out&quot;, e, matchedInfos);</span>
+<span class="fc" id="L53">      }</span>
+<span class="fc" id="L54">    }</span>
+<span class="fc" id="L55">    return devices;</span>
+  }
+
+  private static Map&lt;String, Sequencer&gt; prepareSequencers(List&lt;String&gt; portNames, Map&lt;String, MidiDevice&gt; midiOutDevices, Map&lt;String, Sequence&gt; sequences) throws MidiUnavailableException, InvalidMidiDataException {
+<span class="fc" id="L59">    Map&lt;String, Sequencer&gt; ret = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L60">    final List&lt;Sequencer&gt; playingSequencers = new LinkedList&lt;&gt;();</span>
+<span class="fc bfc" id="L61" title="All 2 branches covered.">    for (String portName : portNames) {</span>
+<span class="fc" id="L62">      MidiDevice midiOutDevice = midiOutDevices.get(portName);</span>
+<span class="fc" id="L63">      Sequence sequence = sequences.get(portName);</span>
+<span class="fc" id="L64">      final Sequencer sequencer = prepareSequencer(midiOutDevice, sequence, seq -&gt; createMetaEventListener(playingSequencers, seq));</span>
+<span class="fc" id="L65">      playingSequencers.add(sequencer);</span>
+<span class="fc" id="L66">      ret.put(portName, sequencer);</span>
+<span class="fc" id="L67">    }</span>
+<span class="fc" id="L68">    return ret;</span>
+  }
+
+  private static Sequencer prepareSequencer(MidiDevice midiOutDevice, Sequence sequence, Function&lt;Sequencer, MetaEventListener&gt; metaEventListenerFactory) throws MidiUnavailableException, InvalidMidiDataException {
+<span class="fc" id="L72">    final Sequencer sequencer = MidiSystem.getSequencer();</span>
+<span class="fc" id="L73">    sequencer.open();</span>
+<span class="fc" id="L74">    connectMidiDeviceToSequencer(midiOutDevice, sequencer);</span>
+<span class="fc" id="L75">    sequencer.setSequence(sequence);</span>
+<span class="fc" id="L76">    sequencer.addMetaEventListener(metaEventListenerFactory.apply(sequencer));</span>
+<span class="fc" id="L77">    return sequencer;</span>
+  }
+
+  private static void connectMidiDeviceToSequencer(MidiDevice midiOutDevice, Sequencer sequencer) throws MidiUnavailableException {
+<span class="pc bpc" id="L81" title="1 of 2 branches missed.">    if (midiOutDevice != null) {</span>
+<span class="fc" id="L82">      midiOutDevice.open();</span>
+<span class="fc" id="L83">      assignDeviceReceiverToSequencer(sequencer, midiOutDevice);</span>
+    }
+<span class="fc" id="L85">  }</span>
+
+  private static void assignDeviceReceiverToSequencer(Sequencer sequencer, MidiDevice dev) throws MidiUnavailableException {
+<span class="fc bfc" id="L88" title="All 2 branches covered.">    for (Transmitter tr : sequencer.getTransmitters()) {</span>
+<span class="fc" id="L89">      tr.setReceiver(null);</span>
+<span class="fc" id="L90">    }</span>
+<span class="fc" id="L91">    sequencer.getTransmitter().setReceiver(dev.getReceiver());</span>
+<span class="fc" id="L92">  }</span>
+
+  private static MetaEventListener createMetaEventListener(List&lt;Sequencer&gt; playingSequencers, Sequencer sequencer) {
+<span class="fc" id="L95">    return new MetaEventListener() {</span>
+<span class="fc" id="L96">      final Sequencer seq = sequencer;</span>
+
+      @Override
+      public void meta(MetaMessage meta) {
+<span class="pc bpc" id="L100" title="1 of 2 branches missed.">        if (meta.getType() == 0x2f) {</span>
+<span class="fc" id="L101">          synchronized (Play.class) {</span>
+            try {
+<span class="fc" id="L103">              Thread.sleep(1000);</span>
+<span class="nc" id="L104">            } catch (InterruptedException e) {</span>
+<span class="nc" id="L105">              throw interrupted(e);</span>
+<span class="fc" id="L106">            }</span>
+<span class="fc" id="L107">            playingSequencers.remove(this.seq);</span>
+<span class="pc bpc" id="L108" title="1 of 2 branches missed.">            if (playingSequencers.isEmpty()) {</span>
+<span class="fc" id="L109">              Play.class.notifyAll();</span>
+            }
+<span class="fc" id="L111">          }</span>
+        }
+<span class="fc" id="L113">      }</span>
+    };
+  }
+
+  private static void startSequencers(List&lt;String&gt; portNames, Map&lt;String, Sequencer&gt; sequencers) {
+<span class="fc bfc" id="L118" title="All 2 branches covered.">    for (String portName : portNames) {</span>
+<span class="fc" id="L119">      System.out.println(&quot;Start playing on &quot; + portName + &quot;(&quot; + System.currentTimeMillis() + &quot;)&quot;);</span>
+<span class="fc" id="L120">      sequencers.get(portName).start();</span>
+<span class="fc" id="L121">    }</span>
+<span class="fc" id="L122">  }</span>
+
+  private static void cleanUpSequencers(List&lt;String&gt; portNames, Map&lt;String, MidiDevice&gt; midiOutDevices, Map&lt;String, Sequencer&gt; sequencers) {
+<span class="fc" id="L125">    List&lt;String&gt; tmp = new LinkedList&lt;&gt;(portNames);</span>
+<span class="fc" id="L126">    Collections.reverse(portNames);</span>
+<span class="fc bfc" id="L127" title="All 2 branches covered.">    for (String portName : tmp) {</span>
+<span class="fc" id="L128">      MidiDevice dev = midiOutDevices.get(portName);</span>
+<span class="pc bpc" id="L129" title="1 of 2 branches missed.">      if (dev != null) {</span>
+<span class="fc" id="L130">        dev.close();</span>
+      }
+<span class="fc" id="L132">      Sequencer sequencer = sequencers.get(portName);</span>
+<span class="pc bpc" id="L133" title="1 of 2 branches missed.">      if (sequencer != null) {</span>
+<span class="fc" id="L134">        sequencer.close();</span>
+      }
+<span class="fc" id="L136">    }</span>
+<span class="fc" id="L137">  }</span>
+
+  private static synchronized void play(Map&lt;String, MidiDevice&gt; midiOutDevices, Map&lt;String, Sequence&gt; sequences) throws SymfonionException {
+<span class="fc" id="L140">    List&lt;String&gt; portNames = new LinkedList&lt;&gt;(sequences.keySet());</span>
+    Map&lt;String, Sequencer&gt; sequencers;
+    try {
+<span class="fc" id="L143">      sequencers = prepareSequencers(portNames, midiOutDevices, sequences);</span>
+      try {
+<span class="fc" id="L145">        startSequencers(portNames, sequencers);</span>
+<span class="fc" id="L146">        Play.class.wait();</span>
+      } finally {
+<span class="fc" id="L148">        System.out.println(&quot;Finished playing.&quot;);</span>
+<span class="fc" id="L149">        cleanUpSequencers(portNames, midiOutDevices, sequencers);</span>
+      }
+<span class="nc" id="L151">    } catch (MidiUnavailableException e) {</span>
+<span class="nc" id="L152">      throw deviceException(&quot;Midi device was not available.&quot;, e);</span>
+<span class="nc" id="L153">    } catch (InvalidMidiDataException e) {</span>
+<span class="nc" id="L154">      throw deviceException(&quot;Data was invalid.&quot;, e);</span>
+<span class="nc" id="L155">    } catch (InterruptedException e) {</span>
+<span class="nc" id="L156">      throw deviceException(&quot;Operation was interrupted.&quot;, e);</span>
+<span class="fc" id="L157">    }</span>
+<span class="fc" id="L158">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

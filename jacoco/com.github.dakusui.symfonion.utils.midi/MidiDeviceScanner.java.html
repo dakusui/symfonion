@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MidiDeviceScanner.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">symfonion</a> &gt; <a href="index.source.html" class="el_package">com.github.dakusui.symfonion.utils.midi</a> &gt; <span class="el_source">MidiDeviceScanner.java</span></div><h1>MidiDeviceScanner.java</h1><pre class="source lang-java linenums">package com.github.dakusui.symfonion.utils.midi;
+
+import java.io.PrintStream;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.sound.midi.MidiDevice;
+import javax.sound.midi.MidiSystem;
+import javax.sound.midi.MidiDevice.Info;
+
+public abstract class MidiDeviceScanner {
+  static abstract class RegexMidiDeviceScanner extends MidiDeviceScanner {
+
+    private final Pattern regex;
+
+    public RegexMidiDeviceScanner(PrintStream ps, Pattern regex) {
+<span class="fc" id="L19">      super(ps);</span>
+<span class="fc" id="L20">      this.regex = regex;</span>
+<span class="fc" id="L21">    }</span>
+
+    @Override
+    protected void start(Info[] allDevices) {
+<span class="fc" id="L25">      PrintStream ps = getPrintStream();</span>
+<span class="fc" id="L26">      ps.println(&quot;     &quot; + getTitle());</span>
+      //ps.printf(&quot;  io %s%n&quot;, MidiUtils.formatMidiDeviceInfo(null));
+<span class="fc" id="L28">      ps.println(&quot;--------------------------------------------------------------------------------&quot;);</span>
+<span class="fc" id="L29">    }</span>
+
+    protected abstract String getTitle();
+
+    @Override
+    protected boolean matches(Info device) {
+<span class="fc" id="L35">      Matcher m = regex.matcher(device.getName());</span>
+<span class="fc" id="L36">      return m.find();</span>
+    }
+
+    @Override
+    protected void matched(Info device) {
+<span class="pc bpc" id="L41" title="1 of 2 branches missed.">      String i = MidiUtils.isMidiDeviceForInput(device) ? &quot;I&quot; : &quot; &quot;;</span>
+<span class="pc bpc" id="L42" title="1 of 2 branches missed.">      String o = MidiUtils.isMidiDeviceForOutput(device) ? &quot;O&quot; : &quot; &quot;;</span>
+<span class="fc" id="L43">      getPrintStream().printf(&quot;* %1s%1s %s%n&quot;, i, o, MidiUtils.formatMidiDeviceInfo(device));</span>
+<span class="fc" id="L44">    }</span>
+
+    @Override
+    protected void scanned(Info device) {
+<span class="fc" id="L48">    }</span>
+
+    @Override
+    protected void end(Info[] matchedDevices) {
+<span class="fc" id="L52">    }</span>
+
+    @Override
+    protected void didntMatch(Info device) {
+<span class="fc bfc" id="L56" title="All 2 branches covered.">      String i = MidiUtils.isMidiDeviceForInput(device) ? &quot;I&quot; : &quot; &quot;;</span>
+<span class="fc bfc" id="L57" title="All 2 branches covered.">      String o = MidiUtils.isMidiDeviceForOutput(device) ? &quot;O&quot; : &quot; &quot;;</span>
+<span class="fc" id="L58">      getPrintStream().printf(&quot;  %1s%1s %s%n&quot;, i, o, MidiUtils.formatMidiDeviceInfo(device));</span>
+<span class="fc" id="L59">    }</span>
+  }
+
+  private final PrintStream ps;
+<span class="fc" id="L63">  private MidiDevice.Info[] matchedDevices = null;</span>
+  protected abstract void start(MidiDevice.Info[] allDevices);
+
+  protected abstract boolean matches(MidiDevice.Info device);
+
+  protected abstract void matched(MidiDevice.Info device);
+
+  protected abstract void scanned(Info device);
+
+  protected abstract void end(MidiDevice.Info[] matchedDevices);
+
+<span class="fc" id="L74">  public MidiDeviceScanner(PrintStream ps) {</span>
+<span class="fc" id="L75">    this.ps = ps;</span>
+<span class="fc" id="L76">  }</span>
+
+  public void scan() {
+<span class="fc" id="L79">    List&lt;MidiDevice.Info&gt; matched = new LinkedList&lt;&gt;();</span>
+<span class="fc" id="L80">    MidiDevice.Info[] allDevices = MidiSystem.getMidiDeviceInfo();</span>
+
+<span class="fc" id="L82">    start(allDevices);</span>
+<span class="fc bfc" id="L83" title="All 2 branches covered.">    for (MidiDevice.Info cur : allDevices) {</span>
+<span class="fc bfc" id="L84" title="All 2 branches covered.">      if (matches(cur)) {</span>
+<span class="fc" id="L85">        matched(cur);</span>
+<span class="fc" id="L86">        matched.add(cur);</span>
+      } else {
+<span class="fc" id="L88">        didntMatch(cur);</span>
+      }
+<span class="fc" id="L90">      scanned(cur);</span>
+    }
+<span class="fc" id="L92">    end(matchedDevices = matched.toArray(new MidiDevice.Info[0]));</span>
+<span class="fc" id="L93">  }</span>
+
+
+  protected abstract void didntMatch(MidiDevice.Info info);
+
+  public PrintStream getPrintStream() {
+<span class="fc" id="L99">    return this.ps;</span>
+  }
+
+
+  public MidiDevice.Info[] getMatchedDevices() {
+<span class="fc" id="L104">    return this.matchedDevices;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

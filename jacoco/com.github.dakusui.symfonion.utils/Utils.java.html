@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Utils.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">symfonion</a> &gt; <a href="index.source.html" class="el_package">com.github.dakusui.symfonion.utils</a> &gt; <span class="el_source">Utils.java</span></div><h1>Utils.java</h1><pre class="source lang-java linenums">package com.github.dakusui.symfonion.utils;
+
+import com.github.dakusui.symfonion.exceptions.SymfonionException;
+import com.github.dakusui.valid8j_pcond.forms.Printables;
+
+import java.io.*;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.BiFunction;
+import java.util.function.Predicate;
+import java.util.regex.Matcher;
+import java.util.stream.Collector;
+
+import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.*;
+import static com.github.dakusui.valid8j.Requires.require;
+import static com.github.dakusui.valid8j_pcond.forms.Predicates.isNotNull;
+import static java.nio.charset.StandardCharsets.UTF_8;
+
+
+<span class="fc" id="L20">public enum Utils {</span>
+  ;
+<span class="fc" id="L22">  public static final java.util.regex.Pattern lengthPattern = java.util.regex.Pattern.compile(&quot;([1-9][0-9]*)(\\.*)&quot;);</span>
+
+  /**
+   * Count occurrences of a given character {@code ch} in a string {@code s}.
+   *
+   * @param ch A character to count its occurrences.
+   * @param s A string in which the number of {@code ch} should be counted.
+   * @return The number of occurrences of {@code ch} in string {@code s}.
+   */
+  public static int count(char ch, String s) {
+<span class="fc" id="L32">    int ret = 0;</span>
+<span class="fc bfc" id="L33" title="All 2 branches covered.">    for (int i = s.indexOf(ch); i &gt;= 0; i = s.indexOf(ch, i + 1)) {</span>
+<span class="fc" id="L34">      ret++;</span>
+    }
+<span class="fc" id="L36">    return ret;</span>
+  }
+
+  public static String loadResource(String resourceName) throws SymfonionException {
+<span class="fc" id="L40">    StringBuffer b = new StringBuffer(4096);</span>
+    try {
+<span class="fc" id="L42">      InputStream is = new BufferedInputStream(require(ClassLoader.getSystemResourceAsStream(resourceName), resourceIsNotNull(resourceName)));</span>
+<span class="fc" id="L43">      loadFromInputStream(b, is);</span>
+<span class="nc" id="L44">    } catch (IOException e) {</span>
+<span class="nc" id="L45">      throw loadResourceException(resourceName, e);</span>
+<span class="fc" id="L46">    }</span>
+<span class="fc" id="L47">    return b.toString();</span>
+  }
+
+  public static String loadFile(String fileName) throws SymfonionException {
+<span class="fc" id="L51">    StringBuffer b = new StringBuffer(4096);</span>
+<span class="fc" id="L52">    File f = new File(fileName);</span>
+<span class="fc" id="L53">    try (InputStream is = new BufferedInputStream(new FileInputStream(f))){</span>
+<span class="fc" id="L54">      loadFromInputStream(b, is);</span>
+<span class="nc" id="L55">    } catch (FileNotFoundException e) {</span>
+<span class="nc" id="L56">      throw fileNotFoundException(f, e);</span>
+<span class="nc" id="L57">    } catch (IOException e) {</span>
+<span class="nc" id="L58">      throw loadFileException(e);</span>
+<span class="fc" id="L59">    }</span>
+<span class="fc" id="L60">    return b.toString();</span>
+  }
+
+  private static void loadFromInputStream(StringBuffer b, InputStream is) throws IOException {
+<span class="fc" id="L64">    Reader r = new InputStreamReader(is, UTF_8);</span>
+    int c;
+<span class="fc bfc" id="L66" title="All 2 branches covered.">    while ((c = r.read()) != -1) {</span>
+<span class="fc" id="L67">      b.append((char) c);</span>
+    }
+<span class="fc" id="L69">  }</span>
+
+  public static Fraction parseNoteLength(String length) {
+<span class="fc" id="L72">    Matcher m = lengthPattern.matcher(length);</span>
+<span class="fc" id="L73">    Fraction ret = null;</span>
+<span class="fc bfc" id="L74" title="All 2 branches covered.">    if (m.matches()) {</span>
+<span class="fc" id="L75">      int l = Integer.parseInt(m.group(1));</span>
+<span class="fc" id="L76">      ret = new Fraction(1, l);</span>
+<span class="fc" id="L77">      int dots = Utils.count('.', m.group(2));</span>
+<span class="fc bfc" id="L78" title="All 2 branches covered.">      for (int i = 0; i &lt; dots; i++) {</span>
+<span class="fc" id="L79">        l *= 2;</span>
+<span class="fc" id="L80">        ret = Fraction.add(ret, new Fraction(1, l));</span>
+      }
+<span class="pc bpc" id="L82" title="1 of 2 branches missed.">    } else if (!&quot;0&quot;.equals(length)) {</span>
+    } else {
+<span class="nc" id="L84">      ret = new Fraction(0, 1);</span>
+    }
+<span class="fc" id="L86">    return ret;</span>
+  }
+
+  public static byte[] getIntBytes(int input) {
+<span class="fc" id="L90">    byte[] ret = new byte[3];</span>
+
+<span class="fc" id="L92">    ret[0] = (byte) (input &gt;&gt; 16 &amp; 0xff);</span>
+<span class="fc" id="L93">    ret[1] = (byte) (input &gt;&gt; 8 &amp; 0xff);</span>
+<span class="fc" id="L94">    ret[2] = (byte) (input &amp; 0xff);</span>
+
+<span class="fc" id="L96">    return ret;</span>
+  }
+
+  /**
+   * This method was copied from &lt;a href=&quot;https://stackoverflow.com/questions/22694884/filter-java-stream-to-1-and-only-1-element/22695424#22695424&quot;&gt;stackoverflow.com&lt;/a&gt; and renamed.
+   *
+   * @param &lt;E&gt; Type of the element to be collected.
+   * @return A collector
+   */
+  public static &lt;E&gt; Collector&lt;E, ?, Optional&lt;E&gt;&gt; onlyElement() {
+<span class="nc" id="L106">    return onlyElement((e1, e2) -&gt; {</span>
+<span class="nc" id="L107">      throw new IllegalArgumentException(&quot;Multiple values are found in the stream: &lt;&quot; + e1 + &quot;&gt; and &lt;&quot; + e2 + &quot;&gt;&quot;);</span>
+    });
+  }
+
+
+  public static &lt;E&gt; Collector&lt;E, AtomicReference&lt;E&gt;, Optional&lt;E&gt;&gt; onlyElement(BiFunction&lt;E, E, ? extends RuntimeException&gt; multipleElements) {
+<span class="fc" id="L113">    return Collector.of(</span>
+        AtomicReference::new,
+        (ref, e) -&gt; {
+<span class="pc bpc" id="L116" title="1 of 2 branches missed.">          if (!ref.compareAndSet(null, e)) {</span>
+<span class="nc" id="L117">            throw multipleElements.apply(ref.get(), e);</span>
+          }
+<span class="fc" id="L119">        },</span>
+        (ref1, ref2) -&gt; {
+<span class="nc bnc" id="L121" title="All 2 branches missed.">          if (ref1.get() == null) {</span>
+<span class="nc" id="L122">            return ref2;</span>
+<span class="nc bnc" id="L123" title="All 2 branches missed.">          } else if (ref2.get() != null) {</span>
+<span class="nc" id="L124">            throw multipleElements.apply(ref1.get(), ref2.get());</span>
+          } else {
+<span class="nc" id="L126">            return ref1;</span>
+          }
+        },
+<span class="fc" id="L129">        ref -&gt; Optional.ofNullable(ref.get()),</span>
+        Collector.Characteristics.UNORDERED);
+  }
+
+  private static Predicate&lt;InputStream&gt; resourceIsNotNull(String resourceName) {
+<span class="fc" id="L134">    return Printables.predicate(() -&gt; &quot;isNotNull[resourceLoadedFrom[&quot; + resourceName + &quot;]]&quot;, isNotNull());</span>
+  }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

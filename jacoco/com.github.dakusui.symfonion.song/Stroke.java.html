@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Stroke.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">symfonion</a> &gt; <a href="index.source.html" class="el_package">com.github.dakusui.symfonion.song</a> &gt; <span class="el_source">Stroke.java</span></div><h1>Stroke.java</h1><pre class="source lang-java linenums">package com.github.dakusui.symfonion.song;
+
+import com.github.dakusui.json.*;
+import com.github.dakusui.symfonion.core.MidiCompiler;
+import com.github.dakusui.symfonion.core.MidiCompilerContext;
+import com.github.dakusui.symfonion.exceptions.ExceptionThrower;
+import com.github.dakusui.symfonion.exceptions.SymfonionException;
+import com.github.dakusui.symfonion.exceptions.SymfonionIllegalFormatException;
+import com.github.dakusui.symfonion.song.Pattern.Parameters;
+import com.github.dakusui.symfonion.utils.Fraction;
+import com.github.dakusui.symfonion.utils.Utils;
+import com.google.gson.*;
+
+import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.MidiEvent;
+import javax.sound.midi.Track;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.regex.Matcher;
+
+import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.*;
+import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.ContextKey.JSON_ELEMENT_ROOT;
+import static com.github.dakusui.symfonion.exceptions.SymfonionIllegalFormatException.NOTE_LENGTH_EXAMPLE;
+import static com.github.dakusui.symfonion.exceptions.SymfonionTypeMismatchException.PRIMITIVE;
+
+public class Stroke {
+  private static final int UNDEFINED_NUM = -1;
+  private final Fraction length;
+<span class="fc" id="L29">  static java.util.regex.Pattern notesPattern = java.util.regex.Pattern.compile(&quot;([A-Zac-z])([#b]*)([&gt;&lt;]*)([\\+\\-]*)?&quot;);</span>
+<span class="fc" id="L30">  List&lt;NoteSet&gt; notes = new LinkedList&lt;&gt;();</span>
+  private final double gate;
+  private final NoteMap noteMap;
+  private final int[] volume;
+  private final int[] pan;
+  private final int[] reverb;
+  private final int[] chorus;
+  private final int[] pitch;
+  private final int[] modulation;
+  private final int pgno;
+<span class="fc" id="L40">  private String bkno = null;</span>
+  private final int tempo;
+  private final JsonArray sysex;
+  private final int[] aftertouch;
+  private final JsonElement strokeJson;
+
+<span class="fc" id="L46">  public Stroke(JsonElement strokeJson, Parameters params, NoteMap noteMap) throws SymfonionException, JsonException {</span>
+    String notes;
+<span class="fc" id="L48">    Fraction len = params.length();</span>
+<span class="fc" id="L49">    double gate = params.gate();</span>
+<span class="fc" id="L50">    this.strokeJson = strokeJson;</span>
+<span class="fc" id="L51">    JsonObject obj = JsonUtils.asJsonObjectWithPromotion(strokeJson, new String[]{</span>
+<span class="fc" id="L52">        Keyword.$notes.name(),</span>
+<span class="fc" id="L53">        Keyword.$length.name()</span>
+    });
+<span class="fc" id="L55">    notes = JsonUtils.asStringWithDefault(obj, null, Keyword.$notes);</span>
+<span class="fc bfc" id="L56" title="All 2 branches covered.">    if (JsonUtils.hasPath(obj, Keyword.$length)) {</span>
+<span class="fc" id="L57">      JsonElement lenJSON = JsonUtils.asJsonElement(obj, Keyword.$length);</span>
+<span class="pc bpc" id="L58" title="1 of 2 branches missed.">      if (lenJSON.isJsonPrimitive()) {</span>
+<span class="fc" id="L59">        len = Utils.parseNoteLength(lenJSON.getAsString());</span>
+<span class="pc bpc" id="L60" title="1 of 2 branches missed.">        if (len == null) {</span>
+<span class="nc" id="L61">          throw illegalFormatException(lenJSON, NOTE_LENGTH_EXAMPLE);</span>
+        }
+      } else {
+<span class="nc" id="L64">        throw typeMismatchException(lenJSON, PRIMITIVE);</span>
+      }
+    }
+<span class="fc bfc" id="L67" title="All 2 branches covered.">    if (JsonUtils.hasPath(obj, Keyword.$gate)) {</span>
+<span class="fc" id="L68">      gate = JsonUtils.asDouble(obj, Keyword.$gate);</span>
+    }
+<span class="fc bfc" id="L70" title="All 2 branches covered.">    this.tempo = JsonUtils.hasPath(obj, Keyword.$tempo) ? JsonUtils.asInt(obj, Keyword.$tempo) : UNDEFINED_NUM;</span>
+<span class="fc bfc" id="L71" title="All 2 branches covered.">    this.pgno = JsonUtils.hasPath(obj, Keyword.$program) ? JsonUtils.asInt(obj, Keyword.$program) : UNDEFINED_NUM;</span>
+<span class="fc bfc" id="L72" title="All 2 branches covered.">    if (JsonUtils.hasPath(obj, Keyword.$bank)) {</span>
+<span class="fc" id="L73">      this.bkno = JsonUtils.asString(obj, Keyword.$bank);</span>
+      // Checks if this.bkno can be parsed as a double value.
+<span class="pc bpc" id="L75" title="1 of 2 branches missed.">      assert this.bkno != null;</span>
+      //noinspection ResultOfMethodCallIgnored
+<span class="fc" id="L77">      Double.parseDouble(this.bkno);</span>
+    }
+<span class="fc" id="L79">    this.volume = getIntArray(obj, Keyword.$volume);</span>
+<span class="fc" id="L80">    this.pan = getIntArray(obj, Keyword.$pan);</span>
+<span class="fc" id="L81">    this.reverb = getIntArray(obj, Keyword.$reverb);</span>
+<span class="fc" id="L82">    this.chorus = getIntArray(obj, Keyword.$chorus);</span>
+<span class="fc" id="L83">    this.pitch = getIntArray(obj, Keyword.$pitch);</span>
+<span class="fc" id="L84">    this.modulation = getIntArray(obj, Keyword.$modulation);</span>
+<span class="fc" id="L85">    this.aftertouch = getIntArray(obj, Keyword.$aftertouch);</span>
+<span class="fc" id="L86">    this.sysex = JsonUtils.asJsonArrayWithDefault(obj, null, Keyword.$sysex);</span>
+    /*
+     * } else {
+     * // unsupported
+     * }
+     */
+<span class="fc" id="L92">    this.noteMap = noteMap;</span>
+<span class="fc" id="L93">    this.gate = gate;</span>
+<span class="fc" id="L94">    Fraction strokeLen = Fraction.zero;</span>
+<span class="fc bfc" id="L95" title="All 2 branches covered.">    if (notes != null) {</span>
+<span class="fc bfc" id="L96" title="All 2 branches covered.">      for (String nn : notes.split(&quot;;&quot;)) {</span>
+<span class="fc" id="L97">        NoteSet ns = new NoteSet();</span>
+        Fraction nsLen;
+        String l;
+<span class="fc bfc" id="L100" title="All 2 branches covered.">        if ((l = parseNotes(nn, ns)) != null) {</span>
+<span class="fc" id="L101">          nsLen = Utils.parseNoteLength(l);</span>
+        } else {
+<span class="fc" id="L103">          nsLen = len;</span>
+        }
+<span class="fc" id="L105">        ns.setLength(nsLen);</span>
+<span class="fc" id="L106">        this.notes.add(ns);</span>
+<span class="fc" id="L107">        strokeLen = Fraction.add(strokeLen, nsLen);</span>
+      }
+    }
+<span class="fc bfc" id="L110" title="All 2 branches covered.">    if (Fraction.zero.equals(strokeLen)) {</span>
+<span class="fc" id="L111">      strokeLen = len;</span>
+    }
+<span class="fc" id="L113">    this.length = strokeLen;</span>
+<span class="fc" id="L114">  }</span>
+
+  private int[] getIntArray(JsonObject cur, Keyword kw) throws JsonInvalidPathException, JsonTypeMismatchException, JsonFormatException {
+    int[] ret;
+<span class="fc bfc" id="L118" title="All 2 branches covered.">    if (!JsonUtils.hasPath(cur, kw)) {</span>
+<span class="fc" id="L119">      return null;</span>
+    }
+<span class="fc" id="L121">    JsonElement json = JsonUtils.asJsonElement(cur, kw);</span>
+<span class="fc bfc" id="L122" title="All 2 branches covered.">    if (json.isJsonArray()) {</span>
+<span class="fc" id="L123">      JsonArray arr = json.getAsJsonArray();</span>
+<span class="fc" id="L124">      ret = interpolate(expandDots(arr));</span>
+<span class="fc" id="L125">    } else {</span>
+<span class="fc" id="L126">      ret = new int[1];</span>
+<span class="fc" id="L127">      ret[0] = JsonUtils.asInt(cur, kw);</span>
+    }
+<span class="fc" id="L129">    return ret;</span>
+  }
+
+  private static JsonArray expandDots(JsonArray arr) throws SymfonionIllegalFormatException {
+<span class="fc" id="L133">    JsonArray ret = new JsonArray();</span>
+<span class="fc bfc" id="L134" title="All 2 branches covered.">    for (int i = 0; i &lt; arr.size(); i++) {</span>
+<span class="fc" id="L135">      JsonElement cur = arr.get(i);</span>
+<span class="fc bfc" id="L136" title="All 2 branches covered.">      if (cur.isJsonPrimitive()) {</span>
+<span class="fc" id="L137">        JsonPrimitive p = cur.getAsJsonPrimitive();</span>
+<span class="pc bpc" id="L138" title="1 of 4 branches missed.">        if (p.isBoolean() || p.isNumber())</span>
+<span class="fc" id="L139">          ret.add(p);</span>
+<span class="pc bpc" id="L140" title="1 of 2 branches missed.">        else if (p.isString()) {</span>
+<span class="fc" id="L141">          String s = p.getAsString();</span>
+<span class="fc bfc" id="L142" title="All 2 branches covered.">          for (int j = 0; j &lt; s.length(); j++) {</span>
+<span class="fc bfc" id="L143" title="All 2 branches covered.">            if (s.charAt(j) == '.')</span>
+<span class="fc" id="L144">              ret.add(JsonNull.INSTANCE);</span>
+            else
+<span class="fc" id="L146">              throw syntaxErrorWhenExpandingDotsIn(arr);</span>
+          }
+        }
+<span class="fc bfc" id="L149" title="All 2 branches covered.">      } else if (cur.isJsonNull())</span>
+<span class="fc" id="L150">        ret.add(cur);</span>
+      else
+<span class="fc" id="L152">        throw ExceptionThrower.typeMismatchWhenExpandingDotsIn(arr);</span>
+    }
+<span class="fc" id="L154">    return ret;</span>
+  }
+
+  private static int[] interpolate(JsonArray arr) {
+    int[] ret;
+<span class="fc" id="L159">    Integer[] tmp = new Integer[arr.size()];</span>
+<span class="fc bfc" id="L160" title="All 2 branches covered.">    for (int i = 0; i &lt; tmp.length; i++) {</span>
+<span class="pc bpc" id="L161" title="1 of 4 branches missed.">      if (arr.get(i) == null || arr.get(i).isJsonNull()) {</span>
+<span class="fc" id="L162">        tmp[i] = null;</span>
+      } else {
+<span class="fc" id="L164">        tmp[i] = arr.get(i).getAsInt();</span>
+      }
+    }
+<span class="fc" id="L167">    ret = new int[arr.size()];</span>
+<span class="fc" id="L168">    int start = 0;</span>
+<span class="fc" id="L169">    int end = 0;</span>
+<span class="fc bfc" id="L170" title="All 2 branches covered.">    for (int i = 0; i &lt; tmp.length; i++) {</span>
+<span class="fc bfc" id="L171" title="All 2 branches covered.">      if (tmp[i] != null) {</span>
+<span class="fc" id="L172">        start = ret[i] = tmp[i];</span>
+      } else {
+<span class="fc" id="L174">        int j = i + 1;</span>
+<span class="pc bpc" id="L175" title="1 of 2 branches missed.">        while (j &lt; tmp.length) {</span>
+<span class="fc bfc" id="L176" title="All 2 branches covered.">          if (tmp[j] != null) {</span>
+<span class="fc" id="L177">            end = tmp[j];</span>
+<span class="fc" id="L178">            ret[j] = end;</span>
+<span class="fc" id="L179">            break;</span>
+          }
+<span class="fc" id="L181">          j++;</span>
+        }
+<span class="fc" id="L183">        int step = (end - start) / (j - i);</span>
+<span class="fc" id="L184">        int curval = start;</span>
+<span class="fc bfc" id="L185" title="All 2 branches covered.">        for (int k = i; k &lt; j; k++) {</span>
+<span class="fc" id="L186">          curval += step;</span>
+<span class="fc" id="L187">          ret[k] = curval;</span>
+        }
+<span class="fc" id="L189">        i = j;</span>
+      }
+    }
+<span class="fc" id="L192">    return ret;</span>
+  }
+
+  public Fraction length() {
+<span class="fc" id="L196">    return length;</span>
+  }
+
+  public double gate() {
+<span class="fc" id="L200">    return this.gate;</span>
+  }
+
+  public List&lt;NoteSet&gt; noteSets() {
+<span class="fc" id="L204">    return this.notes;</span>
+  }
+
+  /*
+   * Returns the 'length' portion of the string &lt;code&gt;s&lt;/code&gt;.
+   */
+  private String parseNotes(String s, List&lt;Note&gt; notes) throws SymfonionException {
+<span class="fc" id="L211">    Matcher m = notesPattern.matcher(s);</span>
+    int i;
+<span class="fc bfc" id="L213" title="All 2 branches covered.">    for (i = 0; m.find(i); i = m.end()) {</span>
+<span class="pc bpc" id="L214" title="1 of 2 branches missed.">      if (i != m.start()) {</span>
+<span class="nc" id="L215">        throw syntaxErrorInNotePattern(s, i, m);</span>
+      }
+<span class="fc" id="L217">      int n_ = this.noteMap.note(m.group(1), this.strokeJson);</span>
+<span class="fc bfc" id="L218" title="All 2 branches covered.">      if (n_ &gt;= 0) {</span>
+<span class="fc" id="L219">        int n =</span>
+            n_ +
+<span class="fc" id="L221">                Utils.count('#', m.group(2)) - Utils.count('b', m.group(2)) +</span>
+<span class="fc" id="L222">                Utils.count('&gt;', m.group(3)) * 12 - Utils.count('&lt;', m.group(3)) * 12;</span>
+<span class="fc" id="L223">        int a = Utils.count('+', m.group(4)) - Utils.count('-', m.group(4));</span>
+<span class="fc" id="L224">        Note nn = new Note(n, a);</span>
+<span class="fc" id="L225">        notes.add(nn);</span>
+      }
+    }
+<span class="fc" id="L228">    Matcher n = Utils.lengthPattern.matcher(s);</span>
+<span class="fc" id="L229">    String ret = null;</span>
+<span class="fc bfc" id="L230" title="All 2 branches covered.">    if (n.find(i)) {</span>
+<span class="fc" id="L231">      ret = s.substring(n.start(), n.end());</span>
+<span class="fc" id="L232">      i = n.end();</span>
+    }
+<span class="pc bpc" id="L234" title="1 of 2 branches missed.">    if (i != s.length()) {</span>
+<span class="nc" id="L235">      String msg = s.substring(0, i) + &quot;`&quot; + s.substring(i) + &quot;' isn't a valid note expression. Notes must be like 'C', 'CEG8.', and so on.&quot;;</span>
+<span class="nc" id="L236">      throw illegalFormatException(this.strokeJson, msg);</span>
+    }
+<span class="fc" id="L238">    return ret;</span>
+
+  }
+
+  interface EventCreator {
+    void createEvent(int v, long pos) throws InvalidMidiDataException;
+  }
+
+  private void renderValues(int[] values, long pos, long strokeLen, MidiCompiler compiler, EventCreator creator) throws
+      InvalidMidiDataException {
+<span class="fc bfc" id="L248" title="All 2 branches covered.">    if (values == null) {</span>
+<span class="fc" id="L249">      return;</span>
+    }
+<span class="fc" id="L251">    long step = strokeLen / values.length;</span>
+<span class="fc bfc" id="L252" title="All 2 branches covered.">    for (int i = 0; i &lt; values.length; i++) {</span>
+<span class="fc" id="L253">      creator.createEvent(values[i], pos + step * i);</span>
+<span class="fc" id="L254">      compiler.controlEventProcessed();</span>
+    }
+<span class="fc" id="L256">  }</span>
+
+  public void compile(final MidiCompiler compiler, MidiCompilerContext context) throws InvalidMidiDataException {
+<span class="fc" id="L259">    final Track track = context.track();</span>
+<span class="fc" id="L260">    final int ch = context.channel();</span>
+<span class="fc" id="L261">    long absolutePosition = context.convertRelativePositionInStrokeToAbsolutePosition(Fraction.zero);</span>
+<span class="fc" id="L262">    long strokeLen = context.getStrokeLengthInTicks(this);</span>
+<span class="pc bpc" id="L263" title="1 of 2 branches missed.">    if (tempo != UNDEFINED_NUM) {</span>
+<span class="nc" id="L264">      track.add(compiler.createTempoEvent(this.tempo, absolutePosition));</span>
+<span class="nc" id="L265">      compiler.controlEventProcessed();</span>
+    }
+<span class="fc bfc" id="L267" title="All 2 branches covered.">    if (bkno != null) {</span>
+<span class="fc" id="L268">      int msb = Integer.parseInt(bkno.substring(0, this.bkno.indexOf('.')));</span>
+<span class="fc" id="L269">      track.add(compiler.createBankSelectMSBEvent(ch, msb, absolutePosition));</span>
+<span class="pc bpc" id="L270" title="1 of 2 branches missed.">      if (this.bkno.indexOf('.') != -1) {</span>
+<span class="fc" id="L271">        int lsb = Integer.parseInt(bkno.substring(this.bkno.indexOf('.') + 1));</span>
+<span class="fc" id="L272">        track.add(compiler.createBankSelectLSBEvent(ch, lsb, absolutePosition));</span>
+      }
+<span class="fc" id="L274">      compiler.controlEventProcessed();</span>
+    }
+<span class="fc bfc" id="L276" title="All 2 branches covered.">    if (pgno != UNDEFINED_NUM) {</span>
+<span class="fc" id="L277">      track.add(compiler.createProgramChangeEvent(ch, this.pgno, absolutePosition));</span>
+<span class="fc" id="L278">      compiler.controlEventProcessed();</span>
+    }
+<span class="pc bpc" id="L280" title="1 of 2 branches missed.">    if (sysex != null) {</span>
+<span class="nc" id="L281">      MidiEvent ev = compiler.createSysexEvent(ch, sysex, absolutePosition);</span>
+<span class="nc bnc" id="L282" title="All 2 branches missed.">      if (ev != null) {</span>
+<span class="nc" id="L283">        track.add(ev);</span>
+<span class="nc" id="L284">        compiler.sysexEventProcessed();</span>
+      }
+    }
+<span class="fc" id="L287">    renderValues(volume, absolutePosition, strokeLen, compiler, (v, pos) -&gt; track.add(compiler.createVolumeChangeEvent(ch, v, pos)));</span>
+<span class="fc" id="L288">    renderValues(pan, absolutePosition, strokeLen, compiler, (v, pos) -&gt; track.add(compiler.createPanChangeEvent(ch, v, pos)));</span>
+<span class="fc" id="L289">    renderValues(reverb, absolutePosition, strokeLen, compiler, (v, pos) -&gt; track.add(compiler.createReverbEvent(ch, v, pos)));</span>
+<span class="fc" id="L290">    renderValues(chorus, absolutePosition, strokeLen, compiler, (v, pos) -&gt; track.add(compiler.createChorusEvent(ch, v, pos)));</span>
+<span class="fc" id="L291">    renderValues(pitch, absolutePosition, strokeLen, compiler, (v, pos) -&gt; track.add(compiler.createPitchBendEvent(ch, v, pos)));</span>
+<span class="fc" id="L292">    renderValues(modulation, absolutePosition, strokeLen, compiler, (v, pos) -&gt; track.add(compiler.createModulationEvent(ch, v, pos)));</span>
+<span class="pc" id="L293">    renderValues(aftertouch, absolutePosition, strokeLen, compiler, (v, pos) -&gt; track.add(compiler.createAfterTouchChangeEvent(ch, v, pos)));</span>
+<span class="fc" id="L294">    int transpose = context.params().transpose();</span>
+<span class="fc" id="L295">    int arpegiodelay = context.params().arpegio();</span>
+<span class="fc" id="L296">    int delta = 0;</span>
+<span class="fc" id="L297">    Fraction relPosInStroke = Fraction.zero;</span>
+<span class="fc bfc" id="L298" title="All 2 branches covered.">    for (NoteSet noteSet : this.noteSets()) {</span>
+<span class="fc" id="L299">      absolutePosition = context.convertRelativePositionInStrokeToAbsolutePosition(relPosInStroke);</span>
+<span class="fc" id="L300">      long absolutePositionWhereNoteFinishes = context.convertRelativePositionInStrokeToAbsolutePosition(</span>
+<span class="fc" id="L301">          Fraction.add(</span>
+              relPosInStroke,
+<span class="fc" id="L303">              noteSet.getLength()</span>
+          )
+      );
+<span class="fc" id="L306">      long noteLengthInTicks = absolutePositionWhereNoteFinishes - absolutePosition;</span>
+<span class="fc bfc" id="L307" title="All 2 branches covered.">      for (Note note : noteSet) {</span>
+<span class="fc" id="L308">        int key = note.key() + transpose;</span>
+<span class="fc" id="L309">        int velocity = Math.max(</span>
+            0,
+<span class="fc" id="L311">            Math.min(</span>
+                127,
+<span class="fc" id="L313">                context.params().velocitybase() +</span>
+<span class="fc" id="L314">                    note.accent() * context.params().velocitydelta() +</span>
+<span class="fc" id="L315">                    context.getGrooveAccent(relPosInStroke)</span>
+            )
+        );
+<span class="fc" id="L318">        track.add(compiler.createNoteOnEvent(ch, key, velocity, absolutePosition + delta));</span>
+<span class="fc" id="L319">        track.add(compiler.createNoteOffEvent(ch, key, (long) (absolutePosition + delta + noteLengthInTicks * this.gate())));</span>
+<span class="fc" id="L320">        compiler.noteProcessed();</span>
+<span class="fc" id="L321">        delta += arpegiodelay;</span>
+<span class="fc" id="L322">      }</span>
+<span class="fc" id="L323">      compiler.noteSetProcessed();</span>
+<span class="fc" id="L324">      relPosInStroke = Fraction.add(relPosInStroke, noteSet.getLength());</span>
+<span class="fc" id="L325">    }</span>
+<span class="fc" id="L326">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

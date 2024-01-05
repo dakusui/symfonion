@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Groove.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">symfonion</a> &gt; <a href="index.source.html" class="el_package">com.github.dakusui.symfonion.song</a> &gt; <span class="el_source">Groove.java</span></div><h1>Groove.java</h1><pre class="source lang-java linenums">package com.github.dakusui.symfonion.song;
+
+import com.github.dakusui.json.JsonFormatException;
+import com.github.dakusui.json.JsonInvalidPathException;
+import com.github.dakusui.json.JsonTypeMismatchException;
+import com.github.dakusui.json.JsonUtils;
+import com.github.dakusui.symfonion.utils.Fraction;
+import com.github.dakusui.symfonion.exceptions.SymfonionException;
+import com.github.dakusui.symfonion.utils.Utils;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
+import java.util.LinkedList;
+import java.util.List;
+
+import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.*;
+import static com.github.dakusui.symfonion.exceptions.SymfonionIllegalFormatException.NOTE_LENGTH_EXAMPLE;
+import static com.github.dakusui.symfonion.exceptions.SymfonionTypeMismatchException.OBJECT;
+
+public class Groove {
+<span class="fc" id="L22">  public static final Groove DEFAULT_INSTANCE = new Groove();</span>
+
+<span class="fc" id="L24">  record Beat(Fraction length, long ticks, int accent) {</span>
+  }
+
+<span class="fc" id="L27">  public record Unit(long pos, int accentDelta) {</span>
+
+    public int accent() {
+<span class="fc" id="L30">        return this.accentDelta;</span>
+      }
+    }
+  
+<span class="fc" id="L34">  List&lt;Beat&gt; beats = new LinkedList&lt;&gt;();</span>
+  
+  private final int resolution;
+  
+  public Groove() {
+<span class="fc" id="L39">    this(384);</span>
+<span class="fc" id="L40">  }</span>
+  
+<span class="fc" id="L42">  public Groove(int resolution) {</span>
+<span class="fc" id="L43">    this.resolution = resolution;</span>
+<span class="fc" id="L44">  }</span>
+  
+  public Unit resolve(Fraction offset) {
+<span class="pc bpc" id="L47" title="1 of 2 branches missed.">    if (offset == null) {</span>
+<span class="nc" id="L48">      String msg = &quot;offset cannot be null. (Groove#resolve)&quot;;</span>
+<span class="nc" id="L49">      throw runtimeException(msg, null);</span>
+    }
+<span class="pc bpc" id="L51" title="1 of 2 branches missed.">    if (Fraction.compare(offset, Fraction.zero) &lt; 0) {</span>
+<span class="nc" id="L52">      String msg = &quot;offset cannot be negative. (Groove#resolve)&quot;;</span>
+<span class="nc" id="L53">      throw runtimeException(msg, null);</span>
+    }
+<span class="fc" id="L55">    long pos = 0;</span>
+    
+<span class="fc" id="L57">    Fraction rest = offset.clone();</span>
+<span class="fc" id="L58">    int i = 0;</span>
+<span class="fc bfc" id="L59" title="All 2 branches covered.">    while (Fraction.compare(rest, Fraction.zero) &gt; 0) {</span>
+<span class="fc bfc" id="L60" title="All 2 branches covered.">      if (i &gt;= this.beats.size()) {</span>
+<span class="fc" id="L61">        break;</span>
+      }
+<span class="fc" id="L63">      Beat beat = this.beats.get(i);</span>
+<span class="fc" id="L64">      rest = Fraction.subtract(rest, beat.length);</span>
+<span class="fc" id="L65">      pos += beat.ticks;</span>
+<span class="fc" id="L66">      i++;</span>
+<span class="fc" id="L67">    }</span>
+    long p;
+<span class="fc" id="L69">    int d = 0;</span>
+<span class="fc bfc" id="L70" title="All 2 branches covered.">    if (Fraction.compare(rest, Fraction.zero) &lt; 0) {</span>
+<span class="fc" id="L71">      Beat beat = this.beats.get(i - 1);</span>
+<span class="fc" id="L72">      p = (long) (pos + Fraction.div(rest, beat.length).doubleValue() * beat.ticks);</span>
+<span class="fc bfc" id="L73" title="All 2 branches covered.">    } else if (Fraction.compare(rest, Fraction.zero) == 0) {</span>
+<span class="fc bfc" id="L74" title="All 2 branches covered.">      if (i &lt; this.beats.size()) {</span>
+<span class="fc" id="L75">        d = this.beats.get(i).accent;</span>
+      }
+<span class="fc" id="L77">      p = pos;</span>
+    } else {
+<span class="fc" id="L79">      p = (pos + (long) (rest.doubleValue() * this.resolution));</span>
+    }
+<span class="fc" id="L81">    return new Unit(p, d);</span>
+  }
+  
+  public void add(Fraction length, long ticks, int accent) {
+<span class="pc bpc" id="L85" title="1 of 2 branches missed.">    if (this == DEFAULT_INSTANCE) {</span>
+<span class="nc" id="L86">      throw runtimeException(&quot;Groove.DEFAULT_INSTANCE is immutable.&quot;, null);</span>
+    }
+<span class="fc" id="L88">    beats.add(new Beat(length, ticks, accent));</span>
+<span class="fc" id="L89">  }</span>
+  
+  public static Groove createGroove(JsonArray grooveDef) throws SymfonionException, JsonTypeMismatchException, JsonInvalidPathException, JsonFormatException {
+<span class="fc" id="L92">    Groove ret = new Groove();</span>
+<span class="fc bfc" id="L93" title="All 2 branches covered.">    for (JsonElement elem : grooveDef) {</span>
+<span class="pc bpc" id="L94" title="1 of 2 branches missed.">      if (!elem.isJsonObject()) {</span>
+<span class="nc" id="L95">        throw typeMismatchException(elem, OBJECT);</span>
+      }
+<span class="fc" id="L97">      JsonObject cur = elem.getAsJsonObject();</span>
+<span class="fc" id="L98">      String len = JsonUtils.asString(cur, Keyword.$length);</span>
+<span class="fc" id="L99">      long ticks = JsonUtils.asLong(cur, Keyword.$ticks);</span>
+<span class="fc" id="L100">      int accent = JsonUtils.asInt(cur, Keyword.$accent);</span>
+      
+<span class="fc" id="L102">      Fraction f = Utils.parseNoteLength(len);</span>
+<span class="fc bfc" id="L103" title="All 2 branches covered.">      if (f == null) {</span>
+<span class="nc" id="L104">        throw illegalFormatException(JsonUtils.asJsonElement(cur, Keyword.$length), NOTE_LENGTH_EXAMPLE);</span>
+      }
+<span class="fc" id="L106">      ret.add(f, ticks, accent);</span>
+<span class="fc" id="L107">    }</span>
+<span class="fc" id="L108">    return ret;</span>
+  }
+}
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

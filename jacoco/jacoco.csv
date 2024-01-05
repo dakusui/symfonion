@@ -1,0 +1,76 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+symfonion,com.github.dakusui.valid8j_cliche.core,Transform,0,6,0,0,0,2,0,2,0,2
+symfonion,com.github.dakusui.valid8j_cliche.core,All,0,16,0,0,0,3,0,2,0,2
+symfonion,com.github.dakusui.valid8j_cliche.core,Cliche,0,10,0,0,0,2,0,2,0,2
+symfonion,com.github.dakusui.symfonion.utils,Utils,57,206,6,10,15,42,7,16,3,12
+symfonion,com.github.dakusui.symfonion.utils,Fraction,11,260,1,17,4,53,1,25,0,17
+symfonion,com.github.dakusui.symfonion.song,Song.Builder,79,342,7,17,14,66,6,14,0,8
+symfonion,com.github.dakusui.symfonion.song,Groove.Unit,0,12,0,0,0,2,0,2,0,2
+symfonion,com.github.dakusui.symfonion.song,Note,0,15,0,0,0,6,0,3,0,3
+symfonion,com.github.dakusui.symfonion.song,Part,3,33,0,0,1,7,1,3,1,3
+symfonion,com.github.dakusui.symfonion.song,Keyword,0,237,0,0,0,40,0,1,0,1
+symfonion,com.github.dakusui.symfonion.song,Bar,44,229,3,15,7,46,3,14,0,8
+symfonion,com.github.dakusui.symfonion.song,Pattern,11,130,0,8,1,27,0,9,0,5
+symfonion,com.github.dakusui.symfonion.song,NoteSet,0,10,0,0,0,4,0,3,0,3
+symfonion,com.github.dakusui.symfonion.song,NoteMap,40,133,2,4,10,24,3,5,2,3
+symfonion,com.github.dakusui.symfonion.song,Stroke,70,1000,14,76,11,177,14,49,1,17
+symfonion,com.github.dakusui.symfonion.song,Pattern.Parameters,6,128,1,3,1,26,1,10,0,9
+symfonion,com.github.dakusui.symfonion.song,Groove.Beat,0,12,0,0,0,1,0,1,0,1
+symfonion,com.github.dakusui.symfonion.song,Song,18,49,0,0,3,12,3,5,3,5
+symfonion,com.github.dakusui.symfonion.song,Groove,36,199,4,18,7,45,4,13,0,6
+symfonion,com.github.dakusui.symfonion.exceptions,ExceptionThrower.Context,16,113,5,7,2,24,5,9,0,8
+symfonion,com.github.dakusui.symfonion.exceptions,SymfonionIllegalFormatException,6,23,0,0,2,3,1,2,1,2
+symfonion,com.github.dakusui.symfonion.exceptions,ExceptionThrower.ContextKey,0,39,0,0,0,8,0,2,0,2
+symfonion,com.github.dakusui.symfonion.exceptions,SymfonionReferenceException,0,47,0,0,0,7,0,3,0,3
+symfonion,com.github.dakusui.symfonion.exceptions,SymfonionTypeMismatchException,39,0,2,0,6,0,3,0,2,0
+symfonion,com.github.dakusui.symfonion.exceptions,CliException,11,0,0,0,4,0,2,0,2,0
+symfonion,com.github.dakusui.symfonion.exceptions,SymfonionInterruptedException,5,0,0,0,2,0,1,0,1,0
+symfonion,com.github.dakusui.symfonion.exceptions,FractionFormatException,3,14,0,0,1,3,1,1,1,1
+symfonion,com.github.dakusui.symfonion.exceptions,SymfonionMissingElementException,14,26,1,1,1,4,1,2,0,2
+symfonion,com.github.dakusui.symfonion.exceptions,ExceptionThrower,222,277,2,6,20,31,19,20,17,18
+symfonion,com.github.dakusui.symfonion.exceptions,ExceptionThrower.new Object() {...},3,0,0,0,1,0,1,0,1,0
+symfonion,com.github.dakusui.symfonion.exceptions,ExceptionThrower.ContextEntry,0,9,0,0,0,1,0,1,0,1
+symfonion,com.github.dakusui.symfonion.exceptions,SymfonionSyntaxException,2,86,3,3,1,16,3,5,0,5
+symfonion,com.github.dakusui.symfonion.exceptions,SymfonionException,15,10,0,0,6,4,2,2,2,2
+symfonion,com.github.dakusui.symfonion.utils.midi,MidiDeviceRecord,1,34,1,3,0,3,1,4,0,3
+symfonion,com.github.dakusui.symfonion.utils.midi,MidiDeviceScanner.RegexMidiDeviceScanner,3,97,2,6,0,19,2,9,0,7
+symfonion,com.github.dakusui.symfonion.utils.midi,MidiDeviceReportFormatter,0,4,0,0,0,1,0,1,0,1
+symfonion,com.github.dakusui.symfonion.utils.midi,MidiDeviceScanner,0,69,0,4,0,17,0,6,0,4
+symfonion,com.github.dakusui.symfonion.utils.midi,MidiUtils,42,84,2,6,4,24,2,9,0,7
+symfonion,com.github.dakusui.symfonion.utils.midi,MidiDeviceManager,12,157,0,0,2,29,2,20,2,20
+symfonion,com.github.dakusui.symfonion.utils.midi,MidiDeviceManager.new MidiDevice.Info() {...},0,7,0,0,0,1,0,1,0,1
+symfonion,com.github.dakusui.symfonion.utils.midi,MidiDeviceManager.new ArrayList() {...},5,74,0,0,0,11,1,3,1,3
+symfonion,com.github.dakusui.symfonion.utils.midi,MidiUtils.new MidiDeviceScanner.RegexMidiDeviceScanner() {...},0,18,1,3,0,3,1,4,0,3
+symfonion,com.github.dakusui.symfonion.utils.midi,MidiDeviceReportFormatter.new MidiDeviceReportFormatter() {...},2,63,1,5,0,6,1,7,0,5
+symfonion,com.github.dakusui.json,JsonTypeMismatchException,87,0,6,0,17,0,8,0,5,0
+symfonion,com.github.dakusui.json,JsonUtils.JsonTypes.new JsonUtils.JsonTypes() {...},11,11,1,1,1,3,1,2,0,2
+symfonion,com.github.dakusui.json,JsonUtils.JsonTypes,0,35,0,2,0,8,0,3,0,2
+symfonion,com.github.dakusui.json,JsonUtils.JsonTypes.new JsonUtils.JsonTypes() {...},11,11,1,1,1,3,1,2,0,2
+symfonion,com.github.dakusui.json,JsonUtils.JsonTypes.new JsonUtils.JsonTypes() {...},11,11,1,1,1,3,1,2,0,2
+symfonion,com.github.dakusui.json,JsonUtils.JsonTypes.new JsonUtils.JsonTypes() {...},17,5,2,0,3,1,2,1,1,1
+symfonion,com.github.dakusui.json,JsonUtils,175,816,21,87,37,171,23,75,4,40
+symfonion,com.github.dakusui.json,JsonIndexOutOfBoundsException,0,16,0,0,0,3,0,2,0,2
+symfonion,com.github.dakusui.json,JsonException,3,6,0,0,1,3,1,1,1,1
+symfonion,com.github.dakusui.json,JsonFormatException,4,0,0,0,2,0,1,0,1,0
+symfonion,com.github.dakusui.json,JsonSummarizer,150,443,19,43,20,90,16,37,1,21
+symfonion,com.github.dakusui.json,JsonPathNotFoundException,0,6,0,0,0,2,0,1,0,1
+symfonion,com.github.dakusui.json,JsonUtils.new Iterator() {...},4,23,0,0,2,5,1,3,1,3
+symfonion,com.github.dakusui.json,JsonInvalidPathException,0,52,0,0,0,13,0,7,0,7
+symfonion,com.github.dakusui.valid8j_cliche.json,JsonObjectTo,3,10,0,0,1,1,1,2,1,2
+symfonion,com.github.dakusui.symfonion.core,Symfonion,108,70,6,2,20,19,4,4,0,4
+symfonion,com.github.dakusui.symfonion.core,MidiCompilerContext,0,53,0,0,0,10,0,5,0,5
+symfonion,com.github.dakusui.symfonion.core,MidiCompiler,139,388,5,17,35,93,7,34,4,26
+symfonion,com.github.dakusui.symfonion.cli,MidiRouteRequest,0,9,0,0,0,1,0,1,0,1
+symfonion,com.github.dakusui.symfonion.cli,CliUtils,68,46,6,4,9,11,7,3,2,3
+symfonion,com.github.dakusui.symfonion.cli,Cli.new OutputStream() {...},46,0,4,0,13,0,7,0,5,0
+symfonion,com.github.dakusui.symfonion.cli,Cli.new WindowAdapter() {...},6,0,0,0,3,0,2,0,2,0
+symfonion,com.github.dakusui.symfonion.cli,Cli,138,226,8,2,38,54,7,8,3,7
+symfonion,com.github.dakusui.symfonion.cli,Cli.Builder,77,190,16,26,12,39,14,9,0,2
+symfonion,com.github.dakusui.symfonion.cli.subcommands,ListDevices,0,29,0,0,0,4,0,3,0,3
+symfonion,com.github.dakusui.symfonion.cli.subcommands,Play.new MetaEventListener() {...},4,40,2,2,2,11,2,2,0,2
+symfonion,com.github.dakusui.symfonion.cli.subcommands,Version,9,29,1,1,4,11,1,4,0,4
+symfonion,com.github.dakusui.symfonion.cli.subcommands,Help,0,13,0,0,0,4,0,2,0,2
+symfonion,com.github.dakusui.symfonion.cli.subcommands,Play,21,271,3,13,8,70,3,17,0,12
+symfonion,com.github.dakusui.symfonion.cli.subcommands,Compile,0,58,0,2,0,12,0,3,0,2
+symfonion,com.github.dakusui.symfonion.cli.subcommands,PatchBay,40,114,2,2,6,27,2,7,0,7
+symfonion,com.github.dakusui.symfonion.cli.subcommands,PresetSubcommand,13,70,0,0,4,13,0,3,0,3

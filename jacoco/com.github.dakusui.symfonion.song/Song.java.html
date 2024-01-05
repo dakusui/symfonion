@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Song.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">symfonion</a> &gt; <a href="index.source.html" class="el_package">com.github.dakusui.symfonion.song</a> &gt; <span class="el_source">Song.java</span></div><h1>Song.java</h1><pre class="source lang-java linenums">package com.github.dakusui.symfonion.song;
+
+import com.github.dakusui.json.JsonException;
+import com.github.dakusui.json.JsonUtils;
+import com.github.dakusui.logias.Logias;
+import com.github.dakusui.logias.lisp.Context;
+import com.github.dakusui.symfonion.exceptions.ExceptionThrower;
+import com.github.dakusui.symfonion.exceptions.SymfonionException;
+import com.github.dakusui.symfonion.utils.Utils;
+import com.github.dakusui.valid8j.Requires;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
+import java.util.*;
+
+import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.*;
+import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.ContextKey.JSON_ELEMENT_ROOT;
+import static com.github.dakusui.symfonion.exceptions.SymfonionTypeMismatchException.ARRAY;
+import static com.github.dakusui.symfonion.exceptions.SymfonionTypeMismatchException.OBJECT;
+import static com.github.dakusui.valid8j.Requires.requireNonNull;
+
+public class Song {
+
+  public static class Builder {
+    private final Context logiasContext;
+    private final JsonObject json;
+
+<span class="fc" id="L29">    public Builder(Context logiasContext, JsonObject jsonObject) {</span>
+<span class="fc" id="L30">      this.logiasContext = requireNonNull(logiasContext);</span>
+<span class="fc" id="L31">      this.json = requireNonNull(jsonObject);</span>
+<span class="fc" id="L32">    }</span>
+
+    private static Context loadMidiDeviceProfile(JsonObject json, Context logiasContext) throws SymfonionException, JsonException {
+<span class="fc" id="L35">      JsonElement tmp = JsonUtils.asJsonObjectWithDefault(json, new JsonObject(), Keyword.$settings);</span>
+<span class="pc bpc" id="L36" title="1 of 2 branches missed.">      if (!tmp.isJsonObject()) {</span>
+<span class="nc" id="L37">        throw typeMismatchException(tmp, OBJECT);</span>
+      }
+<span class="fc" id="L39">      String profileName = JsonUtils.asStringWithDefault(tmp.getAsJsonObject(), &quot;&quot;, Keyword.$mididevice);</span>
+<span class="fc" id="L40">      Logias logias = new Logias(logiasContext);</span>
+<span class="pc bpc" id="L41" title="1 of 2 branches missed.">      if (!&quot;&quot;.equals(profileName)) {</span>
+<span class="nc" id="L42">        JsonObject deviceDef = JsonUtils.toJson(Utils.loadResource(profileName + &quot;.json&quot;)).getAsJsonObject();</span>
+<span class="nc" id="L43">        Iterator&lt;String&gt; i = JsonUtils.keyIterator(deviceDef);</span>
+<span class="nc bnc" id="L44" title="All 2 branches missed.">        while (i.hasNext()) {</span>
+<span class="nc" id="L45">          String k = i.next();</span>
+<span class="nc" id="L46">          JsonElement v = deviceDef.get(k);</span>
+<span class="nc" id="L47">          logiasContext.bind(k, logias.run(logias.buildSexp(v)));</span>
+<span class="nc" id="L48">        }</span>
+      }
+<span class="fc" id="L50">      return logiasContext;</span>
+    }
+
+    private static List&lt;Bar&gt; initSequence(JsonObject json, Map&lt;String, Groove&gt; grooves, Map&lt;String, Pattern&gt; patterns) throws SymfonionException, JsonException {
+<span class="fc" id="L54">      List&lt;Bar&gt; bars = new LinkedList&lt;&gt;();</span>
+<span class="fc" id="L55">      JsonElement tmp = JsonUtils.asJsonElement(json, Keyword.$sequence);</span>
+<span class="pc bpc" id="L56" title="1 of 2 branches missed.">      if (!tmp.isJsonArray()) {</span>
+<span class="nc" id="L57">        throw typeMismatchException(tmp, ARRAY);</span>
+      }
+<span class="fc" id="L59">      JsonArray seqJson = tmp.getAsJsonArray();</span>
+<span class="fc" id="L60">      int len = seqJson.getAsJsonArray().size();</span>
+<span class="fc bfc" id="L61" title="All 2 branches covered.">      for (int i = 0; i &lt; len; i++) {</span>
+<span class="fc" id="L62">        JsonElement barJson = seqJson.get(i);</span>
+<span class="pc bpc" id="L63" title="1 of 2 branches missed.">        if (!barJson.isJsonObject()) {</span>
+<span class="nc" id="L64">          throw typeMismatchException(seqJson, OBJECT);</span>
+        }
+<span class="fc" id="L66">        Bar bar = new Bar(barJson.getAsJsonObject(), json, grooves, patterns);</span>
+<span class="fc" id="L67">        bars.add(bar);</span>
+      }
+<span class="fc" id="L69">      return bars;</span>
+    }
+
+    private static Map&lt;String, NoteMap&gt; initNoteMaps(JsonObject json) throws SymfonionException, JsonException {
+<span class="fc" id="L73">      Map&lt;String, NoteMap&gt; noteMaps = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L74">      final JsonObject noteMapsJSON = JsonUtils.asJsonObjectWithDefault(json, new JsonObject(), Keyword.$notemaps);</span>
+
+<span class="fc" id="L76">      Iterator&lt;String&gt; i = JsonUtils.keyIterator(noteMapsJSON);</span>
+<span class="fc" id="L77">      noteMaps.put(Keyword.$normal.toString(), NoteMap.defaultNoteMap);</span>
+<span class="fc" id="L78">      noteMaps.put(Keyword.$percussion.toString(), NoteMap.defaultPercussionMap);</span>
+<span class="pc bpc" id="L79" title="1 of 2 branches missed.">      while (i.hasNext()) {</span>
+<span class="nc" id="L80">        String name = i.next();</span>
+<span class="nc" id="L81">        NoteMap cur = new NoteMap(JsonUtils.asJsonObject(noteMapsJSON, name));</span>
+<span class="nc" id="L82">        noteMaps.put(name, cur);</span>
+<span class="nc" id="L83">      }</span>
+<span class="fc" id="L84">      return noteMaps;</span>
+    }
+
+    private static Map&lt;String, Pattern&gt; initPatterns(JsonObject json, Map&lt;String, NoteMap&gt; noteMaps) throws SymfonionException, JsonException {
+<span class="fc" id="L88">      Map&lt;String, Pattern&gt; patterns = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L89">      JsonObject patternsJSON = JsonUtils.asJsonObjectWithDefault(json, new JsonObject(), Keyword.$patterns);</span>
+
+<span class="fc" id="L91">      Iterator&lt;String&gt; i = JsonUtils.keyIterator(patternsJSON);</span>
+<span class="fc" id="L92">      try (ExceptionThrower.Context ignored = context($(JSON_ELEMENT_ROOT, json))) {</span>
+<span class="fc bfc" id="L93" title="All 2 branches covered.">        while (i.hasNext()) {</span>
+<span class="fc" id="L94">          String name = i.next();</span>
+<span class="fc" id="L95">          Pattern cur = Pattern.createPattern(JsonUtils.asJsonObject(patternsJSON, name), noteMaps);</span>
+<span class="fc" id="L96">          patterns.put(name, cur);</span>
+<span class="fc" id="L97">        }</span>
+      }
+<span class="fc" id="L99">      return patterns;</span>
+    }
+
+    private static Map&lt;String, Part&gt; initParts(JsonObject json) throws SymfonionException, JsonException {
+<span class="fc" id="L103">      Map&lt;String, Part&gt; parts = new HashMap&lt;&gt;();</span>
+<span class="fc bfc" id="L104" title="All 2 branches covered.">      if (JsonUtils.hasPath(json, Keyword.$parts)) {</span>
+<span class="fc" id="L105">        JsonObject instrumentsJSON = JsonUtils.asJsonObject(json, Keyword.$parts);</span>
+<span class="fc" id="L106">        Iterator&lt;String&gt; i = JsonUtils.keyIterator(instrumentsJSON);</span>
+<span class="fc bfc" id="L107" title="All 2 branches covered.">        while (i.hasNext()) {</span>
+<span class="fc" id="L108">          String name = i.next();</span>
+<span class="fc" id="L109">          Part cur = new Part(name, JsonUtils.asJsonObject(instrumentsJSON, name));</span>
+<span class="fc" id="L110">          parts.put(name, cur);</span>
+<span class="fc" id="L111">        }</span>
+      }
+<span class="fc" id="L113">      return parts;</span>
+    }
+
+    private static Map&lt;String, Groove&gt; initGrooves(JsonObject json) throws SymfonionException, JsonException {
+<span class="fc" id="L117">      Map&lt;String, Groove&gt; grooves = new HashMap&lt;&gt;();</span>
+<span class="fc bfc" id="L118" title="All 2 branches covered.">      if (JsonUtils.hasPath(json, Keyword.$grooves)) {</span>
+<span class="fc" id="L119">        JsonObject groovesJSON = JsonUtils.asJsonObject(json, Keyword.$grooves);</span>
+
+<span class="fc" id="L121">        Iterator&lt;String&gt; i = JsonUtils.keyIterator(groovesJSON);</span>
+<span class="fc bfc" id="L122" title="All 2 branches covered.">        while (i.hasNext()) {</span>
+<span class="fc" id="L123">          String name = i.next();</span>
+<span class="fc" id="L124">          Groove cur = Groove.createGroove(JsonUtils.asJsonArray(groovesJSON, name));</span>
+<span class="fc" id="L125">          grooves.put(name, cur);</span>
+<span class="fc" id="L126">        }</span>
+      }
+<span class="fc" id="L128">      return grooves;</span>
+    }
+
+    public Song build() throws JsonException, SymfonionException {
+<span class="fc" id="L132">      try (ExceptionThrower.Context ignored = context($(JSON_ELEMENT_ROOT, json))) {</span>
+<span class="fc" id="L133">        Map&lt;String, NoteMap&gt; noteMaps = initNoteMaps(json);</span>
+<span class="fc" id="L134">        Map&lt;String, Groove&gt; grooves = initGrooves(json);</span>
+<span class="fc" id="L135">        Map&lt;String, Pattern&gt; patterns = initPatterns(json, noteMaps);</span>
+<span class="fc" id="L136">        return new Song(</span>
+<span class="fc" id="L137">            loadMidiDeviceProfile(json, logiasContext),</span>
+<span class="fc" id="L138">            initParts(this.json),</span>
+            patterns,
+            noteMaps,
+            grooves,
+<span class="fc" id="L142">            initSequence(json, grooves, patterns)</span>
+        );
+      }
+    }
+  }
+
+  private final Context logiasContext;
+  private final Map&lt;String, Part&gt; parts;
+  private final Map&lt;String, Pattern&gt; patterns;
+  private final Map&lt;String, NoteMap&gt; noteMaps;
+  private final Map&lt;String, Groove&gt; grooves;
+  private final List&lt;Bar&gt; bars;
+
+
+  public Song(Context logiasContext,
+              Map&lt;String, Part&gt; parts,
+              Map&lt;String, Pattern&gt; patterns,
+              Map&lt;String, NoteMap&gt; noteMaps,
+              Map&lt;String, Groove&gt; grooves,
+              List&lt;Bar&gt; bars
+<span class="fc" id="L162">  ) {</span>
+<span class="fc" id="L163">    this.logiasContext = logiasContext;</span>
+<span class="fc" id="L164">    this.parts = Requires.requireNonNull(parts);</span>
+<span class="fc" id="L165">    this.patterns = Requires.requireNonNull(patterns);</span>
+<span class="fc" id="L166">    this.noteMaps = requireNonNull(noteMaps);</span>
+<span class="fc" id="L167">    this.grooves = requireNonNull(grooves);</span>
+<span class="fc" id="L168">    this.bars = requireNonNull(bars);</span>
+<span class="fc" id="L169">  }</span>
+
+
+  public Pattern pattern(String patternName) {
+<span class="nc" id="L173">    return this.patterns.get(patternName);</span>
+  }
+
+  public NoteMap noteMap(String noteMapName) {
+<span class="nc" id="L177">    return this.noteMaps.get(noteMapName);</span>
+  }
+
+  public List&lt;Bar&gt; bars() {
+<span class="fc" id="L181">    return Collections.unmodifiableList(this.bars);</span>
+  }
+
+  public Set&lt;String&gt; partNames() {
+<span class="fc" id="L185">    return Collections.unmodifiableSet(this.parts.keySet());</span>
+  }
+
+  public Part part(String name) {
+<span class="fc" id="L189">    return this.parts.get(name);</span>
+  }
+
+  public Context getLogiasContext() {
+<span class="fc" id="L193">    return this.logiasContext;</span>
+  }
+
+  public Groove groove(String grooveName) {
+<span class="nc" id="L197">    return this.grooves.get(grooveName);</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

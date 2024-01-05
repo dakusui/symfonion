@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>JsonInvalidPathException.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">symfonion</a> &gt; <a href="index.source.html" class="el_package">com.github.dakusui.json</a> &gt; <span class="el_source">JsonInvalidPathException.java</span></div><h1>JsonInvalidPathException.java</h1><pre class="source lang-java linenums">package com.github.dakusui.json;
+
+import com.google.gson.JsonElement;
+
+import java.io.Serial;
+import java.util.Arrays;
+
+public class JsonInvalidPathException extends JsonException {
+	/**
+	 * A serial version UID string.
+	 */
+	@Serial
+	private static final long serialVersionUID = 7832147182391783569L;
+
+	protected String formatMessage(JsonElement base, Object[] path) {
+<span class="fc" id="L16">		return String.format(&quot;This element (%s) doesn't have path: %s&quot;, JsonSummarizer.focusedElement(base), Arrays.toString(path));</span>
+	}
+	
+	private final JsonElement base;
+
+	private final Object[] path;
+
+	private final int index;
+
+	private final String message;
+
+	public JsonInvalidPathException(JsonElement base, Object[] path, int index) {
+<span class="fc" id="L28">		super(base);</span>
+<span class="fc" id="L29">		this.message = formatMessage(base, path);</span>
+<span class="fc" id="L30">		this.base = base;</span>
+<span class="fc" id="L31">		this.path = path;</span>
+<span class="fc" id="L32">		this.index = index;</span>
+<span class="fc" id="L33">	}</span>
+
+  public JsonInvalidPathException(JsonElement base, Object[] path) {
+<span class="fc" id="L36">    this(base, path, 0);</span>
+<span class="fc" id="L37">  }</span>
+
+  public JsonElement getProblemCausingNode() {
+<span class="fc" id="L40">		return base;</span>
+	}
+
+	public Object[] getPath() {
+<span class="fc" id="L44">		return path;</span>
+	}
+
+	public int  getIndex() {
+<span class="fc" id="L48">		return this.index;</span>
+	}
+
+	@Override
+	public String getMessage() {
+<span class="fc" id="L53">		return this.message;</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

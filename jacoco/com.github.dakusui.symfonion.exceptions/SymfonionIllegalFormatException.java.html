@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SymfonionIllegalFormatException.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">symfonion</a> &gt; <a href="index.source.html" class="el_package">com.github.dakusui.symfonion.exceptions</a> &gt; <span class="el_source">SymfonionIllegalFormatException.java</span></div><h1>SymfonionIllegalFormatException.java</h1><pre class="source lang-java linenums">package com.github.dakusui.symfonion.exceptions;
+
+import com.github.dakusui.json.JsonUtils;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
+import java.io.File;
+import java.io.Serial;
+
+public class SymfonionIllegalFormatException extends SymfonionSyntaxException {
+  public static final String FRACTION_EXAMPLE = &quot;This value must be a fraction. e.g. '1/2', '1/4', and so on.&quot;;
+  public static final String NOTE_LENGTH_EXAMPLE = &quot;This value must be a note length. e.g. '4', '8.', '16'&quot;;
+
+  /**
+   * Serial version UID
+   */
+  @Serial
+  private static final long serialVersionUID = 8614872945878002862L;
+
+  public SymfonionIllegalFormatException(JsonElement problemCausingJsonNode, String explanationOfAcceptableValue, JsonObject root, File sourceFile) {
+<span class="fc" id="L21">    super(formatMessage(explanationOfAcceptableValue, problemCausingJsonNode), problemCausingJsonNode, root, sourceFile);</span>
+<span class="fc" id="L22">  }</span>
+
+  private static String formatMessage(String acceptableExample, JsonElement problemContainingNode) {
+<span class="fc" id="L25">    return String.format(&quot;%s is invalid. (%s)&quot;, JsonUtils.summarizeJsonElement(problemContainingNode), acceptableExample);</span>
+  }
+
+  static public void main(String[] args) {
+<span class="nc" id="L29">    System.out.println(new JsonObject());</span>
+<span class="nc" id="L30">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

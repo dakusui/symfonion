@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MidiUtils.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">symfonion</a> &gt; <a href="index.source.html" class="el_package">com.github.dakusui.symfonion.utils.midi</a> &gt; <span class="el_source">MidiUtils.java</span></div><h1>MidiUtils.java</h1><pre class="source lang-java linenums">package com.github.dakusui.symfonion.utils.midi;
+
+import com.github.dakusui.symfonion.exceptions.CliException;
+
+import javax.sound.midi.MidiDevice;
+import javax.sound.midi.MidiSystem;
+import java.io.PrintStream;
+import java.util.Arrays;
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
+
+import static java.lang.String.format;
+
+<span class="fc" id="L14">public enum MidiUtils {</span>
+  ;
+
+  public static Stream&lt;MidiDevice.Info&gt; streamMidiDeviceInfo() {
+<span class="fc" id="L18">    return Arrays.stream(MidiSystem.getMidiDeviceInfo());</span>
+  }
+
+  public static String formatMidiDeviceInfo(MidiDevice.Info info) {
+<span class="fc" id="L22">    return String.format(&quot;%-25s %-15s %-35s&quot;, info.getName(), info.getVersion(), info.getVendor());</span>
+  }
+
+  public static boolean isMidiDeviceForInput(MidiDevice.Info device) {
+<span class="fc" id="L26">    Object tmp = null;</span>
+    try {
+<span class="fc" id="L28">      MidiDevice dev = MidiSystem.getMidiDevice(device);</span>
+<span class="fc" id="L29">      try (dev) {</span>
+<span class="fc" id="L30">        dev.open();</span>
+<span class="fc" id="L31">        tmp = dev.getTransmitter();</span>
+      }
+<span class="fc" id="L33">    } catch (Exception ignored) {</span>
+<span class="fc" id="L34">    }</span>
+<span class="fc bfc" id="L35" title="All 2 branches covered.">    return tmp != null;</span>
+  }
+
+  public static boolean isMidiDeviceForOutput(MidiDevice.Info info) {
+<span class="fc" id="L39">    Object tmp = null;</span>
+    try {
+<span class="fc" id="L41">      MidiDevice dev = MidiSystem.getMidiDevice(info);</span>
+<span class="fc" id="L42">      try (dev) {</span>
+<span class="fc" id="L43">        dev.open();</span>
+<span class="fc" id="L44">        tmp = dev.getReceiver();</span>
+      }
+<span class="fc" id="L46">    } catch (Exception ignored) {</span>
+<span class="fc" id="L47">    }</span>
+<span class="fc bfc" id="L48" title="All 2 branches covered.">    return tmp != null;</span>
+  }
+
+  public static MidiDeviceScanner chooseOutputDevices(
+      PrintStream ps, Pattern regex) {
+<span class="fc" id="L53">    return new MidiDeviceScanner.RegexMidiDeviceScanner(ps, regex) {</span>
+      @Override
+      protected String getTitle() {
+<span class="fc" id="L56">        return &quot;MIDI-out devices&quot;;</span>
+      }
+
+      @Override
+      protected boolean matches(MidiDevice.Info device) {
+<span class="pc bpc" id="L61" title="1 of 4 branches missed.">        return super.matches(device) &amp;&amp; isMidiDeviceForOutput(device);</span>
+      }
+    };
+  }
+
+  public static MidiDevice.Info[] getInfos(String portName, MidiDeviceScanner scanner, Pattern regex) throws CliException {
+<span class="fc" id="L67">    MidiDevice.Info[] matchedInfos = scanner.getMatchedDevices();</span>
+<span class="pc bpc" id="L68" title="1 of 2 branches missed.">    if (matchedInfos.length &gt; 1) {</span>
+<span class="nc" id="L69">      String msg = format(&quot;Device for port '%s' (regex:%s) wasn't unique (%d)&quot;, portName, regex, matchedInfos.length);</span>
+<span class="nc" id="L70">      throw new CliException(msg);</span>
+<span class="pc bpc" id="L71" title="1 of 2 branches missed.">    } else if (matchedInfos.length == 0) {</span>
+<span class="nc" id="L72">      String msg = format(&quot;No matching device was found for port '%s' (regex:%s)&quot;, portName, regex);</span>
+<span class="nc" id="L73">      throw new CliException(msg);</span>
+    }
+<span class="fc" id="L75">    return matchedInfos;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Pattern.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">symfonion</a> &gt; <a href="index.source.html" class="el_package">com.github.dakusui.symfonion.song</a> &gt; <span class="el_source">Pattern.java</span></div><h1>Pattern.java</h1><pre class="source lang-java linenums">package com.github.dakusui.symfonion.song;
+
+import com.github.dakusui.json.JsonException;
+import com.github.dakusui.json.JsonUtils;
+import com.github.dakusui.symfonion.exceptions.SymfonionException;
+import com.github.dakusui.symfonion.utils.Fraction;
+import com.github.dakusui.symfonion.utils.Utils;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
+import static com.github.dakusui.json.JsonUtils.asJsonElement;
+import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.illegalFormatException;
+import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.noteMapNotFoundException;
+import static com.github.dakusui.symfonion.exceptions.SymfonionIllegalFormatException.NOTE_LENGTH_EXAMPLE;
+
+
+public class Pattern {
+  public static class Parameters {
+<span class="fc" id="L25">    static final Fraction QUARTER = new Fraction(1, 4);</span>
+<span class="fc" id="L26">    double gate = 0.8;</span>
+<span class="fc" id="L27">    Fraction length = QUARTER;</span>
+<span class="fc" id="L28">    int transpose = 0;</span>
+<span class="fc" id="L29">    int velocityBase = 64;</span>
+<span class="fc" id="L30">    int velocityDelta = 10;</span>
+    int arpeggio;
+    
+<span class="fc" id="L33">    public Parameters(JsonObject json) throws SymfonionException, JsonException {</span>
+<span class="fc" id="L34">      init(json);</span>
+<span class="fc" id="L35">    }</span>
+    
+    public double gate() {
+<span class="fc" id="L38">      return this.gate;</span>
+    }
+    
+    private void init(JsonObject json) throws SymfonionException, JsonException {
+<span class="pc bpc" id="L42" title="1 of 2 branches missed.">      if (json == null) {</span>
+<span class="nc" id="L43">        json = JsonUtils.toJson(&quot;{}&quot;).getAsJsonObject();</span>
+      }
+<span class="fc" id="L45">      this.velocityBase = JsonUtils.asIntWithDefault(json, 64, Keyword.$velocitybase);</span>
+<span class="fc" id="L46">      this.velocityDelta = JsonUtils.asIntWithDefault(json, 5, Keyword.$velocitydelta);</span>
+<span class="fc" id="L47">      this.gate = JsonUtils.asDoubleWithDefault(json, 0.8, Keyword.$gate);</span>
+<span class="fc" id="L48">      this.length = Utils.parseNoteLength(JsonUtils.asStringWithDefault(json, &quot;4&quot;, Keyword.$length));</span>
+<span class="fc bfc" id="L49" title="All 2 branches covered.">      if (this.length == null) {</span>
+<span class="pc" id="L50">        throw illegalFormatException(</span>
+<span class="fc" id="L51">            asJsonElement(json, Keyword.$length),</span>
+            NOTE_LENGTH_EXAMPLE
+        );
+      }
+<span class="fc" id="L55">      this.transpose = JsonUtils.asIntWithDefault(json, 0, Keyword.$transpose);</span>
+<span class="fc" id="L56">      this.arpeggio = JsonUtils.asIntWithDefault(json, 0, Keyword.$arpeggio);</span>
+<span class="fc" id="L57">    }</span>
+    
+    public Fraction length() {
+<span class="fc" id="L60">      return this.length;</span>
+    }
+    
+    public int transpose() {
+<span class="fc" id="L64">      return this.transpose;</span>
+    }
+    
+    public int velocitybase() {
+<span class="fc" id="L68">      return this.velocityBase;</span>
+    }
+    
+    public int velocitydelta() {
+<span class="fc" id="L72">      return this.velocityDelta;</span>
+    }
+    
+    public int arpegio() {
+<span class="fc" id="L76">      return this.arpeggio;</span>
+    }
+  }
+  
+  public static Pattern createPattern(JsonObject json, Map&lt;String, NoteMap&gt; noteMaps) throws SymfonionException, JsonException {
+<span class="fc" id="L81">    NoteMap noteMap = NoteMap.defaultNoteMap;</span>
+<span class="fc bfc" id="L82" title="All 2 branches covered.">    if (JsonUtils.hasPath(json, Keyword.$notemap)) {</span>
+<span class="fc" id="L83">      String noteMapName = JsonUtils.asString(json, Keyword.$notemap);</span>
+<span class="fc" id="L84">      noteMap = noteMaps.get(noteMapName);</span>
+<span class="fc bfc" id="L85" title="All 2 branches covered.">      if (noteMap == null) {</span>
+<span class="nc" id="L86">        throw noteMapNotFoundException(asJsonElement(json, Keyword.$notemap), noteMapName);</span>
+      }
+    }
+<span class="fc" id="L89">    Pattern ret = new Pattern(noteMap);</span>
+<span class="fc" id="L90">    ret.init(json);</span>
+<span class="fc" id="L91">    return ret;</span>
+  }
+  
+<span class="fc" id="L94">  List&lt;Stroke&gt; body = null;</span>
+  NoteMap noteMap;
+<span class="fc" id="L96">  Parameters params = null;</span>
+  
+<span class="fc" id="L98">  Pattern(NoteMap noteMap) {</span>
+<span class="fc" id="L99">    this.noteMap = noteMap;</span>
+<span class="fc" id="L100">  }</span>
+  
+  protected void init(JsonObject json) throws SymfonionException, JsonException {
+    // Initialize 'body'.
+<span class="fc" id="L104">    this.body = new LinkedList&lt;&gt;();</span>
+<span class="fc" id="L105">    this.params = new Parameters(json);</span>
+    JsonArray bodyJSON;
+<span class="fc bfc" id="L107" title="All 2 branches covered.">    if (asJsonElement(json, Keyword.$body).isJsonPrimitive()) {</span>
+<span class="fc" id="L108">      bodyJSON = new JsonArray();</span>
+<span class="fc" id="L109">      bodyJSON.add(asJsonElement(json, Keyword.$body));</span>
+    } else {
+<span class="fc" id="L111">      bodyJSON = JsonUtils.asJsonArray(json, Keyword.$body);</span>
+    }
+<span class="fc" id="L113">    int len = bodyJSON.size();</span>
+<span class="fc bfc" id="L114" title="All 2 branches covered.">    for (int i = 0; i &lt; len; i++) {</span>
+<span class="fc" id="L115">      JsonElement cur = bodyJSON.get(i);</span>
+<span class="fc" id="L116">      Stroke stroke = new Stroke(cur, params, this.noteMap);</span>
+<span class="fc" id="L117">      body.add(stroke);</span>
+    }
+<span class="fc" id="L119">  }</span>
+  
+  public List&lt;Stroke&gt; strokes() {
+<span class="fc" id="L122">    return Collections.unmodifiableList(this.body);</span>
+  }
+  
+  public Parameters parameters() {
+<span class="fc" id="L126">    return this.params;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

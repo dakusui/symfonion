@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SymfonionReferenceException.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">symfonion</a> &gt; <a href="index.source.html" class="el_package">com.github.dakusui.symfonion.exceptions</a> &gt; <span class="el_source">SymfonionReferenceException.java</span></div><h1>SymfonionReferenceException.java</h1><pre class="source lang-java linenums">package com.github.dakusui.symfonion.exceptions;
+
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
+import java.io.File;
+import java.io.Serial;
+
+import static com.github.dakusui.json.JsonUtils.createSummaryJsonObjectFromPaths;
+import static com.github.dakusui.json.JsonUtils.findPathOf;
+
+public class SymfonionReferenceException extends SymfonionSyntaxException {
+  /**
+   * Serial version UID.
+   */
+  @Serial
+  private static final long serialVersionUID = 3554220091863267192L;
+  private final JsonElement referencedNodeHoldingNode;
+
+  public SymfonionReferenceException(String missingReference, String type, JsonElement problemCausingJsonNode, JsonObject root, File sourceFile, JsonElement referencedNodeHoldingNode) {
+<span class="fc" id="L21">    super(formatMessage(missingReference, type),  problemCausingJsonNode, root, sourceFile);</span>
+<span class="fc" id="L22">    this.referencedNodeHoldingNode = referencedNodeHoldingNode;</span>
+<span class="fc" id="L23">  }</span>
+  
+  
+  protected static String formatMessage(String missingReference, String type) {
+<span class="fc" id="L27">    return String.format(&quot;'%s' undefined %s symbol&quot;, missingReference, type);</span>
+  }
+
+  protected JsonObject summaryRootObjectNode() {
+<span class="fc" id="L31">    return createSummaryJsonObjectFromPaths(</span>
+        this.rootJsonObjectNode,
+<span class="fc" id="L33">        findPathOf(problemCausingJsonNode, this.rootJsonObjectNode),</span>
+<span class="fc" id="L34">        findPathOf(referencedNodeHoldingNode, this.rootJsonObjectNode)</span>
+    );
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

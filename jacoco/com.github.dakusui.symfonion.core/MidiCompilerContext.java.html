@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MidiCompilerContext.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">symfonion</a> &gt; <a href="index.source.html" class="el_package">com.github.dakusui.symfonion.core</a> &gt; <span class="el_source">MidiCompilerContext.java</span></div><h1>MidiCompilerContext.java</h1><pre class="source lang-java linenums">package com.github.dakusui.symfonion.core;
+
+import com.github.dakusui.symfonion.utils.Fraction;
+import com.github.dakusui.symfonion.song.Groove;
+import com.github.dakusui.symfonion.song.Pattern;
+import com.github.dakusui.symfonion.song.Stroke;
+
+import javax.sound.midi.Track;
+
+<span class="fc" id="L10">public record MidiCompilerContext(Track track, int channel, Pattern.Parameters params, Fraction relativeStrokePositionInBar,</span>
+                                  long barPositionInTicks, Groove groove) {
+  
+  // this.position = position;
+  // this.grooveAccent = grooveAccent;
+  // this.strokeLengthInTicks = strokeLengthInTicks;
+  
+  public long getStrokeLengthInTicks(Stroke stroke) {
+<span class="fc" id="L18">    return convertRelativePositionInStrokeToAbsolutePosition(stroke.length());</span>
+  }
+  
+  public long convertRelativePositionInStrokeToAbsolutePosition(Fraction relativePositionInStroke) {
+<span class="fc" id="L22">    Groove.Unit unit = resolveRelativePositionInStroke(relativePositionInStroke);</span>
+<span class="fc" id="L23">    long relativePositionInBarInTicks = unit.pos();</span>
+<span class="fc" id="L24">    return barPositionInTicks() + relativePositionInBarInTicks;</span>
+  }
+  
+  public int getGrooveAccent(Fraction relPosInStroke) {
+<span class="fc" id="L28">    Groove.Unit unit = resolveRelativePositionInStroke(relPosInStroke);</span>
+<span class="fc" id="L29">    return unit.accent();</span>
+  }
+  
+  private Groove.Unit resolveRelativePositionInStroke(
+      Fraction relativePositionInStroke) {
+<span class="fc" id="L34">    return this.groove().resolve(</span>
+<span class="fc" id="L35">        Fraction.add(</span>
+<span class="fc" id="L36">            this.relativeStrokePositionInBar(),</span>
+            relativePositionInStroke
+        )
+    );
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

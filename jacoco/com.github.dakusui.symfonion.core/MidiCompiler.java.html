@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MidiCompiler.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">symfonion</a> &gt; <a href="index.source.html" class="el_package">com.github.dakusui.symfonion.core</a> &gt; <span class="el_source">MidiCompiler.java</span></div><h1>MidiCompiler.java</h1><pre class="source lang-java linenums">package com.github.dakusui.symfonion.core;
+
+import com.github.dakusui.logias.Logias;
+import com.github.dakusui.logias.lisp.Context;
+import com.github.dakusui.logias.lisp.s.Literal;
+import com.github.dakusui.logias.lisp.s.Sexp;
+import com.github.dakusui.symfonion.exceptions.ExceptionThrower;
+import com.github.dakusui.symfonion.utils.Fraction;
+import com.github.dakusui.symfonion.exceptions.SymfonionException;
+import com.github.dakusui.symfonion.utils.Utils;
+import com.github.dakusui.symfonion.song.*;
+import com.github.dakusui.symfonion.song.Pattern.Parameters;
+import com.google.gson.JsonArray;
+
+import javax.sound.midi.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.*;
+import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.ContextKey.JSON_ELEMENT_ROOT;
+
+public class MidiCompiler {
+
+  private final Context logiasContext;
+
+<span class="fc" id="L30">  public MidiCompiler(Context logiasContext) {</span>
+<span class="fc" id="L31">    this.logiasContext = (logiasContext);</span>
+<span class="fc" id="L32">  }</span>
+
+  /**
+   * Compiles a {@link Song} object into a map from a port name to {@link Sequence} object.
+   *
+   * @param song An object that holds user-provided music data.
+   * @return A map from a port name to {@code Sequence} object.
+   * @throws InvalidMidiDataException Won't be thrown.
+   * @throws SymfonionException       Undefined part name is referenced by a bar.
+   */
+  public Map&lt;String, Sequence&gt; compile(Song song) throws InvalidMidiDataException, SymfonionException {
+<span class="fc" id="L43">    System.err.println(&quot;Now compiling...&quot;);</span>
+<span class="fc" id="L44">    int resolution = 384;</span>
+<span class="fc" id="L45">    Map&lt;String, Sequence&gt; ret = new HashMap&lt;&gt;();</span>
+    Map&lt;String, Track&gt; tracks;
+<span class="fc" id="L47">    tracks = new HashMap&lt;&gt;();</span>
+<span class="fc bfc" id="L48" title="All 2 branches covered.">    for (String partName : song.partNames()) {</span>
+<span class="fc" id="L49">      Part part = song.part(partName);</span>
+<span class="fc" id="L50">      String portName = part.portName();</span>
+<span class="fc" id="L51">      Sequence sequence = ret.get(portName);</span>
+<span class="pc bpc" id="L52" title="1 of 2 branches missed.">      if (sequence == null) {</span>
+<span class="fc" id="L53">        sequence = new Sequence(Sequence.PPQ, resolution / 4);</span>
+<span class="fc" id="L54">        ret.put(portName, sequence);</span>
+      }
+<span class="fc" id="L56">      tracks.put(partName, sequence.createTrack());</span>
+<span class="fc" id="L57">    }</span>
+
+    ////
+    // position is the offset of a bar from the beginning of the sequence.
+    // Giving the sequencer a grace period to initialize its internal state.
+<span class="fc" id="L62">    long barPositionInTicks = 0; //= resolution / 4;</span>
+<span class="fc" id="L63">    int barid = 0;</span>
+<span class="fc bfc" id="L64" title="All 2 branches covered.">    for (Bar bar : song.bars()) {</span>
+<span class="fc" id="L65">      try (var ignored = context($(JSON_ELEMENT_ROOT, bar.rootJsonObject()))) {</span>
+<span class="fc" id="L66">        barStarted(barid);</span>
+<span class="fc" id="L67">        Groove groove = bar.groove();</span>
+<span class="fc bfc" id="L68" title="All 2 branches covered.">        for (String partName : bar.partNames()) {</span>
+<span class="fc" id="L69">          partStarted(partName);</span>
+<span class="fc" id="L70">          Track track = tracks.get(partName);</span>
+<span class="fc bfc" id="L71" title="All 2 branches covered.">          if (track == null) {</span>
+<span class="fc" id="L72">            aborted();</span>
+<span class="nc" id="L73">            throw partNotFound(bar.lookUpJsonNode(partName), partName);</span>
+          }
+<span class="fc" id="L75">          int channel = song.part(partName).channel();</span>
+<span class="fc bfc" id="L76" title="All 2 branches covered.">          for (List&lt;Pattern&gt; patterns : bar.part(partName)) {</span>
+            ////
+            // relativePosition is a relative position from the beginning
+            // of the bar the pattern belongs to.
+<span class="fc" id="L80">            Fraction relPosInBar = Fraction.zero;</span>
+<span class="fc bfc" id="L81" title="All 2 branches covered.">            for (Pattern each : patterns) {</span>
+<span class="fc" id="L82">              Parameters params = each.parameters();</span>
+<span class="fc" id="L83">              patternStarted();</span>
+<span class="fc bfc" id="L84" title="All 2 branches covered.">              for (Stroke stroke : each.strokes()) {</span>
+                try {
+<span class="fc" id="L86">                  Fraction endingPos = Fraction.add(relPosInBar, stroke.length());</span>
+
+<span class="fc" id="L88">                  stroke.compile(</span>
+                      this,
+                      new MidiCompilerContext(
+                          track,
+                          channel,
+                          params,
+                          relPosInBar,
+                          barPositionInTicks,
+                          groove
+                      )
+                  );
+
+<span class="fc" id="L100">                  relPosInBar = endingPos;</span>
+                  ////
+                  // Breaks if relative position goes over the length of the bar.
+<span class="fc bfc" id="L103" title="All 2 branches covered.">                  if (Fraction.compare(relPosInBar, bar.beats()) &gt;= 0) {</span>
+                    break;
+                  }
+                } finally {
+<span class="fc" id="L107">                  strokeEnded();</span>
+                }
+<span class="fc" id="L109">              }</span>
+<span class="fc" id="L110">              patternEnded();</span>
+<span class="fc" id="L111">            }</span>
+<span class="fc" id="L112">          }</span>
+<span class="fc" id="L113">          partEnded();</span>
+<span class="fc" id="L114">        }</span>
+<span class="fc" id="L115">        barEnded();</span>
+<span class="fc" id="L116">        barid++;</span>
+<span class="fc" id="L117">        barPositionInTicks += (long) (bar.beats().doubleValue() * resolution);</span>
+      }
+<span class="fc" id="L119">    }</span>
+<span class="fc" id="L120">    System.err.println(&quot;Compilation finished.&quot;);</span>
+<span class="fc" id="L121">    return ret;</span>
+  }
+
+  public MidiEvent createNoteOnEvent(int ch, int nKey, int velocity, long lTick) throws InvalidMidiDataException {
+<span class="fc" id="L125">    return createNoteEvent(ShortMessage.NOTE_ON,</span>
+        ch,
+        nKey,
+        velocity,
+        lTick);
+  }
+
+  public MidiEvent createNoteOffEvent(int ch, int nKey, long lTick) throws InvalidMidiDataException {
+<span class="fc" id="L133">    return createNoteEvent(ShortMessage.NOTE_OFF,</span>
+        ch,
+        nKey,
+        0,
+        lTick);
+  }
+
+  protected MidiEvent createNoteEvent(int nCommand,
+                                      int ch,
+                                      int nKey,
+                                      int nVelocity,
+                                      long lTick) throws InvalidMidiDataException {
+<span class="fc" id="L145">    ShortMessage message = new ShortMessage();</span>
+<span class="fc" id="L146">    message.setMessage(nCommand,</span>
+        ch,
+        nKey,
+        nVelocity);
+<span class="fc" id="L150">    return new MidiEvent(message,</span>
+        lTick);
+  }
+
+  public MidiEvent createProgramChangeEvent(int ch, int pgnum, long lTick) throws InvalidMidiDataException {
+<span class="fc" id="L155">    ShortMessage message = new ShortMessage();</span>
+<span class="fc" id="L156">    message.setMessage(ShortMessage.PROGRAM_CHANGE, ch, pgnum, 0);</span>
+
+<span class="fc" id="L158">    return new MidiEvent(message, lTick);</span>
+  }
+
+  public MidiEvent createSysexEvent(int ch, JsonArray arr, long lTick) throws InvalidMidiDataException {
+<span class="nc" id="L162">    SysexMessage message = new SysexMessage();</span>
+<span class="nc" id="L163">    Context lctxt = this.logiasContext.createChild();</span>
+<span class="nc" id="L164">    Sexp channel = new Literal(ch);</span>
+<span class="nc" id="L165">    lctxt.bind(&quot;channel&quot;, channel);</span>
+<span class="nc" id="L166">    Logias logias = new Logias(lctxt);</span>
+<span class="nc" id="L167">    Sexp sysexsexp = logias.buildSexp(arr);</span>
+<span class="nc" id="L168">    Sexp sexp = logias.run(sysexsexp);</span>
+<span class="nc bnc" id="L169" title="All 2 branches missed.">    if (Sexp.nil.equals(sexp)) {</span>
+<span class="nc" id="L170">      return null;</span>
+    }
+<span class="nc" id="L172">    ByteArrayOutputStream baos = new ByteArrayOutputStream();</span>
+<span class="nc" id="L173">    baos.write(SysexMessage.SYSTEM_EXCLUSIVE);    // status: SysEx start</span>
+<span class="nc" id="L174">    Iterator&lt;Sexp&gt; i = sexp.iterator().assumeList();</span>
+<span class="nc bnc" id="L175" title="All 2 branches missed.">    while (i.hasNext()) {</span>
+<span class="nc" id="L176">      Sexp cur = i.next();</span>
+<span class="nc" id="L177">      baos.write((byte) cur.asAtom().longValue());</span>
+<span class="nc" id="L178">    }</span>
+<span class="nc" id="L179">    baos.write(SysexMessage.SPECIAL_SYSTEM_EXCLUSIVE);    // End of exclusive</span>
+    try {
+<span class="nc" id="L181">      baos.close();</span>
+<span class="nc" id="L182">    } catch (IOException e) {</span>
+<span class="nc" id="L183">      throw ExceptionThrower.runtimeException(e.getMessage(), e);</span>
+<span class="nc" id="L184">    }</span>
+<span class="nc" id="L185">    byte[] data = baos.toByteArray();</span>
+<span class="nc" id="L186">    message.setMessage(data, data.length);</span>
+<span class="nc" id="L187">    return new MidiEvent(message, lTick);</span>
+  }
+
+  public MidiEvent createControlChangeEvent(int ch, int controllernum, int param, long lTick) throws InvalidMidiDataException {
+<span class="fc" id="L191">    ShortMessage message = new ShortMessage();</span>
+<span class="fc" id="L192">    message.setMessage(ShortMessage.CONTROL_CHANGE, ch, controllernum, param);</span>
+<span class="fc" id="L193">    return new MidiEvent(message, lTick);</span>
+  }
+
+  public MidiEvent createBankSelectMSBEvent(int ch, int bkmsb, long lTick) throws InvalidMidiDataException {
+<span class="fc" id="L197">    return createControlChangeEvent(ch, 0, bkmsb, lTick);</span>
+  }
+
+  public MidiEvent createBankSelectLSBEvent(int ch, int bklsb, long lTick) throws InvalidMidiDataException {
+<span class="fc" id="L201">    return createControlChangeEvent(ch, 32, bklsb, lTick);</span>
+  }
+
+  public MidiEvent createVolumeChangeEvent(int ch, int volume, long lTick) throws InvalidMidiDataException {
+<span class="fc" id="L205">    return createControlChangeEvent(ch, 7, volume, lTick);</span>
+  }
+
+  public MidiEvent createPanChangeEvent(int ch, int pan, long lTick) throws InvalidMidiDataException {
+<span class="fc" id="L209">    return createControlChangeEvent(ch, 10, pan, lTick);</span>
+  }
+
+  public MidiEvent createReverbEvent(int ch, int depth, long lTick) throws InvalidMidiDataException {
+<span class="fc" id="L213">    return createControlChangeEvent(ch, 91, depth, lTick);</span>
+  }
+
+  public MidiEvent createChorusEvent(int ch, int depth, long lTick) throws InvalidMidiDataException {
+<span class="fc" id="L217">    return createControlChangeEvent(ch, 93, depth, lTick);</span>
+  }
+
+  public MidiEvent createPitchBendEvent(int ch, int depth, long lTick) throws InvalidMidiDataException {
+<span class="fc" id="L221">    ShortMessage message = new ShortMessage();</span>
+<span class="fc" id="L222">    message.setMessage(ShortMessage.PITCH_BEND, ch, 0, depth);</span>
+<span class="fc" id="L223">    return new MidiEvent(message, lTick);</span>
+  }
+
+  public MidiEvent createModulationEvent(int ch, int depth, long lTick) throws InvalidMidiDataException {
+<span class="fc" id="L227">    return createControlChangeEvent(ch, 1, depth, lTick);</span>
+  }
+
+  public MidiEvent createAfterTouchChangeEvent(int ch, int v, long lTick) throws InvalidMidiDataException {
+<span class="nc" id="L231">    ShortMessage message = new ShortMessage();</span>
+<span class="nc" id="L232">    message.setMessage(ShortMessage.CHANNEL_PRESSURE, ch, v, 0);</span>
+<span class="nc" id="L233">    return new MidiEvent(message, lTick);</span>
+  }
+
+  public MidiEvent createTempoEvent(int tempo, long lTick) throws InvalidMidiDataException {
+<span class="nc" id="L237">    int mpqn = 60000000 / tempo;</span>
+<span class="nc" id="L238">    MetaMessage mm = new MetaMessage();</span>
+<span class="nc" id="L239">    byte[] data = Utils.getIntBytes(mpqn);</span>
+<span class="nc" id="L240">    mm.setMessage(0x51, data, data.length);</span>
+<span class="nc" id="L241">    return new MidiEvent(mm, lTick);</span>
+  }
+
+  public void noteProcessed() {
+<span class="fc" id="L245">    System.out.print(&quot;.&quot;);</span>
+<span class="fc" id="L246">  }</span>
+
+  public void controlEventProcessed() {
+<span class="fc" id="L249">    System.out.print(&quot;*&quot;);</span>
+<span class="fc" id="L250">  }</span>
+
+  public void sysexEventProcessed() {
+<span class="nc" id="L253">    System.out.print(&quot;X&quot;);</span>
+<span class="nc" id="L254">  }</span>
+
+  public void barStarted(int barid) {
+<span class="fc" id="L257">    System.out.println(&quot;bar[&quot; + barid + &quot;]&quot;);</span>
+<span class="fc" id="L258">  }</span>
+
+  public void patternStarted() {
+<span class="fc" id="L261">    System.out.print(&quot;[&quot;);</span>
+<span class="fc" id="L262">  }</span>
+
+  public void patternEnded() {
+<span class="fc" id="L265">    System.out.print(&quot;]&quot;);</span>
+<span class="fc" id="L266">  }</span>
+
+  public void barEnded() {
+<span class="fc" id="L269">  }</span>
+
+  public void partStarted(String partName) {
+<span class="fc" id="L272">    System.out.print(&quot;    &quot; + partName + &quot;:&quot;);</span>
+<span class="fc" id="L273">  }</span>
+
+  public void strokeEnded() {
+<span class="fc" id="L276">    System.out.print(&quot;|&quot;);</span>
+<span class="fc" id="L277">  }</span>
+
+  public void partEnded() {
+<span class="fc" id="L280">    System.out.println();</span>
+<span class="fc" id="L281">  }</span>
+
+  public void aborted() {
+<span class="fc" id="L284">    System.out.println(&quot;aborted.&quot;);</span>
+<span class="fc" id="L285">  }</span>
+
+  public void noteSetProcessed() {
+<span class="fc" id="L288">    System.out.print(&quot;;&quot;);</span>
+<span class="fc" id="L289">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

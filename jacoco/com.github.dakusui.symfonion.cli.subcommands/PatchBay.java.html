@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PatchBay.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">symfonion</a> &gt; <a href="index.source.html" class="el_package">com.github.dakusui.symfonion.cli.subcommands</a> &gt; <span class="el_source">PatchBay.java</span></div><h1>PatchBay.java</h1><pre class="source lang-java linenums">package com.github.dakusui.symfonion.cli.subcommands;
+
+import com.github.dakusui.symfonion.cli.Cli;
+import com.github.dakusui.symfonion.cli.MidiRouteRequest;
+import com.github.dakusui.symfonion.cli.Subcommand;
+import com.github.dakusui.symfonion.exceptions.CliException;
+import com.github.dakusui.symfonion.exceptions.SymfonionException;
+import com.github.dakusui.symfonion.utils.midi.MidiDeviceManager;
+import com.github.dakusui.symfonion.utils.midi.MidiDeviceRecord;
+import com.github.dakusui.symfonion.utils.midi.MidiDeviceReportFormatter;
+
+import javax.sound.midi.MidiDevice;
+import javax.sound.midi.MidiUnavailableException;
+import javax.sound.midi.Receiver;
+import javax.sound.midi.Transmitter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintStream;
+import java.util.Map;
+import java.util.function.Predicate;
+import java.util.regex.Pattern;
+
+import static com.github.dakusui.symfonion.cli.CliUtils.composeErrMsg;
+import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.failedToRetrieveTransmitterFromMidiIn;
+import static com.github.dakusui.symfonion.utils.midi.MidiDeviceManager.isMidiDeviceForInput;
+import static com.github.dakusui.symfonion.utils.midi.MidiDeviceManager.matchesPortNameInDefinitions;
+import static com.github.dakusui.valid8j_pcond.forms.Predicates.and;
+import static java.lang.String.format;
+
+<span class="fc" id="L30">public class PatchBay implements Subcommand {</span>
+  @Override
+  public void invoke(Cli cli, PrintStream ps, InputStream inputStream) throws SymfonionException, IOException {
+<span class="fc" id="L33">    MidiRouteRequest route = cli.routeRequest();</span>
+
+<span class="fc" id="L35">    String inPortName = route.in();</span>
+<span class="fc" id="L36">    Map&lt;String, Pattern&gt; midiInDefinitions = requireMidiInDefinitionsContainsInputPortName(cli.midiInRegexPatterns(), inPortName);</span>
+
+<span class="fc" id="L38">    String outPortName = route.out();</span>
+<span class="fc" id="L39">    Map&lt;String, Pattern&gt; midiOutDefinitions = requireMidiOutDefinitionsContainsOutputPortName(cli.midiOutRegexPatterns(), outPortName);</span>
+
+<span class="fc" id="L41">    MidiDeviceManager midiDeviceManager = MidiDeviceManager.from(MidiDeviceReportFormatter.createDefaultInstance());</span>
+
+<span class="fc" id="L43">    MidiDeviceRecord midiInDevice = MidiDeviceManager.lookUpMidiDevice(isInputPortAndMatchesPortName(inPortName, midiInDefinitions), midiDeviceManager);</span>
+<span class="fc" id="L44">    MidiDeviceRecord midiOutDevice = MidiDeviceManager.lookUpMidiDevice(isOutputPortAndMatchesPortName(outPortName, midiOutDefinitions), midiDeviceManager);</span>
+
+<span class="fc" id="L46">    route(midiInDevice, midiOutDevice, midiDeviceManager, ps, inputStream);</span>
+<span class="fc" id="L47">  }</span>
+
+  private static Predicate&lt;MidiDeviceRecord&gt; isOutputPortAndMatchesPortName(String outPortName, Map&lt;String, Pattern&gt; midiOutDefinitions) {
+<span class="fc" id="L50">    return and(MidiDeviceManager.isMidiDeviceForOutput(), matchesPortNameInDefinitions(outPortName, midiOutDefinitions));</span>
+  }
+
+  private static Predicate&lt;MidiDeviceRecord&gt; isInputPortAndMatchesPortName(String inPortName, Map&lt;String, Pattern&gt; midiInDefinitions) {
+<span class="fc" id="L54">    return and(isMidiDeviceForInput(), matchesPortNameInDefinitions(inPortName, midiInDefinitions));</span>
+  }
+
+  public static void route(MidiDeviceRecord input, MidiDeviceRecord output, MidiDeviceManager deviceManager, PrintStream ps, InputStream inputStream) {
+<span class="fc" id="L58">    try (MidiDevice outMidiDevice = deviceManager.openMidiDevice(output)) {</span>
+<span class="fc" id="L59">      try (MidiDevice inMidiDevice = deviceManager.openMidiDevice(input)) {</span>
+<span class="fc" id="L60">        try (Receiver r = outMidiDevice.getReceiver()) {</span>
+<span class="fc" id="L61">          try (Transmitter t = inMidiDevice.getTransmitter()) {</span>
+<span class="fc" id="L62">            t.setReceiver(r);</span>
+<span class="fc" id="L63">            ps.println(&quot;Now in MIDI patch-bay mode. Hit enter to quit.&quot;);</span>
+            //noinspection ResultOfMethodCallIgnored
+<span class="fc" id="L65">            inputStream.read();</span>
+<span class="nc" id="L66">          } catch (IOException e) {</span>
+<span class="nc" id="L67">            ps.println(&quot;quitting due to an error.&quot;);</span>
+          } finally {
+<span class="fc" id="L69">            ps.println(&quot;closing transmitter&quot;);</span>
+          }
+<span class="nc" id="L71">        } catch (MidiUnavailableException e) {</span>
+<span class="nc" id="L72">          throw failedToRetrieveTransmitterFromMidiIn(e, inMidiDevice.getDeviceInfo());</span>
+        } finally {
+<span class="fc" id="L74">          ps.println(&quot;closing receiver&quot;);</span>
+        }
+      }
+    }
+<span class="fc" id="L78">  }</span>
+
+
+  private static Map&lt;String, Pattern&gt; requireMidiInDefinitionsContainsInputPortName(Map&lt;String, Pattern&gt; midiOutDefinitions, String inPortName) {
+<span class="pc bpc" id="L82" title="1 of 2 branches missed.">    if (!midiOutDefinitions.containsKey(inPortName)) {</span>
+<span class="nc" id="L83">      throw new CliException(composeErrMsg(format(&quot;MIDI-in port '%s' is specified, but it is not defined by '-I' option.&quot;, inPortName), &quot;r&quot;, &quot;--route&quot;));</span>
+    }
+<span class="fc" id="L85">    return midiOutDefinitions;</span>
+  }
+
+  private static Map&lt;String, Pattern&gt; requireMidiOutDefinitionsContainsOutputPortName(Map&lt;String, Pattern&gt; midiOutDefinitions, String outPortName) {
+<span class="pc bpc" id="L89" title="1 of 2 branches missed.">    if (!midiOutDefinitions.containsKey(outPortName)) {</span>
+<span class="nc" id="L90">      throw new CliException(composeErrMsg(format(&quot;MIDI-out port '%s' is specified, but it is not defined by '-O' option.&quot;, outPortName), &quot;r&quot;, &quot;route&quot;));</span>
+    }
+<span class="fc" id="L92">    return midiOutDefinitions;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

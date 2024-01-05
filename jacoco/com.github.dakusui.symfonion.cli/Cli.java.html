@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Cli.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">symfonion</a> &gt; <a href="index.source.html" class="el_package">com.github.dakusui.symfonion.cli</a> &gt; <span class="el_source">Cli.java</span></div><h1>Cli.java</h1><pre class="source lang-java linenums">package com.github.dakusui.symfonion.cli;
+
+import com.github.dakusui.logias.lisp.Context;
+import com.github.dakusui.symfonion.cli.subcommands.PresetSubcommand;
+import com.github.dakusui.symfonion.core.Symfonion;
+import com.github.dakusui.symfonion.exceptions.CliException;
+import com.github.dakusui.symfonion.exceptions.SymfonionException;
+import org.apache.commons.cli.*;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
+
+import static com.github.dakusui.symfonion.cli.CliUtils.composeErrMsg;
+import static java.lang.String.format;
+
+<span class="fc" id="L28">public record Cli(Subcommand subcommand, File source, File sink, MidiRouteRequest routeRequest,</span>
+    /*
+     * Returns a map that defines MIDI-in port names.
+     * A key in the returned map is a port name used in a symfonion song file.
+     * The value associated with it is a regular expression that should specify a MIDI device.
+     * The regular expression should be defined so that it matches one and only one MIDI-in device available in the system.
+     */
+                  Map&lt;String, Pattern&gt; midiInRegexPatterns,
+    /*
+     * Returns a map that defines MIDI-out port names.
+     * A key in the returned map is a port name used in a symfonion song file.
+     * The value associated with it is a regular expression that should specify a MIDI device.
+     * The regular expression should be defined so that it matches one and only one MIDI-out device available in the system.
+     */
+                  Map&lt;String, Pattern&gt; midiOutRegexPatterns,
+                  Options options,
+                  Symfonion symfonion) {
+
+  /**
+   * Returns an {@code Options} object which represents the specification of this CLI command.
+   *
+   * @return an {@code Options} object for this {@code CLI} class.
+   */
+  static Options buildOptions() {
+    // create Options object
+<span class="fc" id="L53">    Options options = new Options();</span>
+
+    // //
+    // Behavior options
+<span class="fc" id="L57">    options.addOption(&quot;V&quot;, &quot;version&quot;, false, &quot;print the version information.&quot;);</span>
+<span class="fc" id="L58">    options.addOption(&quot;h&quot;, &quot;help&quot;, false, &quot;print the command line usage.&quot;);</span>
+<span class="fc" id="L59">    options.addOption(&quot;l&quot;, &quot;list&quot;, false, &quot;list the available midi devices.&quot;);</span>
+<span class="fc" id="L60">    options.addOption(&quot;p&quot;, &quot;play&quot;, true, &quot;play the specified file.&quot;);</span>
+<span class="fc" id="L61">    options.addOption(&quot;c&quot;, &quot;compile&quot;, true,</span>
+        &quot;compile the specified file to a standard midi file.&quot;);
+    {
+<span class="fc" id="L64">      Option option = OptionBuilder.create(&quot;r&quot;);</span>
+<span class="fc" id="L65">      option.setLongOpt(&quot;route&quot;);</span>
+<span class="fc" id="L66">      option.setValueSeparator('=');</span>
+<span class="fc" id="L67">      option.setArgs(2);</span>
+<span class="fc" id="L68">      option.setDescription(&quot;run a midi patch bay.&quot;);</span>
+<span class="fc" id="L69">      options.addOption(option);</span>
+    }
+
+    // //
+    // I/O options
+    {
+<span class="fc" id="L75">      Option option = OptionBuilder.create(&quot;O&quot;);</span>
+<span class="fc" id="L76">      option.setValueSeparator('=');</span>
+<span class="fc" id="L77">      option.setArgs(2);</span>
+<span class="fc" id="L78">      option.setDescription(&quot;specify midi out port.&quot;);</span>
+<span class="fc" id="L79">      options.addOption(option);</span>
+    }
+    {
+<span class="fc" id="L82">      Option option = OptionBuilder.create(&quot;I&quot;);</span>
+<span class="fc" id="L83">      option.setValueSeparator('=');</span>
+<span class="fc" id="L84">      option.setArgs(2);</span>
+<span class="fc" id="L85">      option.setDescription(&quot;specify midi in port.&quot;);</span>
+<span class="fc" id="L86">      options.addOption(option);</span>
+    }
+    {
+<span class="fc" id="L89">      Option option = OptionBuilder.create(&quot;o&quot;);</span>
+<span class="fc" id="L90">      option.setArgs(1);</span>
+<span class="fc" id="L91">      option.setDescription(&quot;specify a file to which a compiled standard midi file is output.&quot;);</span>
+<span class="fc" id="L92">      options.addOption(option);</span>
+    }
+<span class="fc" id="L94">    return options;</span>
+  }
+
+  static Symfonion createSymfonion() {
+<span class="fc" id="L98">    return new Symfonion(Context.ROOT.createChild());</span>
+  }
+
+  static CommandLine parseArgs(Options options, String[] args) throws ParseException {
+<span class="fc" id="L102">    CommandLineParser parser = new GnuParser();</span>
+
+<span class="fc" id="L104">    return parser.parse(options, args);</span>
+  }
+
+  static Map&lt;String, Pattern&gt; parseSpecifiedOptionsInCommandLineAsPortNamePatterns(CommandLine cmd, String optionName) throws CliException {
+<span class="fc" id="L108">    Properties props = cmd.getOptionProperties(optionName);</span>
+<span class="fc" id="L109">    Map&lt;String, Pattern&gt; ret = new HashMap&lt;&gt;();</span>
+<span class="fc bfc" id="L110" title="All 2 branches covered.">    for (Object key : props.keySet()) {</span>
+<span class="fc" id="L111">      String portName = key.toString();</span>
+<span class="fc" id="L112">      String p = props.getProperty(portName);</span>
+      try {
+<span class="fc" id="L114">        Pattern portpattern = Pattern.compile(p);</span>
+<span class="fc" id="L115">        ret.put(portName, portpattern);</span>
+<span class="nc" id="L116">      } catch (PatternSyntaxException e) {</span>
+<span class="nc" id="L117">        throw new CliException(composeErrMsg(</span>
+<span class="nc" id="L118">            format(&quot;Regular expression '%s' for '%s' isn't valid.&quot;, portName, p),</span>
+            optionName,
+            null), e);
+<span class="fc" id="L121">      }</span>
+<span class="fc" id="L122">    }</span>
+<span class="fc" id="L123">    return ret;</span>
+  }
+
+  public static int invoke(PrintStream stdout, PrintStream stderr, String... args) {
+    int ret;
+    try {
+<span class="fc" id="L129">      Cli cli = new Builder(args).build();</span>
+<span class="fc" id="L130">      cli.subcommand().invoke(cli, stdout, System.in);</span>
+<span class="fc" id="L131">      ret = 0;</span>
+<span class="nc" id="L132">    } catch (ParseException e) {</span>
+<span class="nc" id="L133">      printError(stderr, e);</span>
+<span class="nc" id="L134">      ret = 1;</span>
+<span class="nc" id="L135">    } catch (CliException e) {</span>
+<span class="nc" id="L136">      printError(stderr, e);</span>
+<span class="nc" id="L137">      ret = 2;</span>
+<span class="fc" id="L138">    } catch (SymfonionException e) {</span>
+<span class="fc" id="L139">      printError(stderr, e);</span>
+<span class="fc" id="L140">      ret = 3;</span>
+<span class="nc" id="L141">    } catch (IOException e) {</span>
+<span class="nc" id="L142">      e.printStackTrace(stderr);</span>
+<span class="nc" id="L143">      ret = 4;</span>
+<span class="fc" id="L144">    } catch (Exception e) {</span>
+<span class="fc" id="L145">      e.printStackTrace(stderr);</span>
+<span class="fc" id="L146">      ret = 5;</span>
+<span class="pc" id="L147">    }</span>
+<span class="fc" id="L148">    return ret;</span>
+  }
+
+  private static void printError(PrintStream ps, Throwable t) {
+<span class="fc" id="L152">    ps.printf(&quot;symfonion: %s%n&quot;, t.getMessage());</span>
+<span class="fc" id="L153">  }</span>
+
+  public static void main(String... args) {
+<span class="nc bnc" id="L156" title="All 4 branches missed.">    if (args.length == 0 &amp;&amp; !GraphicsEnvironment.isHeadless()) {</span>
+<span class="nc" id="L157">      fallbackToSimpleGUI();</span>
+    } else {
+<span class="nc" id="L159">      int exitCode = invoke(System.out, System.err, args);</span>
+<span class="nc" id="L160">      System.exit(exitCode);</span>
+    }
+<span class="nc" id="L162">  }</span>
+
+  static void fallbackToSimpleGUI() {
+<span class="nc" id="L165">    String selectedFile = filenameFromFileChooser();</span>
+<span class="nc bnc" id="L166" title="All 2 branches missed.">    if (selectedFile != null) {</span>
+<span class="nc" id="L167">      String[] args = new String[]{selectedFile};</span>
+<span class="nc" id="L168">      final JTextArea textArea = new JTextArea();</span>
+<span class="nc" id="L169">      JFrame frame = new JFrame(&quot;symfonion output&quot;);</span>
+<span class="nc" id="L170">      frame.addWindowListener(new WindowAdapter() {</span>
+        public void windowClosing(WindowEvent e) {
+<span class="nc" id="L172">          System.exit(0);</span>
+<span class="nc" id="L173">        }</span>
+      });
+<span class="nc" id="L175">      frame.add(textArea);</span>
+<span class="nc" id="L176">      frame.pack();</span>
+<span class="nc" id="L177">      frame.setSize(800, 600);</span>
+<span class="nc" id="L178">      frame.setVisible(true);</span>
+<span class="nc" id="L179">      PrintStream ps = new PrintStream(new OutputStream() {</span>
+<span class="nc" id="L180">        private final StringBuilder sb = new StringBuilder();</span>
+
+        @Override
+        public void flush() {
+<span class="nc" id="L184">        }</span>
+
+        @Override
+        public void close() {
+<span class="nc" id="L188">        }</span>
+
+        @Override
+        public void write(int b) {
+<span class="nc bnc" id="L192" title="All 2 branches missed.">          if (b == '\r')</span>
+<span class="nc" id="L193">            return;</span>
+
+<span class="nc bnc" id="L195" title="All 2 branches missed.">          if (b == '\n') {</span>
+<span class="nc" id="L196">            final String text = sb + &quot;\n&quot;;</span>
+<span class="nc" id="L197">            SwingUtilities.invokeLater(() -&gt; textArea.append(text));</span>
+<span class="nc" id="L198">            sb.setLength(0);</span>
+<span class="nc" id="L199">            return;</span>
+          }
+
+<span class="nc" id="L202">          sb.append((char) b);</span>
+<span class="nc" id="L203">        }</span>
+
+      });
+<span class="nc" id="L206">      System.setOut(ps);</span>
+<span class="nc" id="L207">      System.setErr(ps);</span>
+<span class="nc" id="L208">      invoke(System.out, System.err, args);</span>
+    }
+<span class="nc" id="L210">  }</span>
+
+  static String filenameFromFileChooser() {
+<span class="nc" id="L213">    JFileChooser chooser = new JFileChooser();</span>
+<span class="nc" id="L214">    chooser.setCurrentDirectory(new File(System.getProperty(&quot;user.dir&quot;)));</span>
+<span class="nc" id="L215">    int result = chooser.showOpenDialog(new JFrame());</span>
+<span class="nc bnc" id="L216" title="All 2 branches missed.">    if (result == JFileChooser.APPROVE_OPTION) {</span>
+<span class="nc" id="L217">      return chooser.getSelectedFile().getAbsolutePath();</span>
+    }
+<span class="nc" id="L219">    return null;</span>
+  }
+
+  public static class Builder {
+    private final String[] args;
+    private File source;
+<span class="fc" id="L225">    private File sink = new File(&quot;a.midi&quot;);</span>
+<span class="fc" id="L226">    private MidiRouteRequest routeRequest = null;</span>
+<span class="fc" id="L227">    private Map&lt;String, Pattern&gt; midiInRegexPatterns = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L228">    private Map&lt;String, Pattern&gt; midiOutRegexPatterns = new HashMap&lt;&gt;();</span>
+
+<span class="fc" id="L230">    public Builder(String... args) {</span>
+<span class="fc" id="L231">      this.args = args;</span>
+<span class="fc" id="L232">    }</span>
+
+    public Cli build() throws ParseException {
+<span class="fc" id="L235">      Options options1 = buildOptions();</span>
+<span class="fc" id="L236">      CommandLine cmd = parseArgs(options1, args);</span>
+<span class="fc bfc" id="L237" title="All 2 branches covered.">      if (cmd.hasOption('O')) {</span>
+<span class="fc" id="L238">        this.midiOutRegexPatterns = parseSpecifiedOptionsInCommandLineAsPortNamePatterns(cmd, &quot;O&quot;);</span>
+      }
+<span class="fc bfc" id="L240" title="All 2 branches covered.">      if (cmd.hasOption('I')) {</span>
+<span class="fc" id="L241">        this.midiInRegexPatterns = parseSpecifiedOptionsInCommandLineAsPortNamePatterns(cmd, &quot;I&quot;);</span>
+      }
+<span class="pc bpc" id="L243" title="1 of 2 branches missed.">      if (cmd.hasOption('o')) {</span>
+<span class="nc" id="L244">        String sinkFilename = CliUtils.getSingleOptionValueFromCommandLine(cmd, &quot;o&quot;);</span>
+<span class="nc bnc" id="L245" title="All 2 branches missed.">        if (sinkFilename == null) {</span>
+<span class="nc" id="L246">          throw new CliException(composeErrMsg(&quot;Output filename is required by this option.&quot;, &quot;o&quot;));</span>
+        }
+<span class="nc" id="L248">        this.sink = new File(sinkFilename);</span>
+      }
+      Subcommand subcommand;
+<span class="pc bpc" id="L251" title="2 of 4 branches missed.">      if (cmd.hasOption(&quot;V&quot;) || cmd.hasOption(&quot;version&quot;)) {</span>
+<span class="nc" id="L252">        subcommand = PresetSubcommand.VERSION;</span>
+<span class="pc bpc" id="L253" title="1 of 4 branches missed.">      } else if (cmd.hasOption(&quot;h&quot;) || cmd.hasOption(&quot;help&quot;)) {</span>
+<span class="fc" id="L254">        subcommand = PresetSubcommand.HELP;</span>
+<span class="pc bpc" id="L255" title="1 of 4 branches missed.">      } else if (cmd.hasOption(&quot;l&quot;) || cmd.hasOption(&quot;list&quot;)) {</span>
+<span class="fc" id="L256">        subcommand = PresetSubcommand.LIST;</span>
+<span class="pc bpc" id="L257" title="1 of 4 branches missed.">      } else if (cmd.hasOption(&quot;p&quot;) || cmd.hasOption(&quot;play&quot;)) {</span>
+<span class="fc" id="L258">        subcommand = PresetSubcommand.PLAY;</span>
+<span class="fc" id="L259">        String sourceFilename = CliUtils.getSingleOptionValueFromCommandLine(cmd, &quot;p&quot;);</span>
+<span class="pc bpc" id="L260" title="1 of 2 branches missed.">        if (sourceFilename == null) {</span>
+<span class="nc" id="L261">          throw new CliException(composeErrMsg(&quot;Input filename is required by this option.&quot;, &quot;p&quot;));</span>
+        }
+<span class="fc" id="L263">        this.source = new File(sourceFilename);</span>
+<span class="pc bpc" id="L264" title="1 of 4 branches missed.">      } else if (cmd.hasOption(&quot;c&quot;) || cmd.hasOption(&quot;compile&quot;)) {</span>
+<span class="fc" id="L265">        subcommand = PresetSubcommand.COMPILE;</span>
+<span class="fc" id="L266">        String sourceFilename = CliUtils.getSingleOptionValueFromCommandLine(cmd, &quot;c&quot;);</span>
+<span class="pc bpc" id="L267" title="1 of 2 branches missed.">        if (sourceFilename == null) {</span>
+<span class="nc" id="L268">          throw new CliException(composeErrMsg(&quot;Input filename is required by this option.&quot;, &quot;c&quot;));</span>
+        }
+<span class="fc" id="L270">        this.source = new File(sourceFilename);</span>
+<span class="pc bpc" id="L271" title="1 of 4 branches missed.">      } else if (cmd.hasOption(&quot;r&quot;) || cmd.hasOption(&quot;route&quot;)) {</span>
+<span class="fc" id="L272">        subcommand = PresetSubcommand.ROUTE;</span>
+<span class="fc" id="L273">        Properties props = cmd.getOptionProperties(&quot;r&quot;);</span>
+<span class="pc bpc" id="L274" title="1 of 2 branches missed.">        if (props.size() != 1) {</span>
+<span class="nc" id="L275">          throw new CliException(composeErrMsg(&quot;Route information is not given or specified multiple times.&quot;, &quot;r&quot;, &quot;route&quot;));</span>
+        }
+
+<span class="fc" id="L278">        this.routeRequest = new MidiRouteRequest(cmd.getOptionValues('r')[0], cmd.getOptionValues('r')[1]);</span>
+<span class="fc" id="L279">      } else {</span>
+        @SuppressWarnings(&quot;unchecked&quot;)
+<span class="fc" id="L281">        List&lt;String&gt; leftovers = cmd.getArgList();</span>
+<span class="pc bpc" id="L282" title="1 of 2 branches missed.">        if (leftovers.isEmpty()) {</span>
+<span class="fc" id="L283">          subcommand = PresetSubcommand.HELP;</span>
+<span class="nc bnc" id="L284" title="All 2 branches missed.">        } else if (leftovers.size() == 1) {</span>
+<span class="nc" id="L285">          subcommand = PresetSubcommand.PLAY;</span>
+<span class="nc" id="L286">          this.source = new File(leftovers.getFirst());</span>
+        } else {
+<span class="nc" id="L288">          throw new CliException(composeErrMsg(format(&quot;Unrecognized arguments:%s&quot;, leftovers.subList(2, leftovers.size())), &quot;-&quot;));</span>
+        }
+      }
+<span class="fc" id="L291">      return new Cli(subcommand, source, sink, routeRequest, midiInRegexPatterns, midiOutRegexPatterns, options1, createSymfonion());</span>
+    }
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

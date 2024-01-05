@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ExceptionThrower.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">symfonion</a> &gt; <a href="index.source.html" class="el_package">com.github.dakusui.symfonion.exceptions</a> &gt; <span class="el_source">ExceptionThrower.java</span></div><h1>ExceptionThrower.java</h1><pre class="source lang-java linenums">package com.github.dakusui.symfonion.exceptions;
+
+import com.github.dakusui.json.JsonUtils;
+import com.github.dakusui.symfonion.utils.midi.MidiDeviceRecord;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
+import javax.sound.midi.MidiDevice;
+import javax.sound.midi.MidiUnavailableException;
+import java.io.Closeable;
+import java.io.File;
+import java.util.HashMap;
+import java.util.function.Predicate;
+import java.util.regex.Matcher;
+
+import static com.github.dakusui.symfonion.cli.CliUtils.composeErrMsg;
+import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.ContextKey.*;
+import static com.github.dakusui.valid8j.ValidationFluents.all;
+import static com.github.dakusui.valid8j.ValidationFluents.that;
+import static com.github.dakusui.valid8j_pcond.fluent.Statement.objectValue;
+import static java.lang.String.format;
+
+<span class="nc" id="L24">public class ExceptionThrower {</span>
+<span class="fc" id="L25">  public enum ContextKey {</span>
+<span class="fc" id="L26">    MIDI_DEVICE_INFO(MidiDevice.Info.class),</span>
+<span class="fc" id="L27">    MIDI_DEVICE_INFO_IO(String.class),</span>
+<span class="fc" id="L28">    JSON_ELEMENT_ROOT(JsonObject.class),</span>
+<span class="fc" id="L29">    SOURCE_FILE(File.class);</span>
+    private final Class&lt;?&gt; type;
+
+<span class="fc" id="L32">    ContextKey(Class&lt;?&gt; type) {</span>
+<span class="fc" id="L33">      this.type = type;</span>
+<span class="fc" id="L34">    }</span>
+  }
+
+<span class="fc" id="L37">  public record ContextEntry(ContextKey key, Object value) {</span>
+  }
+
+<span class="fc" id="L40">  public static class Context implements Closeable {</span>
+    private final Context parent;
+<span class="fc" id="L42">    private final HashMap&lt;ExceptionThrower.ContextKey, Object&gt; values = HashMap.newHashMap(100);</span>
+
+<span class="fc" id="L44">    private Context(Context parent) {</span>
+<span class="fc" id="L45">      this.parent = parent;</span>
+<span class="fc" id="L46">    }</span>
+
+<span class="fc" id="L48">    public Context() {</span>
+<span class="fc" id="L49">      this.parent = null;</span>
+<span class="fc" id="L50">    }</span>
+
+    public Context set(ExceptionThrower.ContextKey key, Object value) {
+<span class="pc bpc" id="L53" title="1 of 2 branches missed.">      assert all(</span>
+<span class="fc" id="L54">          objectValue(key).then().isNotNull().$(),</span>
+<span class="fc" id="L55">          objectValue(value).then().isNotNull().isInstanceOf(key.type).$());</span>
+<span class="fc" id="L56">      this.values.put(key, value);</span>
+<span class="fc" id="L57">      return this;</span>
+    }
+
+    public Context parent() {
+<span class="fc" id="L61">      return this.parent;</span>
+    }
+
+    /**
+     *
+     */
+    @SuppressWarnings({&quot;unchecked&quot;})
+    &lt;T&gt; T get(ContextKey key) {
+<span class="pc bpc" id="L69" title="1 of 2 branches missed.">      assert that(objectValue(key).then().isNotNull().$());</span>
+      // In production, we do not want to produce a NullPointerException, even if the key is null.
+      // Just return null in such a situation.
+<span class="pc bpc" id="L72" title="1 of 2 branches missed.">      if (key == null)</span>
+<span class="nc" id="L73">        return null;</span>
+<span class="fc bfc" id="L74" title="All 2 branches covered.">      if (!this.values.containsKey(key)) {</span>
+<span class="pc bpc" id="L75" title="1 of 2 branches missed.">        assert that(objectValue(this).invoke(&quot;parent&quot;).then().isNotNull());</span>
+        // In production, we do not want to produce a NullPointerException, even if a value associated with the key doesn't exist.
+        // Just return null, in such a situation.
+<span class="pc bpc" id="L78" title="1 of 2 branches missed.">        if (this.parent() == null)</span>
+<span class="nc" id="L79">          return null;</span>
+<span class="fc" id="L80">        return this.parent().get(key);</span>
+      }
+<span class="fc" id="L82">      return (T) this.values.get(key);</span>
+    }
+
+
+    @Override
+    public void close() {
+<span class="fc" id="L88">      ExceptionThrower.context.set(this.parent);</span>
+<span class="fc" id="L89">    }</span>
+
+    Context createChild() {
+<span class="fc" id="L92">      return new Context(this);</span>
+    }
+  }
+
+<span class="fc" id="L96">  private static final ThreadLocal&lt;Context&gt; context = new ThreadLocal&lt;&gt;();</span>
+
+  public static ContextEntry contextEntry(ContextKey key, Object value) {
+<span class="pc bpc" id="L99" title="1 of 2 branches missed.">    assert all(</span>
+<span class="fc" id="L100">        objectValue(key).then().isNotNull().$(),</span>
+<span class="fc" id="L101">        objectValue(value).then().isNotNull().isInstanceOf(classOfValueFor(key)).$());</span>
+<span class="fc" id="L102">    return new ContextEntry(key, value);</span>
+  }
+
+
+  public static ContextEntry $(ContextKey key, Object value) {
+<span class="fc" id="L107">    return contextEntry(key, value);</span>
+  }
+
+  public static Context context(ContextEntry... entries) {
+<span class="fc" id="L111">    Context ret = currentContext().createChild();</span>
+<span class="fc" id="L112">    context.set(ret);</span>
+<span class="fc bfc" id="L113" title="All 2 branches covered.">    for (ContextEntry each : entries)</span>
+<span class="fc" id="L114">      ret.set(each.key(), each.value());</span>
+<span class="fc" id="L115">    return ret;</span>
+  }
+
+  public static SymfonionException compilationException(String msg, Throwable e) throws SymfonionException {
+<span class="nc" id="L119">    throw new SymfonionException(msg, e, contextValueOf(SOURCE_FILE));</span>
+  }
+
+  public static SymfonionException fileNotFoundException(File file, Throwable e) throws SymfonionException {
+<span class="nc" id="L123">    throw new SymfonionException(format(&quot;%s: File not found (%s)&quot;, file, e.getMessage()), file);</span>
+  }
+
+  public static SymfonionException loadFileException(Throwable e) throws SymfonionException {
+<span class="fc" id="L127">    throw new SymfonionException(format(&quot;%s: %s&quot;, contextValueOf(SOURCE_FILE), e.getMessage()), contextValueOf(SOURCE_FILE));</span>
+  }
+
+  public static SymfonionException loadResourceException(String resourceName, Throwable e) throws SymfonionException {
+<span class="nc" id="L131">    throw new SymfonionException(format(&quot;%s: Failed to read resource (%s)&quot;, resourceName, e.getMessage()), contextValueOf(SOURCE_FILE));</span>
+  }
+
+  public static SymfonionReferenceException noteMapNotFoundException(JsonElement problemCausingJsonNode, String missingReference) throws SymfonionException {
+<span class="fc" id="L135">    throw new SymfonionReferenceException(missingReference, &quot;notemap&quot;, problemCausingJsonNode, contextValueOf(JSON_ELEMENT_ROOT), contextValueOf(SOURCE_FILE), contextValueOf(JSON_ELEMENT_ROOT));</span>
+  }
+
+  public static SymfonionReferenceException noteNotDefinedException(JsonElement problemCausingJsonNode, String missingReference, String notemapName) throws SymfonionException {
+<span class="fc" id="L139">    throw new SymfonionReferenceException(missingReference, format(&quot;note in %s&quot;, notemapName), problemCausingJsonNode, contextValueOf(JSON_ELEMENT_ROOT), contextValueOf(SOURCE_FILE), contextValueOf(JSON_ELEMENT_ROOT));</span>
+  }
+
+  public static SymfonionException syntaxErrorInNotePattern(String s, int i, Matcher m) {
+<span class="nc" id="L143">    return new SymfonionException(&quot;Error:&quot; + s.substring(0, i) + &quot;[&quot; + s.substring(i, m.start()) + &quot;]&quot; + s.substring(m.start()), contextValueOf(SOURCE_FILE));</span>
+  }
+
+  public static SymfonionReferenceException grooveNotDefinedException(JsonElement problemCausingJsonNode, String missingReference) throws SymfonionException {
+<span class="fc" id="L147">    throw new SymfonionReferenceException(missingReference, &quot;groove&quot;, problemCausingJsonNode, contextValueOf(JSON_ELEMENT_ROOT), contextValueOf(SOURCE_FILE), JsonUtils.asJsonElement(contextValueOf(JSON_ELEMENT_ROOT), &quot;$grooves&quot;));</span>
+  }
+
+  public static SymfonionReferenceException partNotFound(JsonElement problemCausingJsonNode, String missingReference) throws SymfonionException {
+<span class="fc" id="L151">    throw new SymfonionReferenceException(missingReference, &quot;part&quot;, problemCausingJsonNode, contextValueOf(JSON_ELEMENT_ROOT), contextValueOf(SOURCE_FILE), JsonUtils.asJsonElement(contextValueOf(JSON_ELEMENT_ROOT), &quot;$parts&quot;));</span>
+  }
+
+  public static SymfonionReferenceException patternNotFound(JsonElement problemCausingJsonNode, String missingReference) throws SymfonionException {
+<span class="fc" id="L155">    throw new SymfonionReferenceException(missingReference, &quot;pattern&quot;, problemCausingJsonNode, contextValueOf(JSON_ELEMENT_ROOT), contextValueOf(SOURCE_FILE), JsonUtils.asJsonElement(contextValueOf(JSON_ELEMENT_ROOT), &quot;$patterns&quot;));</span>
+  }
+
+  public static SymfonionTypeMismatchException typeMismatchException(JsonElement actualJSON, String... expectedTypes) throws SymfonionSyntaxException {
+<span class="nc" id="L159">    throw new SymfonionTypeMismatchException(expectedTypes, actualJSON, actualJSON, contextValueOf(JSON_ELEMENT_ROOT), contextValueOf(SOURCE_FILE));</span>
+  }
+
+  public static SymfonionIllegalFormatException illegalFormatException(JsonElement actualJSON, String acceptableExample) throws SymfonionIllegalFormatException {
+<span class="fc" id="L163">    throw new SymfonionIllegalFormatException(actualJSON, acceptableExample, contextValueOf(JSON_ELEMENT_ROOT), contextValueOf(SOURCE_FILE));</span>
+  }
+
+  public static SymfonionIllegalFormatException syntaxErrorWhenExpandingDotsIn(JsonArray errorContainingJsonArray) {
+<span class="fc" id="L167">    return new SymfonionIllegalFormatException(</span>
+        errorContainingJsonArray,
+        &quot;In this array, a string can contain only dots. E.g. '[1, \&quot;...\&quot;,3]'. This will be expanded and interpolation of integer values will happen.&quot;,
+<span class="fc" id="L170">        contextValueOf(JSON_ELEMENT_ROOT),</span>
+<span class="fc" id="L171">        contextValueOf(SOURCE_FILE) );</span>
+  }
+
+  public static SymfonionIllegalFormatException typeMismatchWhenExpandingDotsIn(JsonArray errorContainingJsonArray) {
+<span class="fc" id="L175">    return new SymfonionIllegalFormatException(</span>
+        errorContainingJsonArray,
+        &quot;This array, only integers, nulls, and strings containing only dots (...) are allowed.&quot;,
+<span class="fc" id="L178">        contextValueOf(JSON_ELEMENT_ROOT),</span>
+<span class="fc" id="L179">        contextValueOf(SOURCE_FILE) );</span>
+  }
+
+  public static SymfonionMissingElementException requiredElementMissingException(JsonElement problemCausingJsonNode, Object relativePathFromProblemCausingJsonNode) throws SymfonionMissingElementException {
+<span class="nc" id="L183">    throw new SymfonionMissingElementException(problemCausingJsonNode, relativePathFromProblemCausingJsonNode, contextValueOf(JSON_ELEMENT_ROOT), contextValueOf(SOURCE_FILE));</span>
+  }
+
+  public static SymfonionMissingElementException requiredElementMissingException(JsonElement actualJSON, JsonObject root, Object relPath) throws SymfonionMissingElementException {
+<span class="fc" id="L187">    throw new SymfonionMissingElementException(actualJSON, relPath, root, contextValueOf(SOURCE_FILE));</span>
+  }
+
+  public static SymfonionException deviceException(String msg, Throwable e) throws SymfonionException {
+<span class="nc" id="L191">    throw new SymfonionException(msg, e, contextValueOf(SOURCE_FILE));</span>
+  }
+
+  public static RuntimeException runtimeException(String msg, Throwable e) {
+<span class="nc" id="L195">    throw new RuntimeException(msg, e);</span>
+  }
+
+  public static FractionFormatException throwFractionFormatException(String fraction) throws FractionFormatException {
+<span class="fc" id="L199">    throw new FractionFormatException(fraction);</span>
+  }
+
+  public static SymfonionInterruptedException interrupted(InterruptedException e) {
+<span class="nc" id="L203">    Thread.currentThread().interrupt();</span>
+<span class="nc" id="L204">    throw new SymfonionInterruptedException(e.getMessage(), e);</span>
+  }
+
+  public static CliException failedToRetrieveTransmitterFromMidiIn(MidiUnavailableException e, MidiDevice.Info inMidiDeviceInfo) {
+<span class="nc" id="L208">    throw new CliException(format(&quot;(-) Failed to get transmitter from MIDI-in device (%s)&quot;, inMidiDeviceInfo.getName()), e);</span>
+  }
+
+  public static CliException failedToOpenMidiDevice(MidiUnavailableException ee) {
+<span class="nc" id="L212">    throw new CliException(format(&quot;(-) Failed to open MIDI-%s device (%s)&quot;,</span>
+<span class="nc" id="L213">        ExceptionThrower.&lt;MidiDevice.Info&gt;contextValueOf(MIDI_DEVICE_INFO),</span>
+<span class="nc" id="L214">        ExceptionThrower.&lt;String&gt;contextValueOf(MIDI_DEVICE_INFO_IO).toLowerCase()), ee);</span>
+  }
+
+  public static CliException failedToAccessMidiDevice(String deviceType, MidiUnavailableException e, MidiDevice.Info[] matchedInfos) {
+<span class="nc" id="L218">    throw new CliException(composeErrMsg(format(&quot;Failed to access MIDI-%s device:'%s'.&quot;, deviceType, matchedInfos[0].getName()), &quot;O&quot;), e);</span>
+  }
+
+  public static RuntimeException multipleMidiDevices(MidiDeviceRecord e1, MidiDeviceRecord e2, Predicate&lt;MidiDeviceRecord&gt; cond) {
+<span class="nc" id="L222">    throw new CliException(format(&quot;Multiple midi devices (at least: '%s', '%s') are found for: '%s'&quot;, e1, e2, cond));</span>
+  }
+
+  public static RuntimeException noSuchMidiDeviceWasFound(Predicate&lt;MidiDeviceRecord&gt; cond) {
+<span class="nc" id="L226">    throw new CliException(format(&quot;No such MIDI device was found for: '%s'&quot;, cond));</span>
+  }
+
+  public static RuntimeException failedToGetTransmitter() {
+<span class="nc" id="L230">    throw new RuntimeException();</span>
+  }
+
+  public static RuntimeException failedToSetSequence() {
+<span class="nc" id="L234">    throw new RuntimeException();</span>
+  }
+
+  private static &lt;T&gt; T contextValueOf(ContextKey contextKey) {
+<span class="fc" id="L238">    return currentContext().get(contextKey);</span>
+  }
+
+  private static Context currentContext() {
+<span class="fc bfc" id="L242" title="All 2 branches covered.">    if (context.get() == null)</span>
+<span class="fc" id="L243">      context.set(new Context());</span>
+<span class="fc" id="L244">    return context.get();</span>
+  }
+
+  private static Class&lt;?&gt; classOfValueFor(ContextKey key) {
+<span class="nc" id="L248">    class GivenKeyIsNull {</span>
+    }
+<span class="pc bpc" id="L250" title="1 of 2 branches missed.">    return key != null ? key.type : GivenKeyIsNull.class;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>
