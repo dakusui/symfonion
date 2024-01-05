@@ -42,13 +42,11 @@ public class Stroke {
   private final JsonArray sysex;
   private final int[] aftertouch;
   private final JsonElement strokeJson;
-  private final JsonObject rootObjectNode;
 
-  public Stroke(JsonElement strokeJson, JsonObject root, Parameters params, NoteMap noteMap) throws SymfonionException, JsonException {
+  public Stroke(JsonElement strokeJson, Parameters params, NoteMap noteMap) throws SymfonionException, JsonException {
     String notes;
     Fraction len = params.length();
     double gate = params.gate();
-    this.rootObjectNode = root;
     this.strokeJson = strokeJson;
     JsonObject obj = JsonUtils.asJsonObjectWithPromotion(strokeJson, new String[]{
         Keyword.$notes.name(),
@@ -212,34 +210,33 @@ public class Stroke {
   private String parseNotes(String s, List<Note> notes) throws SymfonionException {
     Matcher m = notesPattern.matcher(s);
     int i;
-    try (Context ignored = context($(JSON_ELEMENT_ROOT, this.rootObjectNode))) {
-      for (i = 0; m.find(i); i = m.end()) {
-        if (i != m.start()) {
-          throw syntaxErrorInNotePattern(s, i, m);
-        }
-        int n_ = this.noteMap.note(m.group(1), this.strokeJson);
-        if (n_ >= 0) {
-          int n =
-              n_ +
-                  Utils.count('#', m.group(2)) - Utils.count('b', m.group(2)) +
-                  Utils.count('>', m.group(3)) * 12 - Utils.count('<', m.group(3)) * 12;
-          int a = Utils.count('+', m.group(4)) - Utils.count('-', m.group(4));
-          Note nn = new Note(n, a);
-          notes.add(nn);
-        }
+    for (i = 0; m.find(i); i = m.end()) {
+      if (i != m.start()) {
+        throw syntaxErrorInNotePattern(s, i, m);
       }
-      Matcher n = Utils.lengthPattern.matcher(s);
-      String ret = null;
-      if (n.find(i)) {
-        ret = s.substring(n.start(), n.end());
-        i = n.end();
+      int n_ = this.noteMap.note(m.group(1), this.strokeJson);
+      if (n_ >= 0) {
+        int n =
+            n_ +
+                Utils.count('#', m.group(2)) - Utils.count('b', m.group(2)) +
+                Utils.count('>', m.group(3)) * 12 - Utils.count('<', m.group(3)) * 12;
+        int a = Utils.count('+', m.group(4)) - Utils.count('-', m.group(4));
+        Note nn = new Note(n, a);
+        notes.add(nn);
       }
-      if (i != s.length()) {
-        String msg = s.substring(0, i) + "`" + s.substring(i) + "' isn't a valid note expression. Notes must be like 'C', 'CEG8.', and so on.";
-        throw illegalFormatException(this.strokeJson, msg);
-      }
-      return ret;
     }
+    Matcher n = Utils.lengthPattern.matcher(s);
+    String ret = null;
+    if (n.find(i)) {
+      ret = s.substring(n.start(), n.end());
+      i = n.end();
+    }
+    if (i != s.length()) {
+      String msg = s.substring(0, i) + "`" + s.substring(i) + "' isn't a valid note expression. Notes must be like 'C', 'CEG8.', and so on.";
+      throw illegalFormatException(this.strokeJson, msg);
+    }
+    return ret;
+
   }
 
   interface EventCreator {

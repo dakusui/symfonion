@@ -11,7 +11,7 @@ public class InvalidJsonErrorTest extends CliTestBase {
   public void invalid_01() throws IOException, SymfonionException {
     String resourceName = "invalidJson/02_invalid_01.json";
     assertActualObjectToStringValueContainsExpectedString(
-        fmt("symfonion: %s: jsonpath: .: error: object(0 entries) at this path requires child element $sequence\n"),
+        fmt("symfonion: %s: jsonpath: .: error: {} (object: 0 entries) at this path requires child element $sequence\n"),
         compileResourceWithCli(resourceName)
     );
   }
@@ -55,8 +55,12 @@ public class InvalidJsonErrorTest extends CliTestBase {
   @Test
   public void missingSection_sequence() throws IOException, SymfonionException {
     String resourceName = "invalidJson/08_missingSection_sequences.json";
+
     assertActualObjectToStringValueContainsExpectedString(
-        fmt("symfonion: %s: jsonpath: .: error: object(4 entries) at this path requires child element $sequence\n"),
+        fmt("symfonion: %s: jsonpath: .: error: " +
+            "{\"$parts\":{\"...\":\"...\"},\"$notemaps\":{},\"$patterns\":{\"...\":\"...\"},\"$grooves\":{\"...\":\"...\"}}" +
+            " (object: 4 entries)" +
+            " at this path requires child element $sequence\n"),
         compileResourceWithCli(resourceName)
     );
   }

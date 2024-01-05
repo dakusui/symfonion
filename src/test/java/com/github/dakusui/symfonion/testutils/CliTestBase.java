@@ -4,8 +4,8 @@ import java.io.*;
 import java.util.Objects;
 
 import com.github.dakusui.symfonion.cli.Cli;
-import com.github.dakusui.testutils.forms.core.AllOf;
-import com.github.dakusui.testutils.forms.core.Transform;
+import com.github.dakusui.thincrest_cliche.core.AllOf;
+import com.github.dakusui.thincrest_cliche.core.Transform;
 import org.junit.Before;
 
 import com.github.dakusui.symfonion.exceptions.SymfonionException;

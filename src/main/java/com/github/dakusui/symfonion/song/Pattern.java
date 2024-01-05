@@ -77,7 +77,7 @@ public class Pattern {
     }
   }
   
-  public static Pattern createPattern(JsonObject json, JsonObject root, Map<String, NoteMap> noteMaps) throws SymfonionException, JsonException {
+  public static Pattern createPattern(JsonObject json, Map<String, NoteMap> noteMaps) throws SymfonionException, JsonException {
     NoteMap noteMap = NoteMap.defaultNoteMap;
     if (JsonUtils.hasPath(json, Keyword.$notemap)) {
       String noteMapName = JsonUtils.asString(json, Keyword.$notemap);
@@ -87,7 +87,7 @@ public class Pattern {
       }
     }
     Pattern ret = new Pattern(noteMap);
-    ret.init(json, root);
+    ret.init(json);
     return ret;
   }
   
@@ -99,7 +99,7 @@ public class Pattern {
     this.noteMap = noteMap;
   }
   
-  protected void init(JsonObject json, JsonObject root) throws SymfonionException, JsonException {
+  protected void init(JsonObject json) throws SymfonionException, JsonException {
     // Initialize 'body'.
     this.body = new LinkedList<>();
     this.params = new Parameters(json);
@@ -113,7 +113,7 @@ public class Pattern {
     int len = bodyJSON.size();
     for (int i = 0; i < len; i++) {
       JsonElement cur = bodyJSON.get(i);
-      Stroke stroke = new Stroke(cur, root, params, this.noteMap);
+      Stroke stroke = new Stroke(cur, params, this.noteMap);
       body.add(stroke);
     }
   }

@@ -7,6 +7,9 @@ import java.util.Map;
 
 public enum JsonTestUtils {
   ;
+  public static void main(String... args) {
+  }
+
   
   public static JsonObject object(Entry... entries) {
     JsonObject ret = new JsonObject();

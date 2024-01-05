@@ -2,11 +2,15 @@ package com.github.dakusui.symfonion.exceptions;
 
 import java.io.File;
 import java.io.Serial;
+import java.util.List;
 
 import com.github.dakusui.json.JsonUtils;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+
+import static com.github.dakusui.json.JsonUtils.createSummaryJsonObjectFromPaths;
+import static com.github.dakusui.json.JsonUtils.findPathOf;
 
 public class SymfonionSyntaxException extends SymfonionException {
 
@@ -29,15 +33,15 @@ public class SymfonionSyntaxException extends SymfonionException {
     return this.problemCausingJsonNode;
   }
 
-  public String getJsonPath() {
+  public String toJsonPathString() {
     if (rootJsonObjectNode == null || problemCausingJsonNode == null)
       return "(n/a)";
-    return JsonUtils.findPathOf(this.problemCausingJsonNode, this.rootJsonObjectNode);
+    return JsonUtils.findPathStringOf(this.problemCausingJsonNode, this.rootJsonObjectNode);
   }
 
   @Override
   public String getMessage() {
-    String msg = "jsonpath: " + this.getJsonPath() + ": error: " + super.getMessage();
+    String msg = "jsonpath: " + this.toJsonPathString() + ": error: " + super.getMessage();
     File src = this.getSourceFile();
     if (src != null) {
       msg = src.getPath() + ": " + msg;
@@ -62,8 +66,12 @@ public class SymfonionSyntaxException extends SymfonionException {
             ----
             """,
         msg,
-        this.getJsonPath(),
+        this.toJsonPathString(),
         this.getProblemCausingJsonNode(),
-        new GsonBuilder().setPrettyPrinting().create().toJson(rootJsonObjectNode));
+        new GsonBuilder().setPrettyPrinting().create().toJson(summaryRootObjectNode()));
+  }
+
+  private JsonObject summaryRootObjectNode() {
+    return createSummaryJsonObjectFromPaths(rootJsonObjectNode, findPathOf(this.problemCausingJsonNode, this.rootJsonObjectNode));
   }
 }

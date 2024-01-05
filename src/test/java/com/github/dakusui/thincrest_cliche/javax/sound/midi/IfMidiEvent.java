@@ -1,4 +1,4 @@
-package com.github.dakusui.testutils.forms.javax.sound.midi;
+package com.github.dakusui.thincrest_cliche.javax.sound.midi;
 
 import com.github.dakusui.thincrest_pcond.forms.Printables;
 
