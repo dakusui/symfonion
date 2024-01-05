@@ -534,14 +534,17 @@
             </dependencies>
             <activation>
                 <activeByDefault>true</activeByDefault>
-                <property>
-                    <name>performRelease</name>
-                    <value>true</value>
-                </property>
             </activation>
         </profile>
         <profile>
             <id>release</id>
+            <dependencies>
+                <dependency>
+                    <groupId>com.github.dakusui</groupId>
+                    <artifactId>valid8j-pcond</artifactId>
+                    <scope>compile</scope>
+                </dependency>
+            </dependencies>
             <build>
                 <plugins>
                     <plugin>
