@@ -10,7 +10,7 @@ import org.junit.Test;
 import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.$;
 import static com.github.dakusui.thincrest.TestAssertions.assertThat;
 import static com.github.dakusui.thincrest_pcond.forms.Predicates.containsString;
-import static com.github.dakusui.valid8j_pcond.forms.Functions.call;
+import static com.github.dakusui.thincrest_pcond.forms.Functions.call;
 
 public class ExceptionThrowerContextTest {
   @Ignore

@@ -3,10 +3,10 @@ package com.github.dakusui.symfonion.tests.core;
 import com.github.dakusui.symfonion.utils.Utils;
 import com.github.dakusui.thincrest_cliche.core.Transform;
 import com.github.dakusui.thincrest.TestAssertions;
-import com.github.dakusui.valid8j_pcond.forms.Functions;
+import com.github.dakusui.thincrest_pcond.forms.Functions;
 import org.junit.Test;
 
-import static com.github.dakusui.valid8j_pcond.forms.Predicates.isEqualTo;
+import static com.github.dakusui.thincrest_pcond.forms.Predicates.isEqualTo;
 
 public class UtilsTest {
   @Test

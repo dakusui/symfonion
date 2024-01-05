@@ -6,16 +6,15 @@ import com.github.dakusui.thincrest_pcond.experimentals.cursor.Cursors;
 import com.github.dakusui.thincrest_pcond.forms.Predicates;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
-
-import static com.github.dakusui.valid8j.Requires.requireNonNull;
 
 public class TransformingPredicateFactory<P, O> extends PrintablePredicateFactory.TransformingPredicate.Factory<P, O> {
   final PrintablePredicateFactory.TransformingPredicate.Factory<P, O> base;
 
   public TransformingPredicateFactory(PrintablePredicateFactory.TransformingPredicate.Factory<P, O> base) {
-    this.base = requireNonNull(base);
+    this.base = Objects.requireNonNull(base);
   }
 
   @Override

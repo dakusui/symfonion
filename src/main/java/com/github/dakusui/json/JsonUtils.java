@@ -55,15 +55,25 @@ public class JsonUtils {
   public static JsonObject createSummaryJsonObjectFromPaths(JsonObject rootJsonObject, List<Object>... paths) {
     JsonObject ret = new JsonObject();
     for (List<Object> eachPath : paths) {
-      ret = merge(ret, requireJsonObject(getJsonElement(rootJsonObject, eachPath)));
+      ret = merge(requireJsonObject(createSummaryJsonElementFromPath(rootJsonObject, eachPath)), ret);
     }
     return ret;
   }
 
-  private static JsonElement getJsonElement(JsonObject rootJsonObject, List<Object> eachPath) {
-    return eachPath.isEmpty() ?
+  private static JsonElement createSummaryJsonElementFromPath(JsonObject rootJsonObject, List<Object> path) {
+    return path.isEmpty() ?
         focusedElement(compactJsonObject(rootJsonObject, 3, 3)) :
-        JsonSummarizer.summaryObject(rootJsonObject, eachPath.subList(0, eachPath.size() - 1), eachPath.getLast());
+        path.size() == 1 ?
+            summaryTopLevelElement(rootJsonObject, path.getFirst()) :
+            summaryObject(rootJsonObject, path.subList(0, path.size() - 1), path.getLast());
+  }
+
+  private static JsonElement summaryTopLevelElement(JsonObject rootJsonObject, Object topLevelAttribute) {
+    assert topLevelAttribute instanceof String;
+    JsonObject ret = new JsonObject();
+    String topLevelAttributeName = (String) topLevelAttribute;
+    ret.add(topLevelAttributeName, focusedElement(asJsonElement(rootJsonObject, topLevelAttribute)));
+    return ret;
   }
 
   private static JsonObject requireJsonObject(JsonElement jsonElement) {

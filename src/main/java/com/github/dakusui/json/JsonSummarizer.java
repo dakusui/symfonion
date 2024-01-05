@@ -63,6 +63,14 @@ public class JsonSummarizer {
     return element;
   }
 
+  /**
+   * <pre>
+   *
+   * </pre>
+   *
+   * @param object input JSON object.
+   * @return A summarized JSON object.
+   */
   public static JsonObject focusedObject(JsonObject object) {
     JsonObject ret = new JsonObject();
     object.keySet().forEach(k -> ret.add(k, collapseForObjectValue(object.get(k))));

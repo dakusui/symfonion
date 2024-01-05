@@ -13,7 +13,7 @@ public class JsonInvalidPathException extends JsonException {
 	private static final long serialVersionUID = 7832147182391783569L;
 
 	protected String formatMessage(JsonElement base, Object[] path) {
-		return String.format("This element doesn't have path: %s", Arrays.toString(path));
+		return String.format("This element (%s) doesn't have path: %s", JsonSummarizer.focusedElement(base), Arrays.toString(path));
 	}
 	
 	private final JsonElement base;

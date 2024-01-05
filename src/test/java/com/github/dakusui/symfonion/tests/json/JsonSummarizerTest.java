@@ -70,7 +70,7 @@ public class JsonSummarizerTest extends TestBase {
   }
 
   @Test
-  public void whenSummaryObjet_thenItLooksNice() {
+  public void whenSummaryObject_thenItLooksNice() {
     JsonObject testDataJsonObject = createTestDataJsonObject1();
     JsonObject objectSummary = JsonSummarizer.summaryObject(testDataJsonObject, List.of("hello5"), "key52").getAsJsonObject();
     System.out.println(prettyPrintJsonElement(objectSummary));

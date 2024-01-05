@@ -20,8 +20,8 @@ public class SymfonionSyntaxException extends SymfonionException {
   @Serial
   private static final long serialVersionUID = 5992346365176153504L;
 
-  private final JsonElement problemCausingJsonNode;
-  private final JsonObject rootJsonObjectNode;
+  protected final JsonElement problemCausingJsonNode;
+  protected final JsonObject rootJsonObjectNode;
 
   public SymfonionSyntaxException(String message, JsonElement problemCausingJsonNode, JsonObject rootJsonObjectNode, File sourceFile) {
     super(message, sourceFile);
@@ -71,7 +71,7 @@ public class SymfonionSyntaxException extends SymfonionException {
         new GsonBuilder().setPrettyPrinting().create().toJson(summaryRootObjectNode()));
   }
 
-  private JsonObject summaryRootObjectNode() {
-    return createSummaryJsonObjectFromPaths(rootJsonObjectNode, findPathOf(this.problemCausingJsonNode, this.rootJsonObjectNode));
+  protected JsonObject summaryRootObjectNode() {
+    return createSummaryJsonObjectFromPaths(this.rootJsonObjectNode, findPathOf(this.problemCausingJsonNode, this.rootJsonObjectNode));
   }
 }
