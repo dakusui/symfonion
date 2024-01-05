@@ -1,11 +1,9 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.github.dakusui</groupId>
     <artifactId>symfonion</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0</version>
     <description>A JSON based music macro language processor.</description>
     <packaging>jar</packaging>
 
@@ -26,7 +24,7 @@
         <developerConnection>scm:git:https://github.com/dakusui/symfonion.git
         </developerConnection>
         <url>http://github.com/dakusui/symfonion</url>
-        <tag>HEAD</tag>
+        <tag>symfonion-1.0.0</tag>
     </scm>
 
     <properties>
@@ -326,7 +324,7 @@
                                     <toc>left</toc>
                                     <icons>font</icons>
                                     <sectanchors>true</sectanchors>
-                                    <idprefix/>
+                                    <idprefix />
                                     <idseparator>-</idseparator>
                                 </attributes>
                             </configuration>
@@ -558,8 +556,7 @@
                                 <configuration>
                                     <outputFile>${project.build.directory}/symfonion.jar</outputFile>
                                     <transformers>
-                                        <transformer
-                                                implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                        <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                             <mainClass>com.github.dakusui.symfonion.cli.Cli</mainClass>
                                         </transformer>
                                     </transformers>
