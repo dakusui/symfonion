@@ -1,4 +1,4 @@
-package com.github.dakusui.testutils.forms.core;
+package com.github.dakusui.thincrest_cliche.core;
 
 import com.github.dakusui.thincrest_pcond.forms.Printables;
 

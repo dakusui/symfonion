@@ -1,4 +1,4 @@
-package com.github.dakusui.testutils.forms.java.util.stream;
+package com.github.dakusui.thincrest_cliche.java.util.stream;
 
 import com.github.dakusui.thincrest_pcond.forms.Printables;
 

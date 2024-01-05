@@ -1,7 +1,7 @@
-package com.github.dakusui.testutils.forms.sut.symfonion;
+package com.github.dakusui.thincrest_cliche.sut.symfonion;
 
-import com.github.dakusui.testutils.forms.core.Transform;
-import com.github.dakusui.testutils.forms.core.TransformingPredicateFactory;
+import com.github.dakusui.thincrest_cliche.core.Transform;
+import com.github.dakusui.thincrest_cliche.core.TransformingPredicateFactory;
 
 import static com.github.dakusui.thincrest_pcond.forms.Functions.call;
 import static com.github.dakusui.thincrest_pcond.forms.Functions.stringify;

@@ -1,5 +1,6 @@
 package com.github.dakusui.symfonion.exceptions;
 
+import com.github.dakusui.json.JsonUtils;
 import com.github.dakusui.symfonion.utils.midi.MidiDeviceRecord;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -131,11 +132,11 @@ public class ExceptionThrower {
   }
 
   public static SymfonionReferenceException noteMapNotFoundException(JsonElement problemCausingJsonNode, String missingReference) throws SymfonionException {
-    throw new SymfonionReferenceException(missingReference, "notemap", problemCausingJsonNode, contextValueOf(JSON_ELEMENT_ROOT), contextValueOf(SOURCE_FILE));
+    throw new SymfonionReferenceException(missingReference, "notemap", problemCausingJsonNode, contextValueOf(JSON_ELEMENT_ROOT), contextValueOf(SOURCE_FILE), contextValueOf(JSON_ELEMENT_ROOT));
   }
 
   public static SymfonionReferenceException noteNotDefinedException(JsonElement problemCausingJsonNode, String missingReference, String notemapName) throws SymfonionException {
-    throw new SymfonionReferenceException(missingReference, format("note in %s", notemapName), problemCausingJsonNode, contextValueOf(JSON_ELEMENT_ROOT), contextValueOf(SOURCE_FILE));
+    throw new SymfonionReferenceException(missingReference, format("note in %s", notemapName), problemCausingJsonNode, contextValueOf(JSON_ELEMENT_ROOT), contextValueOf(SOURCE_FILE), contextValueOf(JSON_ELEMENT_ROOT));
   }
 
   public static SymfonionException syntaxErrorInNotePattern(String s, int i, Matcher m) {
@@ -143,15 +144,15 @@ public class ExceptionThrower {
   }
 
   public static SymfonionReferenceException grooveNotDefinedException(JsonElement problemCausingJsonNode, String missingReference) throws SymfonionException {
-    throw new SymfonionReferenceException(missingReference, "groove", problemCausingJsonNode, contextValueOf(JSON_ELEMENT_ROOT), contextValueOf(SOURCE_FILE));
+    throw new SymfonionReferenceException(missingReference, "groove", problemCausingJsonNode, contextValueOf(JSON_ELEMENT_ROOT), contextValueOf(SOURCE_FILE), JsonUtils.asJsonElement(contextValueOf(JSON_ELEMENT_ROOT), "$grooves"));
   }
 
   public static SymfonionReferenceException partNotFound(JsonElement problemCausingJsonNode, String missingReference) throws SymfonionException {
-    throw new SymfonionReferenceException(missingReference, "part", problemCausingJsonNode, contextValueOf(JSON_ELEMENT_ROOT), contextValueOf(SOURCE_FILE));
+    throw new SymfonionReferenceException(missingReference, "part", problemCausingJsonNode, contextValueOf(JSON_ELEMENT_ROOT), contextValueOf(SOURCE_FILE), JsonUtils.asJsonElement(contextValueOf(JSON_ELEMENT_ROOT), "$parts"));
   }
 
   public static SymfonionReferenceException patternNotFound(JsonElement problemCausingJsonNode, String missingReference) throws SymfonionException {
-    throw new SymfonionReferenceException(missingReference, "pattern", problemCausingJsonNode, contextValueOf(JSON_ELEMENT_ROOT), contextValueOf(SOURCE_FILE));
+    throw new SymfonionReferenceException(missingReference, "pattern", problemCausingJsonNode, contextValueOf(JSON_ELEMENT_ROOT), contextValueOf(SOURCE_FILE), JsonUtils.asJsonElement(contextValueOf(JSON_ELEMENT_ROOT), "$patterns"));
   }
 
   public static SymfonionTypeMismatchException typeMismatchException(JsonElement actualJSON, String... expectedTypes) throws SymfonionSyntaxException {

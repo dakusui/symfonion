@@ -3,8 +3,8 @@ package com.github.dakusui.symfonion.tests;
 import com.github.dakusui.symfonion.testutils.CliTestBase;
 import com.github.dakusui.symfonion.testutils.json.StrokeBuilder;
 import com.github.dakusui.symfonion.testutils.json.SymfonionJsonTestUtils;
-import com.github.dakusui.testutils.forms.core.AllOf;
-import com.github.dakusui.testutils.forms.sut.symfonion.ResultTo;
+import com.github.dakusui.thincrest_cliche.core.AllOf;
+import com.github.dakusui.thincrest_cliche.sut.symfonion.ResultTo;
 import com.google.gson.JsonObject;
 import org.junit.Test;
 

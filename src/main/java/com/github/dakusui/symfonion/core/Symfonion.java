@@ -5,25 +5,24 @@ import com.github.dakusui.json.JsonInvalidPathException;
 import com.github.dakusui.json.JsonPathNotFoundException;
 import com.github.dakusui.json.JsonUtils;
 import com.github.dakusui.logias.lisp.Context;
-import com.github.dakusui.symfonion.exceptions.ExceptionThrower;
-import com.github.dakusui.symfonion.exceptions.SymfonionException;
-import com.github.dakusui.symfonion.utils.Utils;
 import com.github.dakusui.symfonion.song.Keyword;
 import com.github.dakusui.symfonion.song.Song;
+import com.github.dakusui.symfonion.utils.Utils;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 
-import javax.sound.midi.*;
+import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.Sequence;
 import java.io.File;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.*;
 
 public class Symfonion {
   Context logiasContext;
-  private String fileName;
   private JsonObject json;
   
   public Symfonion(Context logiasContext) {
@@ -32,8 +31,7 @@ public class Symfonion {
   
   public Song load(String fileName)  {
     Song ret;
-    this.fileName = fileName;
-    try (ExceptionThrower.Context ignored = ExceptionThrower.context($(ContextKey.SOURCE_FILE, new File(this.fileName)))) {
+    try (var ignored = context($(ContextKey.SOURCE_FILE, new File(fileName)))) {
       try {
         this.json = loadSymfonionFile(fileName, new HashMap<>());
         ret = new Song.Builder(logiasContext, json).build();
@@ -46,8 +44,6 @@ public class Symfonion {
       } catch (JsonException e) {
         throw new RuntimeException(e.getMessage(), e);
       }
-    } catch (SymfonionException e) {
-      throw e;
     }
     return ret;
   }

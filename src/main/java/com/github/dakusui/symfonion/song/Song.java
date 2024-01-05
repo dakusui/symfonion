@@ -5,8 +5,8 @@ import com.github.dakusui.json.JsonUtils;
 import com.github.dakusui.logias.Logias;
 import com.github.dakusui.logias.lisp.Context;
 import com.github.dakusui.symfonion.exceptions.ExceptionThrower;
-import com.github.dakusui.symfonion.utils.Utils;
 import com.github.dakusui.symfonion.exceptions.SymfonionException;
+import com.github.dakusui.symfonion.utils.Utils;
 import com.github.dakusui.valid8j.Requires;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -92,7 +92,7 @@ public class Song {
       try (ExceptionThrower.Context ignored = context($(JSON_ELEMENT_ROOT, json))) {
         while (i.hasNext()) {
           String name = i.next();
-          Pattern cur = Pattern.createPattern(JsonUtils.asJsonObject(patternsJSON, name), json, noteMaps);
+          Pattern cur = Pattern.createPattern(JsonUtils.asJsonObject(patternsJSON, name), noteMaps);
           patterns.put(name, cur);
         }
       }

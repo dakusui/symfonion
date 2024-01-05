@@ -2,15 +2,16 @@ package com.github.dakusui.symfonion.tests.json;
 
 import com.github.dakusui.json.JsonInvalidPathException;
 import com.github.dakusui.json.JsonUtils;
-import com.github.dakusui.testutils.forms.core.Transform;
+import com.github.dakusui.symfonion.testutils.TestBase;
+import com.github.dakusui.thincrest_cliche.core.Transform;
 import com.github.dakusui.thincrest_pcond.forms.Printables;
 import org.junit.Test;
 
 import static com.github.dakusui.testutils.json.JsonTestUtils.*;
 import static com.github.dakusui.thincrest.TestAssertions.assertThat;
-import static com.github.dakusui.valid8j_pcond.forms.Predicates.isEqualTo;
+import static com.github.dakusui.thincrest_pcond.forms.Predicates.isEqualTo;
 
-public class JsonUtilsTest {
+public class JsonUtilsTest extends TestBase {
   @Test
   public void givenEmptyObjects_whenMerge_thenEmpty() throws JsonInvalidPathException {
     assertThat(JsonUtils.merge(

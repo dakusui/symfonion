@@ -1,23 +1,20 @@
-package com.github.dakusui.testutils.forms.core;
+package com.github.dakusui.thincrest_cliche.core;
 
-import com.github.dakusui.testutils.forms.java.util.stream.StreamTo;
+import com.github.dakusui.thincrest_cliche.java.util.stream.StreamTo;
 import com.github.dakusui.thincrest_pcond.core.printable.PrintablePredicateFactory;
 import com.github.dakusui.thincrest_pcond.experimentals.cursor.Cursors;
 import com.github.dakusui.thincrest_pcond.forms.Predicates;
 
-import java.awt.*;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
-
-import static com.github.dakusui.thincrest_pcond.core.printable.PrintablePredicateFactory.transform;
-import static com.github.dakusui.valid8j.Requires.requireNonNull;
 
 public class TransformingPredicateFactory<P, O> extends PrintablePredicateFactory.TransformingPredicate.Factory<P, O> {
   final PrintablePredicateFactory.TransformingPredicate.Factory<P, O> base;
 
   public TransformingPredicateFactory(PrintablePredicateFactory.TransformingPredicate.Factory<P, O> base) {
-    this.base = requireNonNull(base);
+    this.base = Objects.requireNonNull(base);
   }
 
   @Override

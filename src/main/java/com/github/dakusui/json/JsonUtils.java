@@ -5,9 +5,13 @@ import com.google.gson.*;
 import java.util.*;
 import java.util.Map.Entry;
 
+import static com.github.dakusui.json.JsonSummarizer.*;
+import static com.github.dakusui.valid8j.Requires.require;
+import static com.github.dakusui.valid8j_pcond.forms.Predicates.callp;
 import static java.util.Objects.requireNonNull;
 
 public class JsonUtils {
+
   static final ThreadLocal<JsonParser> JSON_PARSER;
 
   static {
@@ -18,20 +22,62 @@ public class JsonUtils {
     if (jsonElement == null || jsonElement.isJsonNull()) {
       return "null";
     }
+    JsonElement compact = JsonSummarizer.compactJsonElement(jsonElement, 3, 3);
+
     if (jsonElement.isJsonPrimitive()) {
-      return jsonElement.getAsString() + "(primitive)";
+      return compact + " (primitive)";
     }
     if (jsonElement.isJsonArray()) {
-      return "array(size=" + jsonElement.getAsJsonArray().size() + ")";
+      return focusedArray((JsonArray) compact) + " (array: size=" + jsonElement.getAsJsonArray().size() + ")";
     }
     if (jsonElement.isJsonObject()) {
-      return "object(" + jsonElement.getAsJsonObject().entrySet().size() + " entries)";
+      return focusedObject((JsonObject) compact) + " (object: " + jsonElement.getAsJsonObject().entrySet().size() + " entries)";
     }
-    return jsonElement + "(unknown)";
+    return compact + " (unknown)";
   }
 
-  public static String findPathOf(JsonElement target, JsonObject root) {
+  /**
+   * Returns a string representation of a path to a JSON element {@code target} in {@code root} JSON object node.
+   *
+   * @param target A JSON element whose path in {@code root} is searched for.
+   * @param root   A root JSON object node where {@code target}'s path is searched.
+   * @return A string representation of path to {@code target} in {@code root}.
+   */
+  public static String findPathStringOf(JsonElement target, JsonObject root) {
+    return jsonpathToString(findPathOf(target, root));
+  }
+
+  public static List<Object> findPathOf(JsonElement target, JsonObject root) {
     return buildPathInfo(root).get(target);
+  }
+
+  @SafeVarargs
+  public static JsonObject createSummaryJsonObjectFromPaths(JsonObject rootJsonObject, List<Object>... paths) {
+    JsonObject ret = new JsonObject();
+    for (List<Object> eachPath : paths) {
+      ret = merge(requireJsonObject(createSummaryJsonElementFromPath(rootJsonObject, eachPath)), ret);
+    }
+    return ret;
+  }
+
+  private static JsonElement createSummaryJsonElementFromPath(JsonObject rootJsonObject, List<Object> path) {
+    return path.isEmpty() ?
+        focusedElement(compactJsonObject(rootJsonObject, 3, 3)) :
+        path.size() == 1 ?
+            summaryTopLevelElement(rootJsonObject, path.getFirst()) :
+            summaryObject(rootJsonObject, path.subList(0, path.size() - 1), path.getLast());
+  }
+
+  private static JsonElement summaryTopLevelElement(JsonObject rootJsonObject, Object topLevelAttribute) {
+    assert topLevelAttribute instanceof String;
+    JsonObject ret = new JsonObject();
+    String topLevelAttributeName = (String) topLevelAttribute;
+    ret.add(topLevelAttributeName, focusedElement(asJsonElement(rootJsonObject, topLevelAttribute)));
+    return ret;
+  }
+
+  private static JsonObject requireJsonObject(JsonElement jsonElement) {
+    return require(jsonElement, callp("isJsonObject")).getAsJsonObject();
   }
 
   enum JsonTypes {
@@ -366,28 +412,26 @@ public class JsonUtils {
     }
   }
 
-  public static Map<JsonElement, String> buildPathInfo(JsonObject root) {
-    Map<JsonElement, String> ret = new HashMap<>();
-    ret.put(root, ".");
+  public static Map<JsonElement, List<Object>> buildPathInfo(JsonObject root) {
+    Map<JsonElement, List<Object>> ret = new HashMap<>();
+    ret.put(root, List.of());
     List<Object> path = new LinkedList<>();
     buildPathInfo(ret, path, root);
     return ret;
   }
 
-  private static void buildPathInfo(Map<JsonElement, String> map,
-                                    List<Object> path, JsonElement elem) {
+  private static void buildPathInfo(Map<JsonElement, List<Object>> map, List<Object> path, JsonElement elem) {
     if (!elem.isJsonNull()) {
       if (elem.isJsonArray()) {
         buildPathInfo(map, path, elem.getAsJsonArray());
       } else if (elem.isJsonObject()) {
         buildPathInfo(map, path, elem.getAsJsonObject());
       }
-      map.put(elem, jsonpath(path));
+      map.put(elem, new ArrayList<>(path));
     }
   }
 
-  private static void buildPathInfo(Map<JsonElement, String> map,
-                                    List<Object> path, JsonArray arr) {
+  private static void buildPathInfo(Map<JsonElement, List<Object>> map, List<Object> path, JsonArray arr) {
     int len = arr.size();
     for (int i = 0; i < len; i++) {
       path.add(i);
@@ -396,8 +440,7 @@ public class JsonUtils {
     }
   }
 
-  private static void buildPathInfo(Map<JsonElement, String> map,
-                                    List<Object> path, JsonObject obj) {
+  private static void buildPathInfo(Map<JsonElement, List<Object>> map, List<Object> path, JsonObject obj) {
     for (Entry<String, JsonElement> ent : obj.entrySet()) {
       String k = ent.getKey();
       JsonElement elem = ent.getValue();
@@ -407,7 +450,7 @@ public class JsonUtils {
     }
   }
 
-  private static String jsonpath(List<Object> path) {
+  private static String jsonpathToString(List<Object> path) {
     StringBuilder buf = new StringBuilder();
     for (Object each : path) {
       if (each instanceof Number) {
@@ -416,14 +459,36 @@ public class JsonUtils {
         buf.append(".").append(quoteIfNonAlphanumericalIsContained(each));
       }
     }
+    if (buf.isEmpty())
+      buf.append('.');
     return buf.toString();
   }
 
   private static String quoteIfNonAlphanumericalIsContained(Object obj) {
     if (obj instanceof String s) {
-      return s.matches("[a-zA-Z_][a-zA-Z0-9_]+") ? s : ('"' + s + '"');
+      return s.matches("[a-zA-Z_][a-zA-Z0-9_]+") ? s : '"' + escape(s) + '"';
     }
     return Objects.toString(obj);
+  }
+
+
+  /**
+   * <a href="https://stackoverflow.com/a/61628600/820227">Answer by Dan in stackoverflow.com</a>
+   * escape()
+   * Escape a give String to make it safe to be printed or stored.
+   *
+   * @param s The input String.
+   * @return The output String.
+   **/
+  private static String escape(String s) {
+    return s.replace("\\", "\\\\")
+        .replace("\t", "\\t")
+        .replace("\b", "\\b")
+        .replace("\n", "\\n")
+        .replace("\r", "\\r")
+        .replace("\f", "\\f")
+        .replace("\'", "\\'")      // <== not necessary
+        .replace("\"", "\\\"");
   }
 
   public static JsonElement toJson(String str) {
