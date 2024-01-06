@@ -187,9 +187,9 @@ public class MidiCompiler {
     return new MidiEvent(message, lTick);
   }
 
-  public MidiEvent createControlChangeEvent(int ch, int controllernum, int param, long lTick) throws InvalidMidiDataException {
+  public MidiEvent createControlChangeEvent(int ch, int controllerNum, int param, long lTick) throws InvalidMidiDataException {
     ShortMessage message = new ShortMessage();
-    message.setMessage(ShortMessage.CONTROL_CHANGE, ch, controllernum, param);
+    message.setMessage(ShortMessage.CONTROL_CHANGE, ch, controllerNum, param);
     return new MidiEvent(message, lTick);
   }
 

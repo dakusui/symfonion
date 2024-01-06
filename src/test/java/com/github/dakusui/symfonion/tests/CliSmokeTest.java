@@ -1,10 +1,12 @@
 package com.github.dakusui.symfonion.tests;
 
+import com.github.dakusui.json.JsonUtils;
 import com.github.dakusui.symfonion.testutils.CliTestBase;
 import com.github.dakusui.symfonion.testutils.json.StrokeBuilder;
 import com.github.dakusui.symfonion.testutils.json.SymfonionJsonTestUtils;
 import com.github.dakusui.thincrest_cliche.core.AllOf;
 import com.github.dakusui.thincrest_cliche.sut.symfonion.ResultTo;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -51,6 +53,14 @@ public class CliSmokeTest extends CliTestBase {
     Result result = invokeCliWithArguments("-p", writeContentToTempFile(Objects.toString(song)).getAbsolutePath(), "-Oport1=Gervill");
 
     System.err.println("[source]");
+    System.err.println(".Song");
+    System.err.println("----");
+    System.err.println(new GsonBuilder().setPrettyPrinting().create().toJson(song));
+    System.err.println("----");
+    System.err.println();
+
+    System.err.println("[source]");
+    System.err.println(".Result");
     System.err.println("----");
     System.err.println(result);
     System.err.println("----");
@@ -76,9 +86,24 @@ public class CliSmokeTest extends CliTestBase {
         )),
         $("$patterns", object(
             $("R4", object($("$body", json("r4")))),
-            $("pgchg-piano", object($("$body", json("r16")), $("$program", json(1)))),
-            $("pgchg-guitar", object($("$body", json("r16")), $("$program", json(12)))),
-            $("main", object($("$body", array(json("BGE4;AFD4;GEC4"))))),
+            $("pgchg-piano", object($("$body", array(object(
+                $("$notes", json("r16")),
+                $("$volume", json(120)),
+                $("$pan", json(0)),
+                $("$reverb", json(120)),
+                $("$bank", json(5.15)),
+                $("$program", json(33))))))),
+            $("pgchg-guitar", object($("$body", array(object(
+                $("$notes", json("r16")),
+                $("$volume", json(120)),
+                $("$pan", json(60)),
+                $("$bank", json(5.45)),
+                $("$program", json(1))))))),
+            $("pan:left-to-right", object($("$body", array(object(
+                $("$notes", json("r2")), $("$pan", array(0, "..............", 127))))))),
+            $("pan:right-to-left", object($("$body", array(object(
+                $("$notes", json("r2")), $("$pan", array(1, "..............", 0))))))),
+            $("main", object($("$body", array(json("BGE4;AFD4;GEC2"))))),
             $("sub", object(
                 $("$body", array(json("BGE8;BGE8;AFD8;AFD8;GEC8;GEC8"))))),
             $("drum-1", object(
@@ -88,23 +113,24 @@ public class CliSmokeTest extends CliTestBase {
         $("$grooves", object($("16beats", sixteenBeatsGroove()))),
         $("$sequence", array(
             object(
-                $("$beats", json("4/4")),
+                $("$beats", json("2/4")),
                 $("$patterns", object(
                     $("piano", array("R4", "pgchg-piano")),
-                    $("guitar", array("R4", "pgchg-piano"))))),
+                    $("guitar", array("R4", "pgchg-guitar"))))),
             object(
                 $("$beats", json("16/4")),
                 $("$patterns", object(
                     $("piano", array("main")),
-                    $("guitar", array("sub")),
+                    $("guitar", array("sub", "pan:left-to-right")),
                     $("drums", array("drum-1"))
                 )),
                 $("$groove", json("16beats"))
             ))));
 
-    Result result = invokeCliWithArguments("-p", writeContentToTempFile(Objects.toString(song)).getAbsolutePath(), "-Oport1=hw:1,0,0", "-Oport2=hw:1,1,0");
+    Result result = invokeCliWithArguments("-p", writeContentToTempFile(Objects.toString(song)).getAbsolutePath(), "-Oport1=hw:1,0,0\\]", "-Oport2=hw:1,0,1\\]");
 
     System.err.println("[source]");
+
     System.err.println("----");
     System.err.println(result);
     System.err.println("----");
