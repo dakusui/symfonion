@@ -1,0 +1,14 @@
+[source, json]
+.Example
+----
+{
+  "$patterns": {
+    "gm:program:piano": {
+        "$body": {
+            "$program": 1
+        }
+    },
+    "...": "..."
+  }
+}
+----

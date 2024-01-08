@@ -1,0 +1,46 @@
+[[CONTENT]]
+[source, json]
+----
+[
+  {
+    "$length": "8",
+    "$ticks": 48,
+    "$accent": 30
+  },
+  {
+    "$length": "8",
+    "$ticks": 48,
+    "$accent": 10
+  },
+  {
+    "$length": "8",
+    "$ticks": 48,
+    "$accent": 20
+  },
+  {
+    "$length": "8",
+    "$ticks": 48,
+    "$accent": 10
+  },
+  {
+    "$length": "8",
+    "$ticks": 48,
+    "$accent": 25
+  },
+  {
+    "$length": "8",
+    "$ticks": 48,
+    "$accent": 10
+  },
+  {
+    "$length": "8",
+    "$ticks": 48,
+    "$accent": 15
+  },
+  {
+    "$length": "8",
+    "$ticks": 48,
+    "$accent": 10
+  }
+]
+----

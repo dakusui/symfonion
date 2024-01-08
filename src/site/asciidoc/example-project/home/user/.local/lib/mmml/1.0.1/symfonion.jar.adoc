@@ -1,0 +1,1 @@
+This file is an executable jar file of `mmml` 's core, which is "SyMFONION".

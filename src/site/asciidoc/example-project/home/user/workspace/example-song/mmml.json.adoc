@@ -1,0 +1,68 @@
+The project definition file for `mmml`.
+
+[source, json]
+----
+{
+  "name": "mmmlExample",
+  "profiles": {
+    "$includes": [ "src/main/mmml/profiles.json?" ],
+    "default": {
+      "pipeline": "compile-and-play",
+      "parts": "all",
+      "sequence": "full",
+      "ports": "default"
+    },
+    "compile": {
+
+    }
+  },
+  "stages": {
+    "clean": {
+        "execute": "rm",
+        "args": [
+          "-fr",
+          "target"
+        ]
+    },
+    "prepareResources": {
+      "$//": ""
+
+    },
+    "compileResource": {
+
+    },
+    "runSymfonion": {
+
+    },
+    "runSymfonion-playSong": {
+
+    },
+    "runSymfonion-compileOnly": {
+
+    },
+    "connectDevices": {
+
+    }
+  },
+  "pipelines": {
+    "clean": [ "clean" ],
+    "compile": [ "prepareResources"],
+    "compile-and-play": [ "copyResources", "prepareResources", "runSymfonion-playSong" ]
+  },
+  "devices": {
+    "jv": {
+      "executables": [{}]
+    },
+    "yoshimi": {
+      "executables": [{}]
+    },
+    "gm": {
+      "executables": [{}]
+    }
+  }
+}
+----
+
+`mmml` generates buildweaver.json from this file.
+
+See link:../../../../mmml.adoc[]

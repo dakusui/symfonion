@@ -1,0 +1,2 @@
+If this file (`\\__index__`) is present in a directory, `\\__index__.json` file is generated int the enclosing directory.
+The JSON file contains entries for JSON files under the directory.

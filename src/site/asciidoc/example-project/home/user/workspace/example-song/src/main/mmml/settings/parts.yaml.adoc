@@ -1,0 +1,47 @@
+[source, yaml]
+.parts-myl-laptop.yaml
+----
+piano:
+  "$signature":
+    "$sound":
+    - "$program": piano
+    - "$volume": 100
+    - "$reverb": 32
+    - "$pan": 27
+    "$play":
+    - "$velocitybase": 100
+    - "$velocitydelta": 100
+  "$port": port1
+guitar:
+  "$signature":
+    "$sound":
+    - "$program": guitar
+    - "$volume": 100
+    - "$reverb": 32
+    - "$pan": 100
+    "$play":
+    - "$velocitybase": 100
+    - "$velocitydelta": 10
+  "$port": port1
+base:
+  "$signature":
+    "$sound":
+    - "$program": base
+    - "$volume": 100
+    - "$reverb": 64
+    - "$pan": 32
+    "$play":
+    - "$velocitybase": 100
+    - "$velocitydelta": 10
+  "$port": port2
+drums:
+  "$signature":
+    - "$program": drums
+    - "$volume": 100
+    - "$reverb": 64
+    - "$pan": 96
+  "$play":
+    - "$velocitybase": 100
+    - "$velocitydelta": 10
+  "$port": port2
+----

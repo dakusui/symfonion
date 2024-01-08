@@ -1,0 +1,1 @@
+This script just executes `$HOME/.local/lib/mmml/latest/symfonion.jar`

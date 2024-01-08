@@ -1,0 +1,1 @@
+This directory will be an entry of `JF_PATH` environment variable.

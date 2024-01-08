@@ -1,0 +1,95 @@
+
+
+[ditaa]
+.Pipeline
+----
+
+ +--------+ 0                                         +----------------------+
+ | MMML   +------------------------------------------>|{d} mmml.json         |
+ |        |                                           +----------------------+
+ |        +-=--------------------------------------------------+
+ |        +-------+                                            |
+ +--------+ 1     |                                            | projectPreparation
+                  |                                            V
+                  |                                   +----------------------+
+                  |     +---------------------------->|{d} buildweaver.json  |
+                  |     |                             +----------------------+
+                  |     |
+                  |     |       +---------+           +----------------------+
+                  |     |+----->|PP1:     +---------->|{s} src/main/mmml     |
+                  |     ||   3  | cp -r   +           |                      |
+                  |     ||      +----+----+           +----------------------+
+                  |     ||           :
+                  |     ||           +----------=--------------+ copyResources
+                  |     ||                                     |
+                  V     ||                                     V
+             +--------+ ||      +---------+           +----------------------+
+             |        +-+|+---->|PP2:     +---------->|{s} target/mmml       |
+             |        +--+|  4  | find    |           |                      |
+             | build  +---+     +----+----+           +----------------------+
+             | weaver |              :
+             |        +---+          +--------------------------+ prepareResources
+             |        +--+|                                     |  __index__.json
+             |        +-+||                                     V
+             +--------+ |||  5  +---------+       5.1 +----------------------+
+                        ||+---->|PP3:     +---------->|{d} source (yaml/json)|
+                        ||      | jq_front|           +----------------------+
+                        ||      +----+----+
+                        ||           :
+                        ||           +--------------------------+
+                        ||                                      |
+                        ||                                  5.2 |  song.json
+                        ||      +---------+                     V
+                        ||      |         |       6.1 +----------------------+
+                        |+----->|symfonion+---------->|{d} source (json)     |
+                        |    6  |         |           +----------------------+
+                        |       +--+----+-+
+                        |          |    |
+                        |          :    :
+                        |          |    +-----------------------+
+                        |          | 6.2a1                  6.2b|
+                        |          V                            V
+             +--------+ |   2   +---------+       7.1 +----------------------+
+             | OTHER  | +------>|  SYNTH  +---------->|{d} MIDI files        |
+             |        +-------->|(Yoshimi)|           +----------------------+
+             | TOOLS  |      7  +----+----+
+             +--------+              |
+                                     :
+                                     | 6.2a2
+                                     V 7.2
+                                +---------+
+                                |  AUDIO  |
+                                +---------+
+
+----
+
+0: Project Preparation:: Render project definition file (`buildweaver.json`) for `buildweaver` tool.
+1: Read Project Definition File:: At beginning, `buildweaver` reads its project definition file, `buildweaver.json` from the current working directory.
+2: Prepare Synthesizer:: Based on the configuration, `mmml` starts synthesizer, such as `Yoshimi`<<Yoshimi>>.
+3: Copy Resources:: Copy resources under source directory (`src/main/mmml`) to working directory (`target/mmml`).
+4: Prepare Resources:: Under the working directory, traverse the copied resourced and find `\\__index__` files.
+For each directory wih the file, generate `\\__index__.json`, which contains entries for JSON files in it.
+5: Preprocess Source Files:: Then, `mmml` preprocesses YAML files to convert them into one JSON file using `jq-front`<<jq-front>>.
+5.1:: (t.b.d.)
+5.2:: (t.b.d.)
+6: Compile Source Files:: Preprocessing stage generates a JSON file which `symfonion`<<symfonion>> can process.
+`symfonion` compiles it into MIDI data.
+The MIDI data is written to output files or directly sent to MIDI devices (music synthesizers; *5.2a1* and *5.2a2*).
+6.1::: `symfonion` reads the JSON files
+6.2a1::: Sends MIDI events to the MIDI devices, for instance Yoshimi, etc.
+6.2a2::: The MIDI device sends AUDIO
+6.2b::: In case, compile only mode is specified, instead of sending the MIDI events to sequencers, MIDI files will be generated.
+7 Playback Compiled MIDI files:: The MIDI player `symfonion` has is a very simple one.
+In case you want to play back the compiled MIDI files with features that it doesn't have or in an environment where it doesn't work, you need to use external tools.
+7.1 and 7.2::: Your tool reads and reuses the compiled MIDI files.
+
+== Future Works
+
+(t.b.d.)
+
+[bibliography]
+== References
+
+- [[[Yoshimi, 1]]] Yoshimi Software synthesizer for Linux https://yoshimi.sourceforge.io/
+- [[[jq-front, 2]]] jq-front https://dakusui.github.io/jq-front/
+- [[[symfonion, 3]]] SyMFONION https://dakusui.github.io/symfonion/

@@ -1,0 +1,21 @@
+[source, json]
+----
+{
+  "$extends": ["base.json"],
+  "$sequence": [
+    "ref:object:$(bar prepare)",
+    "ref:object:$(bar intro1)",
+    "ref:object:$(bar intro2)",
+    "ref:object:$(bar a)",
+    "ref:object:$(bar b)",
+    "ref:object:$(bar break)",
+    "ref:object:$(bar chorus)",
+    "ref:object:$(bar interval1)",
+    "ref:object:$(bar a)",
+    "ref:object:$(bar b)",
+    "ref:object:$(bar break)",
+    "ref:object:$(bar chorus)",
+    "ref:object:$(bar outro)",
+  ]
+}
+----

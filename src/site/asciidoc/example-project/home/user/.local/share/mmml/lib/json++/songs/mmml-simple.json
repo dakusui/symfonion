@@ -1,0 +1,18 @@
+{
+  "$settings": {
+    "$includes": [
+      "song/settings.json?"
+    ]
+  },
+  "$pattens": {
+    "$includes": [
+      "patterns.json?"
+    ]
+  },
+  "$grooves": {
+    "$includes": [
+      "grooves.json?"
+    ]
+  },
+  "$sequence": []
+}

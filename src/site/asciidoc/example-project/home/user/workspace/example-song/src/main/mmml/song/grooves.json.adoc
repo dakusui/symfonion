@@ -1,0 +1,6 @@
+[source, json]
+----
+{
+  "$extends": [ "collect_directory_entries.sh;bash -eu;grooves" ]
+}
+----

@@ -1,0 +1,9 @@
+[[CONTENT]]
+[source, json]
+----
+{
+}
+----
+
+In GM standard, drum kit program number is not specified.
+Messages sent to channel 10 (1-based) will be interpreted as drum kit notes.

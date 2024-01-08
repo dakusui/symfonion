@@ -1,0 +1,28 @@
+A script library that defines functions useful for `symfonion` users.
+
+[source, bash]
+----
+#!/usr/bin/env bash -eu
+
+# A function that prints the specified bar
+function bar() {
+  local _bar_name="${1}"
+  echo "$(ref ."${bars}"."${1}")"
+}
+
+# A function that prints the program change data.
+# This is supposed to be called from inside an element in "$sequence" array.
+function program_change() {
+  local _program_name="${1}"
+  local _device_name
+  _device_name="${2:-$(device_name)}"
+
+  # from the device name this function looks int `components/programs/{_device_name}.json,
+  # which should hold an entry for the specified `_program_name`.
+}
+
+# This function is supposed to be called inside "$sequence" list element.
+function device_name() {
+  # this figures out port name first, then it will figure out a device name assigned to the port.
+}
+----

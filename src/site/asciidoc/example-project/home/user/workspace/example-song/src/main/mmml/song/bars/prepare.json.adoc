@@ -1,0 +1,17 @@
+[[CONTENT]]
+[source, yaml]
+----
+---
+"$beats": 1/4
+"$patterns":
+  conductor:
+  - R4
+  piano:
+  - eval:object:$(program_change piano)
+  guitar:
+  - eval:object:$(program_change guitar)
+  base:
+  - eval:object:$(program_change base)
+  drums:
+  - eval:object:$(program_change drums)
+----

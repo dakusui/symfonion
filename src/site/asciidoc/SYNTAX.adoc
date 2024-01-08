@@ -288,7 +288,7 @@ But in terms of SyMFONION syntax, users can not tell which attributes are parame
 
 ==== Notes
 
-Notes in a stroke must match a regular expression pattern defined by a string below. (This is a "Java-style" regular expression and its syntax slightly different from other ones such as perl's. Refer to this document. http://docs.oracle.com/javase/6/docs/api/java/util/regex/Pattern.html)
+Notes in a stroke must match a regular expression pattern defined by a string below. (This is a "Java-style" regular expression and its syntax slightly different from other ones such as perl's. Refer to this document: http://docs.oracle.com/javase/6/docs/api/java/util/regex/Pattern.html[java.util.regex.Pattern])
 
 [source, subs="verbatim"]
 ----
@@ -563,7 +563,7 @@ Each note-on message has 'velocity' value. Velocity of a note message represents
 
 ===== Length
 
-"$length" is a string/int value which defines the note length.
+`$length` is a string/int value which defines the note length.
 Both of below are the same meanin
 g.
 
@@ -576,7 +576,7 @@ g.
 ]
 ----
 
-But to create a dotted note, you can only use a string for "$length"
+But to create a dotted note, you can only use a string for `$length`:
 
 [source, json]
 ----

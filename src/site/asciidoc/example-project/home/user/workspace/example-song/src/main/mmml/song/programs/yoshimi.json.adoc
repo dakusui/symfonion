@@ -1,0 +1,14 @@
+[source, json]
+----
+{
+  "yoshimi": {
+    "$extends": [
+      "gm/__index__.json",
+      "yoshimi/__index__.json"
+    ]
+  }
+}
+----
+
+To fall back to program definition for General MIDI, this file extends `gm.json`.
+See link:gm.json.adoc[].

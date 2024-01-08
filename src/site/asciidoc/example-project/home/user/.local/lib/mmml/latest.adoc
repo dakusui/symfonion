@@ -1,0 +1,1 @@
+This file is a symbolic link to the most recent binary's enclosing directory.

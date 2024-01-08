@@ -1,0 +1,20 @@
+[[CONTENT]]]
+[source,json]
+----
+{
+  "$configuration": {
+    "$inclusions": [ "*.json", "*.json++" ,"*.yaml" ],
+    "$exclusions": [ "-*" ]
+  }
+}
+----
+
+When `collect_directory_entries.sh` processes entries in a directory, it first reads `\\__index__.json` file.
+The elements in `$inclusions` and `$exclusions` attributes will be passed to `find` command's `-name` and `-not -name` parameters respectively.
+
+Meaning,
+
+----
+$ find {dir} -name '*.json' -name '*.json' -name '*.json -name '*.yaml' -not -name '-*'
+----
+

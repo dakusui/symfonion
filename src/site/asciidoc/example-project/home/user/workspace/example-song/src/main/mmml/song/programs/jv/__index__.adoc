@@ -1,0 +1,1 @@
+See link:../gm/__index__.adoc[].
