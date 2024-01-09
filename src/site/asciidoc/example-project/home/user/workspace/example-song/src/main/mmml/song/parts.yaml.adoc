@@ -2,6 +2,7 @@
 .parts-myl-laptop.yaml
 ----
 piano:
+  "$device": "eval:object:$(device yoshimi)"
   "$signature":
     "$sound":
     - "$program": piano
@@ -13,6 +14,7 @@ piano:
     - "$velocitydelta": 100
   "$port": port1
 guitar:
+  "$device": "eval:object:$(device surge-xt)"
   "$signature":
     "$sound":
     - "$program": guitar
@@ -24,6 +26,7 @@ guitar:
     - "$velocitydelta": 10
   "$port": port1
 base:
+  "$device": "eval:object:$(device jv)"
   "$signature":
     "$sound":
     - "$program": base
@@ -35,6 +38,7 @@ base:
     - "$velocitydelta": 10
   "$port": port2
 drums:
+  "$device": "eval:object:$(device gervill)"
   "$signature":
     - "$program": drums
     - "$volume": 100

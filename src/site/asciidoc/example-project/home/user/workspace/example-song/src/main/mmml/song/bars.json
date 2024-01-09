@@ -1,0 +1,6 @@
+[source, json]
+----
+{
+  "$extends": [ "bars/__init__.json" ]
+}
+----

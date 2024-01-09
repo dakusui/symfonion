@@ -1,3 +1,6 @@
+Among other files in this directory, `prepare.json` has a special responsibility to initialize channels of each part.
+That is, sending program, reverb, modulation and other control changes to each channel to which each part is assigned.
+
 [[CONTENT]]
 [source, yaml]
 ----

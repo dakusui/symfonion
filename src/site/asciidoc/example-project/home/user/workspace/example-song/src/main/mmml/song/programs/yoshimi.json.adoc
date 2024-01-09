@@ -11,4 +11,4 @@
 ----
 
 To fall back to program definition for General MIDI, this file extends `gm.json`.
-See link:gm.json.adoc[].
+See link:gervill.json.adoc[].

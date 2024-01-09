@@ -1,0 +1,38 @@
+[source,json]
+----
+{
+  "notes": ""
+}
+----
+
+How do I want to define a pattern?
+
+
+[source, json]
+----
+[
+    {
+      "$body": {
+        "$notes": "CEG4;BGD4;...;...",
+        "$program": "...",
+        "$bank": "...",
+        "$pan": ["..."],
+        "$volume": ["..."],
+      },
+      "$length": "8",
+      "$gate": 0.75
+    },
+    {
+      "...": "..."
+    }
+]
+----
+
+[source, json]
+----
+{
+  "$notes": "CEG4;BGD4;...;...",
+  "$program": "piano",
+}
+----
+

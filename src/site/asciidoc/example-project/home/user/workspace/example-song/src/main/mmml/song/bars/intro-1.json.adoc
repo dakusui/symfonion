@@ -1,0 +1,137 @@
+An element defined by this file should be referenced from a entry in `sequence` directory.
+
+Following illustrates how the `$sequence` array looks like in a full song file after `prepareResources` stage.
+
+[source, json]
+----
+{
+  "$sequence": [
+    {
+      "$beats": "1/8",
+      "$patterns": {
+        "piano": [
+          "R8",
+          "pgchg-piano"
+        ],
+        "guitar": [
+          "R8",
+          "pgchg-guitar"
+        ]
+      }
+    },
+    {
+      "$beats": "4/4",
+      "$patterns": {
+        "piano": [
+          "main"
+        ],
+        "guitar": [
+          "sub",
+          "pan:left-to-right"
+        ],
+        "drums": [
+          "drum-1"
+        ]
+      },
+      "$groove": "16beats",
+    }
+  ]
+}
+----
+
+The first element in the `$sequence` array prepares every channel used in the song.
+The second defines how the intro-1 should be played.
+
+In an entry in the sequence directory, you want to write something like this.
+
+[source, json]
+.full.json
+----
+{
+  "$extends": ["base.json"],
+  "$sequence": [
+    "ref:object:$(bar prepare)",
+    "ref:object:$(bar intro-1)",
+    "ref:object:$(bar intro-2)",
+    "ref:object:$(bar verse-1)",
+    "ref:object:$(bar bridge-1)",
+    "ref:object:$(bar break)",
+    "ref:object:$(bar chorus)",
+    "ref:object:$(bar interval1)",
+    "ref:object:$(bar verse-2)",
+    "ref:object:$(bar bridge-2)",
+    "ref:object:$(bar break)",
+    "ref:object:$(bar chorus)",
+    "ref:object:$(bar outro)",
+  ]
+}
+----
+
+For more detail of the first element (`prepare`), which has a different responsibility from the others, check link:prepare.json.adoc[prepare.json].
+
+This file, `intro-1.json`, provides the content to be rendered by the second element, `$(bar intro-1)`.
+
+
+[source,json]
+----
+{
+  "$beats": "4/4",
+  "$patterns": {
+    "piano": [
+      "main"
+    ],
+    "guitar": [
+      "sub",
+      "pan:left-to-right",
+      "eval:object:$(inline_pattern ...)"
+    ],
+    "": [
+      "base"
+    ],
+    "drums": [
+      "drum-1"
+    ]
+  },
+  "$groove": "16beats",
+}
+----
+
+Strings under arrays associated with part names should be valid names found under `$patterns` attribute.
+
+[EXAMPLE]
+[source,json]
+----
+{                           // BEGIN: A pattern
+    "$body":[
+        // ____________/ A stroke element
+        { "$notes":"CEG" }, // A stroke
+        { "$notes":"CEG" },
+                ":",
+                ":",
+        { "$notes":"CEG" }
+    ],
+    "$length":"8",
+    "$gate":"0.5"
+}                           // END: A pattern
+----
+
+[EXAMPLE]
+[source,json]
+----
+{
+    "$body": "CEG;CEG;...;CEG"
+    "$length":"8",
+    "$gate":"0.5"
+}
+----
+
+Although, this is not yet implemented, even you should become able to do write only the `$notes` attribute directly: (https://github.com/dakusui/symfonion/issues/2[Issue-#2])
+
+[EXAMPLE]
+[source,json]
+----
+"CEG;CEG;...;CEG"
+----
+
+
+[EXAMPLE]

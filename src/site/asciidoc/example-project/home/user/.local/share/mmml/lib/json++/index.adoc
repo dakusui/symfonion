@@ -1,4 +1,0 @@
-A directory under which reusable JSON++ files are stored.
-
-At this moment, only very basic files are provided.
-This directory is an entry in `JF_PATH`environment variable.
