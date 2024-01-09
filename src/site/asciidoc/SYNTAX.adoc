@@ -1,12 +1,12 @@
 // suppress inspection "JsonStandardCompliance" for whole file
 :toc:
 
-= SyMFONION Modern Music Macro Language
+= symfonion Modern Music Macro Language
 
 
-"SyMFONION" is a JSON-based music macro language which enables you to describe a piece of music as easily as 8-bit days' MML but in much more structured way.
+"symfonion" is a JSON-based music macro language which enables you to describe a piece of music as easily as 8-bit days' MML but in much more structured way.
 
-Here is an example of a piece of music written in SyMFONION.
+Here is an example of a piece of music written in symfonion.
 
 [source, json]
 ----
@@ -41,7 +41,7 @@ Here is an example of a piece of music written in SyMFONION.
 }
 ----
 
-Basically, a SyMFONION program is a JSON object and its three most important elements are, "$parts", "$patterns", and "$sequence".
+Basically, a symfonion program is a JSON object and its three most important elements are, "$parts", "$patterns", and "$sequence".
 
 A value for "$parts" is a dictionary which describes 'parts' in music score (like 'piano part', 'guitar part', and so on). "$patterns" holds a set of patterns which are melodies, rhythm patterns, effect patters, and so on. And "$sequence" organises how each pattern should be played. For instance, a pattern "test1" is played twice on a part "testviolin" in the example above.
 
@@ -75,7 +75,7 @@ If you have two files like below in the same directory,
 }
 ----
 
-and if example.js is given to SyMFONION, they will be merged into single JSON object.
+and if example.js is given to symfonion, they will be merged into single JSON object.
 
 [source, json]
 ----
@@ -267,7 +267,7 @@ Relationships between patterns, strokes, and notes are described in the figure b
 
 A stroke is a set of Midi messages which are transmitted to a single midi channel of a midi device during a note (or notes belongs to one chord in a score) is being played.
 
-Midi messages in SyMFONION can be divided into two groups. One is 'note' messages (or simply "notes") and the other is 'non-note' messages.
+Midi messages in symfonion can be divided into two groups. One is 'note' messages (or simply "notes") and the other is 'non-note' messages.
 There are several types of non-note messages, which are 'volume, 'pan', 'reverb', 'chorus', 'pitch', and so on.
 These are played as independent messages on a midi device.
 
@@ -284,7 +284,7 @@ In the example below, "$velocitybase" is a parameter which modifies a note and "
     }
 ----
 
-But in terms of SyMFONION syntax, users can not tell which attributes are parameters for a note and which are non-note messages. But the developer of SyMFONION thought that it is not important for users and SyMFONION should abstract the midi message/event structure. In other words, users do not need to know if an attribute is a note parameter or a non-note message.
+But in terms of symfonion syntax, users can not tell which attributes are parameters for a note and which are non-note messages. But the developer of symfonion thought that it is not important for users and symfonion should abstract the midi message/event structure. In other words, users do not need to know if an attribute is a note parameter or a non-note message.
 
 ==== Notes
 
@@ -341,19 +341,19 @@ You can omit values in between concrete values like this,
 [
     {
         "$notes":"C",
-        "$volume":[0,,,40]
+        "$volume":[0,",..",40]
     },
     {
         "$notes":"C",
-        "$volume":[0,,,80,,,,100]
+        "$volume":[0,"..",80,"..",100]
     }
 ]
 ----
 
-SyMFONION fills the gap by linear interpolation.
+symfonion fills the gap by linear interpolation.
 
 This feature is implemented using GSON's behavior, where missing values are interpreted as `null`.
-`null`s will be replaced with appropriate values by SyMFONION.
+`null`s will be replaced with appropriate values by symfonion.
 However, this is parser dependent semantics and such data is considered "malformed" JSON, strictly speaking.
 
 You can use a string contains only dots (`...`) instead.
@@ -366,7 +366,7 @@ You can use a string contains only dots (`...`) instead.
 }
 ----
 
-One `.` will be interpreted as one `null`, which will be interpolated by SyMFONION.
+One `.` will be interpreted as one `null`, which will be interpolated by symfonion.
 
 
 If you give an integer to "$volume" attribute, its considered as an array which has only one value.
@@ -396,7 +396,7 @@ This feature is 'arrayable'.
 ----
     {
         "$notes":"C",
-        "$volume":[0,,,70,,,80],
+        "$volume":[0,"..",70,"..",80],
         "...": ""
     }
 ----
@@ -413,7 +413,7 @@ This feature is 'arrayable'.
 ----
     {
         "$notes":"C",
-        "$pan":[0,,,,,,127],
+        "$pan":[0,".....",127],
         "...": ""
     }
 ----
@@ -428,7 +428,7 @@ This feature is 'arrayable'.
 ----
     {
         "$notes":"C",
-        "$reverb":[0,,,,,,127],
+        "$reverb":[0,".....",127],
         "...": "..."
     }
 ----
@@ -443,7 +443,7 @@ This feature is 'arrayable'.
 ----
     {
         "$notes":"C",
-        "$chorus":[0,,,,,,127],
+        "$chorus":[0,".....",127],
     }
 ----
 
@@ -456,7 +456,7 @@ This feature is 'arrayable'.
 ----
     {
         "$notes":"C",
-        "$pitch":[0,,,,,,127],
+        "$pitch":[0,".....",127],
         "...": ""
     }
 ----
@@ -474,7 +474,7 @@ This feature is 'arrayable'.
 
     {
         "$notes":"C",
-        "$modulation":[0,,,,,,127],
+        "$modulation":[0,".....",127],
         "...": "..."
     }
 ----
@@ -532,7 +532,7 @@ Note that this affects all the tracks in the sequence being played.
 ===== Sysex
 By using $sysex attribute users can send 'System exclusive' messages to a midi device.
 The value is a JSON array which comply with 'LogiasLisp' syntax.
-For more details, refer to [Midi System Exclusive messages] (t.b.d.).
+For more details, refer to [Midi System Exclusive messages] (t.b.d).
 
 
 ==== Note parameters
@@ -547,9 +547,9 @@ And usually the time between note on and note off is slight shorter than the tim
    Note-on     Note-off
 
      | gate time  |     |
-     |<---------->|     |
+     |<---------->| 80  |
      | note length|     |
-     |<-----------+---->|
+     |<-----------+---->| 100
      |            |     |
    /-+            |     |
    | |            |     |
@@ -587,7 +587,7 @@ But to create a dotted note, you can only use a string for `$length`:
 ----
 <1> dotted eighth note.
 
-Also you can write double dotted/triple dotted notes by using a string.
+Also, you can write double dotted/triple dotted notes by using a string.
 
 [source, json]
 ----
@@ -626,7 +626,7 @@ The default value of $velocitybase is 64 and $velocitydelta is 10
 
 ===== Gate
 
-In SyMFONION, The note parameter "$gate" is a float value which signifies the ratio of the gate time to the note length.
+In symfonion, The note parameter "$gate" is a float value which signifies the ratio of the gate time to the note length.
 
 The default value is 0.8.
 
@@ -701,7 +701,7 @@ By using this feature, the pattern above can be rewritten like this,
 }
 ----
 
-Users can write note parameters directly under "pattern definitions" (in the case above "pattern example" is a "pattern definition, for example) and they are in effect all the notes in "$body" attribute which is in the same pattern.
+Users can write note parameters directly under "pattern definitions" (in the case above "pattern example" is a "pattern definition, for example) , and they are in effect all the notes in "$body" attribute which is in the same pattern.
 
 == Groove
 In real musical works, all the sixteenth notes have neither the same length nor the same strength. One comes at the beginning of a bar usually longer and stronger than the others usually. And if there are 4 forth notes in a bar, second and forth ones are shorter and weaker than the others. These fluctuations are called 'grooves' in DTM world.
@@ -735,7 +735,7 @@ In symfonion syntax, you can define grooves like below,
 ----
 
 In this example, there are 16 sixteenth notes each of which has independent "$ticks" and "$accent".
-If a pattern is played with this groove, the first sixteen note will be lengthen 28 MIDI ticks, while usually sixteenth notes have only 24 MIDI ticks (currently, a whole note is fixed to 384 MIDI ticks in symfonion). And 30 is added to the original velocity of the note.
+If a pattern is played with this groove, the first sixteen note will be length of 28 MIDI ticks, while usually sixteenth notes have only 24 MIDI ticks (currently, a whole note is fixed to 384 MIDI ticks in symfonion). And 30 is added to the original velocity of the note.
 
 == Sequence
 
@@ -768,7 +768,8 @@ And each dictionary represents a bar in a score.
 
 "$beats" specifies a length of the bar. Users can give a fraction as a string, like "4/4", "3/4", "16/16", and so on.
 
-The SyMFONION uses this information to determine the length of the bar. Therefore "8/8", "4/4", and "16/16" are considered to be completely the same thing. 
+The symfonion uses this information to determine the length of the bar.
+So, "8/8", "4/4", and "16/16" are considered to be completely the same thing.
 
 The end of the bar is given by "$beats". If a pattern in the bar is longer the length given by "$beats", notes after the end  of the bar will not be played.
 
@@ -782,9 +783,9 @@ The names of the patterns must be defined in "$patterns" section (see "Patterns"
 
 A part usually corresponds to an instrument in the real world. Then, why do we have a list for a part?
 
-The reason is because the designer of SyMFONION wanted to allow users to overlay multiple patterns. 
+For that reason, the designer of symfonion wanted to allow users to overlay multiple patterns.
 
-For example, users of SyMFONION may want to write "Fade-in" or "Fade-out" for a certain part in the sequence.
+For example, users of symfonion may want to write "Fade-in" or "Fade-out" for a certain part in the sequence.
 
 In that case, what users need to do is below,
 
@@ -796,11 +797,11 @@ At first, define "fade-in" or "fade-out" pattern in "$patterns" section.
     "$patterns":{
         "fade-in":{
             "$length":1,
-            "$volume":[0,,,,,,,,,,,127]
+            "$volume":[0,".........",127]
         },
         "fade-out":{
             "$length":1,
-            "$volume":[127,,,,,,,,,,,0]
+            "$volume":[127,"..........",0]
         },
         "melody":{
             "...": "..."
