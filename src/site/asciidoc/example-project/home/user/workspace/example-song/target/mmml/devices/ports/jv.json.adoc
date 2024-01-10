@@ -1,0 +1,11 @@
+[[CONTENT]]
+[source, json]
+.devices/ports/jv.json
+----
+{
+  "$extends": [
+    "jv-10x0.json?",
+    "gm.json"
+  ]
+}
+----

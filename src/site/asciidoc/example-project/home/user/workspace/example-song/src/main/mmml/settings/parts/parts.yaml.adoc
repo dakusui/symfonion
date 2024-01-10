@@ -11,7 +11,7 @@ ports:
     - drums
 ----
 
-This file will be converted  `parts.json` as follows
+This file will be converted  `parts.json` as follows:
 
 [source,yaml]
 ----

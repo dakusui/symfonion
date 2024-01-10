@@ -1,0 +1,6 @@
+[[CONTENT]]
+[source, json]
+----
+{
+}
+----

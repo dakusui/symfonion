@@ -1,0 +1,16 @@
+This file is generated from link:song.json{plus}{plus}.adoc[song.json++] in the *prepareResource* stage of the link:../../../../../../mmml.adoc[Pipeline].
+
+[[CONTENT]]
+[source,json]
+.target/mmml/song.json
+----
+{
+  "$settings": {"...": "..."},
+  "$patterns": {"...": "..."},
+  "$grooves": {"...": "..."},
+  "$ports": {"...":"..."},
+  "$sequence": [{"...":"..."},{"...":"..."},{"...":"..."}]
+}
+----
+
+This file is passed to `symfonion` and therefore it needs to be in the format which `symfonion` can interpret directly.
