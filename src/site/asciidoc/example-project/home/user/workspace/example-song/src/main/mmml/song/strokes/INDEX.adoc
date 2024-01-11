@@ -1,0 +1,51 @@
+In this directory "strokes" will be stored.
+
+An example of a stroke looks as follows:
+
+[source, json]
+.strokes/intro-riff-1.json
+----
+{
+  "$notes": "CEG4;BGD4;...;...",
+  "$pan": ["..."],    // optional
+  "$volume": ["..."], // optional
+}
+----
+
+Skip `$length`.
+We should always be explicit.
+Fix the default to `16`.
+Among two digits notes, 16 will be the most frequent.
+Typing single digit is less work than two.
+
+This will be translated to:
+
+[source, json]
+.patterns/intro-riff-1.json
+----
+{
+    "$body": {
+        "$notes": "CEG4;BGD4;...;...",
+        "$program": "eval:number:$(program $(part_name))",
+        "$bank": "eval:number:$(bank $(part_name))",
+        "$pan": ["..."],
+        "$volume": ["..."],
+    },
+    "$length": "8",
+    "$gate": 0.75
+}
+----
+
+`$program` and should be automatically resolved from the part name.
+For this, functions `$(program partName)`, `$(bank partName)`, and `$(part_name)` should be provided.
+
+The file is stored right under `patterns` directory and if the file name exists in the directory, it will be overridden.
+
+[source, json]
+----
+{
+  "$notes": "CEG4;BGD4;...;...",
+  "$program": "piano",
+}
+----
+
