@@ -1,0 +1,67 @@
+This file is generated from the other JSON files in this directory.
+
+After the prepare-resources stage of the pipeline, it will have the following content, for instance.:
+
+[[CONTENT]]
+[source, json]
+.__init__.json
+----
+{
+  "bass": {
+    "$extends": [ "voice-base.json" ],
+    "wave": {
+      "$program": 30,
+      "$bank": 0.0
+    }
+  },
+  "drums": {
+    "part": {
+      "$channel": 9
+    }
+  },
+  "guitar": {
+    "$extends": [ "voice-base.json" ],
+    "wave": {
+      "$program": 30,
+      "$bank": 0.0
+    }
+  },
+  "piano": {
+    "$extends": [ "voice-base.json" ],
+    "wave": {
+      "$program": 0,
+      "$bank": 0.0
+    }
+  }
+}
+----
+
+`voice-base.json` is a preset JSON file bundled with `mmml` to save your typing work.
+It just has the following content.
+
+[%nowrap%, json]
+.voice-base.json
+----
+{
+  "wave": {
+    "$program": "eval:error:This attribute should provide program change number (0-based)",
+    "$bank": 0.0
+  },
+  "part": {
+    "$channel": -1
+  }
+}
+----
+
+It forces you to
+
+The program attribute has a string value which results in an error in the preparation stage unless you override it.
+
+The `$bank` attribute is a float that specifies a bank number, whose integer portion is MSB and fraction portion is LSB.
+Check `symfonion` 's https://dakusui.github.io/symfonion/SYNTAX.html[SYNTAX].
+
+The `$channel` attribute under `part` has a negative value (`-1`).
+`mmml` will assign an integer between 0-16 but 9.
+
+In this example, "Gervill", a software synthesizer bundled with OpenJDK, is designed to be default.
+It is a good idea to define all the possible voices used in this song.

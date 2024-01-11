@@ -1,0 +1,22 @@
+[source, json]
+----
+{
+  "device": {
+    "cli": [{
+      "cmd": "",
+      "args": [
+      ]
+    }],
+    "midiMessages": [
+      { "$sysex": [ "$set-syscommon-soundmode-perf" ] },
+      { "$sysex": [ "$jv-set-currentperf", 12 ] }
+    ]
+  },
+  "channel": {
+    "cli": [],
+    "midi": [
+      { "$sysex": ["$jv-init-part", "$channel", "$channel"] }
+    ]
+  }
+}
+----

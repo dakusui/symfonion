@@ -11,6 +11,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Objects;
 
 import static com.github.dakusui.symfonion.testutils.json.SymfonionJsonTestUtils.sixteenBeatsGroove;
@@ -70,6 +71,16 @@ public class CliSmokeTest extends CliTestBase {
         AllOf.$(
             ResultTo.exitCode().isEqualTo(0),
             ResultTo.out().findSubstrings("*", "Gervill", "Real Time Sequencer")));
+  }
+
+  @Test
+  public void givenK311_whenPlaySubcommandIsInvoked_thenPlayed() throws IOException {
+    assumeRequiredMidiDevicesPresent();
+    assumeThat(isRunUnderPitest(), isFalse());
+
+    Result result = compileAndPlayResourceWithCli("examples/example-k311.json");
+
+    System.out.println(result);
   }
 
   @Ignore

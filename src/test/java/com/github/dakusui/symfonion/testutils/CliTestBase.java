@@ -62,6 +62,11 @@ public class CliTestBase extends TestBase {
     return invokeCliWithArguments("-c", workFile.getAbsolutePath());
   }
 
+  protected Result compileAndPlayResourceWithCli(String resourceName) throws IOException, SymfonionException {
+    this.workFile = writeResourceToTempFile(resourceName);
+    return invokeCliWithArguments("-p", workFile.getAbsolutePath());
+  }
+
   protected Result invokeCliWithArguments(String... args) {
     ByteArrayOutputStream stdout, stderr;
     PrintStream ps1 = new PrintStream(stdout = new ByteArrayOutputStream());
