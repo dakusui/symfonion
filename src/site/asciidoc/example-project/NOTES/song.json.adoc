@@ -96,4 +96,4 @@
 
 ----
 
-`program_change` is a function that should be defined in `symfonion.rc`, which is extended (`SOURCE` ed) by `base.json`.
+`program_change` is a function that should be defined in `symfonion.rc`, which is extended (`SOURCE` ed) by `bass.json`.

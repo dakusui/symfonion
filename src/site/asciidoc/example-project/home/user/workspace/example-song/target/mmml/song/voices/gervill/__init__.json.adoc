@@ -1,0 +1,39 @@
+[[CONTENT]]
+[source, json]
+.__init__.json
+----
+{
+  "bass": {
+    "wave": {
+      "$program": 30,
+      "$bank": 0.0
+    },
+    "part": {
+      "$channel": -1
+    }
+  },
+  "drums": {
+    "part": {
+      "$channel": 9
+    }
+  },
+  "guitar": {
+    "wave": {
+      "$program": 30,
+      "$bank": 0.0
+    },
+    "part": {
+      "$channel": -1
+    }
+  },
+  "piano": {
+    "wave": {
+      "$program": 0,
+      "$bank": 0.0
+    },
+    "part": {
+      "$channel": -1
+    }
+  }
+}
+----

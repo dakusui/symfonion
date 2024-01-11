@@ -10,4 +10,4 @@
 ----
 `__index__.json` is automatically generated in the resource preparation stage.
 // suppress inspection "AsciiDocLinkResolve"
-See link:gervill/\\__index__.adoc[]
+See link:gm/\\__index__.adoc[]

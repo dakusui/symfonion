@@ -87,7 +87,7 @@ This will be translated to:
 `$program` and should be automatically resolved from the part name.
 For this, functions `$(program partName)`, `$(bank partName)`, and `$(part_name)` should be provided.
 
-
+,
 [source, json]
 ----
 {
@@ -96,3 +96,17 @@ For this, functions `$(program partName)`, `$(bank partName)`, and `$(part_name)
 }
 ----
 
+== JF_PATH
+
+[%nowrap]
+.JF_PATH for Prepare Source Files stage
+----
+$PROJECT_DIR/src/target/mmml:$PROJECT_DIR/src/lib/mmml/json++:$PROJECT_DIR/src/lib/mmml/scripts:$HOME/.config/mmml/json++:$HOME/.local/share/mmml/lib/json++
+----
+
+
+== Tickets to file
+
+- Multiple `$mididevice` s can be defined.
+Also, the feature itself is actually just loading a library of LISP (logiaslisp) functions.
+It should be renamed to `$import` or something that represents what it does better.

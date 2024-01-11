@@ -82,7 +82,7 @@ public class CliSmokeTest extends CliTestBase {
         $("$parts", object(
             $("piano", object($("$channel", json(0)), $("$port", json("port1")))),
             $("guitar", object($("$channel", json(1)), $("$port", json("port1")))),
-            $("drums", object($("$channel", json(9)), $("$port", json("port2"))))
+            $("drums", object($("$channel", json(9)), $("$port", json("port1"))))
         )),
         $("$patterns", object(
             $("R4", object($("$body", json("r4")))),
@@ -109,7 +109,7 @@ public class CliSmokeTest extends CliTestBase {
                 $("$body", array(json("BGE8;BGE8;AFD8;AFD8;GEC8;GEC8"))))),
             $("drum-1", object(
                 $("$notemap", json("$percussion")),
-                $("$body", array(json("BH16;H16;H16;H16;BSH16;H16;H16;H16;BH16;H16;H16;H16;BSH32;H32;H16;H16;H16;")))))
+                $("$body", array(json("BH16;H16;H16;H16;BSH32;H32;H16;H16;H16;BH16;H16;H16;H16;BSH32;H32;H16;H16;H16;")))))
         )),
         $("$grooves", object($("16beats", sixteenBeatsGroove()))),
         $("$sequence", array(
@@ -142,7 +142,7 @@ public class CliSmokeTest extends CliTestBase {
     System.err.println("----");
     System.err.println();
 
-    Result result = invokeCliWithArguments("-p", writeContentToTempFile(Objects.toString(song)).getAbsolutePath(), "-Oport1=hw:1,0,0\\]", "-Oport2=hw:1,0,1\\]");
+    Result result = invokeCliWithArguments("-p", writeContentToTempFile(Objects.toString(song)).getAbsolutePath(), "-Oport2=\\[hw:1,1,0\\]", "-Oport1=\\[hw:1,0,0\\]");
 
     System.err.println("[source]");
     System.err.println("----");

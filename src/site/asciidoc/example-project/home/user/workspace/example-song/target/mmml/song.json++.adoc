@@ -5,31 +5,35 @@
 .target/mmml/song.json++
 ----
 {
-  "$extends": ["..."],
+  "$extends": [ "symfonion.rc","std/song-base.json++" ],
   "$devices": {
     "import": ["jv"],
     "ports": {
-     "$extends": ["???/ports/__index__.json"]
-    },
+     "$extends": ["devices/ports.json"]
+    }
   },
   "$song": {
-      "parts": {
-      },
-      "bars": {
-        "$includes": ["song/bars/__index__.json?"]
-      },
-      "patterns": {
-        "$includes": ["song/patterns/__index__.json?"]
-      },
-      "grooves": {
-        "$includes": ["song/grooves/__index__.json?"]
-      },
-      "sequence": "$(render_sequence)"
+    "parts": {
+      "$includes": [ "devices/parts/__index.json" ]
+    },
+    "bars": {
+      "$includes": ["song/bars/__index__.json?"]
+    },
+    "patterns": {
+      "$includes": ["song/patterns/__index__.json?"]
+    },
+    "grooves": {
+      "$includes": ["song/grooves/__index__.json?"]
+    },
+    "sequence": "$(render_sequence)"
   },
-  "$settings": "eval:object:$(ref \"devices\".import[0])",
+  "$settings": {
+    "$mididevice": "eval:object:$(ref \"devices\".import[0])" // <1>
+  },
   "$ports": "eval:object:$(ref .\"$devices\".ports)",
   "$patterns": "eval:object:$(ref .\"$song\".patterns)",
   "$grooves": "eval:object:$(ref .\"$song\".grooves)",
-  "$sequence": "eval:array:$(ref .\"$song\".sequence)",
+  "$sequence": "eval:array:$(ref .\"$song\".sequence)"
 }
 ----
+<1> It is a current limitation of `symfonion` that it import only one MIDI device.

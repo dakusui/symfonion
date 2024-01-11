@@ -1,1 +1,0 @@
-Contents of this directory is copied from `src/main/mmml` and it will be an entry in `JF_PATH` environment variable, when compilation step happens.

@@ -1,0 +1,17 @@
+
+----
+{
+  "piano": {
+    "port": "virtmidi2"
+  },
+  "guitar": {
+    "port": "virtmidi1"
+  },
+  "base": {
+    "port": "Gervill"
+  },
+  "drums": {
+    "port": "BT-01"
+  }
+}
+----

@@ -1,1 +1,1 @@
-See link:../gervill/__index__.adoc[].
+See link:../gm/__index__.adoc[].
