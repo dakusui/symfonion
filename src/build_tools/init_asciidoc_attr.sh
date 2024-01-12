@@ -6,6 +6,7 @@
 }
 
 top_dir="$(pwd)/src/site/asciidoc/example-project"
+doc_base="${1:-${top_dir}}"
 
   # shellcheck disable=SC2156
 find "${top_dir}" \
@@ -13,5 +14,5 @@ find "${top_dir}" \
   -exec sh -c "echo 'include::../.attr.adoc[]' > {}/.attr.adoc" {} \;
 
 echo "
-:doc_base: ${top_dir}=
+:doc_base: ${doc_base}
 " > src/site/asciidoc/example-project/.attr.adoc
