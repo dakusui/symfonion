@@ -13,3 +13,6 @@ This directory will be an entry of `JF_PATH` environment variable.
   "$sequence": "eval:array:$(compose_sequence_array )"
 }
 ----
+
+Directories under this will not be an element in `JF_PATH` environment variable.
+Instead, MMML registers some directories under `target`, which are copied in the "prepare resource" stage in the pipeline, as an element in the environment variable.

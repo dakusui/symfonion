@@ -1,4 +1,4 @@
-This file is generated from link:song.json{plus}{plus}.adoc[song.json++] in the *prepareResource* stage of the link:../../../../../../mmml.adoc[Pipeline].
+This file is generated from link:song.json{plus}{plus}.adoc[song.json++] in the *prepareResource* stage of the link:../../../../../../MMML.adoc[Pipeline].
 
 [[CONTENT]]
 [source,json]

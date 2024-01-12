@@ -1,0 +1,37 @@
+This is a home directory of a user.
+In Linux environment, it will be usually `/home/\{yourName\}`.
+Under this directory, examples, specifications, and descriptions are stored in the following style.
+
+----
+CAPITAL_DIRECTORY/          // <1>
+  dir/                      // <2>
+    filename1.ext.adoc      // <3>
+    filename2.ext           // <4>
+  INDEX.adoc                // <5>
+----
+1. Directories whose names are CAPITAL_CAMEL_CASES.
+Their names will be determined by MMML's or its platform's specification.
+For instance, this directory (`USER`) is a home directory of MMML's user, but it cannot be literary "USER".
+2. Directories whose names are lower cases.
+They are "examples".
+In the actual working environment of MMML, it may be exactly the name.
+For instance, if you find `src` directory under this directory (`USER`), in the actual working environment, there will be `src` directory at the corresponding path.
+3. Files end with `.adoc` contains an example of the file with it and its description.
+For instance, if you find a file `file.txt.adoc`, it will describe the file's specification and includes actual example.
+4. In case, how the content of the file should be is obvious only with example, just an example will be placed without `.adoc` extension.
+5. Description of a directory itself will be storeed as `INDEX.adoc`.
+
+Following illustrates how a file `file.txt.adoc` looks like.
+
+.file.txt.adoc
+====
+ This file contains a greetings.
+ [[CONTENT]]
+ [source, text]
+ .file.txt
+ ----
+ hello
+ ----
+====
+
+The block that contains an example of the file is tageed with `CONTENT` so that it can be extracted programmatically, when necessary.
