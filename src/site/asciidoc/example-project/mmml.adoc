@@ -7,6 +7,8 @@ Please choose one from the followings:
 - Thirty-fifty,
 - Or just M-M-M-L.
 
+Which one do you like? ;)
+
 == Processing Pipeline
 
 [ditaa]

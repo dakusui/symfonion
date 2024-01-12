@@ -1,3 +1,5 @@
+include::.attr.adoc[]
+
 The project definition file for `mmml`.
 
 [source, json]

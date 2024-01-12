@@ -1,0 +1,1 @@
+To render the documents under this directory properly, run `src/build_tools/init_asciidoc_attr.sh`, first.
