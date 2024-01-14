@@ -11,3 +11,5 @@
   }
 }
 ----
+
+include::.attr.adoc[]

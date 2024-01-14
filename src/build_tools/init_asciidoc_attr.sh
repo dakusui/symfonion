@@ -1,18 +1,34 @@
 #!/usr/bin/env bash
 
 [[ -e pom.xml ]] || {
-  echo "Seems not to be in project top directory. Missing pom.xml"
+  echo "Seems not to be in project top directory. Missing pom.xml" >&2
   exit 1
 }
-
+myself="$(realpath "${0}")"
 top_dir="$(pwd)/src/site/asciidoc/example-project"
 doc_base="${1:-${top_dir}}"
 
-  # shellcheck disable=SC2156
+# shellcheck disable=SC2156
 find "${top_dir}" \
   -type d -not -path "${top_dir}" \
   -exec sh -c "echo 'include::../.attr.adoc[]' > {}/.attr.adoc" {} \;
 
+_target_file="src/site/asciidoc/example-project/.attr.adoc"
 echo "
 :doc_base: ${doc_base}
-" > src/site/asciidoc/example-project/.attr.adoc
+:project_root: ${doc_base}/home/USER/WORKSPACE
+:project_src: ${doc_base}/home/USER/WORKSPACE/src
+:main_mmml_src: ${doc_base}/home/USER/WORKSPACE/src/mmml
+:target_dir: ${doc_base}/home/USER/WORKSPACE/target
+:target_mmml_dir: ${doc_base}/home/USER/WORKSPACE/target/mmml
+" > "${_target_file}"
+
+if [[ "${doc_base}" == "${top_dir}" ]]; then
+  echo "
+[.text-right]
+**<link:{doc_base}/INDEX.adoc[top]>**
+**<link:${myself}[update .attr base]>**
+
+[.text-left]
+" >> "${_target_file}"
+fi
