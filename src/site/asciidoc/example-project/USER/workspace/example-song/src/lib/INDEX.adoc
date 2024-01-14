@@ -1,2 +1,2 @@
-Under this directory, files that can be potentially reused are stored.
+Under this directory, files that can be potentially reused in future  are stored.
 They will be promoted to built-in shared files and stored under `.local/lib/share/mmml/lib` or `.local/lib/mmml`.

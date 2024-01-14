@@ -1,0 +1,6 @@
+[[CONTENT]]
+.devices.json
+----
+{
+}
+----
