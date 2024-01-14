@@ -1,0 +1,19 @@
+[source, json]
+----
+{
+  "jv-performance": {
+    "init": {
+
+    },
+    "shutdown": {
+
+    }
+  },
+  "yoshimi-default": {
+
+  },
+  "surge-xr-default": {
+
+  }
+}
+----

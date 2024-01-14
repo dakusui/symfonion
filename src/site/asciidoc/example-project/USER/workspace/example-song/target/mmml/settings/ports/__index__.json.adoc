@@ -3,11 +3,11 @@
   "virtmidi1": {
     "deviceType": "yoshimi"
     "port": "\[hw:1,0,0\]"
-  }
+  },
   "virtmidi2": {
     "deviceType": "surge-xt"
     "port": "\[hw:1,1,0\]"
-  }
+  },
   "gervill": {
     "deviceType": "gm"
     "port": "Gervill"
