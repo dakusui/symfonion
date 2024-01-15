@@ -1,16 +1,3 @@
-= MMML: Modern Music Macro Language
-
-How to pronounce it?
-Please choose one from the followings:
-
-- M-three-L,
-- Thirty-fifty,
-- Or just M-M-M-L.
-
-Which one do you like? ;)
-
-== Processing Pipeline
-
 [ditaa]
 .Pipeline
 ----
@@ -98,14 +85,3 @@ The MIDI data is written to output files or directly sent to MIDI devices (music
 7 Playback Compiled MIDI files:: The MIDI player `symfonion` has is a very simple one.
 In case you want to play back the compiled MIDI files with features that it doesn't have or in an environment where it doesn't work, you need to use external tools.
 7.1 and 7.2::: Your tool reads and reuses the compiled MIDI files.
-
-== Future Works
-
-(t.b.d.)
-
-[bibliography]
-== References
-
-- [[[Yoshimi, 1]]] Yoshimi Software synthesizer for Linux https://yoshimi.sourceforge.io/
-- [[[jq-front, 2]]] jq-front https://dakusui.github.io/jq-front/
-- [[[symfonion, 3]]] SyMFONION https://dakusui.github.io/symfonion/

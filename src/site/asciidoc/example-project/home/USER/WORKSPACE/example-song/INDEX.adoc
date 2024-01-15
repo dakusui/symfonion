@@ -1,0 +1,6 @@
+include::.attr.adoc[]
+
+This is a "project root directory" of an example project `example-song`.
+By default, the mmml tools first reads a file link:mmml.json.adoc[`mmml.json`] in c current working directory, which defines how your project looks like, first.
+In this example, it is configured to process `src/main/mml/song.json{plus}{plus}`.
+

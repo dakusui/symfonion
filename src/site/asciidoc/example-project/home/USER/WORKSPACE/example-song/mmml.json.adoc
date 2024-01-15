@@ -77,4 +77,4 @@ The project definition file for `mmml`.
 
 `mmml` generates buildweaver.json from this file.
 
-See link:../../../../mmml.adoc[]
+See link:../../../../mmml-pipeline.adoc[]
