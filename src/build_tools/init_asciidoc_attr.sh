@@ -28,7 +28,7 @@ if [[ "${doc_base}" == "${top_dir}" ]]; then
   echo "
 [.text-right]
 **<link:{doc_base}/INDEX.adoc[top]>**
-**<link:{doc_base}/home/USER/WORKSPACE/example-song/INDEX.adoc[top]>**
+**<link:{doc_base}/home/USER/WORKSPACE/example-song/INDEX.adoc[project_root]>**
 **<link:${myself}[update .attr base]>**
 
 [.text-left]

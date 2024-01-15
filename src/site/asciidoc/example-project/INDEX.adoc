@@ -49,9 +49,13 @@ In case just giving an example is sufficient, an example file is just placed. (M
 `.attr.adoc` is an auto-generated file that defines attributes referenced across documentation files.
 Its contents look like following:
 
-----
+[%collapsible]
+====
+[%nowrap]
+....
 include::.attr.adoc[]
-----
+....
+====
 
 By doing `include::.attr.adoc[]` at the beginning of an `.adoc` file, we can reference an attribute `doc_base`, which specifies the directory that contains this file, for instance.
 
