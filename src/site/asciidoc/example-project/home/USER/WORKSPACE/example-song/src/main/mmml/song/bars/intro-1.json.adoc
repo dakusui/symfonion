@@ -67,7 +67,8 @@ In an entry in the sequence directory, you want to write something like this.
 }
 ----
 
-For more detail of the first element (`prepare`), which has a different responsibility from the others, check link:prepare.json.adoc[prepare.json].
+// suppress inspection "AsciiDocLinkResolve"
+For more detail of the first element (`prepare`), which has a different responsibility from the others, check link:\\__init__.json.adoc[\\__init__.json].
 
 This file, `intro-1.json`, provides the content to be rendered by the second element, `$(bar intro-1)`.
 
