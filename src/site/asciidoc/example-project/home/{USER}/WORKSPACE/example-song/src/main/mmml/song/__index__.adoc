@@ -1,0 +1,1 @@
+A placeholder file to let mmml processor generate `\\__index__.json`.

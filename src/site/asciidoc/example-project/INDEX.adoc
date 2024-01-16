@@ -20,7 +20,7 @@ To render the documents under this directory properly, run `src/build_tools/init
 
 Check: link:mmml-pipeline.adoc[MMML].
 
-== Documentation Structure of MMML
+== File Name Convention of MMML
 
 Under this directory, the documentation of the tool: MMML is stored.
 Following is a convention of the file and directory names.
@@ -30,12 +30,12 @@ Following is a convention of the file and directory names.
 \_directory1   A directory.
   \_DIRECTORY2 A directory.
     .attr.adoc
-    INDEX.adoc
-  .attr.adoc   An auto-genrated file that defines attribute values used in the documentation in common.
+  INDEX.adoc   .attr.adoc   An auto-genrated file that defines attribute values used in the documentation in common.
   INDEX.adoc   A documentation file that decribes this directory.
   file1.adoc   A documentation that describes `file1`.
   file2        An example of `file2`.
   FILE3.adoc   A documentation that describes a semantics which is named `FILE3`.
+  __FUNCNAME__ Generates `__FUNCTIONE__.json`
 ----
 
 In this documentation, concrete values as examples are used as much as possible to give a clear image to readers and readers can reuse fragments found in the documentation just by copy-and-pasting.
@@ -58,6 +58,15 @@ include::.attr.adoc[]
 ====
 
 By doing `include::.attr.adoc[]` at the beginning of an `.adoc` file, we can reference an attribute `doc_base`, which specifies the directory that contains this file, for instance.
+
+Also, in the "prepare resource" stage, when MMML finds a file `\\__FILENAME__` under a target directory, `\\__FILENAME__.json` will be generated.
+A handler function whose name is `mmml_json_generator_FUNCNAME` and the output will be written to `\\__FILENAME__.json`.
+This is the mechanism that generates `\\__index__.json`.
+
+== Attribute Name Convention of MMML
+
+`$attribute_name`:: (t.b.d.)
+`attribute_name`:: (t.b.d.)
 
 == Future Works
 

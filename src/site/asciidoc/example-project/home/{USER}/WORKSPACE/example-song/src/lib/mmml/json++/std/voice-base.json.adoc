@@ -1,0 +1,16 @@
+This is a file to be extended by a definition of a voice for a MIDI device instance.
+
+[[CONTENT]]
+[source, json]
+----
+{
+  "wave": {
+    "$program": "error:This attribute should provide program change number (0-based)",
+    "$bank": 0.0
+  },
+  "part": {
+    "$channel": -1
+  },
+  "init": []
+}
+----

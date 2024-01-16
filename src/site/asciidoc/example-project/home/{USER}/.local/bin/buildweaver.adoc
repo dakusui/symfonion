@@ -1,0 +1,77 @@
+== BuildWeaver
+
+This is an executable of  `buildweaver` tool, which automates repetitive and tedious jobs to build your projects.
+
+
+[source, bash]
+.Usage Example
+----
+$ buildweaver clean
+-> rm -fr target
+$ buildweaver # or
+$ buildweaver compile-and-play
+-> cp -r src/mml
+-> find target -type f -exec process_resource {} \;
+-> jq-front target/mmml/song.json++ > target/mmml/song.json
+-> symfonion target/mmml/song.json
+----
+
+=== Project Definition File Format
+
+Its configuration should be placed at the project root directory and named `buildewaver.yaml`.
+Its content looks like following.:
+
+[%nowrap, yaml]
+----
+---
+profiles:
+  default:
+    infile: "hello"
+    outfile: "hello.bin"
+  optimizationEnabled:
+    infile: "hello"
+    outfile: "hello.bin"
+    perf: "-O2"
+stages:
+  clean:
+    cmd: rm                      # Phew! It's scary! Use clean_target_directory built-in in daily use.
+    - -fr
+    - target
+  compile:
+    cmd: gcc
+    args:
+    - -time                      # A string value will be used as is, unless:
+    - subst:-c $infile           #   it starts with "subst:", in which strings starging with `$` will
+                                 #   be interpolated with profile variables.
+    - subst?outfile:-o $outfile  #   If "subst" is folloed by "?{profile variable name}:", this argument
+                                 #   will be skipped unless the profile value has non-null value.
+    - subst?perf:-O2
+  ...: ...
+lifecycles:
+  claan:
+  - clean
+  compile:
+  - copyResources
+  - compile
+
+defaultLifeCycle: compile
+defaultProfile: default
+----
+
+Followings are examples of how to execute this tool.
+
+.Commandline Examples
+----
+$ buildweaver clean
+$ buildweaver compile
+$ buildweaver clean compile
+$ buildweaver --profile=optimizationEnabled clean compile
+$ buildweaver --profile=optimizationEnabled --profileVariable=outfile:a.out clean compile
+$ buildweaver --profile='inline:{"infile":"hello-work"}' clean compile
+----
+
+=== Relationship with Maven
+
+The author of `buildweaver` is using this tool to wrap maven's build procedure, when a maven project requires manual steps to build it.
+In most cases, such steps can be integrated into `pom.xml`, but sometimes you do not want to modify the original one.
+Even if you decide to modify it, it is a bit tedious task to use `maven-exec-plugin` since it's syntax is a bit heavy.

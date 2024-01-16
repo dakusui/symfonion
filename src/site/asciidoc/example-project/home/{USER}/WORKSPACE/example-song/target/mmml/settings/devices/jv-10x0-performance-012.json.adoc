@@ -1,0 +1,163 @@
+[source,json]
+.jv-10x0-performance-012.json
+----
+{
+  "port": "UM-01",
+  "deviceType": "jv",
+  "init": [
+    {
+      "type": "midi",
+      "messages": [
+        {
+          "$sysex": [
+            "$set-syscommon-soundmode-perf"
+          ]
+        },
+        {
+          "$sysex": [
+            "$jv-set-currentperf",
+            12
+          ]
+        },
+        {
+          "$sysex": [
+            "$jv-init-part",
+            0,
+            0
+          ]
+        },
+        {
+          "$sysex": [
+            "$jv-init-part",
+            1,
+            1
+          ]
+        },
+        {
+          "...": "..."
+        },
+        {
+          "$sysex": [
+            "$jv-init-part",
+            15,
+            15
+          ]
+        },
+        {
+          "$sysex": [
+            "$set-perfcommon-efx-distortion",
+            "$currentperf",
+            127,
+            0,
+            3,
+            30,
+            30,
+            32
+          ]
+        },
+        {
+          "$sysex": [
+            "$set-perfcommon-efx",
+            "$currentperf",
+            "$output-MIX",
+            22,
+            0,
+            30,
+            "$contsource-OFF",
+            63,
+            "$contsource-OFF",
+            0
+          ]
+        },
+        {
+          "$sysex": [
+            "$set-perfcommon-chorus",
+            "$currentperf",
+            0,
+            106,
+            106,
+            16,
+            64,
+            2
+          ]
+        },
+        {
+          "$sysex": [
+            "$set-perfcommon-reverb",
+            "$currentperf",
+            "$reverb-type-STAGE1",
+            106,
+            127,
+            "$reverb-hfdump-2000",
+            0
+          ]
+        },
+        {
+          "$sysex": [
+            "$set-perfcommon-tempo",
+            "$currentperf",
+            100
+          ]
+        },
+        {
+          "$sysex": [
+            "$jv-refresh-currentperf"
+          ]
+        }
+      ]
+    }
+  ],
+  "voices": {
+    "$extends": [ "gm-voices.json++" ],
+    "piano": {
+      "init": [
+        {
+          "$sysex": [
+            "$jv-set-patchnum-pr-a",
+            "$channel",
+            122
+          ]
+        },
+        {
+          "$sysex": [
+            "$jv-set-mixefx-send-level",
+            "$channel",
+            127
+          ]
+        },
+        {
+          "$sysex": [
+            "$jv-set-output-level",
+            "$channel",
+            127
+          ]
+        },
+        {
+          "$sysex": [
+            "$jv-set-output-assign",
+            "$channel",
+            "$output-EFX"
+          ]
+        }
+      ]
+    },
+    "guitar": {
+      "...": "..."
+    },
+    "bass": {
+      "...": "..."
+    },
+    "drums": {
+      "...": "..."
+    }
+  }
+}
+----
+
+== `.init`
+
+(t.b.d.)
+
+== `.voices.VOICE_NAME.init`
+
+(t.b.d.)

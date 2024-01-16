@@ -1,0 +1,27 @@
+[[CONTENT]]
+[source, json]
+.piano.json for JV-10x0;
+----
+{
+  "wave": {
+    "$sysex": ["$jv-set-patchnum-pr-d", "$channel", 2]
+  },
+  "part": {
+    "$channel": -1
+  }
+}
+----
+
+Preset-D (GM Bank) 's program-2 "Piano 3" will be selected by this system exclusive message.
+
+wave::
+This is an attribute that specifies a "wave" of a voice.
+In GM-1 (General MIDI 1) standard, it is just a program number that can be sent by `$program` control change.
+Usually synthesizers have a lot of more tones not included in the standard.
+To specify such a tone, you can send "bank" control change.
+To select a bank, you can use `$bank` attribute.
+Its integer part specifies MSB of it, while fraction part specifies LSB.
+To find which bank stores what tones, check a manual of a synthesizer you are using.
+Some mode of some synthesizer allows you to choose a tone through system exclusive messages.
+For instance, a wave in an expansion card for Roland's JV series.
+To choose it, you can use `$sysex` attribute.

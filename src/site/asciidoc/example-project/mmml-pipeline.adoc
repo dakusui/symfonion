@@ -10,7 +10,7 @@
    |    |
    |    |
    |    +-=----------------------------------------------------+
-   +--------------+                                            | projectPreparation
+   +--------------+                                            | prepareProject
                   |                                            V
                   |                                    +----------------------+
                   |      +---------------------------->|{d} buildweaver.json  |
@@ -64,13 +64,13 @@
                                  +---------+
 ----
 
-0: Project Preparation:: Render project definition file (`buildweaver.json`) for `buildweaver` tool.
+0: Prepare Project:: Render project definition file (`buildweaver.json`) for `buildweaver` tool.
 1: Read Project Definition File:: At beginning, `buildweaver` reads its project definition file, `buildweaver.json` from the current working directory.
 2: Prepare Synthesizers:: Based on the configuration, `mmml` starts synthesizers, such as `Yoshimi`<<Yoshimi>>.
 3: Copy Resources:: Copy resources under source directory (`src/main/mmml`) to working directory (`target/mmml`).
 4: Prepare Resources:: In this step, two things will be done.
 First Convert files under `strokes` will be converted into patterns, and they will be stored under `patterns` directory.
-See link:../example-project/home/USER/WORKSPACE/example-song/src/main/mmml/song/strokes/[`strokes`].
+See link:../example-project/home/{USER}/WORKSPACE/example-song/src/main/mmml/song/strokes/[`strokes`].
 Then, traverse the copied resourced and find `\\__index__` files.
 For each directory wih the file, generate `\\__index__.json`, which contains entries for JSON files in it.
 Note that all those happen only under `target` directory.
