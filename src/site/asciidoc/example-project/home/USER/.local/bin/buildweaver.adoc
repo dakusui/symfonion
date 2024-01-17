@@ -2,6 +2,7 @@
 
 This is an executable of  `buildweaver` tool, which automates repetitive and tedious jobs to build your projects.
 
+`buildweaver` itself is designed to be used not only for `mmml` and `symfonion` but also for general software development projects such as Maven-based ones.
 
 [source, bash]
 .Usage Example

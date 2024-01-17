@@ -1,0 +1,23 @@
+`mmml` is installed in XDG-based directory structure<<xdg-spec>>.
+Since some important directories lack environment variables that point them in XDG standard, following labels are used in this documentation instead.
+
+`XDG_LOCAL_LIB`:: This points `~/.local/lib`.
+`XDG_LOCAL_BIN`:: This points `~/.local/bin`.
+
+
+For instance, we may state that:
+
+====
+"Executables of `mmml` will be copied under directory `${XDG_LOCAL_LIB}/mmml/{mmml-version}`."
+====
+
+Also, there are following environment variables in XDG specification.
+
+`XDG_DATA_HOME`:: This points `~/.share`.
+`XDG_CONFIG_HOME`:: This points `~/.config`.
+
+
+[bibliography]
+== References
+
+- [[[xdg-spec, 1]]] "XDG Base Directory Specification" https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html

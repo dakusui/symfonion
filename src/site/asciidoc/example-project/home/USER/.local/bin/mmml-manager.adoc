@@ -1,0 +1,12 @@
+This is a tool to manage `mmml` versions.
+
+----
+mmml-manager list
+----
+Lists the available `mmml` versions in this system.
+
+----
+mmml-manager switch-to {version}
+----
+Switch the `mmml` version to the specified version.
+The executable of this tool directly stored under this directory, not under `

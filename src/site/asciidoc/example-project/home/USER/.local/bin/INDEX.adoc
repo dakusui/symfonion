@@ -1,0 +1,4 @@
+`mmml` 's installer creates symbolic links under this directory, except for `mmml-manager`.
+They are pointing executable files under `$HOME/.local/lib/mml/latest` of the same names.
+
+`mmml-manager` is a tool to switch `mmml` versions.

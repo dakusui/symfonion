@@ -14,7 +14,7 @@
   },
   "$song": {
     "parts": {
-      "$includes": [ "devices/parts/__index.json" ]
+      "$includes": [ "devices/parts/__index__.json" ]
     },
     "bars": {
       "$includes": ["song/bars/__index__.json?"]

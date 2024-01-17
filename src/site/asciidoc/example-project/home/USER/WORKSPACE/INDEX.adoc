@@ -1,0 +1,3 @@
+In many desktop environments you have directories such as `Documents` or `Desktop`.
+Under it, you may create another directory level such as `EclipseProjects` or `IdeaProject`.
+`WORKSPACE` represents a direct parent directory of one of `mmml`-based projects.
