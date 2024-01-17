@@ -4,7 +4,7 @@ After the prepare-resources stage of the pipeline, it will have the following co
 
 [[CONTENT]]
 [source, json]
-.__init__.json
+.__index__.json
 ----
 {
   "bass": {

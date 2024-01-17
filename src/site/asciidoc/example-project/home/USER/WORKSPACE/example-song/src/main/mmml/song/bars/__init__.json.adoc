@@ -8,9 +8,9 @@ That is, sending program, reverb, modulation and other control changes to each c
 [source, yaml]
 ----
 ---
-"$beats": 1/4
-"$patterns":
-  conductor:
+$beats: 1/4
+$patterns:
+  __control__:
   - R4
   piano:
   - eval:object:$(program_change piano)
@@ -20,4 +20,27 @@ That is, sending program, reverb, modulation and other control changes to each c
   - eval:object:$(program_change base)
   drums:
   - eval:object:$(program_change drums)
+----
+
+[source, json]
+.\\__init__.json
+----
+{
+  "$beats": "1/8",
+  "$patterns": {
+    "__control__": [ "__init__/__control__" ],
+    "piano": [ "__init__/piano" ],
+    "guitar": [ "__init__/guitar" ],
+    "bass": [ "__init__/bass" ],
+    "drums": [ "__init__/drums" ]
+  }
+}
+----
+
+.patterns/\\__index__.json
+----
+{
+  "__init__": {
+  }
+}
 ----
