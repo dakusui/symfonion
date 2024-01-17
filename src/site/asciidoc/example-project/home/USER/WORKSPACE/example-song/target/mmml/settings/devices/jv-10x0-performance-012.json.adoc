@@ -2,7 +2,7 @@
 .jv-10x0-performance-012.json
 ----
 {
-  "port": "UM-01",
+  "port": "UM1",
   "deviceType": "jv",
   "init": [
     {

@@ -1,3 +1,5 @@
+include::.attr.adoc[]
+
 `mmml` is installed in XDG-based directory structure<<xdg-spec>>.
 Since some important directories lack environment variables that point them in XDG standard, following labels are used in this documentation instead.
 

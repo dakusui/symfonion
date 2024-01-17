@@ -9,4 +9,6 @@ Lists the available `mmml` versions in this system.
 mmml-manager switch-to {version}
 ----
 Switch the `mmml` version to the specified version.
-The executable of this tool directly stored under this directory, not under `
+This is done by re-creating a symbolic link `$+{XDG_LOCAL_LIB}+/mmml/latest` so that it points `$+{XDG_LOCAL_LIB}+/mmml/+{version}+`
+
+Note that the executable of this tool directly stored under this directory, not under `XDG_LOCAL_LIB/mmml`.

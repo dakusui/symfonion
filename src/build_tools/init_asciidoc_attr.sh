@@ -22,6 +22,10 @@ echo "
 :main_mmml_src: ${doc_base}/home/USER/WORKSPACE/src/mmml
 :target_dir: ${doc_base}/home/USER/WORKSPACE/target
 :target_mmml_dir: ${doc_base}/home/USER/WORKSPACE/target/mmml
+:xdg_config_home: ${doc_base}/home/USER/.config
+:xdg_data_home: ${doc_base}/home/USER/.local/share
+:xdg_local_bin: ${doc_base}/home/USER/.local/bin
+:xdg_local_lib: ${doc_base}/home/USER/.local/lib
 " > "${_target_file}"
 
 if [[ "${doc_base}" == "${top_dir}" ]]; then
@@ -30,6 +34,11 @@ if [[ "${doc_base}" == "${top_dir}" ]]; then
 **<link:{doc_base}/INDEX.adoc[top]>**
 **<link:{doc_base}/home/USER/WORKSPACE/example-song/INDEX.adoc[project_root]>**
 **<link:${myself}[update .attr base]>**
+[.text-right]
+**<link:{xdg_config_home}/mmml/INDEX.adoc[XDG_CONFIG_HOME/mmml]>**
+**<link:{xdg_data_home}/INDEX.adoc[XDG_DATA_HOME]>**
+**<link:{xdg_local_bin}/INDEX.adoc[XDG_LOCAL_BIN]>**
+**<link:{xdg_local_lib}/INDEX.adoc[XDG_LOCAL_LIB]>**
 
 [.text-left]
 " >> "${_target_file}"
