@@ -19,25 +19,37 @@ stages:
       - -fr
       - target
   copyResources:
-    - cmd: echo
+    - cmd: mkdir
       args:
-      - hello
+      - -p
+      - target/mmml
+    - cmd: cp
+      args:
+      - -r
+      - src/main/mmml/*
+      - target/mmml/
   prepareResources:
     - cmd: echo
       args:
       - hello
   preprocessSourceFiles:
-    - cmd: echo
+    - cmd: jq-front
       args:
-      - hello
+      - target/mmml/song.json++
+      out: target/mmml/song.json
   compileSourceFilesAndPlay:
-    - cmd: echo
+    - cmd: symfonion
       args:
-      - hello
+      - target/mmml/song.json
+      - -o
+      - target/song
   compileSourceFiles:
-    - cmd: echo
+    - cmd: symfonion
       args:
-      - hello
+      - -c
+      - target/mmml/song.json
+      - -o
+      - target/song
 lifecycles:
   claan:
   - clean

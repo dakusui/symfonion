@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+set -E -o nounset -o errexit +o posix -o pipefail
+shopt -s inherit_errexit
 
 [[ -e pom.xml ]] || {
   echo "Seems not to be in project top directory. Missing pom.xml" >&2
