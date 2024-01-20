@@ -1,0 +1,56 @@
+[[CONTEN]]
+[%nowrap, yaml]
+.buildweaver.json
+----
+---
+profiles:
+  $includes:
+  - profiles.yaml?
+  default:
+    infile: "hello"
+    outfile: "hello.bin"
+  optimizationEnabled:
+    infile: "hello"
+    outfile: "hello.bin"
+    perf: "-O2"
+stages:
+  clean:
+    - cmd: rm                      # Phew! It's scary! Use clean_target_directory built-in in daily use.
+      - -fr
+      - target
+  copyResources:
+    - cmd: echo
+      args:
+      - hello
+  prepareResources:
+    - cmd: echo
+      args:
+      - hello
+  preprocessSourceFiles:
+    - cmd: echo
+      args:
+      - hello
+  compileSourceFilesAndPlay:
+    - cmd: echo
+      args:
+      - hello
+  compileSourceFiles:
+    - cmd: echo
+      args:
+      - hello
+lifecycles:
+  claan:
+  - clean
+  compileAndPlay:
+  - copyResources
+  - prepareResources
+  - preprocessSourceFiles
+  - compileSourceFilesAndPlay
+  compile:
+  - copyResources
+  - prepareResources
+  - preprocessSourceFiles
+  - compile
+defaultLifeCycle: compileAndPlay
+defaultProfile: default
+----

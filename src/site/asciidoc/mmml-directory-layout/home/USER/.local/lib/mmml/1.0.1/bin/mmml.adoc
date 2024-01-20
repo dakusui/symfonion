@@ -1,1 +1,4 @@
 include::.attr.adoc[]
+
+`mmml` is implemented as a wrapper for `buildweaver` utility.
+It just generates
