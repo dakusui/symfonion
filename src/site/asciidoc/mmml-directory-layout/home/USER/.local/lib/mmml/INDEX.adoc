@@ -1,0 +1,30 @@
+Under this directory, executables and libraries of `mmml` and its components (i.e. `symfonion` and `buildweaver`) are stored.
+
+----
+This directory
+`-{version}/    <1>
+`-{...}/
+`-{...}/
+`-snapshot/     <2>
+`-latest        <3>
+----
+1. Under this directory, files of one released version will be stored.
+2. Under this directory, files of a development version will be stored.
+3. This is a symbolic link created by `mmml-manager`<<mmml-manager>>.
+The link points currently used version (alternative) of `mmml`.
+
+`mmml-manager` also creates a symbolic link to each file in `+{this directory}+/latest/bin` under `xdg_local_bin`<<xdg_local_bin>> directory.
+Check its link:{xdg_local_bin}/mmml-manager.adoc[documentation] for more detail.
+
+For the internal structure of subdirectories (`+{version}+` and  `snapshot`) of this, check link:1.0.1/INDEX.adoc[an example].
+
+[bibliography]
+== References
+
+- [[[mmml-manager, 1]]] link:{xdg_local_bin}/mmml-manager.adoc[mmml-manager]
+- [[[xdg_local_bin, 2]]] link:{xdg_local_bin}/INDEX.adoc[xdg_local_bin]
+
+
+
+
+

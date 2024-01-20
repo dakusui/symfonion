@@ -5,7 +5,7 @@
   exit 1
 }
 myself="$(realpath "${0}")"
-top_dir="$(pwd)/src/site/asciidoc/example-project"
+top_dir="$(pwd)/src/site/asciidoc/mmml-directory-layout"
 doc_base="${1:-${top_dir}}"
 
 # shellcheck disable=SC2156
@@ -13,7 +13,7 @@ find "${top_dir}" \
   -type d -not -path "${top_dir}" \
   -exec sh -c "printf '%s\n%s' '// CAUTION: This file is auto-generated. Add .attr.adoc to .gitignore and DO NOT EDIT //' 'include::../.attr.adoc[]' > {}/.attr.adoc" {} \;
 
-_target_file="src/site/asciidoc/example-project/.attr.adoc"
+_target_file="${top_dir}/.attr.adoc"
 echo "
 // CAUTION: This file is auto-generated. Add .attr.adoc to .gitignore and DON'T EDIT //
 :doc_base: ${doc_base}
@@ -36,9 +36,9 @@ if [[ "${doc_base}" == "${top_dir}" ]]; then
 **<link:${myself}[update .attr base]>**
 [.text-right]
 **<link:{xdg_config_home}/mmml/INDEX.adoc[XDG_CONFIG_HOME/mmml]>**
-**<link:{xdg_data_home}/INDEX.adoc[XDG_DATA_HOME]>**
-**<link:{xdg_local_bin}/INDEX.adoc[XDG_LOCAL_BIN]>**
-**<link:{xdg_local_lib}/INDEX.adoc[XDG_LOCAL_LIB]>**
+**<link:{xdg_data_home}/mmml/INDEX.adoc[XDG_DATA_HOME/mmml]>**
+**<link:{xdg_local_bin}/mmml/INDEX.adoc[XDG_LOCAL_BIN/mmml]>**
+**<link:{xdg_local_lib}/mmml/INDEX.adoc[XDG_LOCAL_LIB/mmml]>**
 
 [.text-left]
 " >> "${_target_file}"

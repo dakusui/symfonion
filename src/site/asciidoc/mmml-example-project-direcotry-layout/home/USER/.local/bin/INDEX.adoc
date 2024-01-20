@@ -1,9 +1,0 @@
-include::.attr.adoc[]
-
-`mmml` 's installer does two things:
-
-- It creates symbolic links under this directory, except for `mmml-manager`.
-They are pointing executable files under `$+{XDG_LOCAL_LIB}+/mml/latest` of the same names.
-- It copies `mmml-manager` is a tool to switch `mmml` versions.
-
-Since it will be confusing for readers to store documentations of `mmml` and its related tools under `$+{XDG_LOCAL_LIB}+/mml/+{version}+`, the specifications of the tools bundled with `mmml` will be discussed under this directory, although it stores wrappers or links only.

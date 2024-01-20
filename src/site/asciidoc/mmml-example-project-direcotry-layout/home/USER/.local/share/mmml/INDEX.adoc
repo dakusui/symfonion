@@ -1,2 +1,0 @@
-Under this directory, system specific data will be stored (, if any).
-Currently not used.

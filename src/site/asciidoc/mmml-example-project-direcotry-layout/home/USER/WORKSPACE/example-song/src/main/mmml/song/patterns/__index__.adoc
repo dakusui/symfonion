@@ -1,1 +1,0 @@
-`\\__index__` lets buildweaver create `\\__index__.json`, which lists files in it.
