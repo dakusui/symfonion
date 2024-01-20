@@ -11,9 +11,16 @@ set -E -o nounset -o errexit +o posix -o pipefail
 shopt -s inherit_errexit
 
 function main() {
-  local _dir="${1}"
+  local _dir="${1}" _pwd="${2}" _jf_path
   shift
-  buildweaver "${HOME}/.local/lib/mmml/latest/lib/json++/buildweaver.json" "${@}"
+  shift
+
+  _jf_path="."
+  _jf_path="${_jf_path}:${_pwd_}/targt/mmml"
+  _jf_path="${_jf_path}:${_pwd_}/src/lib/mmml/json++"
+  _jf_path="${_jf_path}:${HOME}/.config/mmml/json++"
+  _jf_path="${_jf_path}:${HOME}/.local/lib/mmml/latest/lib/json++"
+  JF_PATH="${_jf_path}" buildweaver "${HOME}/.local/lib/mmml/latest/lib/json++/buildweaver.json" "${@}"
 }
 
 main "$(dirname ${0})" ${@}"
