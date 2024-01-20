@@ -1,0 +1,10 @@
+[%nowrap, json]
+.default.json
+----
+{
+  "*": {
+    "$extends": [ "deviceType/gm.json" ],
+    "port": "Gervill"
+  }
+}
+----

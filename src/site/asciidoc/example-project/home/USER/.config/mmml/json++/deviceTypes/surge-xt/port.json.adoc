@@ -1,7 +1,0 @@
-[[CONTENT]]
-[source, json]
-----
-{
-  "port": "UM1"
-}
-----
