@@ -177,6 +177,21 @@ public class MidiCompilerTest extends TestBase {
                         Transform.$(ticks()).isEqualTo(379L))))),
 
         createPositiveTestCase(
+            TestUtils.name("sixteen notes are given in a single string element", "compile", "number of events and tick length seem ok"),
+            SymfonionJsonTestUtils.composeSymfonionSongJsonObjectUsingInline(
+                "port1", json("C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;"), SymfonionJsonTestUtils.sixteenBeatsGroove()),
+            AllOf.$(
+                FromMap.<String>toKeyList().allOf(
+                    FromList.toSize().isEqualTo(1),
+                    FromList.<String>toElementAt(0).isEqualTo("port1")),
+                Transform.$(FromSong.toSequence("port1").andThen(trackList())).allOf(
+                    FromList.toSize().isEqualTo(1),
+                    FromList.<Track>toElementAt(0).allOf(
+                        Transform.$(size()).isEqualTo(33),
+                        Transform.$(midiEventAt(0)).isNotNull(),
+                        Transform.$(ticks()).isEqualTo(379L))))),
+
+        createPositiveTestCase(
             TestUtils.name("sixteen notes are given in two string elements", "compile", "number of events and tick length seem ok"),
             SymfonionJsonTestUtils.composeSymfonionSongJsonObject(
                 "port1", array(json("C16;C16;C16;C16;C16;C16;C16;C16;"), json("C16;C16;C16;C16;C16;C16;C16;C16;")), SymfonionJsonTestUtils.sixteenBeatsGroove()),

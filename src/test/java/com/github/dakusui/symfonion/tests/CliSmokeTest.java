@@ -42,53 +42,17 @@ public class CliSmokeTest extends CliTestBase {
                 $("$beats", json("4/4")),
                 $("$patterns", object($("piano", array("R4"))))),
             object(
-                $("$beats", json("16/4")),
+                $("$beats", json("4/4")),
                 $("$patterns", object($("piano", array("main")))),
-                $("$groove", json("16beats"))
-            ))));
-
-    Result result = invokeCliWithArguments("-p", writeContentToTempFile(Objects.toString(song)).getAbsolutePath(), "-Oport1=Gervill");
-
-    System.err.println("[source]");
-    System.err.println("----");
-    System.err.println(result);
-    System.err.println("----");
-
-    assertThat(
-        result,
-        AllOf.$(
-            ResultTo.exitCode().isEqualTo(0),
-            ResultTo.out().findSubstrings("*", "Gervill", "Real Time Sequencer")));
-  }
-
-  /**
-   * Generates three strokes, each of which is a chord. Em, Dm, and C, respectively.
-   * This test plays a generated midi, and you will hear it from your speaker.
-   *
-   * @throws FileNotFoundException This shouldn't be thrown.
-   */
-  @Test
-  public void givenThreeStrokesThroughInline_whenPlaySubcommandIsInvoked_thenPlayed() throws FileNotFoundException {
-    assumeRequiredMidiDevicesPresent();
-    assumeThat(isRunUnderPitest(), isFalse());
-    JsonObject song = object(
-        $("$settings", object()),
-        $("$parts", object($("piano", object($("$channel", json(0)), $("$port", json("port1")))))),
-        $("$patterns", object(
-        )),
-        $("$grooves", object($("16beats", sixteenBeatsGroove()))),
-        $("$sequence", array(
+                $("$groove", json("16beats"))),
             object(
                 $("$beats", json("4/4")),
-                $("$patterns", object($("piano", array("$inline:" + Objects.toString(object($("$body", json("r4"))))))))),
-            object(
-                $("$beats", json("16/4")),
-                $("$patterns", object($("piano", array("$inline:" + Objects.toString(object($("$body", array(json("BGE8;r8;AFD8;r8;GEC8;r8"))))))))),
+                $("$patterns", object($("piano", array("$inline:" + object($("$body", array(json("BGE8;r8;AFD8;r8;GEC8;r8")))))))),
                 $("$groove", json("16beats"))
             ))));
 
     Result result = invokeCliWithArguments("-p", writeContentToTempFile(Objects.toString(song)).getAbsolutePath(), "-Oport1=Gervill");
-    System.out.println("song:" + song);
+
     System.err.println("[source]");
     System.err.println("----");
     System.err.println(result);
