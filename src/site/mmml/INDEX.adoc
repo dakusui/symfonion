@@ -10,15 +10,16 @@ Please choose one from the followings:
 - Thirty-fifty,
 - Or just M-M-M-L.
 
+// suppress inspection "GrazieInspection"
 Which one do you like? ;)
 
 == The Processing Pipeline of MMML
 
-include::mmml-pipeline.adoc[]
+include::pipeline/mmml-pipeline.adoc[]
 
 To render the documents under this directory properly, run `src/build_tools/init_asciidoc_attr.sh`, first.
 
-Check: link:mmml-pipeline.adoc[MMML].
+Check: link:pipeline/mmml-pipeline.adoc[MMML].
 
 == File Name Convention of MMML
 
@@ -68,6 +69,10 @@ Note that `\\__index__.json` is always generated for every directory under `targ
 
 `$attribute_name`:: (t.b.d.)
 `attribute_name`:: (t.b.d.)
+
+== Profile Selection Mechanism
+
+(t.b.d)
 
 == Future Works
 

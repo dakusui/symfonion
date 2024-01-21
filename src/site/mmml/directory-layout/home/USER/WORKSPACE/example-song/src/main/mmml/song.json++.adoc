@@ -9,7 +9,7 @@
   "$config": {
     "$includes": [
       "settings/devices.json",
-      "helpers/readJsonObjectForSpecifiedProfileValue.sh;bash -eu;settings/portMappings;portMapping"
+      "helpers/readProfileValue.sh;bash -eu;settings/portMappings;portMapping"
     ]
   },
   "$song": {

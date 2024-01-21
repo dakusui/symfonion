@@ -7,7 +7,7 @@ shopt -s inherit_errexit
   exit 1
 }
 myself="$(realpath "${0}")"
-top_dir="$(pwd)/src/site/asciidoc/mmml-directory-layout"
+top_dir="$(pwd)/src/site/mmml"
 doc_base="${1:-${top_dir}}"
 
 # shellcheck disable=SC2156
