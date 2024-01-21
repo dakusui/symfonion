@@ -130,8 +130,8 @@ public class MidiCompilerTest extends TestBase {
                         FromList.<Track>toElementAt(0).allOf(
                             Transform.$(size()).isEqualTo(6),
                             Transform.$(midiEventAt(0)).isNotNull(),
-                            Transform.$(ticks()).isEqualTo(96L))),
-                    Transform.$(tickLength()).isEqualTo(96L))
+                            Transform.$(ticks()).isEqualTo(24L))),
+                    Transform.$(tickLength()).isEqualTo(24L))
             )),
 
         createPositiveTestCase(
