@@ -69,7 +69,13 @@ public class Symfonion {
     }
     return ret;
   }
-  
+
+  /**
+   * Compiles a {@link Song} object into a map of a part name to {@link Sequence} object.
+   *
+   * @param song A song object.
+   * @return A map from part name to a MIDI sequence object.
+   */
   public Map<String, Sequence> compile(Song song)  {
     MidiCompiler compiler = new MidiCompiler(song.getLogiasContext());
     Map<String, Sequence> ret;

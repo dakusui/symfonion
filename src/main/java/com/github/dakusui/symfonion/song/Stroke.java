@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 
 import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.*;
-import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.ContextKey.JSON_ELEMENT_ROOT;
 import static com.github.dakusui.symfonion.exceptions.SymfonionIllegalFormatException.NOTE_LENGTH_EXAMPLE;
 import static com.github.dakusui.symfonion.exceptions.SymfonionTypeMismatchException.PRIMITIVE;
 
@@ -292,7 +291,7 @@ public class Stroke {
     renderValues(modulation, absolutePosition, strokeLen, compiler, (v, pos) -> track.add(compiler.createModulationEvent(ch, v, pos)));
     renderValues(aftertouch, absolutePosition, strokeLen, compiler, (v, pos) -> track.add(compiler.createAfterTouchChangeEvent(ch, v, pos)));
     int transpose = context.params().transpose();
-    int arpegiodelay = context.params().arpegio();
+    int arpegiodelay = context.params().arpeggio();
     int delta = 0;
     Fraction relPosInStroke = Fraction.zero;
     for (NoteSet noteSet : this.noteSets()) {
@@ -310,8 +309,8 @@ public class Stroke {
             0,
             Math.min(
                 127,
-                context.params().velocitybase() +
-                    note.accent() * context.params().velocitydelta() +
+                context.params().velocityBase() +
+                    note.accent() * context.params().velocityDelta() +
                     context.getGrooveAccent(relPosInStroke)
             )
         );

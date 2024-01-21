@@ -50,7 +50,7 @@ public class Song {
       return logiasContext;
     }
 
-    private static List<Bar> initSequence(JsonObject json, Map<String, Groove> grooves, Map<String, Pattern> patterns) throws SymfonionException, JsonException {
+    private static List<Bar> initSequence(JsonObject json, Map<String, Groove> grooves, Map<String, NoteMap> noteMaps, Map<String, Pattern> patterns) throws SymfonionException, JsonException {
       List<Bar> bars = new LinkedList<>();
       JsonElement tmp = JsonUtils.asJsonElement(json, Keyword.$sequence);
       if (!tmp.isJsonArray()) {
@@ -63,12 +63,20 @@ public class Song {
         if (!barJson.isJsonObject()) {
           throw typeMismatchException(seqJson, OBJECT);
         }
-        Bar bar = new Bar(barJson.getAsJsonObject(), json, grooves, patterns);
+        Bar bar = new Bar(barJson.getAsJsonObject(), json, grooves, noteMaps, patterns);
         bars.add(bar);
       }
       return bars;
     }
 
+    /**
+     * Returns a map of note-map name to note-map.
+     *
+     * @param json A JSON object that defines note-maps.
+     * @return A map of note-map name to note-map.
+     * @throws SymfonionException An error found in {@code json} argument.
+     * @throws JsonException An error found in {@code json} argument.
+     */
     private static Map<String, NoteMap> initNoteMaps(JsonObject json) throws SymfonionException, JsonException {
       Map<String, NoteMap> noteMaps = new HashMap<>();
       final JsonObject noteMapsJSON = JsonUtils.asJsonObjectWithDefault(json, new JsonObject(), Keyword.$notemaps);
@@ -88,8 +96,8 @@ public class Song {
       Map<String, Pattern> patterns = new HashMap<>();
       JsonObject patternsJSON = JsonUtils.asJsonObjectWithDefault(json, new JsonObject(), Keyword.$patterns);
 
-      Iterator<String> i = JsonUtils.keyIterator(patternsJSON);
       try (ExceptionThrower.Context ignored = context($(JSON_ELEMENT_ROOT, json))) {
+        Iterator<String> i = JsonUtils.keyIterator(patternsJSON);
         while (i.hasNext()) {
           String name = i.next();
           Pattern cur = Pattern.createPattern(JsonUtils.asJsonObject(patternsJSON, name), noteMaps);
@@ -139,7 +147,7 @@ public class Song {
             patterns,
             noteMaps,
             grooves,
-            initSequence(json, grooves, patterns)
+            initSequence(json, grooves, noteMaps, patterns)
         );
       }
     }

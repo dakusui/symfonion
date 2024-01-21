@@ -42,8 +42,12 @@ public class CliSmokeTest extends CliTestBase {
                 $("$beats", json("4/4")),
                 $("$patterns", object($("piano", array("R4"))))),
             object(
-                $("$beats", json("16/4")),
+                $("$beats", json("4/4")),
                 $("$patterns", object($("piano", array("main")))),
+                $("$groove", json("16beats"))),
+            object(
+                $("$beats", json("4/4")),
+                $("$patterns", object($("piano", array("$inline:" + object($("$body", array(json("BGE8;r8;AFD8;r8;GEC8;r8")))))))),
                 $("$groove", json("16beats"))
             ))));
 
