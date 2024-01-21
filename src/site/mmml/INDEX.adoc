@@ -15,55 +15,15 @@ Which one do you like? ;)
 
 == The Processing Pipeline of MMML
 
-include::pipeline/mmml-pipeline.adoc[]
-
 To render the documents under this directory properly, run `src/build_tools/init_asciidoc_attr.sh`, first.
 
-Check: link:pipeline/mmml-pipeline.adoc[MMML].
+Check: link:features/mmml-pipeline.adoc[MMML].
 
-== File Name Convention of MMML
 
-Under this directory, the documentation of the tool: MMML is stored.
-Following is a convention of the file and directory names.
+== Directory Layout
 
-[%nowrap]
-----
-\_directory1   A directory.
-  \_DIRECTORY2 A directory.
-    .attr.adoc
-  INDEX.adoc   .attr.adoc   An auto-genrated file that defines attribute values used in the documentation in common.
-  INDEX.adoc   A documentation file that decribes this directory.
-  file1.adoc   A documentation that describes `file1`.
-  file2        An example of `file2`.
-  FILE3.adoc   A documentation that describes a semantics which is named `FILE3`.
-  __FUNCNAME__ Generates `__FUNCTIONE__.json`
-----
+Check: link:directory-layout/INDEX.adoc[directory layout design].
 
-In this documentation, concrete values as examples are used as much as possible to give a clear image to readers and readers can reuse fragments found in the documentation just by copy-and-pasting.
-However, sometimes, authors want readers to realize that it is a responsibility of a user (=reader) to choose a name of a file.
-For such files and directories, their name are written in CAPITAL in the directory structure.
-
-In a documentation file (`.adoc` file), there will be a block which has an identifier `CONTENT`.
-The block contains a concrete example of a file that the documentation describes.
-In case just giving an example is sufficient, an example file is just placed. (Meaning, `file2` and `file2.adoc` should not co-exist in the same directory)
-
-`.attr.adoc` is an auto-generated file that defines attributes referenced across documentation files.
-Its contents look like following:
-
-[%collapsible]
-====
-[%nowrap]
-....
-include::.attr.adoc[]
-....
-====
-
-By doing `include::.attr.adoc[]` at the beginning of an `.adoc` file, we can reference an attribute `doc_base`, which specifies the directory that contains this file, for instance.
-
-Also, in the "prepare resource" stage, when MMML finds a file `\\__FILENAME__` under a target directory, `\\__FILENAME__.json` will be generated.
-A handler function whose name is `mmml_json_generator_FUNCNAME` and the output will be written to `\\__FILENAME__.json`.
-
-Note that `\\__index__.json` is always generated for every directory under `target/mmml`.
 
 == Attribute Name Convention of MMML
 

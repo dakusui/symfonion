@@ -1,6 +1,6 @@
 include::.attr.adoc[]
 
-This file is generated from link:song.json{plus}{plus}.adoc[song.json++] in the *prepareResource* stage of the link:{doc_base}/pipeline/mmml-pipeline.adoc[Pipeline].
+This file is generated from link:song.json{plus}{plus}.adoc[song.json++] in the *prepareResource* stage of the link:{doc_base}/features/mmml-pipeline.adoc[Pipeline].
 
 [[CONTENT]]
 [source,json]
