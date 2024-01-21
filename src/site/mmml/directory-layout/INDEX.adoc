@@ -1,3 +1,5 @@
+== Directory Structure of MMML processor and its project
+
 == File Name Convention of MMML
 
 Under this directory, the documentation of the tool: MMML is stored.
@@ -8,7 +10,8 @@ Following is a convention of the file and directory names.
 \_directory1   A directory.
   \_DIRECTORY2 A directory.
     .attr.adoc
-  INDEX.adoc   .attr.adoc   An auto-genrated file that defines attribute values used in the documentation in common.
+    INDEX.adoc
+  .attr.adoc   An auto-genrated file that defines attribute values used in the documentation in common.
   INDEX.adoc   A documentation file that decribes this directory.
   file1.adoc   A documentation that describes `file1`.
   file2        An example of `file2`.

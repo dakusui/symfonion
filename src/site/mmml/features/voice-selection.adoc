@@ -1,0 +1,107 @@
+:ditaa-options: separation=false, no-shadows, round-corners, scale=2.5
+
+[%nowrap, json]
+.song.json++
+----
+{
+  "$includes": [ "mysong.json" ],
+  "settings": {
+    "devices": {
+      "jv-1080": {
+        "voices": {
+          "piano": [ "..." ],
+          "guitabe": [ "..." ],
+          "...": "..."
+        }
+      },
+      "gervill": {
+        "voices": {
+          "piano": [ { "$program": 0, "$bank": 0.0 } ],
+          "...": "..."
+        }
+      }
+    }
+  },
+  "bars": {
+    "__init__": {
+      "$beats": "2/8",
+      "$patterns": {
+        "__device__:jv1080-perf-12-part": [ "eval:string:inline:$(init_device $(device))" ],
+        "__device__:gervill-part": [ "eval:string:inline:$(init_device $(device))" ],
+        "piano-part": [ "intline:R8", "eval:string:__init__:part:$(devivce):$(part_name)" ],
+        "guitar-part": [ "intline:R8", "eval:string:__init__:part:$(devivce):$(part_name)" ],
+        "bass-part": [ "intline:R8", "eval:string:__init__:part:$(devivce):$(part_name)" ],
+        "drums-part": [ "intline:R8", "eval:string:__init__:part:$(devivce):$(part_name)" ]
+      }
+    },
+    "intro": {
+      "...": "..."
+    },
+    "...": "...",
+    "outro": {
+      "...": "..."
+    }
+  },
+  "$patterns": {
+    "__init__": [],
+    "__init__:device:gervill": [],
+    "__init__:part:gervill:piano": [ {"$body": { "$bank": 0.0 }}, {"$body": { "$program": 0 }} ],
+    "__init__:device:jv-1080-perf-12": [ {}, {} ],
+    "__init__:part:jv-1080-perf-12:guitar": [ {}, {} ],
+  },
+  "$parts": {
+  },
+  "$sequence": [
+    "eval:object:$(ref .bars.__init__)",
+    "eval:object:$(ref .bars.intro)",
+    "...",
+    "eval:object:$(ref .bars.outro)",
+  ]
+}
+----
+
+[%nowrap, json]
+.patterns (song.json)
+----
+{
+  "$body": "eval:array:$(voice $(device) guitar)"
+}
+----
+
+.pattern "voice-guitar" a for GM1 device
+----
+{
+  "$body": [ { "$program":24 }, { "$bank": 0.0 } ]
+}
+----
+
+.pattern "voice-guitar" for a JV-10x0 device
+----
+{
+  "$body": [ { "$sysex": ["$jv-set-patchnum-pr-b", "$channel", 8] } ]
+}
+----
+
+
+[ditaa]
+----
+Sequence
+
+ Time ------------------------------------------------------------------------------->
++----+-------------+------------------------------------------------------------------+
+|    |  +-------+  |  +-------+                                                       |
+|    |  |pattern|  |  |pattern|                                                       |
+|    |  +-------+  |  +-------+                                                       |
+|    |             |                                                                  |
+|    |  +-------+  |  +-------+                                                       |
+|part|  |pattern|  |  |pattern|                                                       |
+|    |  +-------+  |  +-------+                                                       |
+|    |             |                    +-------------------------------------------+ |
+|    |  +-------+  |  +-------+         |+------------------+ +---------------+     | |
+|    |  |pattern|  |  |pattern|<>------>||{notes,length,...}| | {"...":"..."} | ... | |
+|    |  +-------+  |  +-------+    body |+------------------+ +---------------+     | |
+|    |             |                    +-------------------------------------------+ |
++----+-------------+------------------------------------------------------------------+
+
+
+----
