@@ -18,20 +18,23 @@ import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.*;
 import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.ContextKey.JSON_ELEMENT_ROOT;
 import static com.github.dakusui.symfonion.exceptions.SymfonionIllegalFormatException.FRACTION_EXAMPLE;
 import static com.github.dakusui.symfonion.exceptions.SymfonionTypeMismatchException.ARRAY;
+import static java.util.Collections.singletonList;
 
 public class Bar {
   private final Map<String, Groove> grooves;
   private final Map<String, Pattern> patterns;
   private final JsonObject rootJsonObject;
+  private final Map<String, NoteMap> noteMaps;
   Fraction beats;
   Map<String, List<List<Pattern>>> patternLists = new HashMap<>();
   Groove groove;
   private final JsonObject json;
 
 
-  public Bar(JsonObject jsonObject, JsonObject root, Map<String, Groove> grooves, Map<String, Pattern> patterns) throws SymfonionException, JsonException {
+  public Bar(JsonObject jsonObject, JsonObject root, Map<String, Groove> grooves, Map<String, NoteMap> noteMaps, Map<String, Pattern> patterns) throws SymfonionException, JsonException {
     this.grooves = grooves;
     this.patterns = patterns;
+    this.noteMaps = noteMaps;
     this.json = jsonObject;
     this.rootJsonObject = root;
     init(jsonObject, root);
@@ -61,7 +64,7 @@ public class Bar {
       }
       for (Entry<String, JsonElement> stringJsonElementEntry : patternsJsonObject.entrySet()) {
         String partName = stringJsonElementEntry.getKey();
-        List<List<Pattern>> patterns = new LinkedList<>();
+        List<List<Pattern>> patternLists = new LinkedList<>();
         JsonArray partPatternsJsonArray = JsonUtils.asJsonArray(patternsJsonObject, partName);
         if (!partPatternsJsonArray.isJsonArray()) {
           throw typeMismatchException(partPatternsJsonArray, ARRAY);
@@ -70,27 +73,36 @@ public class Bar {
         for (int j = 0; j < len; j++) {
           JsonElement jsonPatterns = partPatternsJsonArray.get(j);
           String patternNames = jsonPatterns.getAsString();
-          List<Pattern> p = new LinkedList<>();
-          for (String each : patternNames.split(";")) {
-            Pattern cur = this.patterns.get(each);
-            if (cur == null) {
-              throw patternNotFound(jsonPatterns, patternNames);
+          if (patternNames.startsWith("$inline:")) {
+            patternLists.add(singletonList(Pattern.createPattern(JsonUtils.toJson(patternNames.substring("$inline:".length())).getAsJsonObject(), this.noteMaps)));
+          } else {
+            List<Pattern> patternList = new LinkedList<>();
+            for (String eachPatternName : patternNames.split(";")) {
+              Pattern cur;
+              cur = this.patterns.get(eachPatternName);
+              if (cur == null) {
+                throw patternNotFound(jsonPatterns, patternNames);
+              }
+              patternList.add(cur);
             }
-            p.add(cur);
+            patternLists.add(patternList);
           }
-          patterns.add(p);
         }
-        patternLists.put(partName, patterns);
+        Result result = new Result(partName, patternLists);
+        this.patternLists.put(result.partName(), result.patternLists());
       }
     }
+  }
+
+  private record Result(String partName, List<List<Pattern>> patternLists) {
   }
 
   public Set<String> partNames() {
     return Collections.unmodifiableSet(this.patternLists.keySet());
   }
 
-  public List<List<Pattern>> part(String instrumentName) {
-    return Collections.unmodifiableList(this.patternLists.get(instrumentName));
+  public List<List<Pattern>> part(String partName) {
+    return Collections.unmodifiableList(this.patternLists.get(partName));
   }
 
   public Fraction beats() {
