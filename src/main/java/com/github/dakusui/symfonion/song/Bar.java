@@ -22,7 +22,6 @@ import static com.github.dakusui.symfonion.exceptions.SymfonionTypeMismatchExcep
 import static java.util.Collections.singletonList;
 
 public class Bar {
-  private final Map<String, Groove> grooves;
   private final Map<String, Pattern> patterns;
   private final JsonObject rootJsonObject;
   private final Map<String, NoteMap> noteMaps;
@@ -33,35 +32,30 @@ public class Bar {
 
 
   public Bar(JsonObject barJsonObject, JsonObject root, Map<String, Groove> grooves, Map<String, NoteMap> noteMaps, Map<String, Pattern> patterns) throws SymfonionException, JsonException {
-    this.grooves = grooves;
     this.patterns = patterns;
     this.noteMaps = noteMaps;
     this.barJsonObject = barJsonObject;
     this.rootJsonObject = root;
-    init(barJsonObject, root);
-  }
-
-  private void init(JsonObject jsonObject, JsonObject root) throws SymfonionException, JsonException {
     try (Context ignored = context($(JSON_ELEMENT_ROOT, root))) {
       try {
-        this.beats = Fraction.parseFraction(JsonUtils.asString(jsonObject, Keyword.$beats));
+        this.beats = Fraction.parseFraction(JsonUtils.asString(barJsonObject, Keyword.$beats));
       } catch (FractionFormatException e) {
-        throw illegalFormatException(asJsonElement(jsonObject, Keyword.$beats), FRACTION_EXAMPLE);
+        throw illegalFormatException(asJsonElement(barJsonObject, Keyword.$beats), FRACTION_EXAMPLE);
       }
       this.beats = this.beats == null ? Fraction.one : this.beats;
       this.groove = Groove.DEFAULT_INSTANCE;
       Groove g = Groove.DEFAULT_INSTANCE;
-      if (JsonUtils.hasPath(jsonObject, Keyword.$groove)) {
-        String grooveName = JsonUtils.asString(jsonObject, Keyword.$groove.name());
+      if (JsonUtils.hasPath(barJsonObject, Keyword.$groove)) {
+        String grooveName = JsonUtils.asString(barJsonObject, Keyword.$groove.name());
         g = grooves.get(grooveName);
         if (g == null) {
-          throw grooveNotDefinedException(asJsonElement(jsonObject, Keyword.$groove), grooveName);
+          throw grooveNotDefinedException(asJsonElement(barJsonObject, Keyword.$groove), grooveName);
         }
       }
       this.groove = g;
-      JsonObject patternsJsonObjectInBar = getPatternsInBarAsJsonObject(jsonObject);
+      JsonObject patternsJsonObjectInBar = getPatternsInBarAsJsonObject(barJsonObject);
       for (Entry<String, JsonElement> patternEntryJsonElement : patternsJsonObjectInBar.entrySet()) {
-        List<List<Pattern>> patternLists = new LinkedList<>();
+        List<List<Pattern>> patternLists1 = new LinkedList<>();
         String partName = patternEntryJsonElement.getKey();
         JsonArray partPatternsJsonArray = getPatternsForPartJsonElements(partName, patternsJsonObjectInBar);
         int len = partPatternsJsonArray.size();
@@ -69,10 +63,10 @@ public class Bar {
           JsonElement jsonPatterns = partPatternsJsonArray.get(j);
           String patternNames = jsonPatterns.getAsString();
           try (Context ignored2 = context($(REFERENCING_JSON_NODE, jsonPatterns))){
-            patternLists.add(createPattern(patternNames, jsonPatterns));
+            patternLists1.add(createPattern(patternNames, jsonPatterns));
           }
         }
-        this.patternLists.put(partName, patternLists);
+        this.patternLists.put(partName, patternLists1);
       }
     }
   }
