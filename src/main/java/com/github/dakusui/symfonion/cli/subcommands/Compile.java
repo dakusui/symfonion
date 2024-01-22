@@ -23,7 +23,7 @@ public class Compile implements Subcommand {
     public void invoke(Cli cli, PrintStream ps, InputStream inputStream) throws SymfonionException, IOException {
         try (ExceptionThrower.Context ignored = ExceptionThrower.context($(ExceptionThrower.ContextKey.SOURCE_FILE, cli.source()))) {
             Symfonion symfonion = cli.symfonion();
-            Song song = symfonion.load(cli.source().getAbsolutePath());
+            Song song = symfonion.load(cli.source().getAbsolutePath(), cli.barFilter(), cli.partFilter());
             Map<String, Sequence> sequences = symfonion.compile(song);
 
             for (String portName : sequences.keySet()) {

@@ -8,11 +8,13 @@ import com.github.dakusui.symfonion.exceptions.ExceptionThrower;
 import com.github.dakusui.symfonion.exceptions.SymfonionException;
 import com.github.dakusui.symfonion.utils.Utils;
 import com.github.dakusui.valid8j.Requires;
+import com.github.dakusui.valid8j_pcond.forms.Predicates;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import java.util.*;
+import java.util.function.Predicate;
 
 import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.*;
 import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.ContextKey.JSON_ELEMENT_ROOT;
@@ -26,9 +28,38 @@ public class Song {
     private final Context logiasContext;
     private final JsonObject json;
 
+    private Predicate<Bar> barFilter = Predicates.alwaysTrue();
+    private Predicate<String> partFilter = Predicates.alwaysTrue();
+
     public Builder(Context logiasContext, JsonObject jsonObject) {
       this.logiasContext = requireNonNull(logiasContext);
       this.json = requireNonNull(jsonObject);
+    }
+
+    public Builder barFilter(Predicate<Bar> barFilter) {
+      this.barFilter = requireNonNull(barFilter);
+      return this;
+    }
+
+    public Builder partFilter(Predicate<String> partFilter) {
+      this.partFilter = requireNonNull(partFilter);
+      return this;
+    }
+
+    public Song build() throws JsonException, SymfonionException {
+      try (ExceptionThrower.Context ignored = context($(JSON_ELEMENT_ROOT, json))) {
+        Map<String, NoteMap> noteMaps = initNoteMaps(json);
+        Map<String, Groove> grooves = initGrooves(json);
+        Map<String, Pattern> patterns = initPatterns(json, noteMaps);
+        return new Song(
+            loadMidiDeviceProfile(json, logiasContext),
+            initParts(this.json),
+            patterns,
+            noteMaps,
+            grooves,
+            initSequence(json, grooves, noteMaps, patterns, this.barFilter, this.partFilter)
+        );
+      }
     }
 
     private static Context loadMidiDeviceProfile(JsonObject json, Context logiasContext) throws SymfonionException, JsonException {
@@ -50,7 +81,13 @@ public class Song {
       return logiasContext;
     }
 
-    private static List<Bar> initSequence(JsonObject json, Map<String, Groove> grooves, Map<String, Pattern> patterns) throws SymfonionException, JsonException {
+    private static List<Bar> initSequence(
+        JsonObject json,
+        Map<String, Groove> grooves,
+        Map<String, NoteMap> noteMaps,
+        Map<String, Pattern> patterns,
+        Predicate<Bar> barFilter,
+        Predicate<String> partFilter) throws SymfonionException, JsonException {
       List<Bar> bars = new LinkedList<>();
       JsonElement tmp = JsonUtils.asJsonElement(json, Keyword.$sequence);
       if (!tmp.isJsonArray()) {
@@ -63,12 +100,21 @@ public class Song {
         if (!barJson.isJsonObject()) {
           throw typeMismatchException(seqJson, OBJECT);
         }
-        Bar bar = new Bar(barJson.getAsJsonObject(), json, grooves, patterns);
-        bars.add(bar);
+        Bar bar = new Bar(barJson.getAsJsonObject(), json, grooves, noteMaps, patterns, partFilter);
+        if (barFilter.test(bar))
+          bars.add(bar);
       }
       return bars;
     }
 
+    /**
+     * Returns a map of note-map name to note-map.
+     *
+     * @param json A JSON object that defines note-maps.
+     * @return A map of note-map name to note-map.
+     * @throws SymfonionException An error found in {@code json} argument.
+     * @throws JsonException      An error found in {@code json} argument.
+     */
     private static Map<String, NoteMap> initNoteMaps(JsonObject json) throws SymfonionException, JsonException {
       Map<String, NoteMap> noteMaps = new HashMap<>();
       final JsonObject noteMapsJSON = JsonUtils.asJsonObjectWithDefault(json, new JsonObject(), Keyword.$notemaps);
@@ -88,8 +134,8 @@ public class Song {
       Map<String, Pattern> patterns = new HashMap<>();
       JsonObject patternsJSON = JsonUtils.asJsonObjectWithDefault(json, new JsonObject(), Keyword.$patterns);
 
-      Iterator<String> i = JsonUtils.keyIterator(patternsJSON);
       try (ExceptionThrower.Context ignored = context($(JSON_ELEMENT_ROOT, json))) {
+        Iterator<String> i = JsonUtils.keyIterator(patternsJSON);
         while (i.hasNext()) {
           String name = i.next();
           Pattern cur = Pattern.createPattern(JsonUtils.asJsonObject(patternsJSON, name), noteMaps);
@@ -126,22 +172,6 @@ public class Song {
         }
       }
       return grooves;
-    }
-
-    public Song build() throws JsonException, SymfonionException {
-      try (ExceptionThrower.Context ignored = context($(JSON_ELEMENT_ROOT, json))) {
-        Map<String, NoteMap> noteMaps = initNoteMaps(json);
-        Map<String, Groove> grooves = initGrooves(json);
-        Map<String, Pattern> patterns = initPatterns(json, noteMaps);
-        return new Song(
-            loadMidiDeviceProfile(json, logiasContext),
-            initParts(this.json),
-            patterns,
-            noteMaps,
-            grooves,
-            initSequence(json, grooves, patterns)
-        );
-      }
     }
   }
 

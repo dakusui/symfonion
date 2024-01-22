@@ -5,6 +5,7 @@ import com.github.dakusui.json.JsonInvalidPathException;
 import com.github.dakusui.json.JsonPathNotFoundException;
 import com.github.dakusui.json.JsonUtils;
 import com.github.dakusui.logias.lisp.Context;
+import com.github.dakusui.symfonion.song.Bar;
 import com.github.dakusui.symfonion.song.Keyword;
 import com.github.dakusui.symfonion.song.Song;
 import com.github.dakusui.symfonion.utils.Utils;
@@ -18,6 +19,7 @@ import javax.sound.midi.Sequence;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Predicate;
 
 import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.*;
 
@@ -29,12 +31,15 @@ public class Symfonion {
     this.logiasContext = logiasContext;
   }
   
-  public Song load(String fileName)  {
+  public Song load(String fileName, Predicate<Bar> barFilter, Predicate<String> partFilter)  {
     Song ret;
     try (var ignored = context($(ContextKey.SOURCE_FILE, new File(fileName)))) {
       try {
         this.json = loadSymfonionFile(fileName, new HashMap<>());
-        ret = new Song.Builder(logiasContext, json).build();
+        ret = new Song.Builder(logiasContext, json)
+            .barFilter(barFilter)
+            .partFilter(partFilter)
+            .build();
       } catch (JsonSyntaxException e) {
         throw loadFileException(e.getCause());
       } catch (IllegalStateException e) {
@@ -69,7 +74,13 @@ public class Symfonion {
     }
     return ret;
   }
-  
+
+  /**
+   * Compiles a {@link Song} object into a map of a part name to {@link Sequence} object.
+   *
+   * @param song A song object.
+   * @return A map from part name to a MIDI sequence object.
+   */
   public Map<String, Sequence> compile(Song song)  {
     MidiCompiler compiler = new MidiCompiler(song.getLogiasContext());
     Map<String, Sequence> ret;

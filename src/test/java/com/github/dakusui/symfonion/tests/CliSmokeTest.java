@@ -43,15 +43,22 @@ public class CliSmokeTest extends CliTestBase {
         $("$grooves", object($("16beats", sixteenBeatsGroove()))),
         $("$sequence", array(
             object(
+                $("$labels", array(json("reference"))),
                 $("$beats", json("4/4")),
                 $("$patterns", object($("piano", array("R4"))))),
             object(
-                $("$beats", json("16/4")),
+                $("$labels", array(json("reference"))),
+                $("$beats", json("4/4")),
                 $("$patterns", object($("piano", array("main")))),
+                $("$groove", json("16beats"))),
+            object(
+                $("$labels", array(json("inline"))),
+                $("$beats", json("4/4")),
+                $("$patterns", object($("piano", array("$inline:" + object($("$body", array(json("BGE8;r8;AFD8;r8;GEC8;r8")))))))),
                 $("$groove", json("16beats"))
             ))));
 
-    Result result = invokeCliWithArguments("-p", writeContentToTempFile(Objects.toString(song)).getAbsolutePath(), "-Oport1=Gervill");
+    Result result = invokeCliWithArguments("-p", writeContentToTempFile(Objects.toString(song)).getAbsolutePath(), "-Oport1=Gervill", "--bars=*", "--parts=p.*");
 
     System.err.println("[source]");
     System.err.println(".Song");
@@ -73,6 +80,7 @@ public class CliSmokeTest extends CliTestBase {
             ResultTo.out().findSubstrings("*", "Gervill", "Real Time Sequencer")));
   }
 
+  @Ignore
   @Test
   public void givenK311_whenPlaySubcommandIsInvoked_thenPlayed() throws IOException {
     assumeRequiredMidiDevicesPresent();

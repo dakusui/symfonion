@@ -26,7 +26,8 @@ public class ExceptionThrower {
     MIDI_DEVICE_INFO(MidiDevice.Info.class),
     MIDI_DEVICE_INFO_IO(String.class),
     JSON_ELEMENT_ROOT(JsonObject.class),
-    SOURCE_FILE(File.class);
+    SOURCE_FILE(File.class),
+    REFERENCING_JSON_NODE(JsonElement.class);
     private final Class<?> type;
 
     ContextKey(Class<?> type) {
@@ -151,8 +152,8 @@ public class ExceptionThrower {
     throw new SymfonionReferenceException(missingReference, "part", problemCausingJsonNode, contextValueOf(JSON_ELEMENT_ROOT), contextValueOf(SOURCE_FILE), JsonUtils.asJsonElement(contextValueOf(JSON_ELEMENT_ROOT), "$parts"));
   }
 
-  public static SymfonionReferenceException patternNotFound(JsonElement problemCausingJsonNode, String missingReference) throws SymfonionException {
-    throw new SymfonionReferenceException(missingReference, "pattern", problemCausingJsonNode, contextValueOf(JSON_ELEMENT_ROOT), contextValueOf(SOURCE_FILE), JsonUtils.asJsonElement(contextValueOf(JSON_ELEMENT_ROOT), "$patterns"));
+  public static SymfonionReferenceException patternNotFound(String missingReference) throws SymfonionException {
+    throw new SymfonionReferenceException(missingReference, "pattern", contextValueOf(REFERENCING_JSON_NODE), contextValueOf(JSON_ELEMENT_ROOT), contextValueOf(SOURCE_FILE), JsonUtils.asJsonElement(contextValueOf(JSON_ELEMENT_ROOT), "$patterns"));
   }
 
   public static SymfonionTypeMismatchException typeMismatchException(JsonElement actualJSON, String... expectedTypes) throws SymfonionSyntaxException {
