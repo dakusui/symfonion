@@ -61,6 +61,7 @@ see also -o option.
 
 Users can use this option in order to debug regular expressions that are used with -p option.
 This command will behave like a MIDI patch bay when it is invoked with this option.
+// suppress inspection "GrazieInspection"
 MIDI devices associated with midioutport and midiinport must be defined by -O and -I options.
 
 === -o {output filename}
