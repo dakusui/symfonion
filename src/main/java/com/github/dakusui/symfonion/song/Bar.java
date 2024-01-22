@@ -43,7 +43,7 @@ public class Bar {
         throw illegalFormatException(asJsonElement(barJsonObject, Keyword.$beats), FRACTION_EXAMPLE);
       }
       this.beats = this.beats == null ? Fraction.one : this.beats;
-      this.groove = Groove.DEFAULT_INSTANCE;
+      //this.groove = Groove.DEFAULT_INSTANCE;
       Groove g = Groove.DEFAULT_INSTANCE;
       if (JsonUtils.hasPath(barJsonObject, Keyword.$groove)) {
         String grooveName = JsonUtils.asString(barJsonObject, Keyword.$groove.name());
