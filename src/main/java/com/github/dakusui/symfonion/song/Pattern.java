@@ -45,7 +45,7 @@ public class Pattern {
       this.velocityBase = JsonUtils.asIntWithDefault(json, 64, Keyword.$velocitybase);
       this.velocityDelta = JsonUtils.asIntWithDefault(json, 5, Keyword.$velocitydelta);
       this.gate = JsonUtils.asDoubleWithDefault(json, 0.8, Keyword.$gate);
-      this.length = Utils.parseNoteLength(JsonUtils.asStringWithDefault(json, "4", Keyword.$length));
+      this.length = Utils.parseNoteLength(JsonUtils.asStringWithDefault(json, "16", Keyword.$length));
       if (this.length == null) {
         throw illegalFormatException(
             asJsonElement(json, Keyword.$length),
@@ -64,15 +64,15 @@ public class Pattern {
       return this.transpose;
     }
     
-    public int velocitybase() {
+    public int velocityBase() {
       return this.velocityBase;
     }
     
-    public int velocitydelta() {
+    public int velocityDelta() {
       return this.velocityDelta;
     }
     
-    public int arpegio() {
+    public int arpeggio() {
       return this.arpeggio;
     }
   }
