@@ -5,6 +5,8 @@ import com.github.dakusui.symfonion.cli.subcommands.PresetSubcommand;
 import com.github.dakusui.symfonion.core.Symfonion;
 import com.github.dakusui.symfonion.exceptions.CliException;
 import com.github.dakusui.symfonion.exceptions.SymfonionException;
+import com.github.dakusui.symfonion.song.Bar;
+import com.github.dakusui.valid8j_pcond.forms.Predicates;
 import org.apache.commons.cli.*;
 
 import javax.swing.*;
@@ -15,33 +17,38 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import static com.github.dakusui.symfonion.cli.CliUtils.composeErrMsg;
 import static java.lang.String.format;
 
-public record Cli(Subcommand subcommand, File source, File sink, MidiRouteRequest routeRequest,
+public record Cli(
+    Subcommand subcommand,
+    File source,
+    File sink,
+    MidiRouteRequest routeRequest,
     /*
      * Returns a map that defines MIDI-in port names.
      * A key in the returned map is a port name used in a symfonion song file.
      * The value associated with it is a regular expression that should specify a MIDI device.
      * The regular expression should be defined so that it matches one and only one MIDI-in device available in the system.
      */
-                  Map<String, Pattern> midiInRegexPatterns,
+    Map<String, Pattern> midiInRegexPatterns,
     /*
      * Returns a map that defines MIDI-out port names.
      * A key in the returned map is a port name used in a symfonion song file.
      * The value associated with it is a regular expression that should specify a MIDI device.
      * The regular expression should be defined so that it matches one and only one MIDI-out device available in the system.
      */
-                  Map<String, Pattern> midiOutRegexPatterns,
-                  Options options,
-                  Symfonion symfonion) {
+    Map<String, Pattern> midiOutRegexPatterns,
+    Predicate<Bar> barFilter,
+    Predicate<String> partFilter,
+    Options options,
+    Symfonion symfonion) {
 
   /**
    * Returns an {@code Options} object which represents the specification of this CLI command.
@@ -89,6 +96,22 @@ public record Cli(Subcommand subcommand, File source, File sink, MidiRouteReques
       Option option = OptionBuilder.create("o");
       option.setArgs(1);
       option.setDescription("specify a file to which a compiled standard midi file is output.");
+      options.addOption(option);
+    }
+    // bar filter
+    {
+      OptionBuilder.withLongOpt("bars");
+      Option option = OptionBuilder.create();
+      option.setArgs(1);
+      option.setDescription("specify a filter for bars. bars any of whose labels matches with a given regex will be processed.");
+      options.addOption(option);
+    }
+    // part filter
+    {
+      OptionBuilder.withLongOpt("parts");
+      Option option = OptionBuilder.create();
+      option.setArgs(1);
+      option.setDescription("specify a filter for parts. parts whose name matches with a given regex will be processed.");
       options.addOption(option);
     }
     return options;
@@ -274,7 +297,6 @@ public record Cli(Subcommand subcommand, File source, File sink, MidiRouteReques
         if (props.size() != 1) {
           throw new CliException(composeErrMsg("Route information is not given or specified multiple times.", "r", "route"));
         }
-
         this.routeRequest = new MidiRouteRequest(cmd.getOptionValues('r')[0], cmd.getOptionValues('r')[1]);
       } else {
         @SuppressWarnings("unchecked")
@@ -288,7 +310,13 @@ public record Cli(Subcommand subcommand, File source, File sink, MidiRouteReques
           throw new CliException(composeErrMsg(format("Unrecognized arguments:%s", leftovers.subList(2, leftovers.size())), "-"));
         }
       }
-      return new Cli(subcommand, source, sink, routeRequest, midiInRegexPatterns, midiOutRegexPatterns, options1, createSymfonion());
+      Predicate<Bar> barFilter = Predicates.alwaysTrue();
+      if (cmd.hasOption("bars") && !Objects.equals("*", cmd.getOptionValue("bars")))
+        barFilter = bar -> bar.labels().stream().anyMatch(l -> l.matches(cmd.getOptionValue("bars")));
+      Predicate<String> partFilter = Predicates.alwaysTrue();
+      if (cmd.hasOption("parts") && !Objects.equals("*", cmd.getOptionValue("parts")))
+        partFilter = partName -> partName != null && partName.matches(cmd.getOptionValue("parts"));
+      return new Cli(subcommand, source, sink, routeRequest, midiInRegexPatterns, midiOutRegexPatterns, barFilter, partFilter, options1, createSymfonion());
     }
   }
 }

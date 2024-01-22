@@ -152,7 +152,7 @@ public class ExceptionThrower {
     throw new SymfonionReferenceException(missingReference, "part", problemCausingJsonNode, contextValueOf(JSON_ELEMENT_ROOT), contextValueOf(SOURCE_FILE), JsonUtils.asJsonElement(contextValueOf(JSON_ELEMENT_ROOT), "$parts"));
   }
 
-  public static SymfonionReferenceException patternNotFound(JsonElement problemCausingJsonNode, String missingReference) throws SymfonionException {
+  public static SymfonionReferenceException patternNotFound(String missingReference) throws SymfonionException {
     throw new SymfonionReferenceException(missingReference, "pattern", contextValueOf(REFERENCING_JSON_NODE), contextValueOf(JSON_ELEMENT_ROOT), contextValueOf(SOURCE_FILE), JsonUtils.asJsonElement(contextValueOf(JSON_ELEMENT_ROOT), "$patterns"));
   }
 
