@@ -1,0 +1,160 @@
+`.$local` and `.$auto` part should be auto-generated from `.$user` by `mmml` in *prepareResources* stage in the pipeline.
+This will be processed by `jq-front` and `song.json` will be generated.
+
+// $local is auto-generated based on $user.$devices
+// $auto is auto-generated based on $user and keys in .$local
+
+[source,json]
+.song.json++
+----
+{
+  "$local": {
+    "jv-10x0": {
+      "$extends": [ "deviceTypes/jv-10x0.json" ],
+      "$voices": {
+        "default:keyboard": {},
+        "default:guitar": {},
+        "default:bass": {},
+        "default:drums": {}
+      }
+    },
+    "gervill": {
+      "$extends": [ "deviceTypes/gervill.json" ],
+      "$voices": {
+        "default:keyboard": {},
+        "default:guitar": {},
+        "default:bass": {},
+        "default:drums": {}
+      }
+    }
+  },
+  "$auto": {
+    "$patterns": {
+    },
+    "$bars": {
+      "__init__": {
+        "$labels": [ "__init__" ],
+        "$beats": "2/4",
+        "$patterns": {
+          "device:jv1080": [ "eval:string:$(inline_device_init jv1080" ],
+          "device:gervill": [ "$eval:string:$(inline_device_init gervill" ],
+          "part:keyboard": [ "eval:string:$(inline_stroke notes R8)", "eval:string:$(inline_part_init keyboard)", "eval:string:$(voice default:keyboard)" ],
+          "part:guitar": [ "eval:string:$(inline_stroke notes R8)", "eval:string:$(inline_part_init guitar)", "eval:string:$(voice default:guitar)" ],
+          "part:bass": [ "eval:string:$(inline_stroke notes R8)", "eval:string:$(inline_part_init base)", "eval:string:$(voice default:bass)" ],
+          "part:drums": [ "eval:string:$(inline_stroke notes R8)", "eval:string:$(inline_part_init drums)", "eval:string:$(voice default:drums)" ]
+        }
+      }
+    },
+    "$parts": {
+      "part:keyboard": {
+      },
+      "part:guitar": {
+      },
+      "part:bass": {
+      },
+      "part:drums": {
+      }
+    },
+    "sequence": [ "eval:object:$(ref .\"$bars\".__init__)" ]
+  },
+  "$user": {
+    "$devices": {
+      "jv1080": {
+        "$extends": ["deviceTypes/jv10x0.json"],
+        "$voices": {
+          "default:keyboard": "eval:object:$(voice_alias_of piano)",
+          "default:guitar": "eval:object:$(voice_alias_of distortion)",
+          "default:bass": "eval:object:$(voice_alias_of electric-bass)",
+          "default:drums": "eval:object:$(voice_alias_of tekno-kit)",
+          "piano": { "$sysex": ["$jv-set-patchnum-pr-a", "$channel", 0]},
+          "distortion": { "$sysex": ["$jv-set-patchnum-pr-b", "$channel", 8] },
+          "string": { "$sysex": ["$jv-set-patchnum-pr-c", "$channel", 50] },
+          "ensemble": { "$sysex": ["$jv-set-patchnum-pr-c", "$channel", 78] },
+          "bass": { "$sysex": ["$jv-set-patchnum-user", "$channel", 54] },
+          "reed": { "$sysex": ["$jv-set-patchnum-pr-d", "$channel", 65] },
+          "pipe": { "$sysex": ["$jv-set-patchnum-pr-a", "$channel", 59] },
+          "synthLead": { "$sysex": ["$jv-set-patchnum-pr-b", "$channel", 92] },
+          "synthPad": { "$sysex": ["$jv-set-patchnum-pr-c", "$channel", 62] },
+          "electric-bass": { "$sysex": ["$jv-set-patchnum-pr-b", "$channel", 24] },
+          "tekno-kit": { "$sysex": ["$jv-set-patchnum-pr-b", "$channel", 1] }
+        },
+        "$midiPorts": {
+          "out": "port1"
+        }
+      },
+      "gervill": {
+        "$extends": ["deviceTypes/gervill.json"],
+        "$voices": {
+          "default:keyboard": "eval:object:$(voice_alias_of piano)",
+          "default:guitar": "eval:object:$(voice_alias_of overdrive)",
+          "default:bass": "eval:object:$(voice_alias_of electric-bass)",
+          "default:drums": "eval:object:$(voice_alias_of disco-kit)"
+        },
+        "$midiPorts": {
+          "$out": "port2"
+        }
+      }
+    },
+    "$parts": {
+      "part:keyboard": {
+        "$device": "gervill",
+        "$channel": 0
+      },
+      "part:guitar": {
+        "$device": "jv1080",
+        "$channel": 0
+       },
+      "part:bass": {
+        "$device": "gervill",
+        "$channel": 1
+      },
+      "part:drums": {
+        "$device": "jv1080",
+        "$channel": 10
+      }
+    },
+    "$patterns": {
+      "...": "..."
+    },
+    "$grooves": {
+      "...": "..."
+    },
+    "$bars": {
+      "intro-1": {
+        "$labels": ["intro", "1"],
+        "$patterns": {
+           "keyboard":[ "$inline:$(voice piano)", "$inline:$(inline_stroke 'C;D;E;R;C;D;E;R;C;D;E;R;C;D;E;R;')" ],
+           "guitar":[],
+           "bass":[],
+           "drums":[]
+        }
+      },
+      "...": "...",
+      "outro": {
+        "...": "..."
+      }
+    },
+    "$sequence": [
+      "eval:object:$(bar intro)",
+      "eval:object:$(bar verse-1)",
+      "eval:object:$(bar bridge-1)",
+      "eval:object:$(bar break-1)",
+      "eval:object:$(bar chorus-1)",
+      "eval:object:$(bar interlude-1)",
+      "eval:object:$(bar verse-2)",
+      "eval:object:$(bar bridge-2)",
+      "eval:object:$(bar break-2)",
+      "eval:object:$(bar chorus-2)",
+      "eval:object:$(bar interlude-2)",
+      "eval:object:$(bar chorus-3)",
+      "eval:object:$(bar outro)"
+    ]
+  },
+  "$settings": { "$mididevice": "jv" },
+  "$parts": "$eval:object:$(compose_parts_section '.$user.$parts' '.$user.$devices')",
+  "$notemaps": "eval:object:$(ref '.$user.$notemaps')",
+  "$grooves": "eval:object:$(ref '.$user.$grooves')",
+  "$patterns": "eval:object:$(object_merge '.$user.$patterns' '.$auto.patterns')",
+  "$sequence": "eval:array:$(array_append '.$auto.$sequence.__init__' '.$user.$sequence.__init__')"
+}
+----
