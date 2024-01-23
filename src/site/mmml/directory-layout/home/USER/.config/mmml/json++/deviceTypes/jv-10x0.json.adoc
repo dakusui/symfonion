@@ -38,7 +38,7 @@
       ]
     }
   },
-  "waves": {
+  "voices": {
     "piano": {
       "$sysex": ["$jv-set-patchnum-pr-a", "$channel", 0]
     },
