@@ -7,6 +7,8 @@ This file is generated from link:song.json{plus}{plus}.adoc[song.json++] in the 
 .target/mmml/song.json
 ----
 {
+  "$auto": {"...": "..."},
+  "$user": {"...": "..."},
   "$settings": {"...": "..."},
   "$patterns": {"...": "..."},
   "$grooves": {"...": "..."},
