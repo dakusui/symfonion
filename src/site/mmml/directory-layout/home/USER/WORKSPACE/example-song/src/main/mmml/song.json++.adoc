@@ -1,9 +1,17 @@
-A user defined file of
+`.$local` and `.$auto` part should be auto-generated from `.$song` by `mmml` in *prepareResources* stage in the pipeline.
+This will be processed by `jq-front` and `song.json` will be generated.
+
+// $local is auto-generated based on $song.$devices
+// $auto is auto-generated based on $song and keys in .$local
+
+
+[[CONTENT]]
 [source, json]
-.song.mmml.json++
+.song.json++
 ----
 {
-  "$devices": {
+  "$extends": [ "std/song-base.json++" ],
+  "$song": {
     "jv1080": {
       "$extends": ["deviceTypes/jv10x0.json"],
       "$voices": {
@@ -38,65 +46,64 @@ A user defined file of
       "$midiPorts": {
         "$out": "port2"
       }
-    }
-  },
-  "$parts": {
-    "part:keyboard": {
-      "$device": "gervill",
-      "$channel": 0
     },
-    "part:guitar": {
-      "$device": "jv1080",
-      "$channel": 0
-     },
-    "part:bass": {
-      "$device": "gervill",
-      "$channel": 1
-    },
-    "part:drums": {
-      "$device": "jv1080",
-      "$channel": 10
-    }
-  },
-  "$patterns": {
-    "...": "..."
-  },
-  "$grooves": {
-    "...": "..."
-  },
-  "$bars": {
-    "intro-1": {
-      "$labels": ["intro", "1"],
-      "$patterns": {
-         "keyboard":[
-           "$inline:$(voice piano)",
-           "$inline:$(inline_stroke 'C;D;E;R;C;D;E;R;C;D;E;R;C;D;E;R;')"
-         ],
-         "guitar":[],
-         "bass":[],
-         "drums":[]
+    "$parts": {
+      "part:keyboard": {
+        "$device": "gervill",
+        "$channel": 0
+      },
+      "part:guitar": {
+        "$device": "jv1080",
+        "$channel": 0
+       },
+      "part:bass": {
+        "$device": "gervill",
+        "$channel": 1
+      },
+      "part:drums": {
+        "$device": "jv1080",
+        "$channel": 9
       }
     },
-    "...": "...",
-    "outro": {
+    "$patterns": {
       "...": "..."
-    }
-  },
-  "$sequence": [
-    "eval:object:$(bar intro)",
-    "eval:object:$(bar verse-1)",
-    "eval:object:$(bar bridge-1)",
-    "eval:object:$(bar break-1)",
-    "eval:object:$(bar chorus-1)",
-    "eval:object:$(bar interlude-1)",
-    "eval:object:$(bar verse-2)",
-    "eval:object:$(bar bridge-2)",
-    "eval:object:$(bar break-2)",
-    "eval:object:$(bar chorus-2)",
-    "eval:object:$(bar interlude-2)",
-    "eval:object:$(bar chorus-3)",
-    "eval:object:$(bar outro)"
-  ]
+    },
+    "$grooves": {
+      "...": "..."
+    },
+    "$bars": {
+      "intro-1": {
+        "$labels": ["intro", "1"],
+        "$patterns": {
+           "keyboard":[
+             "$inline:$(voice piano)",
+             "$inline:$(inline_stroke 'C;D;E;R;C;D;E;R;C;D;E;R;C;D;E;R;')"
+           ],
+           "guitar":[],
+           "bass":[],
+           "drums":[]
+         }
+      },
+      "...": "...",
+      "outro": {
+        "...": "..."
+      }
+    },
+    "$sequence": [
+      "eval:object:$(bar intro)",
+      "eval:object:$(bar verse-1)",
+      "eval:object:$(bar bridge-1)",
+      "eval:object:$(bar break-1)",
+      "eval:object:$(bar chorus-1)",
+      "eval:object:$(bar interlude-1)",
+      "eval:object:$(bar verse-2)",
+      "eval:object:$(bar bridge-2)",
+      "eval:object:$(bar break-2)",
+      "eval:object:$(bar chorus-2)",
+      "eval:object:$(bar interlude-2)",
+      "eval:object:$(bar chorus-3)",
+      "eval:object:$(bar outro)"
+    ]
+  }
 }
 ----
-This file should be convertable into JSON file by `jq-front` only setting `JF_PATH` environment variable properly.

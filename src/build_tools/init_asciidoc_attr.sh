@@ -7,7 +7,7 @@ shopt -s inherit_errexit
   exit 1
 }
 myself="$(realpath "${0}")"
-top_dir="$(pwd)/src/site/mmml"
+top_dir="$(pwd)/src/site/mmml/directory-layout"
 doc_base="${1:-${top_dir}}"
 
 # shellcheck disable=SC2156
@@ -39,7 +39,7 @@ if [[ "${doc_base}" == "${top_dir}" ]]; then
 [.text-right]
 **<link:{xdg_config_home}/mmml/INDEX.adoc[XDG_CONFIG_HOME/mmml]>**
 **<link:{xdg_data_home}/mmml/INDEX.adoc[XDG_DATA_HOME/mmml]>**
-**<link:{xdg_local_bin}/mmml/INDEX.adoc[XDG_LOCAL_BIN/mmml]>**
+**<link:{xdg_local_bin}/INDEX.adoc[XDG_LOCAL_BIN]>**
 **<link:{xdg_local_lib}/mmml/INDEX.adoc[XDG_LOCAL_LIB/mmml]>**
 
 [.text-left]

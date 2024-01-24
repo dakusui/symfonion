@@ -1,0 +1,20 @@
+A file that defines basic structure of `song.json{plus}{plus}`.
+
+[[CONTENT]]
+[source,json]
+[%nowrap]
+.std/song-base.json++
+----
+{
+  "$extends": [ "devices.json" ],
+  "$auto": {
+    "$extends": [ "auto.json" ]
+  },
+  "$settings": { "$mididevice": "jv" },
+  "$parts": "$eval:object:$(compose_parts_section '.$song.$parts' '.$song.$devices')",
+  "$notemaps": "eval:object:$(ref '.$song.$notemaps')",
+  "$grooves": "eval:object:$(ref '.$song.$grooves')",
+  "$patterns": "eval:object:$(object_merge '.$song.$patterns' '.$auto.patterns')",
+  "$sequence": "eval:array:$(array_append '.$auto.$sequence.__init__' '.$song.$sequence.__init__')"
+}
+----

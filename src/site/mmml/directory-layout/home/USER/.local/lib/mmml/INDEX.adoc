@@ -1,12 +1,14 @@
+include::.attr.adoc[]
+
 Under this directory, executables and libraries of `mmml` and its components (i.e. `symfonion` and `buildweaver`) are stored.
 
 ----
 This directory
-`-{version}/    <1>
-`-{...}/
-`-{...}/
-`-snapshot/     <2>
-`-latest        <3>
+\_{version}/    <1>
+\_{...}/
+\_{...}/
+\_snapshot/     <2>
+\_latest        <3>
 ----
 1. Under this directory, files of one released version will be stored.
 2. Under this directory, files of a development version will be stored.
@@ -19,6 +21,8 @@ Check its link:{xdg_local_bin}/mmml-manager.adoc[documentation] for more detail.
 For the internal structure of subdirectories (`+{version}+` and  `snapshot`) of this, check link:1.0.1/INDEX.adoc[an example].
 
 [bibliography]
+
+
 == References
 
 - [[[mmml-manager, 1]]] link:{xdg_local_bin}/mmml-manager.adoc[mmml-manager]

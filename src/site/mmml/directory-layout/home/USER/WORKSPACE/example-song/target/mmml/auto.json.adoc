@@ -1,0 +1,32 @@
+[[CONTENT]]
+[source, json]
+.auto.json
+----
+{
+  "$bars": {
+    "__init__": {
+      "$labels": [ "__init__" ],
+      "$beats": "2/4",
+      "$patterns": {
+        "device:jv1080": [ "eval:string:$(inline_device_init jv1080" ],
+        "device:gervill": [ "$eval:string:$(inline_device_init gervill" ],
+        "part:keyboard": [ "eval:string:$(inline_stroke notes R8)", "eval:string:$(inline_part_init keyboard)", "eval:string:$(voice default:keyboard)" ],
+        "part:guitar": [ "eval:string:$(inline_stroke notes R8)", "eval:string:$(inline_part_init guitar)", "eval:string:$(voice default:guitar)" ],
+        "part:bass": [ "eval:string:$(inline_stroke notes R8)", "eval:string:$(inline_part_init base)", "eval:string:$(voice default:bass)" ],
+        "part:drums": [ "eval:string:$(inline_stroke notes R8)", "eval:string:$(inline_part_init drums)", "eval:string:$(voice default:drums)" ]
+      }
+    }
+  },
+  "$parts": {
+    "part:keyboard": {
+    },
+    "part:guitar": {
+    },
+    "part:bass": {
+    },
+    "part:drums": {
+    }
+  },
+  "sequence": [ "eval:object:$(ref .\"$bars\".__init__)" ]
+}
+----

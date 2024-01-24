@@ -1,5 +1,6 @@
 [[CONTEN]]
-[%nowrap, yaml]
+[source, yaml]
+[%nowrap]
 .buildweaver.json
 ----
 ---
@@ -15,7 +16,9 @@ profiles:
     perf: "-O2"
 stages:
   clean:
-    - cmd: rm                      # Phew! It's scary! Use clean_target_directory built-in in daily use.
+    # Phew! It's scary! Use clean_target_directory built-in in daily use.
+    - cmd: "rm"
+      args:
       - -fr
       - target
   copyResources:

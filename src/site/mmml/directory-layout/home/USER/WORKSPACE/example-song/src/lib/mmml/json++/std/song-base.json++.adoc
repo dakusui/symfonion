@@ -1,7 +1,0 @@
-A file that defines basic structure of `song.json{plus}{plus}`.
-
-[[CONTENT]]
-.std/song-base.json++
-----
-{}
-----

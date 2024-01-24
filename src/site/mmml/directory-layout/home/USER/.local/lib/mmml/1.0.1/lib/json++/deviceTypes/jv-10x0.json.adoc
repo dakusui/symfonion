@@ -5,7 +5,6 @@
 ----
 {
   "$extends": [ "gm.json" ],
-  "import": [ "jv.json" ],
   "initialize": {
     "device": {
       "description": "This defines a procedure to initialize JV-10x0 devices.",
