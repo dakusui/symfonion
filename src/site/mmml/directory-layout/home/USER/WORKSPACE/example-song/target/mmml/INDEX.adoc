@@ -1,1 +1,18 @@
 Contents of this directory is copied from `src/main/mmml` and it will be an entry in `JF_PATH` environment variable, when compilation step happens.
+
+
+song.json++::
+Users define their music by writing this file.
+
+std/song-base.json{plus}{plus}::
+This is a built-in file of `mmml` .
+This gives a basic structure of the `song.json++` file.
+Supposed to be "extended" by `song.json{plus}{plus}`.
+auto.json::
+This is an auto-generated file by `mmml` 's "prepareResource" stage.
+devices.json::
+This is an auto-generated file by `mmml` 's "prepareResource" stage.
+This file collects information about
+song.json:: (t.b.d.)
+
+

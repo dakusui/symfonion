@@ -1,50 +1,46 @@
-`.$local` and `.$auto` part should be auto-generated from `.$song` by `mmml` in *prepareResources* stage in the pipeline.
-This will be processed by `jq-front` and `song.json` will be generated.
+include::.attr.adoc[]
 
-// $local is auto-generated based on $song.$devices
-// $auto is auto-generated based on $song and keys in .$local
-
+It is a cliché to have a phrase `"$extends": ["std/song-base.json{plus}{plus}"]` at the top of this file.
+This is a syntax to "extend" (or inherit) the content of `std/song-base.json++` under elements in `JF_PATH` environment variable.
+By default, the one under `\{xdg_local_lib\}/mmml/1.0.1/lib/json{plus}{plus}` directory will be picked up.
 
 [[CONTENT]]
 [source, json]
+[%nowrap]
 .song.json++
 ----
 {
   "$extends": [ "std/song-base.json++" ],
   "$song": {
-    "jv1080": {
-      "$extends": ["deviceTypes/jv10x0.json"],
-      "$voices": {
-        "default:keyboard": "eval:object:$(voice_alias_of piano)",
-        "default:guitar": "eval:object:$(voice_alias_of distortion)",
-        "default:bass": "eval:object:$(voice_alias_of electric-bass)",
-        "default:drums": "eval:object:$(voice_alias_of tekno-kit)",
-        "piano": { "$sysex": ["$jv-set-patchnum-pr-a", "$channel", 0]},
-        "distortion": { "$sysex": ["$jv-set-patchnum-pr-b", "$channel", 8] },
-        "string": { "$sysex": ["$jv-set-patchnum-pr-c", "$channel", 50] },
-        "ensemble": { "$sysex": ["$jv-set-patchnum-pr-c", "$channel", 78] },
-        "bass": { "$sysex": ["$jv-set-patchnum-user", "$channel", 54] },
-        "reed": { "$sysex": ["$jv-set-patchnum-pr-d", "$channel", 65] },
-        "pipe": { "$sysex": ["$jv-set-patchnum-pr-a", "$channel", 59] },
-        "synthLead": { "$sysex": ["$jv-set-patchnum-pr-b", "$channel", 92] },
-        "synthPad": { "$sysex": ["$jv-set-patchnum-pr-c", "$channel", 62] },
-        "electric-bass": { "$sysex": ["$jv-set-patchnum-pr-b", "$channel", 24] },
-        "tekno-kit": { "$sysex": ["$jv-set-patchnum-pr-b", "$channel", 1] }
+    "$devices": {
+      "jv-1080": {
+        "$deviceType": "jv-10x0",
+        "$voices": {
+          "default:keyboard": "eval:object:$(voice_alias_of piano)",
+          "default:guitar": "eval:object:$(voice_alias_of distortion)",
+          "default:bass": "eval:object:$(voice_alias_of electric-bass)",
+          "default:drums": "eval:object:$(voice_alias_of tekno-kit)",
+          "piano": { "$sysex": ["$jv-set-patchnum-pr-a", "$channel", 0]},
+          "distortion": { "$sysex": ["$jv-set-patchnum-pr-b", "$channel", 8] },
+          "string": { "$sysex": ["$jv-set-patchnum-pr-c", "$channel", 50] },
+          "ensemble": { "$sysex": ["$jv-set-patchnum-pr-c", "$channel", 78] },
+          "bass": { "$sysex": ["$jv-set-patchnum-user", "$channel", 54] },
+          "reed": { "$sysex": ["$jv-set-patchnum-pr-d", "$channel", 65] },
+          "pipe": { "$sysex": ["$jv-set-patchnum-pr-a", "$channel", 59] },
+          "synthLead": { "$sysex": ["$jv-set-patchnum-pr-b", "$channel", 92] },
+          "synthPad": { "$sysex": ["$jv-set-patchnum-pr-c", "$channel", 62] },
+          "electric-bass": { "$sysex": ["$jv-set-patchnum-pr-b", "$channel", 24] },
+          "tekno-kit": { "$sysex": ["$jv-set-patchnum-pr-b", "$channel", 1] }
+        }
       },
-      "$midiPorts": {
-        "out": "port1"
-      }
-    },
-    "gervill": {
-      "$extends": ["deviceTypes/gervill.json"],
-      "$voices": {
-        "default:keyboard": "eval:object:$(voice_alias_of piano)",
-        "default:guitar": "eval:object:$(voice_alias_of overdrive)",
-        "default:bass": "eval:object:$(voice_alias_of electric-bass)",
-        "default:drums": "eval:object:$(voice_alias_of disco-kit)"
-      },
-      "$midiPorts": {
-        "$out": "port2"
+      "gervill": {
+        "$deviceType": "gm.json",
+        "$voices": {
+          "default:keyboard": "eval:object:$(voice_alias_of piano)",
+          "default:guitar": "eval:object:$(voice_alias_of overdrive)",
+          "default:bass": "eval:object:$(voice_alias_of electric-bass)",
+          "default:drums": "eval:object:$(voice_alias_of disco-kit)"
+        }
       }
     },
     "$parts": {
@@ -66,6 +62,7 @@ This will be processed by `jq-front` and `song.json` will be generated.
       }
     },
     "$patterns": {
+      "part:keyboard:program_change:piano": "eval:object:$(voice piano)",
       "...": "..."
     },
     "$grooves": {
@@ -75,13 +72,13 @@ This will be processed by `jq-front` and `song.json` will be generated.
       "intro-1": {
         "$labels": ["intro", "1"],
         "$patterns": {
-           "keyboard":[
-             "$inline:$(voice piano)",
-             "$inline:$(inline_stroke 'C;D;E;R;C;D;E;R;C;D;E;R;C;D;E;R;')"
+           "part:keyboard":[
+             "eval:string:$inline:$(voice piano)",
+             "eval:string:$inline:$(stroke 'C;D;E;R;C;D;E;R;C;D;E;R;C;D;E;R;')"
            ],
-           "guitar":[],
-           "bass":[],
-           "drums":[]
+           "part:guitar":[],
+           "part:bass":[],
+           "part:drums":[]
          }
       },
       "...": "...",
@@ -107,3 +104,15 @@ This will be processed by `jq-front` and `song.json` will be generated.
   }
 }
 ----
+
+== Functions
+
+link:{xdg_local_lib}/mmml/1.0.1/lib/json++/helpers/symfonion.rc.adoc[symnfonion.rc]
+
+bar(_bar_name):: references a bar named `_bar_name`in `$bars` element.
+voice:: Composes a message(s) to change voice for a part.
+Used in `.$bars.+{bar_name}+.$patterns.+{_partname_}+[ ]`.
+This function requires `_device_name` function to work.
+_device_name:: Prints a device name of a part in which this function is called.
+This means function that calls this needs to be used in `.$bars.+{bar_name}+.$patterns.+{_partname_}+[ ]`.
+

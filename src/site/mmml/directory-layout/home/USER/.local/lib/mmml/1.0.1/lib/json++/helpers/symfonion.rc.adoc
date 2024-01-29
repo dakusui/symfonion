@@ -26,3 +26,79 @@ function device_name() {
   # this figures out port name first, then it will figure out a device name assigned to the port.
 }
 ----
+
+[source, bash]
+----
+####
+# Merges two JSON objects into one in the same manner as the inheritance of jq-front.
+function object_merge() {
+  :
+}
+
+####
+# Creates a new JSON array from two JSON arrays by appending the second one to the first.
+function array_append() {
+  :
+}
+
+function voice_alias_of() {
+  local _voice_name="${1}"
+  ref $(cur) ."${_voice_name}"
+}
+
+####
+# This function constructs a stroke object for changing a voice in a polymorphic manner.
+# This function is intended to be used in '.{$user,$auto}.bars.{barName}.$patterns.{partName}.[*]'
+# Output is string type and should look like, :
+#   '$inline:{"$sysex":["$jv-set-patchnum-pr-c","$channel",78]}'
+# if it is used for a JV-10x0 series synthesizer.
+function voice() {
+  local _voice_name="${1}"
+  _voice "$(_device_name)" "${_voice_name}"
+}
+
+# This function is intended to be used by voice function.
+function _voice() {
+  local _device_name="${1}" _voice_name="${2}"
+  local _p
+  _p="$(printf '.$song.$devices.%s.$voices.%s' "${_device_name}" "${_voice_name}")"
+  printf '$inline:%s' "$(ref ${_p})"
+}
+
+# This function prints a device name of the current part.
+# This function is intended to be used by 'voice' function.
+function _device_name() {
+  :
+}
+
+# is this really necessary?
+function inline_stroke() {
+  printf '$inline:%s' "$(stroke "${@}")"
+}
+
+# To be re-written
+function stroke() {
+  local _type="${1}"
+  shift
+  local _values="${@}"
+  printf '%s' "$(jq -ncr                              \
+                    --arg key '$'"${_type}"           \
+                    --argjson value "${_value}"       \
+                      '{"$body": {"$notes": $value}}' )"
+}
+
+function inline_init_part() {
+  :
+}
+
+function inline_voice() {
+  :
+}
+
+# Composes an element in "bar"
+function bar() {
+  l0cal _bar_name="${1}"
+  ref '.$bar'."${_bar_name}"
+}
+
+----

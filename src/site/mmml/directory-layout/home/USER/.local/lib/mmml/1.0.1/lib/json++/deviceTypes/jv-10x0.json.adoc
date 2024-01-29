@@ -1,6 +1,7 @@
 
 [[CONTENT]]
-[%nowrap, json]
+[source, json]
+[%nowrap]
 .jv-10x0.json
 ----
 {
