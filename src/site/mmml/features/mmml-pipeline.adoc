@@ -31,8 +31,8 @@
    |         | build  +----+     +----+----+           +----------------------+
    ++------->| weaver |               :
              |        +----+          +--------------------------+ prepareResources
-             |        +---+|                                     |   process files in strokes directory
-             |        |   ||                                     |   generate __index__.json files
+             |        +---+|                                     |   generate auto.json file
+             |        |   ||                                     |
              |        +--+||                                     V
              +--------+  |||  5  +---------+       5.1 +--------------------------+
                          ||+---->|PP3:     +---------->|{d}song.json++ (yaml/json)|
@@ -71,7 +71,7 @@
 3: Copy Resources:: Copy resources under source directory (`src/main/mmml`) to working directory (`target/mmml`).
 4: Prepare Resources:: In this step, two things will be done.
 First Convert files under `strokes` will be converted into patterns, and they will be stored under `patterns` directory.
-See link:../directory-layout/home/{USER}/WORKSPACE/example-song/src/main/mmml/song/strokes/[`strokes`].
+See link:../directory-layout/home/USER/WORKSPACE/example-song/src/main/mmml/song/strokes/[`strokes`].
 Then, traverse the copied resourced and find `\\__index__` files.
 For each directory wih the file, generate `\\__index__.json`, which contains entries for JSON files in it.
 Note that all those happen only under `target` directory.

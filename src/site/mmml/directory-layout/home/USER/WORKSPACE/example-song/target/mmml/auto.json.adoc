@@ -16,7 +16,7 @@
             "default:drums": {}
           },
           "$midiPorts": {
-            "out": "jv-1080"
+            "$out": "jv-1080"
           }
         },
         "gervill": {
@@ -32,16 +32,16 @@
           }
         }
       },
-      "jv-1080": "eval:object:$(object_merge '.$song.$devices.jv-1080' '$auto.$devices.$default.jv-1080')",
-      "gervill": "eval:object:$(object_merge '.$song.$devices.gervill' '$auto.$devices.$default.gervill')"
+      "jv-1080": "eval:object:$(object_merge '.$song.$devices.jv-1080' '.$auto.$devices.$default.jv-1080')",
+      "gervill": "eval:object:$(object_merge '.$song.$devices.gervill' '.$auto.$devices.$default.gervill')"
     },
     "$bars": {
       "__init__": {
         "$labels": [ "__init__" ],
         "$beats": "2/4",
         "$patterns": {
-          "device:jv1080": [ "eval:string:$(inline_device_init jv1080" ],
-          "device:gervill": [ "$eval:string:$(inline_device_init gervill" ],
+          "device:jv1080": [ "eval:string:$(inline_device_init jv1080)" ],
+          "device:gervill": [ "$eval:string:$(inline_device_init gervill)" ],
           "part:keyboard": [ "eval:string:$(inline_stroke notes R8)", "eval:string:$(inline_part_init keyboard)", "eval:string:$(voice default:keyboard)" ],
           "part:guitar": [ "eval:string:$(inline_stroke notes R8)", "eval:string:$(inline_part_init guitar)", "eval:string:$(voice default:guitar)" ],
           "part:bass": [ "eval:string:$(inline_stroke notes R8)", "eval:string:$(inline_part_init base)", "eval:string:$(voice default:bass)" ],
