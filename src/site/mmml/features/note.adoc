@@ -1,10 +1,35 @@
+:toc:
+
+= SYNTAX: `song.json++`
+
+
 include::.attr.adoc[]
+
+== Object Structure of `song.json++`
+
+[plantuml]
+----
+class "helpers/symfonion.rc" as symfonion_helper {
+}
+class song extends song_base {
+}
+class "std/song-base.json++" as song_base extends auto, symfonion_helper {
+}
+class "auto.json" as auto {
+}
+class "song.json++" as song {
+}
+auto *--> "0.." device: use
+class device {
+}
+----
+
+== `song.json++`
 
 It is a cliché to have a phrase `"$extends": ["std/song-base.json{plus}{plus}"]` at the top of this file.
 This is a syntax to "extend" (or inherit) the content of `std/song-base.json++` under elements in `JF_PATH` environment variable.
 By default, the one under `\{xdg_local_lib\}/mmml/1.0.1/lib/json{plus}{plus}` directory will be picked up.
 
-[[CONTENT]]
 [source, json]
 [%nowrap]
 .song.json++
@@ -73,8 +98,8 @@ By default, the one under `\{xdg_local_lib\}/mmml/1.0.1/lib/json{plus}{plus}` di
         "$labels": ["intro", "1"],
         "$patterns": {
            "part:keyboard":[
-             "eval:string:$inline:$(voice piano)",
-             "eval:string:$inline:$(stroke 'C;D;E;R;C;D;E;R;C;D;E;R;C;D;E;R;')"
+             "eval:string:$(inline $(voice piano))",
+             "eval:string:$(inline $(stroke 'C;D;E;R;C;D;E;R;C;D;E;R;C;D;E;R;'))"
            ],
            "part:guitar":[],
            "part:bass":[],
@@ -105,9 +130,10 @@ By default, the one under `\{xdg_local_lib\}/mmml/1.0.1/lib/json{plus}{plus}` di
 }
 ----
 
+== `std/song-base.json++`
+
 `std/song-base.json++` is a file that defines basic structure of `song.json{plus}{plus}`.
 
-[[CONTENT]]
 [source,json]
 [%nowrap]
 .std/song-base.json++
@@ -123,9 +149,162 @@ By default, the one under `\{xdg_local_lib\}/mmml/1.0.1/lib/json{plus}{plus}` di
 }
 ----
 
+== device definition files
+
+=== `jv-10x0.json`
+
+[source, json]
+[%nowrap]
+.jv-10x0.json
+----
+{
+  "$extends": [ "gm.json" ],
+  "initialize": {
+    "device": {
+      "description": "This defines a procedure to initialize JV-10x0 devices.",
+      "procedure": [
+        {
+          "type": "cli",
+          "execution": {
+              "cmd": "check UM1",
+              "args": [
+              ]
+          }
+        },
+        {
+          "type": "midiMessages",
+          "execution": { "$sysex": [ "$set-syscommon-soundmode-perf" ] }
+        },
+        {
+          "type": "midiMessage",
+          "execution": { "$sysex": [ "$jv-set-currentperf", 12 ] }
+        }
+      ]
+    },
+    "channel": {
+      "description": "This defines a procedure to initialize a MIDI channel of a JV-10x0 device. You can reference a channel to be initialized by '$channel'",
+      "procedure": [
+        {
+          "type": "midiMessages",
+          "execution": { "$sysex": ["$jv-init-part", "$channel", "$channel"] }
+        }
+      ]
+    }
+  },
+  "voices": {
+    "piano": {
+      "$sysex": ["$jv-set-patchnum-pr-a", "$channel", 0]
+    },
+    "guitar": {
+      "$sysex": ["$jv-set-patchnum-pr-b", "$channel", 8]
+    },
+    "string": {
+      "$sysex": ["$jv-set-patchnum-pr-c", "$channel", 50]
+    },
+    "ensemble": {
+      "$sysex": ["$jv-set-patchnum-pr-c", "$channel", 78]
+    },
+    "bass": {
+      "$sysex": ["$jv-set-patchnum-user", "$channel", 54]
+    },
+    "reed": {
+      "$sysex": ["$jv-set-patchnum-pr-d", "$channel", 65]
+    },
+    "pipe": {
+      "$sysex": ["$jv-set-patchnum-pr-a", "$channel", 59]
+    },
+    "synthLead": {
+      "$sysex": ["$jv-set-patchnum-pr-b", "$channel", 92]
+    },
+    "synthPad": {
+      "$sysex": ["$jv-set-patchnum-pr-c", "$channel", 62]
+    },
+    "bass": {
+      "$sysex": ["$jv-set-patchnum-pr-b", "$channel", 24]
+    },
+    "drums": {
+      "$sysex": ["$jv-set-patchnum-pr-b", "$channel", 1]
+    }
+  }
+}
+----
+
+=== `gm.json`
+
+[source, json]
+[%nowrap]
+.gm.json
+----
+{
+  "$extends" : [ "deviceType-helper.sh;SOURCE" ]
+  "__device_name__" : "eval:string:$(device_name)",
+  "import": [],
+  "initialize": {
+    "device": {
+      "description": "This defines a procedure to initialize a General MIDI-1 level device, which requires nothing.",
+      "procedure": []
+    },
+    "channel": {
+      "description": "This defines a procedure to initialize a MIDI channel of a General MIDI-1 level device, which requires nothing.",
+      "procedure": []
+    }
+  },
+  "waves": {
+    "piano": { "$program": 0, "$bank": 0.0 },
+    "chromaticPercussion": { "$program": 8, "$bank": 0.0 },
+    "organ": { "$program": 16, "$bank": 0.0 },
+    "guitar": { "$program": 24, "$bank": 0.0 },
+    "bass": { "$program": 32, "$bank": 0.0 },
+    "string": { "$program": 40, "$bank": 0.0 },
+    "ensemble": { "$program": 48, "$bank": 0.0 },
+    "brass": { "$program": 56, "$bank": 0.0 },
+    "reed": { "$program": 64, "$bank": 0.0 },
+    "pipe": { "$program": 72, "$bank": 0.0 },
+    "synthLead": { "$program": 80, "$bank": 0.0 },
+    "synthPad": { "$program": 88, "$bank": 0.0 },
+    "synthEffectRain": { "$program": 96, "$bank": 0.0 },
+    "synthEffectSoundtrack": { "$program": 97, "$bank": 0.0 },
+    "synthEffectCrystal": { "$program": 98, "$bank": 0.0 },
+    "synthEffectAtmosphere": { "$program": 99, "$bank": 0.0 },
+    "synthEffectBrightness": { "$program": 100, "$bank": 0.0 },
+    "synthEffectGoblins": { "$program": 101, "$bank": 0.0 },
+    "synthEffectEchoes": { "$program": 102, "$bank": 0.0 },
+    "synthEffectSciFi": { "$program": 103, "$bank": 0.0 },
+    "ethnic": { "$program": 104, "$bank": 0.0 },
+    "percussive": { "$program": 112, "$bank": 0.0 },
+    "soundEffectGuitarFretNoise": { "$program": 120, "$bank": 0.0 },
+    "soundEffectBreathNoise": { "$program": 121, "$bank": 0.0 },
+    "soundEffectSeashore": { "$program": 122, "$bank": 0.0 },
+    "soundEffectBirdTweet": { "$program": 123, "$bank": 0.0 },
+    "soundEffectTelephoneRing": { "$program": 124, "$bank": 0.0 },
+    "soundEffectHelicoptor": { "$program": 125, "$bank": 0.0 },
+    "soundEffectApplause": { "$program": 126, "$bank": 0.0 },
+    "soundEffectGunshot": { "$program": 127, "$bank": 0.0 },
+  }
+}
+----
+
+A bank select is explicitly sent because if this definition is used for GM-2 level device, the bank won't be properly set and unintended wave will be played, otherwise.
+
+[%nowrap, script]
+.deviceType-helper.sh
+----
+function wave() {
+  local _device_name="${1}" _wave_name="${2}"
+  ref .system.devices."${_device_name}".waves."${_wave_name}"
+}
+
+function device_name() {
+  local _p
+  _p="$(cur)"
+  echo "${_p##*.}"
+}
+----
+
+
+== `auto.json`
+
 link:{target_dir}/mmml/auto.json.adoc[auto.json] is a file auto-generated in the stage of  link:{doc_base}/features/mmml-pipeline.adoc[mmml-pipeline].
-
-
 
 [source, json]
 [%nowrap]
@@ -192,11 +371,13 @@ link:{target_dir}/mmml/auto.json.adoc[auto.json] is a file auto-generated in the
 }
 ----
 
+== `helpers/symfonion.rc`
+
 A script library that defines functions useful for `symfonion` users.
 
 A reserved word is always prefixed with `$`.
 
-[source, bash]
+[source, shellscript]
 .`helpers/symfonion.rc`
 ----
 #!/usr/bin/env bash -eu
@@ -241,8 +422,8 @@ function array_append() {
 }
 
 function voice_alias_of() {
-local _voice_name="${1}"
-ref $(cur) ."${_voice_name}"
+  local _voice_name="${1}"
+  ref $(cur) ."${_voice_name}"
 }
 
 ####
@@ -252,8 +433,8 @@ ref $(cur) ."${_voice_name}"
 #   '$inline:{"$sysex":["$jv-set-patchnum-pr-c","$channel",78]}'
 # if it is used for a JV-10x0 series synthesizer.
 function voice() {
-local _voice_name="${1}"
-_voice "$(_device_name)" "${_voice_name}"
+  local _voice_name="${1}"
+  _voice "$(_device_name)" "${_voice_name}"
 }
 
 # This function is intended to be used by voice function.
@@ -286,12 +467,15 @@ function stroke() {
                       '{"$body": {"$notes": $value}}' )"
 }
 
-function inline_init_part() {
-:
+function init_device() {
+  :
+}
+function init_part() {
+  :
 }
 
-function inline_voice() {
-:
+function voice() {
+  :
 }
 
 # Composes an element in "bar"
@@ -299,23 +483,30 @@ function bar() {
   l0cal _bar_name="${1}"
   ref '.$bar'."${_bar_name}"
 }
-
 ----
 
+=== Used in `song.json++`
+voice_alias_of:: (t.b.d.) .$song.$devices.+{device}+.$voices
+voice:: .$song.$bars, $song.$patterns
+bar:: .$song.$sequence
+stroke:: .$song.$bars
+inline:: .$bars
+bar:: .$sequence
 
-[plantuml]
-----
-class "helpers/symfonion.rc" as symfonion_helper {
-}
-class song extends song_base {
-}
-class "std/song-base.json++" as song_base extends auto, symfonion_helper {
-}
-class "auto.json" as auto {
-}
-class "song.json++" as song {
-}
-auto *--> "0.." device: use
-class device {
-}
-----
+=== Used in `song-base.json++`
+
+compose_parts_section:: .$parts
+object_merge:: .$patterns
+array_append:: .$sequence
+
+=== Used in `auto.json`
+
+object_merge:: .$auto.$devices.+{device}+
+device_init:: .$auto.$bars.$patterns
+part_init:: .$auto.$bars.$patterns
+inline:: .$auto.$bars.$patterns, etc.
+voice:: .$auto.$bars.$patterns
+
+
+
+
