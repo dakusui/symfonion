@@ -39,7 +39,7 @@ By default, the one under `\{xdg_local_lib\}/mmml/1.0.1/lib/json{plus}{plus}` di
   "$song": {
     "$devices": {
       "jv-1080": {
-        "$deviceType": "jv-10x0",
+        "$extends": [ "deviceTypes/jv-10x0" ],
         "$voices": {
           "default:keyboard": "eval:object:$(voice_alias_of piano)",
           "default:guitar": "eval:object:$(voice_alias_of distortion)",
@@ -59,7 +59,7 @@ By default, the one under `\{xdg_local_lib\}/mmml/1.0.1/lib/json{plus}{plus}` di
         }
       },
       "gervill": {
-        "$deviceType": "gm.json",
+        "$extends": [ "deviceTypes/gm.json" ],
         "$voices": {
           "default:keyboard": "eval:object:$(voice_alias_of piano)",
           "default:guitar": "eval:object:$(voice_alias_of overdrive)",
@@ -219,9 +219,6 @@ By default, the one under `\{xdg_local_lib\}/mmml/1.0.1/lib/json{plus}{plus}` di
     "synthPad": {
       "$sysex": ["$jv-set-patchnum-pr-c", "$channel", 62]
     },
-    "bass": {
-      "$sysex": ["$jv-set-patchnum-pr-b", "$channel", 24]
-    },
     "drums": {
       "$sysex": ["$jv-set-patchnum-pr-b", "$channel", 1]
     }
@@ -236,7 +233,7 @@ By default, the one under `\{xdg_local_lib\}/mmml/1.0.1/lib/json{plus}{plus}` di
 .gm.json
 ----
 {
-  "$extends" : [ "deviceType-helper.sh;SOURCE" ]
+  "$extends" : [ "deviceType-helper.sh;SOURCE" ],
   "__device_name__" : "eval:string:$(device_name)",
   "import": [],
   "initialize": {
@@ -277,9 +274,9 @@ By default, the one under `\{xdg_local_lib\}/mmml/1.0.1/lib/json{plus}{plus}` di
     "soundEffectSeashore": { "$program": 122, "$bank": 0.0 },
     "soundEffectBirdTweet": { "$program": 123, "$bank": 0.0 },
     "soundEffectTelephoneRing": { "$program": 124, "$bank": 0.0 },
-    "soundEffectHelicoptor": { "$program": 125, "$bank": 0.0 },
+    "soundEffectHelicopter": { "$program": 125, "$bank": 0.0 },
     "soundEffectApplause": { "$program": 126, "$bank": 0.0 },
-    "soundEffectGunshot": { "$program": 127, "$bank": 0.0 },
+    "soundEffectGunshot": { "$program": 127, "$bank": 0.0 }
   }
 }
 ----
@@ -316,24 +313,14 @@ link:{target_dir}/mmml/auto.json.adoc[auto.json] is a file auto-generated in the
       "$default": {
         "jv-1080": {
           "$extends": [ "deviceTypes/jv-10x0.json" ],
-          "$voices": {
-            "default:keyboard": {},
-            "default:guitar": {},
-            "default:bass": {},
-            "default:drums": {}
-          },
+          "$default_voices": "eval:object:$(render_default_parts)",
           "$midiPorts": {
             "out": "jv-1080"
           }
         },
         "gervill": {
           "$extends": [ "deviceTypes/gm.json" ],
-          "$voices": {
-            "default:keyboard": {},
-            "default:guitar": {},
-            "default:bass": {},
-            "default:drums": {}
-          },
+          "$default_voices": "eval:object:$(render_default_parts)",
           "$midiPorts": {
             "$out": "gervill"
           }
@@ -368,6 +355,16 @@ link:{target_dir}/mmml/auto.json.adoc[auto.json] is a file auto-generated in the
     },
     "sequence": [ "eval:object:$(ref '.$bars.__init__')" ]
   }
+}
+----
+
+.output of `render_default_parts`
+----
+{
+  "default:keyboard": {},
+  "default:guitar": {},
+  "default:bass": {},
+  "default:drums": {}
 }
 ----
 
@@ -442,7 +439,7 @@ function _voice() {
   local _device_name="${1}" _voice_name="${2}"
   local _p
   _p="$(printf '.$song.$devices.%s.$voices.%s' "${_device_name}" "${_voice_name}")"
-  printf '$inline:%s' "$(ref ${_p})"
+  ref "${_p}"
 }
 
 # This function prints a device name of the current part.
