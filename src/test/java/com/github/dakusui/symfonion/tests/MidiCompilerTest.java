@@ -66,6 +66,7 @@ public class MidiCompilerTest extends TestBase {
   }
 
   public static List<SymfonionTestCase> positiveTestCases() {
+    String beats = "16/4";
     return Arrays.asList(
         createPositiveTestCase(
             TestUtils.name("top level attributes are all empty", "compile", "empty song"),
@@ -236,6 +237,31 @@ public class MidiCompilerTest extends TestBase {
             TestUtils.name("a note and an 'arrayable' control (volume)", "compile", "arrayable control expanded."),
             SymfonionJsonTestUtils.composeSymfonionSongJsonObject(
                 "port2", array(new StrokeBuilder().notes("C4").volume(array(10, 20, 30, 40, 50, 60, 70, 80, 90, 100)).build()), SymfonionJsonTestUtils.sixteenBeatsGroove()),
+            Transform.$(FromSong.toSequence("port2").andThen(trackList()).andThen(elementAt(0))).allOf(
+                toStreamBy(midiMessageStream(isNoteOn())).anyMatch(note(isEqualTo(C3))),
+                toStreamBy(midiMessageStream(isNoteOff())).anyMatch(note(isEqualTo(C3))),
+                toStreamBy(midiMessageStream(isControlChange().and(control(isEqualTo(VOLUME))))).allMatch(controlData(greaterThanOrEqualTo((byte) 10))),
+                toStreamBy(midiMessageStream(isControlChange().and(control(isEqualTo(VOLUME))))).checkCount(isEqualTo(10L))
+            )),
+
+        createPositiveTestCase(
+            TestUtils.name("a note and an 'arrayable' control (volume) by referencing different patterns using overlay", "compile", "arrayable control expanded."),
+            object(
+                $("$settings", object()),
+                $("$parts", object($("piano", object($("$channel", json(0)), $("$port", json("port2")))))),
+                $("$patterns", object(
+                    $("C16x16", object(
+                        $("$body", array(new StrokeBuilder().notes("C4").build()))
+
+                    )),
+                    $("crescendo", object(
+                        $("$body", array(new StrokeBuilder().volume(array(10, 20, 30, 40, 50, 60, 70, 80, 90, 100)).build()))
+                    )))),
+                $("$grooves", object($("16beats", SymfonionJsonTestUtils.sixteenBeatsGroove()))),
+                $("$sequence", array(object($("$beats", json(beats)), $("$patterns",
+                        object($("piano", array("C16x16", "crescendo")))
+                    ),
+                    $("$groove", json("16beats")))))),
             Transform.$(FromSong.toSequence("port2").andThen(trackList()).andThen(elementAt(0))).allOf(
                 toStreamBy(midiMessageStream(isNoteOn())).anyMatch(note(isEqualTo(C3))),
                 toStreamBy(midiMessageStream(isNoteOff())).anyMatch(note(isEqualTo(C3))),
