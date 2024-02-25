@@ -271,7 +271,7 @@
 	"$sequence": [
 		{
 			"$beats": "1/4",
-			"$patterns": {
+			"$parts": {
 				"vocal": [
 					"setting"
 				],
@@ -288,7 +288,7 @@
 		},
 		{
 			"$beats": "16/16",
-			"$patterns": {
+			"$parts": {
 				"vocal": [],
 				"piano": [],
 				"guitar": [
@@ -304,7 +304,7 @@
 		},
 		{
 			"$beats": "16/16",
-			"$patterns": {
+			"$parts": {
 				"vocal": [
 					"melody1"
 				],
@@ -326,7 +326,7 @@
 		},
 		{
 			"$beats": "16/16",
-			"$patterns": {
+			"$parts": {
 				"vocal": [
 					"melody1",
 					"effect1"
@@ -347,7 +347,7 @@
 		},
 		{
 			"$beats": "16/16",
-			"$patterns": {
+			"$parts": {
 				"vocal": [
 					"melody1",
 					"effect1"

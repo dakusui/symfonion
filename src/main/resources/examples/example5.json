@@ -15,7 +15,7 @@
   "$sequence": [
     {
       "$beats": "8/4",
-      "$patterns": {
+      "$parts": {
         "piano": [
           "acoustic"
         ]

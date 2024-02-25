@@ -21,23 +21,23 @@
     "$length": 8
     "$gate": 0.3
 "$sequence":
-  - "$patterns":
+  - "$parts":
       pianor:
         - 01r
     "$beats": 2/4
-  - "$patterns":
+  - "$parts":
       pianor:
         - 02r
     "$beats": 4/4
-  - "$patterns":
+  - "$parts":
       pianor:
         - 04r
     "$beats": 4/4
-  - "$patterns":
+  - "$parts":
       pianor:
         - 06r
     "$beats": 4/4
-  - "$patterns":
+  - "$parts":
       pianor:
         - '08r'
     "$beats": 4/4
