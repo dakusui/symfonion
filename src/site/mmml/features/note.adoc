@@ -39,7 +39,7 @@ By default, the one under `\{xdg_local_lib\}/mmml/1.0.1/lib/json{plus}{plus}` di
   "$song": {
     "$devices": {
       "jv-1080": {
-        "$extends": [ "deviceTypes/jv-10x0" ],
+        "$extends": [ "deviceTypes/jv-10x0.json" ],
         "$voices": {
           "default:keyboard": "eval:object:$(voice_alias_of piano)",
           "default:guitar": "eval:object:$(voice_alias_of distortion)",
@@ -246,7 +246,7 @@ By default, the one under `\{xdg_local_lib\}/mmml/1.0.1/lib/json{plus}{plus}` di
       "procedure": []
     }
   },
-  "waves": {
+  "$voices": {
     "piano": { "$program": 0, "$bank": 0.0 },
     "chromaticPercussion": { "$program": 8, "$bank": 0.0 },
     "organ": { "$program": 16, "$bank": 0.0 },
@@ -277,7 +277,8 @@ By default, the one under `\{xdg_local_lib\}/mmml/1.0.1/lib/json{plus}{plus}` di
     "soundEffectHelicopter": { "$program": 125, "$bank": 0.0 },
     "soundEffectApplause": { "$program": 126, "$bank": 0.0 },
     "soundEffectGunshot": { "$program": 127, "$bank": 0.0 }
-  }
+  },
+  "$availableVoices": "eval:object:$(merge_objects \"$(ref $(cur).$voices)\" \"$(ref $(cur).$defaultVoices)\")"
 }
 ----
 
@@ -506,4 +507,4 @@ voice:: .$auto.$bars.$patterns
 
 
 
-
+render_parts:: (t.b.d.)

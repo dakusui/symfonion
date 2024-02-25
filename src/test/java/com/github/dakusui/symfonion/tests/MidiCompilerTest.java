@@ -80,7 +80,7 @@ public class MidiCompilerTest extends TestBase {
                     $("$sequence", array(
                         object(
                             $("$beats", json("8/4")),
-                            $("$patterns", object()))
+                            $("$parts", object()))
                     )))),
             Transform.$(FromSong.toKeySet()).check(isEmpty())),
 
@@ -92,7 +92,7 @@ public class MidiCompilerTest extends TestBase {
                 object($("$sequence", array(
                     merge(
                         object($("$beats", json("8/4"))),
-                        object($("$patterns", object($("piano", array()))))
+                        object($("$parts", object($("piano", array()))))
                     ))))),
             AllOf.$(
                 FromMap.<String>toKeyList().allOf(
@@ -118,7 +118,7 @@ public class MidiCompilerTest extends TestBase {
                 $("$sequence", array(
                     merge(
                         object($("$beats", json("8/4"))),
-                        object($("$patterns", object($("piano", array("pg-change-to-piano"))))))
+                        object($("$parts", object($("piano", array("pg-change-to-piano"))))))
                 ))),
             allOf(
                 FromMap.<String>toKeyList().allOf(
@@ -144,7 +144,7 @@ public class MidiCompilerTest extends TestBase {
                 $("$sequence", array(
                     merge(
                         object($("$beats", json("8/4"))),
-                        object($("$patterns", object($("piano", array("C16x16"))))),
+                        object($("$parts", object($("piano", array("C16x16"))))),
                         object($("$groove", json("16beats")))
                     )))),
             AllOf.$(

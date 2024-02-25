@@ -46,7 +46,7 @@ public class Bar {
       /*
         partName -> [ patternName ]
        */
-      JsonObject patternsJsonObjectInBar = getPatternsInBarAsJsonObject(barJsonObject);
+      JsonObject patternsJsonObjectInBar = getPartsInBarAsJsonObject(barJsonObject);
       for (Entry<String, JsonElement> patternEntryJsonElement : patternsJsonObjectInBar.entrySet()) {
         if (!partFilter.test(patternEntryJsonElement.getKey()))
           continue;
@@ -102,10 +102,10 @@ public class Bar {
     return partPatternsJsonArray;
   }
 
-  private static JsonObject getPatternsInBarAsJsonObject(JsonObject jsonObject) {
-    JsonObject patternsJsonObjectInBar = JsonUtils.asJsonObject(jsonObject, Keyword.$patterns);
+  private static JsonObject getPartsInBarAsJsonObject(JsonObject jsonObject) {
+    JsonObject patternsJsonObjectInBar = JsonUtils.asJsonObject(jsonObject, Keyword.$parts);
     if (patternsJsonObjectInBar == null) {
-      throw requiredElementMissingException(jsonObject, Keyword.$patterns);
+      throw requiredElementMissingException(jsonObject, Keyword.$parts);
     }
     return patternsJsonObjectInBar;
   }
@@ -146,7 +146,7 @@ public class Bar {
 
   public JsonElement lookUpJsonNode(String partName) {
     try {
-      return asJsonElement(this.barJsonObject, Keyword.$patterns, partName);
+      return asJsonElement(this.barJsonObject, Keyword.$parts, partName);
     } catch (JsonInvalidPathException e) {
       return null;
     }

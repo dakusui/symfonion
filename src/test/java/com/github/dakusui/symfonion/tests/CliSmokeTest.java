@@ -13,6 +13,7 @@ import org.junit.Test;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Objects;
+import java.util.Optional;
 
 import static com.github.dakusui.symfonion.testutils.json.SymfonionJsonTestUtils.sixteenBeatsGroove;
 import static com.github.dakusui.symfonion.testutils.json.SymfonionJsonTestUtils.sixteenBeatsGrooveFlat;
@@ -36,7 +37,7 @@ public class CliSmokeTest extends CliTestBase {
     assumeThat(isRunUnderPitest(), isFalse());
     JsonObject song = object(
         $("$settings", object()),
-        $("$parts", object($("piano", object($("$channel", json(0)), $("$port", json("port1")))))),
+        $("$parts", object($("piano", object($("$channel", json(0)), $("$port", json("GERVILL_PORT")))))),
         $("$patterns", object(
             $("R4", object($("$body", json("r4")))),
             $("main", object($("$body", array(json("BGE8;r8;AFD8;r8;GEC8;r8"))))))),
@@ -45,20 +46,20 @@ public class CliSmokeTest extends CliTestBase {
             object(
                 $("$labels", array(json("reference"))),
                 $("$beats", json("4/4")),
-                $("$patterns", object($("piano", array("R4"))))),
+                $("$parts", object($("piano", array("R4"))))),
             object(
                 $("$labels", array(json("reference"))),
                 $("$beats", json("4/4")),
-                $("$patterns", object($("piano", array("main")))),
+                $("$parts", object($("piano", array("main")))),
                 $("$groove", json("16beats"))),
             object(
                 $("$labels", array(json("inline"))),
                 $("$beats", json("4/4")),
-                $("$patterns", object($("piano", array("$inline:" + object($("$body", array(json("BGE8;r8;AFD8;r8;GEC8;r8")))))))),
+                $("$parts", object($("piano", array("$inline:" + object($("$body", array(json("BGE8;r8;AFD8;r8;GEC8;r8")))))))),
                 $("$groove", json("16beats"))
             ))));
 
-    Result result = invokeCliWithArguments("-p", writeContentToTempFile(Objects.toString(song)).getAbsolutePath(), "-Oport1=Gervill", "--bars=*", "--parts=p.*");
+    Result result = invokeCliWithArguments("-p", writeContentToTempFile(Objects.toString(song)).getAbsolutePath(), "-OGERVILL_PORT=Gervill", "--bars=*", "--parts=p.*");
 
     System.err.println("[source]");
     System.err.println(".Song");
