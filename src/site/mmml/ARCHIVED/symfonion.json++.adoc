@@ -1,0 +1,29 @@
+[%nowrap,json]
+----
+{
+  "$executionParameters": "eval:object:render_execution_parameters",
+  "$song": {
+    "bars": {
+
+    },
+    "grooves": {
+
+    },
+    "patterns": {
+
+    },
+    "programs": {
+
+    },
+    "sequences": {
+      "full": {
+        "...": "..."
+      }
+    }
+  },
+  "$settings": "eval:object:$(render_settings $(ref .\"$song\") $(ref .\"$executionParameters\"))",
+  "$patterns": "eval:object:$(render_patterns $(ref .\"$song\") $(ref .\"$executionParameters\"))",
+  "$grooves": "eval:object:$(render_groove $(ref .\"$song\") $(ref .\"$executionParameters\"))",
+  "$sequence": "eval:array:$(render_sequence $(ref .\"$song\") $(ref .\"$executionParameters\"))"
+}
+----

@@ -1,0 +1,38 @@
+This file is auto-generated in `prepareResources` stage of `buildWeaver` module.
+
+[[CONTENT]]
+[source,json]
+----
+{
+  "chords": {
+    "Am": {
+      "$body": "AC>E"
+    },
+    "Em": {
+      "$body": "EGB"
+    },
+    "C": {
+      "$body": "CEG"
+    },
+    "4": {
+      "$length": "4",
+      "$gate": 0.95
+    },
+    "2": {
+      "$length": "2",
+      "$gate": 0.95
+    },
+    "1": {
+      "$length": "1",
+      "$gate": 0.95
+    }
+  }
+}
+----
+
+
+These can be used as follows:
+
+----
+$(chord "Am" "4")
+----

@@ -1,0 +1,80 @@
+include::.attr.adoc[]
+
+The project definition file for `mmml`.
+
+[source, json]
+----
+{
+  "name": "mmmlExample",
+  "profiles": {
+    "$includes": [ "src/main/mmml/profiles.json?" ],
+    "default": {
+      "pipeline": "compile-and-play",
+      "parts": ["*"],
+      "sequence": ["*"],
+      "ports": "default"
+    },
+    "part": {
+      "pipeline": "compile-and-play",
+      "parts": ["*"],
+      "sequence": ["${chosen}"],
+      "ports": "default"
+    },
+    "compile": {
+      "pipeline": "compile-only",
+      "parts": ["*"],
+      "sequence": ["*"],
+      "ports": "default"
+    }
+  },
+  "stages": {
+    "clean": {
+        "execute": "rm",
+        "args": [
+          "-fr",
+          "target"
+        ]
+    },
+    "prepareResources": {
+      "$//": "Generates __index__.json in every directory which has __index__ file"
+
+    },
+    "runSymfonion-playSong": {
+      "cmd": "eval:string:${HOME}/.local/symfonion/bin/symfonion",
+      "args": [
+        "--play",
+        "eval:string:$(profileValue infile)",
+        "eval:array:$(profileValue midiOutPrtMap)"
+      ]
+    },
+    "runSymfonion-compileOnly": {
+      "cmd": "eval:string:${HOME}/.local/symfonion/bin/symfonion",
+      "args": []
+
+    },
+    "connectDevices": {
+
+    }
+  },
+  "pipelines": {
+    "clean": [ "clean" ],
+    "compile": [ "prepareResources"],
+    "compile-and-play": [ "copyResources", "prepareResources", "runSymfonion-playSong" ]
+  },
+  "devices": {
+    "jv": {
+      "executables": [{}]
+    },
+    "yoshimi": {
+      "executables": [{}]
+    },
+    "gm": {
+      "executables": [{}]
+    }
+  }
+}
+----
+
+`mmml` generates buildweaver.json from this file.
+
+See link:../../../../mmml-pipeline.adoc[]

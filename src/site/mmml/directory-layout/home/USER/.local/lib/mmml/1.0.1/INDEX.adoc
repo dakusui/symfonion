@@ -1,0 +1,4 @@
+This is a directory that stores executable files and library files of a certain version of `mmml` processor.
+
+link:bin/INDEX.adoc[bin]:: stores executables of `mmml`.
+link:lib/[lib]:: stores libraries of `mmml`.

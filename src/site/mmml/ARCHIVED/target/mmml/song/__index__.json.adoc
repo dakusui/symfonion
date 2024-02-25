@@ -1,0 +1,36 @@
+This file is auto-generated in `prepareResources` stage of `buildWeaver` module.
+
+[[CONTENT]]
+[source,json]
+----
+{
+  "bars": {
+    "break-1": { "...": "..." },
+    "bridge-1": { "...": "..." },
+    "bridge-2": { "...": "..." },
+    "chorus-1": { "...": "..." },
+    "...": { "...": "..." },
+    "prepare": { "...": "..." },
+    "verse-1": { "...": "..." },
+    "verse-2": { "...": "..." }
+  },
+  "grooves": {
+    "8beats": ["..."],
+    "16beats": ["..."]
+  },
+  "patterns": {
+
+  },
+  "programs": {
+    "gervill": {
+      "...": "..."
+    },
+    "jv": {
+      "...": "..."
+    },
+    "yoshimi": {
+      "...": "..."
+    }
+  }
+}
+----

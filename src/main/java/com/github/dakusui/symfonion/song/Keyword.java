@@ -39,5 +39,5 @@ public enum Keyword {
 	$velocitybase,
 	$velocitydelta,
 	$volume, 
-	$ticks, 
+	$ticks, $labels,
 }

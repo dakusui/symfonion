@@ -27,14 +27,14 @@
 	"$sequence":[
 	    {
 			"$beats":"16/16",
-			"$patterns":{
+			"$parts":{
 				"vocal":["melody1"]
 			},
 			"$groove":"16beats"
 		},
 	    {
 			"$beats":"16/16",
-			"$patterns":{
+			"$parts":{
 				"vocal":["melody1"]
 			},
 			"$groove":"16beats"

@@ -82,7 +82,7 @@ public enum SymfonionJsonTestUtils {
         $("$sequence", array(
             merge(
                 object($("$beats", json(beats))),
-                object($("$patterns", object($(partName, array(patternName))))),
+                object($("$parts", object($(partName, array(patternName))))),
                 object($("$groove", json(grooveName)))
             ))));
   }
@@ -99,7 +99,7 @@ public enum SymfonionJsonTestUtils {
         $("$sequence", array(
             merge(
                 object($("$beats", json(beats))),
-                object($("$patterns", object($(partName, array("$inline:" + object($("$body", array(strokes)))))))),
+                object($("$parts", object($(partName, array("$inline:" + object($("$body", array(strokes)))))))),
                 object($("$groove", json(grooveName)))
             ))));
   }

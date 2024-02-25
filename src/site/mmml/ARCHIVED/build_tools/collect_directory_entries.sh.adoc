@@ -1,0 +1,53 @@
+[[CONTENT]]
+[source, shell]
+----
+#!/usr/bin/env bash -eu
+
+function main() {
+  local _args="${@}"
+  local _target_dir_name _index_json_file
+  # Generates a JSON object whose keys are filestems of chosen JSON/YAML files and values are the content of the file.
+  _index_json_file="$(find_file "${1}/__index__.json")"
+  _target_dir_name="$(dirname "${_target_dir_name}")"
+  # based on the content in __index__.json, list the entries in the directory and
+  # construct a JSON object
+  # ...
+}
+
+main "${@}"
+----
+
+If you have a directory like below:
+
+----
+dir/
+  __index__.json  // Suppose that the content of this file is '{}'
+  file1.json      // Suppose that the content of this is '{"key1": "value1", "...":"..."}
+  file2.json
+  dir2/
+    file3.json    // The content is '["a", "b", "c"]'
+----
+
+You will get following output:
+
+[source, json]
+----
+{
+  "file1": {
+    "key1": "value",
+    "...": "..."
+  },
+  "file2": [
+    "...",
+    "..."
+  ],
+  "dir2": {
+    "file3": ["a", "b", "c"]
+  }
+}
+----
+
+If the content of one of the files in the `dir` is malformed, an error will be reported.
+
+In case you have `file1.json` and `file2.yaml` in the directory, the behavior is not specified.
+

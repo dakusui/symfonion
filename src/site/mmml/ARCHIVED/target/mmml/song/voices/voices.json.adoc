@@ -1,0 +1,50 @@
+[source, json]
+.voices.json
+----
+{
+  "gervill": {
+    "$extends": ["gervill/__index__.json"]
+  },
+  "jv": {
+    "$extends": ["jv/__index__.json", "gervill/__index__.json"]
+  },
+  "surge-xt": {
+    "$extends": ["surge-xt/__index__.json", "gervill/__index__.json"]
+  },
+  "yoshimi": {
+    "$extends": ["yoshimi/__index__.json", "gervill/__index__.json"]
+  }
+}
+----
+In this example, we assume that `Gervill` only supports GM-1 level programs, which can be supported any other (modern) MIDI devices.
+So, the other devices (`jv`, `surge-xt`, and `yoshimi`) are extending it (`gervill/__index__.json`).
+
+After inheritance resolution by `jq-front` happens, the JSON node generated from this file will look like following:
+
+[source, json]
+----
+{
+  "gervill": {
+    "drums": {
+      "...": "..."
+    },
+    "piano": {
+      "...": "..."
+    },
+    "...": "..."
+  },
+  "jv": {
+    "drums": {
+      "...": "..."
+    },
+    "piano": {
+      "...": "..."
+    },
+    "...": "..."
+  },
+  "...": "..."
+}
+----
+
+
+TODO:: This doc should go to `src/main` side.

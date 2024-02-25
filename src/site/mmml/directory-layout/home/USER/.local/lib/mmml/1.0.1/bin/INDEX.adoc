@@ -1,0 +1,8 @@
+include::.attr.adoc[]
+
+link:buildweaver.adoc[buildweaver]:: A utility tool to execute `mmml` command.
+As shown in the link:{doc_base}/INDEX.adoc[pipeline design], `mmml` 's processing pipeline consists of several stages, which should be executed in specific orders depending on the use case.
+`buildweaver` provides a way to execute them properly at the same time flexibly.
+link:mmml.adoc[mmml]:: This is a command that users directly executes.
+Ideally, this works as a wrapper of  `buildweaver` and executes it only with given arguments.
+link:symfonion.adoc[synfonion]:: A core component of `mmml`, which compiles a given JSON file into MIDI data object and plays it.

@@ -1,0 +1,10 @@
+This file is auto-generated in `prepareResources` stage of `buildWeaver` module.
+
+[[CONTENT]]
+[source,json]
+----
+{
+  "8beats": ["..."],
+  "16beats": ["..."]
+}
+----

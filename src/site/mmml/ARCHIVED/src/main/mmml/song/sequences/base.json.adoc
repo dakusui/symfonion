@@ -1,0 +1,22 @@
+[[CONTENT]]
+[source, json]
+----
+{
+  "$extends": ["symfonion.sh;SOURCE"],
+  "$settings": {
+    "$includes": ["settings/devices.json"]
+  },
+  "$parts": {
+    "$includes": ["settings/parts.json"]
+  },
+  "$patterns": {
+    "$includes": ["song/programs.json"]
+  },
+  "$grooves": {
+    "$includes": ["song/grooves.json"]
+  },
+  "$bars": {
+    "$includes": ["song/bars.json"]
+  }
+}
+----

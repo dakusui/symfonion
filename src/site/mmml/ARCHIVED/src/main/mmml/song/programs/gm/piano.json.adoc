@@ -1,0 +1,8 @@
+[[CONTENT]]
+[source, json]
+----
+{
+  "$program": 0,
+  "$bank": 0.0
+}
+----

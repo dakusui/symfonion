@@ -1,0 +1,29 @@
+[source,json]
+----
+{
+  "wave": {
+    "$program": 1,
+    "$bank": 0.0,
+    "...": "..."
+  },
+  "init": [],
+}
+----
+
+wave::
+This is an attribute that specifies a "wave" of a voice.
+In GM-1 (General MIDI 1) standard, it is just a program number that can be sent by `$program` control change.
+Usually synthesizers have a lot of more tones not included in the standard.
+To specify such a tone, you can send "bank" control change.
+To select a bank, you can use `$bank` attribute.
+Its integer part specifies MSB of it, while fraction part specifies LSB.
+To find which bank stores what tones, check a manual of a synthesizer you are using.
+Some mode of some synthesizer allows you to choose a tone through system exclusive messages.
+For instance, a wave in an expansion card for Roland's JV series.
+To choose it, you can use `$sysex` attribute.
+
+
+
+init::
+This attribute defines a sequence of MIDI signals which should be sent to a MIDI device on which this voice will be played.
+The message will be a part of a pattern "init/{voice name}".

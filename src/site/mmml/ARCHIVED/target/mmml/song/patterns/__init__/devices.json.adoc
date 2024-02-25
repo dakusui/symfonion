@@ -1,0 +1,19 @@
+[[CONTENT]]
+[%nowrap, json]
+.devices.json
+----
+{
+  "surge-xt-1": {
+    "$body": "eval:array:$(ref .\"$settings\".devices.\"surge-xt-1\".init",
+  },
+  "jv-10x0-performance-012": {
+    "$body": "eval:array:$(ref .\"$settings\".devices.\"jv-10x0-performance-012\".init",
+  },
+  "gervill": {
+    "$body": "eval:array:$(ref .\"$settings\".devices.gervill.init",
+  },
+  "yoshimi-1": {
+    "$body": "eval:array:$(ref .\"$settings\".devices.\"yoshimi-1\".init",
+  }
+}
+----

@@ -26,7 +26,7 @@ public class Play implements Subcommand {
     try (Context ignored = context($(SOURCE_FILE, cli.source()))) {
       Symfonion symfonion = cli.symfonion();
 
-      Song song = symfonion.load(cli.source().getAbsolutePath());
+      Song song = symfonion.load(cli.source().getAbsolutePath(), cli.barFilter(), cli.partFilter());
       Map<String, Sequence> sequences = symfonion.compile(song);
       ps.println();
       Map<String, MidiDevice> midiOutDevices = prepareMidiOutDevices(ps, cli.midiOutRegexPatterns());

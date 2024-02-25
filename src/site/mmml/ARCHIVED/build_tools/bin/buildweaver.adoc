@@ -1,0 +1,59 @@
+This is currently just an example, which illustrates the format of option definition.
+
+[[CONTENT]]
+[%nowrap, shellscript]
+----
+BUILDFLOW_SPECIFICATION="$(
+  cat <<'END'
+{
+      "usage": "buildflow [OPTION]... [SUBCOMMAND]...",
+      "description":[
+        "Runs tests.",
+        "",
+        "Sub-commands:",
+        "  preprocess:",
+        "    Preprocesses test definition files (yaml++, yaml, and json++) and convert them into executable JSON test files",
+        "  run:",
+        "    Runs tests under a directory specified by --test-workdir and writes a report file: testreport.json under a ",
+        "    directory specified by --test-reportdir.",
+        "  report:",
+        "    Reads a file testreport.json under directory specified by --test-reportdir and renders a report file (testreport.adoc)",
+        "    under the same directory.",
+        "  none:",
+        "    Does nothing",
+        "",
+        "Options: (* - for development use only)"
+      ],
+      "options":[
+        ["h","help",false,false,"show this help"],
+        ["p","parallel",false,false,"execute the tests in parallel"],
+        ["f","filter",true,[".*"],"filter tests with the specified regular expression"],
+        ["","commandunit-dir",true,[],"directory to store config and data files (default: {test-srcdir}/.commandunit)"],
+        ["","project-name",true,["unknown"],"set project name of the test execution. used as the report's title"],
+        ["","test-srcdir",true,[],"specify directory under which tests are stored (default: current directory/src/test)"],
+        ["","test-workdir",true,[],"specify directory under which commandunit writes internal data* (default: current directory + /target/commandunit/work)"],
+        ["","test-reportdir",true,[],"write test reports under the specified directory* (default: current directory + /target/commandunit/report)"],
+        ["","ignore-mtime",false,false,"ignore mtime and forcibly compile tests"],
+        ["","clean",false,false,"clean working directory"],
+        ["","tapview",false,false,"show test progress with 'tapview'"]
+      ],
+      "examples":{
+        "commandunit": "Run tests found under current directory in sequential mode.",
+        "commandunit --test-srcdir=DIR": "Run tests found under DIR in sequential mode.",
+        "commandunit --test-srcdir=DIR -p": "Run tests found under DIR in parallel mode."
+      },
+      "references":{
+        "github project": "https://github.com/dakusui/bud",
+        "documentation": "https://dakusui.github.io/commandunit/",
+        "Test Anything Protocol": "https://testanything.org/",
+        "tapview": "https://gitlab.com/esr/tapview"
+      }
+  },
+  "configuration": {
+  "directories": {
+      "source": "src/main/mmml",
+      "work": "target/mmml/src"
+    }
+  }
+END
+----

@@ -27,7 +27,7 @@
   "$sequence": [
     {
       "$beats": "8/8",
-      "$patterns": {
+      "$parts": {
         "test": [
           "test1"
         ]
@@ -35,7 +35,7 @@
     },
     {
       "$beats": "8/8",
-      "$patterns": {
+      "$parts": {
         "test": [
           "test1"
         ]

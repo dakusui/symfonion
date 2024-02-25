@@ -1,0 +1,35 @@
+[[CONTENT]]
+[source, json]
+.\\__index__.json
+----
+{
+  "jv-10x0-performance-012": {
+    "deviceType": "jv",
+    "port": "UM1",
+    "init": {
+      "...": "..."
+    },
+    "voices": {
+      "...": "..."
+    }
+  },
+  "yoshimi-1": {
+    "deviceType": "yoshimi",
+    "port": "\\[hw:1:0:1\\]",
+    "...": "..."
+  },
+  "surge-xt-1": {
+    "deviceType": "surge-xt",
+    "port": "\\[hw:1:1:0\\]",
+    "...": "..."
+  },
+  "gervill-1": {
+    "deviceType": "gervill",
+    "port": "Gervill",
+  }
+}
+----
+
+
+
+

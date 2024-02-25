@@ -1,0 +1,11 @@
+[source, yaml]
+----
+piano:
+-
+guitar:
+-
+base:
+-
+drums:
+-
+----

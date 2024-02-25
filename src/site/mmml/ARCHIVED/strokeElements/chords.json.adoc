@@ -1,0 +1,15 @@
+----
+{
+  "Am": {
+    "$body": "AC>E"
+  },
+  "Em": {
+    "$body": "EGB'
+  },
+  "C": {
+    "$body": "CEG'
+  }
+}
+----
+
+`function chord()` should be defined as a shared function.

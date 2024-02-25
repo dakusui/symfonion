@@ -1,0 +1,27 @@
+[[CONTENT]]
+[source, json]
+.init.json.adoc
+----
+{
+  "piano": {
+    "$body": {
+      "$program": 0
+    }
+  },
+  "guitar": {
+    "$body": {
+      "$program": 30,
+      "$sysex": [ "..." ]
+    }
+  },
+  "bass": {
+    "$body": {
+      "$program": 30
+    }
+  },
+  "drums": {
+    "$body": {
+    }
+  }
+}
+----

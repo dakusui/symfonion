@@ -131,7 +131,7 @@
 	"$sequence": [
 		{
 			"$beats": "16/16",
-			"$patterns": {
+			"$parts": {
 				"vocal": [
 					"melody1"
 				]
@@ -140,7 +140,7 @@
 		},
 		{
 			"$beats": "16/16",
-			"$patterns": {
+			"$parts": {
 				"vocal": [
 					"melody1"
 				]

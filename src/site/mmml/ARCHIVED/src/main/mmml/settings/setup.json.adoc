@@ -1,0 +1,15 @@
+
+[[CONTENT]]
+[%nowrap, json]
+.devices.json
+----
+{
+  "$includes": [
+    "devices.json",
+    "helpors/readJsonObjectForSpecifiedProfileValue.sh;bash -eu;portMappings;portMapping"
+  ]
+}
+----
+
+Also, check link:{xdg_config_home}/mmml/json++/helpers/readJsonObjectForSpecifiedProfileValue.sh.adoc[readJsonObjectForSpecifiedProfileValue.sh].
+

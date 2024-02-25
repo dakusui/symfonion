@@ -1,0 +1,26 @@
+include::.attr.adoc[]
+
+A file that defines basic structure of `song.json{plus}{plus}`.
+
+[[CONTENT]]
+[source,json]
+[%nowrap]
+.std/song-base.json++
+----
+{
+  "$extends": [ "auto.json", "helpers/symfonion.rc" ],
+  "$settings": { "$mididevice": "jv" },
+  "$parts": "$eval:object:$(compose_parts_section '.$song.$parts' '.$song.$devices')",
+  "$notemaps": "eval:object:$(ref '.$song.$notemaps')",
+  "$grooves": "eval:object:$(ref '.$song.$grooves')",
+  "$patterns": "eval:object:$(object_merge '.$song.$patterns' '.$auto.patterns')",
+  "$sequence": "eval:array:$(array_append '.$auto.$sequence' '.$song.$sequence')"
+}
+----
+
+link:{target_dir}/mmml/auto.json.adoc[auto.json] is a file auto-generated in the stage of  link:{doc_base}/features/mmml-pipeline.adoc[mmml-pipeline].
+
+
+auto.json
+
+link:{xdg_local_lib}/mmml/1.0.1/lib/json++/helpers/symfonion.rc.adoc[symnfonion.rc]

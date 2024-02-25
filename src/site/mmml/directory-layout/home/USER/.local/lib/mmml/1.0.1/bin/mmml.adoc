@@ -1,0 +1,33 @@
+include::.attr.adoc[]
+
+`mmml` is implemented as a wrapper for `buildweaver` utility.
+It just executes `buildweaver` using preset project definition file found under `$+{HOME}+/.local/lib/mmml/latest/lib/json++` directory<<buildweaver.json>>.
+
+[[CONTENT]]
+[%nowrap, bash]
+.mmml
+----
+#!/bin/env bash
+set -E -o nounset -o errexit +o posix -o pipefail
+shopt -s inherit_errexit
+
+function main() {
+  local _dir="${1}" _pwd="${2}" _jf_path
+  shift
+  shift
+
+  _jf_path="."
+  _jf_path="${_jf_path}:${_pwd_}/targt/mmml"
+  _jf_path="${_jf_path}:${_pwd_}/src/lib/mmml/json++"
+  _jf_path="${_jf_path}:${HOME}/.config/mmml/json++"
+  _jf_path="${_jf_path}:${HOME}/.local/lib/mmml/latest/lib/json++"
+  JF_PATH="${_jf_path}" buildweaver "${HOME}/.local/lib/mmml/latest/lib/json++/buildweaver.json" "${@}"
+}
+
+main "$(dirname ${0})" ${@}"
+----
+
+[bibliography]
+== References
+
+- [[[buildweaver.json, 1]]] buildweaver.json link:{xdg_local_lib}/mmml/1.0.1/lib/json++/buildweaver.json.adoc[buildweaver.json bundled with mmml]

@@ -1,0 +1,99 @@
+[source, json]
+.Example
+----
+{
+  "$extends": ["songs/mmml-simple.json"]
+}
+----
+
+[source, yaml]
+----
+---
+"$extends":
+- songs/mmml-simple.json
+
+----
+
+
+[source, yaml]
+----
+---
+"$settings": {}
+"$parts":
+  piano:
+    "$channel": 0
+    "$port": port1
+"$patterns":
+  R4:
+    "$body": r4
+  main:
+    "$body":
+    - BGE8;r8;AFD8;r8;GEC8;r8
+"$grooves":
+  16beats:
+  - "$length": '16'
+    "$ticks": 28
+    "$accent": 30
+  - ...: ...
+  - "$length": '16'
+    "$ticks": 22
+    "$accent": -10
+"$sequence":
+- "$beats": 4/4
+  "$patterns":
+    piano:
+    - R4
+- "$beats": 16/4
+  "$patterns":
+    piano:
+    - main
+  "$groove": 16beats
+
+----
+
+[source, yaml]
+----
+---
+"extends":
+- base.json
+"$settings": {}
+"$parts":
+  "$includes":
+  - parts/parts.json
+"$patterns":
+  R4:
+    "$body": r4
+  main:
+    "$body":
+    - BGE8;r8;AFD8;r8;GEC8;r8
+"$grooves":
+  16beats:
+  - "$length": '16'
+    "$ticks": 28
+    "$accent": 30
+  - ...: ...
+  - "$length": '16'
+    "$ticks": 22
+    "$accent": -10
+"$sequence":
+- "$beats": 1/4
+  "$patterns":
+    control:
+    - R4
+    piano:
+    - eval:object:$(program_change piano)
+    guitar:
+    - eval:object:$(program_change guitar)
+    base:
+    - eval:object:$(program_change base)
+    drums:
+    - eval:object:$(program_change drums)
+- "$beats": 4/4
+  "$patterns":
+    piano:
+    - main
+  "$groove": 16beats
+
+----
+
+`program_change` is a function that should be defined in `symfonion.rc`, which is extended (`SOURCE` ed) by `bass.json`.

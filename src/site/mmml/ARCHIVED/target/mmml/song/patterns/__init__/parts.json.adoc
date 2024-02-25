@@ -1,0 +1,19 @@
+[[CONTENT]]
+[%nowrap, json]
+.parts.json
+----
+{
+  "piano": {
+    "$body": "eval:array:$(ref .\"$settings\".devices.\"surge-xt-1\".piano.init",
+  },
+  "guitar": {
+    "$body": "eval:array:$(ref .\"$settings\".devices.jv-10x0-performance-012.guitar.init",
+  },
+  "bass": {
+    "$body": "eval:array:$(ref .\"$settings\".devices.gervill.bass.init",
+  },
+  "drums": {
+    "$body": "eval:array:$(ref .\"$settings\".devices.\"yoshimi-1\".bass.init",
+  }
+}
+----

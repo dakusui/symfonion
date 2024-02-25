@@ -1,0 +1,15 @@
+[[CONTENT]]
+[source, json]
+.piano.json for JV-10x0;
+----
+{
+  "wave": {
+    "$sysex": ["$jv-set-patchnum-pr-b", "$channel", 1]
+  },
+  "part": {
+    "$channel": -1
+  }
+}
+----
+
+Preset-B's program-1 "Dist Gtr 2" will be selected by this system exclusive message.
