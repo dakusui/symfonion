@@ -33,7 +33,7 @@ public class JsonTypeMismatchException extends JsonException {
 
 	/**
 	 * Creates an object of this class.
-	 * 
+	 *
 	 * @param elem A JSON element whose value is found invalid.
 	 * @param expectedTypes Strings which describe expected values.
 	 */
@@ -42,10 +42,10 @@ public class JsonTypeMismatchException extends JsonException {
 	}
 
 	/**
-	 * Creates an object of this class.
+	 * Creates an object of this class from `elem` and `reason`.
 	 * 
 	 * @param elem A JSON element whose value is found invalid.
-	 * @param reason A string that describes the reason why <code>elem</code> was considered invalid.
+	 * @param reason A string that describes the reason why `elem` was considered invalid.
 	 */
 	public JsonTypeMismatchException(JsonElement elem, String reason) {
 		this(elem, reason, new JsonTypes[] {});
@@ -56,7 +56,7 @@ public class JsonTypeMismatchException extends JsonException {
 	 * 
 	 * @param elem A JSON element whose value is found invalid.
 	 * @param expectedTypes Strings which describe expected values.
-	 * @param reason A string that describes the reason why <code>elem</code> was considered invalid.
+	 * @param reason A string that describes the reason why `elem` was considered invalid.
 	 */
 	JsonTypeMismatchException(JsonElement elem, String reason, JsonUtils.JsonTypes... expectedTypes) {
 		super(elem);
