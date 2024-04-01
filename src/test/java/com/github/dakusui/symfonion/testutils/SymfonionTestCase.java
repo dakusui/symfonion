@@ -1,6 +1,6 @@
 package com.github.dakusui.symfonion.testutils;
 
-import com.github.dakusui.json.JsonException;
+import com.github.dakusui.json.CompatJsonException;
 import com.github.dakusui.symfonion.exceptions.SymfonionException;
 import com.google.gson.JsonObject;
 
@@ -61,7 +61,7 @@ public record SymfonionTestCase(String name, JsonObject input, Predicate<Map<Str
     return new SymfonionTestCase("NEGATIVE: " + name, input, null, testOracleForException);
   }
   
-  private static Map<String, Sequence> execute(JsonObject input) throws JsonException, InvalidMidiDataException, SymfonionException {
+  private static Map<String, Sequence> execute(JsonObject input) throws CompatJsonException, InvalidMidiDataException, SymfonionException {
     return SymfonionTestUtils.compileJsonObject(input);
   }
   

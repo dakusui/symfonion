@@ -4,7 +4,7 @@ import com.google.gson.JsonElement;
 
 import java.io.Serial;
 
-public class JsonException extends RuntimeException {
+public class CompatJsonException extends RuntimeException {
 
 	/**
 	 * Serial version UID.
@@ -14,7 +14,7 @@ public class JsonException extends RuntimeException {
 	
 	private final JsonElement problemCausingNode;
 
-	public JsonException(JsonElement problemCausingNode) {
+	public CompatJsonException(JsonElement problemCausingNode) {
 		this.problemCausingNode = problemCausingNode;
 	}
 	

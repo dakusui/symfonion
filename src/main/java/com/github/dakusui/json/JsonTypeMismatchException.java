@@ -14,7 +14,7 @@ import static com.github.dakusui.json.JsonUtils.summarizeJsonElement;
  * 
  * @author hiroshi
  */
-public class JsonTypeMismatchException extends JsonException {
+public class JsonTypeMismatchException extends CompatJsonException {
 	/**
 	 * A serial version UID string.
 	 */

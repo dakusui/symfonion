@@ -4,7 +4,7 @@ import com.google.gson.JsonElement;
 
 import java.io.Serial;
 
-public class JsonFormatException extends JsonException {
+public class JsonFormatException extends CompatJsonException {
 
 	public JsonFormatException(JsonElement elem) {
 		super(elem)	;

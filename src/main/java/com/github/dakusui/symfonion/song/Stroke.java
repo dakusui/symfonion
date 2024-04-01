@@ -42,7 +42,7 @@ public class Stroke {
   private final int[] aftertouch;
   private final JsonElement strokeJson;
 
-  public Stroke(JsonElement strokeJson, Parameters params, NoteMap noteMap) throws SymfonionException, JsonException {
+  public Stroke(JsonElement strokeJson, Parameters params, NoteMap noteMap) throws SymfonionException, CompatJsonException {
     String notes;
     Fraction len = params.length();
     double gate = params.gate();

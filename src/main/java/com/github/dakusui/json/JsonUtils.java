@@ -282,7 +282,7 @@ public class JsonUtils {
   }
 
   public static JsonArray asJsonArray(JsonElement base, Object... path)
-      throws JsonException {
+      throws CompatJsonException {
     return asJsonArrayWithDefault(base, null, path);
   }
 
@@ -394,7 +394,7 @@ public class JsonUtils {
   }
 
   public static double asDouble(JsonElement base, Object... path)
-      throws JsonException {
+      throws CompatJsonException {
     try {
       return Double.parseDouble(requireNonNull(asString(base, path)));
     } catch (NumberFormatException e) {

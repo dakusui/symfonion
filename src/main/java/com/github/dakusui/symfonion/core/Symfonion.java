@@ -1,6 +1,6 @@
 package com.github.dakusui.symfonion.core;
 
-import com.github.dakusui.json.JsonException;
+import com.github.dakusui.json.CompatJsonException;
 import com.github.dakusui.json.JsonInvalidPathException;
 import com.github.dakusui.json.JsonPathNotFoundException;
 import com.github.dakusui.json.JsonUtils;
@@ -46,7 +46,7 @@ public class Symfonion {
         throw loadFileException(e);
       } catch (JsonPathNotFoundException e) {
         throw requiredElementMissingException(e.getProblemCausingNode(), this.json, JsonUtils.formatPath(e.getPath()));
-      } catch (JsonException e) {
+      } catch (CompatJsonException e) {
         throw new RuntimeException(e.getMessage(), e);
       }
     }

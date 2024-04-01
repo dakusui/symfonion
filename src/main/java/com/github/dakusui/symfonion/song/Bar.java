@@ -1,6 +1,6 @@
 package com.github.dakusui.symfonion.song;
 
-import com.github.dakusui.json.JsonException;
+import com.github.dakusui.json.CompatJsonException;
 import com.github.dakusui.json.JsonInvalidPathException;
 import com.github.dakusui.json.JsonUtils;
 import com.github.dakusui.symfonion.exceptions.FractionFormatException;
@@ -34,7 +34,19 @@ public class Bar {
   private final JsonObject barJsonObject;
 
 
-  public Bar(JsonObject barJsonObject, JsonObject root, Map<String, Groove> grooves, Map<String, NoteMap> noteMaps, Map<String, Pattern> patterns, Predicate<String> partFilter) throws SymfonionException, JsonException {
+  /**
+   * Creates a `Bar` object.
+   *
+   * @param barJsonObject A JSON object from which a bar is created.
+   * @param root A root JSON object that `barJsonObject` belongs to.
+   * @param grooves A map that defines a groove on which this bar should be played.
+   * @param noteMaps A note map with which this bar should be played.
+   * @param patterns A map that holds that defines patterns this bar references.
+   * @param partFilter A predicate that filters parts to be played in this bar.
+   * @throws SymfonionException Data processing was failed.
+   * @throws CompatJsonException Invalid JSON is given.
+   */
+  public Bar(JsonObject barJsonObject, JsonObject root, Map<String, Groove> grooves, Map<String, NoteMap> noteMaps, Map<String, Pattern> patterns, Predicate<String> partFilter) throws SymfonionException, CompatJsonException {
     this.patterns = patterns;
     this.noteMaps = noteMaps;
     this.barJsonObject = barJsonObject;
@@ -110,6 +122,13 @@ public class Bar {
     return patternsJsonObjectInBar;
   }
 
+  /**
+   * Creates a list of patterns from a string that holds pattern names.
+   * In the `patternNames` variable name pattern names are joined by `;`.
+   *
+   * @param patternNames A string that holds pattern names.
+   * @return
+   */
   private List<Pattern> createPattern(String patternNames) {
     List<Pattern> patternList;
     if (patternNames.startsWith("$inline:")) {
@@ -128,10 +147,21 @@ public class Bar {
     return patternList;
   }
 
+  /**
+   * Returns a set of part names.
+   * @return A set of part names.
+   */
   public Set<String> partNames() {
     return Collections.unmodifiableSet(this.patternLists.keySet());
   }
 
+  /**
+   * Returns a list of a list of patterns for the `partName`.
+   * TODO
+   *
+   * @param partName A part name for which patterns should be returned.
+   * @return A list of a list of patterns.
+   */
   public List<List<Pattern>> part(String partName) {
     return Collections.unmodifiableList(this.patternLists.get(partName));
   }
@@ -152,10 +182,20 @@ public class Bar {
     }
   }
 
+  /**
+   * Returns a root JSON object to which this bar belongs.
+   *
+   * @return A root JSON object.
+   */
   public JsonObject rootJsonObject() {
     return this.rootJsonObject;
   }
 
+  /**
+   * Returns labels attached to this bar object.
+   *
+   * @return A list of labels.
+   */
   public List<String> labels() {
     return this.labels;
   }

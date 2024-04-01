@@ -1,6 +1,6 @@
 package com.github.dakusui.symfonion.song;
 
-import com.github.dakusui.json.JsonException;
+import com.github.dakusui.json.CompatJsonException;
 import com.github.dakusui.json.JsonUtils;
 import com.github.dakusui.logias.Logias;
 import com.github.dakusui.logias.lisp.Context;
@@ -46,7 +46,7 @@ public class Song {
       return this;
     }
 
-    public Song build() throws JsonException, SymfonionException {
+    public Song build() throws CompatJsonException, SymfonionException {
       try (ExceptionThrower.Context ignored = context($(JSON_ELEMENT_ROOT, json))) {
         Map<String, NoteMap> noteMaps = initNoteMaps(json);
         Map<String, Groove> grooves = initGrooves(json);
@@ -62,7 +62,7 @@ public class Song {
       }
     }
 
-    private static Context loadMidiDeviceProfile(JsonObject json, Context logiasContext) throws SymfonionException, JsonException {
+    private static Context loadMidiDeviceProfile(JsonObject json, Context logiasContext) throws SymfonionException, CompatJsonException {
       JsonElement tmp = JsonUtils.asJsonObjectWithDefault(json, new JsonObject(), Keyword.$settings);
       if (!tmp.isJsonObject()) {
         throw typeMismatchException(tmp, OBJECT);
@@ -87,7 +87,7 @@ public class Song {
         Map<String, NoteMap> noteMaps,
         Map<String, Pattern> patterns,
         Predicate<Bar> barFilter,
-        Predicate<String> partFilter) throws SymfonionException, JsonException {
+        Predicate<String> partFilter) throws SymfonionException, CompatJsonException {
       List<Bar> bars = new LinkedList<>();
       JsonElement tmp = JsonUtils.asJsonElement(json, Keyword.$sequence);
       if (!tmp.isJsonArray()) {
@@ -113,9 +113,9 @@ public class Song {
      * @param json A JSON object that defines note-maps.
      * @return A map of note-map name to note-map.
      * @throws SymfonionException An error found in {@code json} argument.
-     * @throws JsonException      An error found in {@code json} argument.
+     * @throws CompatJsonException      An error found in {@code json} argument.
      */
-    private static Map<String, NoteMap> initNoteMaps(JsonObject json) throws SymfonionException, JsonException {
+    private static Map<String, NoteMap> initNoteMaps(JsonObject json) throws SymfonionException, CompatJsonException {
       Map<String, NoteMap> noteMaps = new HashMap<>();
       final JsonObject noteMapsJSON = JsonUtils.asJsonObjectWithDefault(json, new JsonObject(), Keyword.$notemaps);
 
@@ -130,7 +130,7 @@ public class Song {
       return noteMaps;
     }
 
-    private static Map<String, Pattern> initPatterns(JsonObject json, Map<String, NoteMap> noteMaps) throws SymfonionException, JsonException {
+    private static Map<String, Pattern> initPatterns(JsonObject json, Map<String, NoteMap> noteMaps) throws SymfonionException, CompatJsonException {
       Map<String, Pattern> patterns = new HashMap<>();
       JsonObject patternsJSON = JsonUtils.asJsonObjectWithDefault(json, new JsonObject(), Keyword.$patterns);
 
@@ -145,7 +145,7 @@ public class Song {
       return patterns;
     }
 
-    private static Map<String, Part> initParts(JsonObject json) throws SymfonionException, JsonException {
+    private static Map<String, Part> initParts(JsonObject json) throws SymfonionException, CompatJsonException {
       Map<String, Part> parts = new HashMap<>();
       if (JsonUtils.hasPath(json, Keyword.$parts)) {
         JsonObject instrumentsJSON = JsonUtils.asJsonObject(json, Keyword.$parts);
@@ -159,7 +159,7 @@ public class Song {
       return parts;
     }
 
-    private static Map<String, Groove> initGrooves(JsonObject json) throws SymfonionException, JsonException {
+    private static Map<String, Groove> initGrooves(JsonObject json) throws SymfonionException, CompatJsonException {
       Map<String, Groove> grooves = new HashMap<>();
       if (JsonUtils.hasPath(json, Keyword.$grooves)) {
         JsonObject groovesJSON = JsonUtils.asJsonObject(json, Keyword.$grooves);

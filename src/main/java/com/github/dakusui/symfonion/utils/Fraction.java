@@ -18,6 +18,9 @@ import static com.github.dakusui.valid8j_pcond.forms.Predicates.not;
 /**
  * A class to implement simple Fraction functions
  * there is basically a constructor (which reduces)
+ *
+ * @param numerator A numerator of a fraction
+ * @param  denominator A denominator of a fraction
  */
 public record Fraction(int numerator, int denominator) implements Cloneable, Serializable {
   public static final Pattern fractionPattern = Pattern.compile("([0-9]+)/([1-9][0-9]*)");

@@ -1,6 +1,6 @@
 package com.github.dakusui.symfonion.song;
 
-import com.github.dakusui.json.JsonException;
+import com.github.dakusui.json.CompatJsonException;
 import com.github.dakusui.json.JsonUtils;
 import com.github.dakusui.symfonion.exceptions.SymfonionException;
 import com.github.dakusui.symfonion.utils.Fraction;
@@ -30,7 +30,7 @@ public class Pattern {
     int velocityDelta = 10;
     int arpeggio;
     
-    public Parameters(JsonObject json) throws SymfonionException, JsonException {
+    public Parameters(JsonObject json) throws SymfonionException, CompatJsonException {
       init(json);
     }
     
@@ -38,7 +38,7 @@ public class Pattern {
       return this.gate;
     }
     
-    private void init(JsonObject json) throws SymfonionException, JsonException {
+    private void init(JsonObject json) throws SymfonionException, CompatJsonException {
       if (json == null) {
         json = JsonUtils.toJson("{}").getAsJsonObject();
       }
@@ -77,7 +77,7 @@ public class Pattern {
     }
   }
   
-  public static Pattern createPattern(JsonObject json, Map<String, NoteMap> noteMaps) throws SymfonionException, JsonException {
+  public static Pattern createPattern(JsonObject json, Map<String, NoteMap> noteMaps) throws SymfonionException, CompatJsonException {
     NoteMap noteMap = NoteMap.defaultNoteMap;
     if (JsonUtils.hasPath(json, Keyword.$notemap)) {
       String noteMapName = JsonUtils.asString(json, Keyword.$notemap);
@@ -99,7 +99,7 @@ public class Pattern {
     this.noteMap = noteMap;
   }
   
-  protected void init(JsonObject json) throws SymfonionException, JsonException {
+  protected void init(JsonObject json) throws SymfonionException, CompatJsonException {
     // Initialize 'body'.
     this.body = new LinkedList<>();
     this.params = new Parameters(json);

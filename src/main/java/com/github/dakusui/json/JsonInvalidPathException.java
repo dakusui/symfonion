@@ -5,7 +5,7 @@ import com.google.gson.JsonElement;
 import java.io.Serial;
 import java.util.Arrays;
 
-public class JsonInvalidPathException extends JsonException {
+public class JsonInvalidPathException extends CompatJsonException {
 	/**
 	 * A serial version UID string.
 	 */
