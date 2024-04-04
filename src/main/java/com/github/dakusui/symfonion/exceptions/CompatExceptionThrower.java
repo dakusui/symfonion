@@ -15,13 +15,13 @@ import java.util.function.Predicate;
 import java.util.regex.Matcher;
 
 import static com.github.dakusui.symfonion.cli.CliUtils.composeErrMsg;
-import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.ContextKey.*;
+import static com.github.dakusui.symfonion.exceptions.CompatExceptionThrower.ContextKey.*;
 import static com.github.dakusui.valid8j.ValidationFluents.all;
 import static com.github.dakusui.valid8j.ValidationFluents.that;
 import static com.github.dakusui.valid8j_pcond.fluent.Statement.objectValue;
 import static java.lang.String.format;
 
-public class ExceptionThrower {
+public class CompatExceptionThrower {
   public enum ContextKey {
     MIDI_DEVICE_INFO(MidiDevice.Info.class),
     MIDI_DEVICE_INFO_IO(String.class),
@@ -40,7 +40,7 @@ public class ExceptionThrower {
 
   public static class Context implements Closeable {
     private final Context parent;
-    private final HashMap<ExceptionThrower.ContextKey, Object> values = HashMap.newHashMap(100);
+    private final HashMap<CompatExceptionThrower.ContextKey, Object> values = HashMap.newHashMap(100);
 
     private Context(Context parent) {
       this.parent = parent;
@@ -50,7 +50,7 @@ public class ExceptionThrower {
       this.parent = null;
     }
 
-    public Context set(ExceptionThrower.ContextKey key, Object value) {
+    public Context set(CompatExceptionThrower.ContextKey key, Object value) {
       assert all(
           objectValue(key).then().isNotNull().$(),
           objectValue(value).then().isNotNull().isInstanceOf(key.type).$());
@@ -86,7 +86,7 @@ public class ExceptionThrower {
 
     @Override
     public void close() {
-      ExceptionThrower.context.set(this.parent);
+      CompatExceptionThrower.context.set(this.parent);
     }
 
     Context createChild() {
@@ -211,8 +211,8 @@ public class ExceptionThrower {
 
   public static CliException failedToOpenMidiDevice(MidiUnavailableException ee) {
     throw new CliException(format("(-) Failed to open MIDI-%s device (%s)",
-        ExceptionThrower.<MidiDevice.Info>contextValueOf(MIDI_DEVICE_INFO),
-        ExceptionThrower.<String>contextValueOf(MIDI_DEVICE_INFO_IO).toLowerCase()), ee);
+        CompatExceptionThrower.<MidiDevice.Info>contextValueOf(MIDI_DEVICE_INFO),
+        CompatExceptionThrower.<String>contextValueOf(MIDI_DEVICE_INFO_IO).toLowerCase()), ee);
   }
 
   public static CliException failedToAccessMidiDevice(String deviceType, MidiUnavailableException e, MidiDevice.Info[] matchedInfos) {

@@ -14,7 +14,7 @@ import com.google.gson.JsonObject;
 import java.util.LinkedList;
 import java.util.List;
 
-import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.*;
+import static com.github.dakusui.symfonion.exceptions.CompatExceptionThrower.*;
 import static com.github.dakusui.symfonion.exceptions.SymfonionIllegalFormatException.NOTE_LENGTH_EXAMPLE;
 import static com.github.dakusui.symfonion.exceptions.SymfonionTypeMismatchException.OBJECT;
 

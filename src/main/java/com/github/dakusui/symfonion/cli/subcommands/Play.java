@@ -16,8 +16,8 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 
-import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.*;
-import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.ContextKey.SOURCE_FILE;
+import static com.github.dakusui.symfonion.exceptions.CompatExceptionThrower.*;
+import static com.github.dakusui.symfonion.exceptions.CompatExceptionThrower.ContextKey.SOURCE_FILE;
 
 public class Play implements Subcommand {
 

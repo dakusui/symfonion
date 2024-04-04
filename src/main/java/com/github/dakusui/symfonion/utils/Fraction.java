@@ -9,7 +9,7 @@ import java.io.Serializable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.throwFractionFormatException;
+import static com.github.dakusui.symfonion.exceptions.CompatExceptionThrower.throwFractionFormatException;
 import static com.github.dakusui.valid8j.Requires.requireArgument;
 import static com.github.dakusui.valid8j_pcond.forms.Predicates.isEqualTo;
 import static com.github.dakusui.valid8j_pcond.forms.Predicates.not;

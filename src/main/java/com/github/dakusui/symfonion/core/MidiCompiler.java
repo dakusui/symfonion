@@ -4,7 +4,7 @@ import com.github.dakusui.logias.Logias;
 import com.github.dakusui.logias.lisp.Context;
 import com.github.dakusui.logias.lisp.s.Literal;
 import com.github.dakusui.logias.lisp.s.Sexp;
-import com.github.dakusui.symfonion.exceptions.ExceptionThrower;
+import com.github.dakusui.symfonion.exceptions.CompatExceptionThrower;
 import com.github.dakusui.symfonion.utils.Fraction;
 import com.github.dakusui.symfonion.exceptions.SymfonionException;
 import com.github.dakusui.symfonion.utils.Utils;
@@ -20,8 +20,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.*;
-import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.ContextKey.JSON_ELEMENT_ROOT;
+import static com.github.dakusui.symfonion.exceptions.CompatExceptionThrower.*;
+import static com.github.dakusui.symfonion.exceptions.CompatExceptionThrower.ContextKey.JSON_ELEMENT_ROOT;
 
 public class MidiCompiler {
 
@@ -180,7 +180,7 @@ public class MidiCompiler {
     try {
       baos.close();
     } catch (IOException e) {
-      throw ExceptionThrower.runtimeException(e.getMessage(), e);
+      throw CompatExceptionThrower.runtimeException(e.getMessage(), e);
     }
     byte[] data = baos.toByteArray();
     message.setMessage(data, data.length);

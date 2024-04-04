@@ -1,0 +1,6 @@
+== ExceptionComposer mechanism
+
+In order to compose an informative error message, we sometime need an extra parameter to a function.
+For instance, if you want to include a file name in an error message, you need a file name.
+If you are going to open a file, and it fails, it is natural to receive a file name as an argument.
+However, when you are processing a data in a `java.io.InputStream`, and you find a wrong byte in it, you can not access the file from which you find the erroneous data.

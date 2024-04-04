@@ -16,9 +16,9 @@ import java.util.function.Predicate;
 import java.util.stream.StreamSupport;
 
 import static com.github.dakusui.json.JsonUtils.asJsonElement;
-import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.*;
-import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.ContextKey.JSON_ELEMENT_ROOT;
-import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.ContextKey.REFERENCING_JSON_NODE;
+import static com.github.dakusui.symfonion.exceptions.CompatExceptionThrower.*;
+import static com.github.dakusui.symfonion.exceptions.CompatExceptionThrower.ContextKey.JSON_ELEMENT_ROOT;
+import static com.github.dakusui.symfonion.exceptions.CompatExceptionThrower.ContextKey.REFERENCING_JSON_NODE;
 import static com.github.dakusui.symfonion.exceptions.SymfonionIllegalFormatException.FRACTION_EXAMPLE;
 import static com.github.dakusui.symfonion.exceptions.SymfonionTypeMismatchException.ARRAY;
 import static java.util.Collections.singletonList;

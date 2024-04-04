@@ -15,8 +15,8 @@ import java.util.List;
 import java.util.Map;
 
 import static com.github.dakusui.json.JsonUtils.asJsonElement;
-import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.illegalFormatException;
-import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.noteMapNotFoundException;
+import static com.github.dakusui.symfonion.exceptions.CompatExceptionThrower.illegalFormatException;
+import static com.github.dakusui.symfonion.exceptions.CompatExceptionThrower.noteMapNotFoundException;
 import static com.github.dakusui.symfonion.exceptions.SymfonionIllegalFormatException.NOTE_LENGTH_EXAMPLE;
 
 

@@ -3,7 +3,7 @@ package com.github.dakusui.symfonion.song;
 import com.github.dakusui.json.*;
 import com.github.dakusui.symfonion.core.MidiCompiler;
 import com.github.dakusui.symfonion.core.MidiCompilerContext;
-import com.github.dakusui.symfonion.exceptions.ExceptionThrower;
+import com.github.dakusui.symfonion.exceptions.CompatExceptionThrower;
 import com.github.dakusui.symfonion.exceptions.SymfonionException;
 import com.github.dakusui.symfonion.exceptions.SymfonionIllegalFormatException;
 import com.github.dakusui.symfonion.song.Pattern.Parameters;
@@ -18,7 +18,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
 
-import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.*;
+import static com.github.dakusui.symfonion.exceptions.CompatExceptionThrower.*;
 import static com.github.dakusui.symfonion.exceptions.SymfonionIllegalFormatException.NOTE_LENGTH_EXAMPLE;
 import static com.github.dakusui.symfonion.exceptions.SymfonionTypeMismatchException.PRIMITIVE;
 
@@ -148,7 +148,7 @@ public class Stroke {
       } else if (cur.isJsonNull())
         ret.add(cur);
       else
-        throw ExceptionThrower.typeMismatchWhenExpandingDotsIn(arr);
+        throw CompatExceptionThrower.typeMismatchWhenExpandingDotsIn(arr);
     }
     return ret;
   }

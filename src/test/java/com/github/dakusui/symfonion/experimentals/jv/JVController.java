@@ -10,7 +10,7 @@ import javax.sound.midi.MidiSystem;
 import javax.sound.midi.Receiver;
 import javax.sound.midi.SysexMessage;
 
-import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.deviceException;
+import static com.github.dakusui.symfonion.exceptions.CompatExceptionThrower.deviceException;
 
 
 public class JVController {

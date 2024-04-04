@@ -1,20 +1,19 @@
 package com.github.dakusui.symfonion.utils.midi;
 
-import com.github.dakusui.symfonion.exceptions.ExceptionThrower;
+import com.github.dakusui.symfonion.exceptions.CompatExceptionThrower;
 import com.github.dakusui.valid8j_pcond.forms.Printables;
 
 import javax.sound.midi.MidiDevice;
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.MidiUnavailableException;
 import java.util.*;
-import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
-import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.*;
-import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.ContextKey.MIDI_DEVICE_INFO;
-import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.ContextKey.MIDI_DEVICE_INFO_IO;
+import static com.github.dakusui.symfonion.exceptions.CompatExceptionThrower.*;
+import static com.github.dakusui.symfonion.exceptions.CompatExceptionThrower.ContextKey.MIDI_DEVICE_INFO;
+import static com.github.dakusui.symfonion.exceptions.CompatExceptionThrower.ContextKey.MIDI_DEVICE_INFO_IO;
 import static com.github.dakusui.symfonion.utils.Utils.onlyElement;
 
 public class MidiDeviceManager {
@@ -89,7 +88,7 @@ public class MidiDeviceManager {
   }
 
   public MidiDevice openMidiDevice(MidiDeviceRecord deviceRecord) {
-    try (ExceptionThrower.Context ignored = context($(MIDI_DEVICE_INFO, deviceRecord.info()), $(MIDI_DEVICE_INFO_IO, deviceRecord.io()))) {
+    try (CompatExceptionThrower.Context ignored = context($(MIDI_DEVICE_INFO, deviceRecord.info()), $(MIDI_DEVICE_INFO_IO, deviceRecord.io()))) {
       return openMidiDevice(deviceRecord.info());
     }
   }
@@ -100,7 +99,7 @@ public class MidiDeviceManager {
       ret.open();
       return ret;
     } catch (MidiUnavailableException e) {
-      throw ExceptionThrower.failedToOpenMidiDevice(e);
+      throw CompatExceptionThrower.failedToOpenMidiDevice(e);
     }
   }
 

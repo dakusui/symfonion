@@ -21,7 +21,7 @@ import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
 import static com.github.dakusui.symfonion.cli.CliUtils.composeErrMsg;
-import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.failedToRetrieveTransmitterFromMidiIn;
+import static com.github.dakusui.symfonion.exceptions.CompatExceptionThrower.failedToRetrieveTransmitterFromMidiIn;
 import static com.github.dakusui.symfonion.utils.midi.MidiDeviceManager.isMidiDeviceForInput;
 import static com.github.dakusui.symfonion.utils.midi.MidiDeviceManager.matchesPortNameInDefinitions;
 import static com.github.dakusui.valid8j_pcond.forms.Predicates.and;

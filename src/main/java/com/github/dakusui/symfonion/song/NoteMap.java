@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.noteNotDefinedException;
+import static com.github.dakusui.symfonion.exceptions.CompatExceptionThrower.noteNotDefinedException;
 
 
 public class NoteMap {

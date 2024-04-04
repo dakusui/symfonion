@@ -4,7 +4,7 @@ import com.github.dakusui.json.CompatJsonException;
 import com.github.dakusui.json.JsonUtils;
 import com.github.dakusui.logias.Logias;
 import com.github.dakusui.logias.lisp.Context;
-import com.github.dakusui.symfonion.exceptions.ExceptionThrower;
+import com.github.dakusui.symfonion.exceptions.CompatExceptionThrower;
 import com.github.dakusui.symfonion.exceptions.SymfonionException;
 import com.github.dakusui.symfonion.utils.Utils;
 import com.github.dakusui.valid8j.Requires;
@@ -16,8 +16,8 @@ import com.google.gson.JsonObject;
 import java.util.*;
 import java.util.function.Predicate;
 
-import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.*;
-import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.ContextKey.JSON_ELEMENT_ROOT;
+import static com.github.dakusui.symfonion.exceptions.CompatExceptionThrower.*;
+import static com.github.dakusui.symfonion.exceptions.CompatExceptionThrower.ContextKey.JSON_ELEMENT_ROOT;
 import static com.github.dakusui.symfonion.exceptions.SymfonionTypeMismatchException.ARRAY;
 import static com.github.dakusui.symfonion.exceptions.SymfonionTypeMismatchException.OBJECT;
 import static com.github.dakusui.valid8j.Requires.requireNonNull;
@@ -47,7 +47,7 @@ public class Song {
     }
 
     public Song build() throws CompatJsonException, SymfonionException {
-      try (ExceptionThrower.Context ignored = context($(JSON_ELEMENT_ROOT, json))) {
+      try (CompatExceptionThrower.Context ignored = context($(JSON_ELEMENT_ROOT, json))) {
         Map<String, NoteMap> noteMaps = initNoteMaps(json);
         Map<String, Groove> grooves = initGrooves(json);
         Map<String, Pattern> patterns = initPatterns(json, noteMaps);
@@ -134,7 +134,7 @@ public class Song {
       Map<String, Pattern> patterns = new HashMap<>();
       JsonObject patternsJSON = JsonUtils.asJsonObjectWithDefault(json, new JsonObject(), Keyword.$patterns);
 
-      try (ExceptionThrower.Context ignored = context($(JSON_ELEMENT_ROOT, json))) {
+      try (CompatExceptionThrower.Context ignored = context($(JSON_ELEMENT_ROOT, json))) {
         Iterator<String> i = JsonUtils.keyIterator(patternsJSON);
         while (i.hasNext()) {
           String name = i.next();
