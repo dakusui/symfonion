@@ -1,6 +1,6 @@
 package com.github.dakusui.symfonion.tests;
 
-import com.github.dakusui.symfonion.exceptions.SymfonionException;
+import com.github.dakusui.symfonion.compat.exceptions.SymfonionException;
 import com.github.dakusui.symfonion.testutils.CliTestBase;
 import org.junit.Test;
 

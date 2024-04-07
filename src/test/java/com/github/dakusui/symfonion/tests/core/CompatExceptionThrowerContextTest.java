@@ -1,13 +1,13 @@
 package com.github.dakusui.symfonion.tests.core;
 
-import com.github.dakusui.symfonion.exceptions.CompatExceptionThrower;
-import com.github.dakusui.symfonion.exceptions.SymfonionMissingElementException;
+import com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower;
+import com.github.dakusui.symfonion.compat.exceptions.SymfonionMissingElementException;
 import com.github.dakusui.thincrest_cliche.core.Transform;
 import com.github.dakusui.testutils.json.JsonTestUtils;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import static com.github.dakusui.symfonion.exceptions.CompatExceptionThrower.$;
+import static com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower.$;
 import static com.github.dakusui.thincrest.TestAssertions.assertThat;
 import static com.github.dakusui.thincrest_pcond.forms.Predicates.containsString;
 import static com.github.dakusui.thincrest_pcond.forms.Functions.call;

@@ -1,21 +1,38 @@
 package com.github.dakusui.exception;
 
 
-import java.util.function.Function;
-import java.util.function.Supplier;
+import static com.github.dakusui.exception.ExceptionContext.*;
 
-public enum ExceptionThrower {
+public interface ExceptionThrower<K extends Key> {
   ;
-  public static final ThreadLocal<ExceptionContext> EXCEPTION_CONTEXT_THREAD_LOCAL = ThreadLocal.withInitial(ExceptionContext::newExceptionContext);
 
-  static ExceptionContext exceptionContext() {
-    return EXCEPTION_CONTEXT_THREAD_LOCAL.get();
+  default RuntimeException exception() {
+    throw newException(message(currentContext()));
   }
 
-  static <E extends RuntimeException> E fileBroken() {
-    throw exception(exceptionContext()::fileBrokenMessage, RuntimeException::new);
+  default RuntimeException exception(String message) {
+    throw newException(message + ": " + message(currentContext()));
   }
-  static <E extends RuntimeException> E exception(Supplier<String> messageComposer, Function<String, E> exceptionComposer) {
-    throw exceptionComposer.apply(messageComposer.get());
+
+  default RuntimeException exception(Throwable cause) {
+    throw newException(message(currentContext()), cause);
   }
+
+  default RuntimeException exception(String message, Throwable cause) {
+    throw newException(message + ": " + message(currentContext()), cause);
+  }
+
+  default RuntimeException newException(String message) {
+    throw newException(message, null);
+  }
+
+  RuntimeException newException(String message, Throwable cause);
+
+  String message(ExceptionContext<K> context);
+
+  private ExceptionContext<K> currentContext() {
+    return contextManager().current();
+  }
+
+  ExceptionContext.Manager<K> contextManager();
 }

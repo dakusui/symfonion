@@ -1,8 +1,7 @@
-package com.github.dakusui.symfonion.exceptions;
+package com.github.dakusui.symfonion.compat.exceptions;
 
 import java.io.File;
 import java.io.Serial;
-import java.util.List;
 
 import com.github.dakusui.json.JsonUtils;
 import com.google.gson.GsonBuilder;

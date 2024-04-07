@@ -4,8 +4,8 @@ import com.github.dakusui.json.CompatJsonException;
 import com.github.dakusui.json.JsonUtils;
 import com.github.dakusui.logias.Logias;
 import com.github.dakusui.logias.lisp.Context;
-import com.github.dakusui.symfonion.exceptions.CompatExceptionThrower;
-import com.github.dakusui.symfonion.exceptions.SymfonionException;
+import com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower;
+import com.github.dakusui.symfonion.compat.exceptions.SymfonionException;
 import com.github.dakusui.symfonion.utils.Utils;
 import com.github.dakusui.valid8j.Requires;
 import com.github.dakusui.valid8j_pcond.forms.Predicates;
@@ -16,10 +16,10 @@ import com.google.gson.JsonObject;
 import java.util.*;
 import java.util.function.Predicate;
 
-import static com.github.dakusui.symfonion.exceptions.CompatExceptionThrower.*;
-import static com.github.dakusui.symfonion.exceptions.CompatExceptionThrower.ContextKey.JSON_ELEMENT_ROOT;
-import static com.github.dakusui.symfonion.exceptions.SymfonionTypeMismatchException.ARRAY;
-import static com.github.dakusui.symfonion.exceptions.SymfonionTypeMismatchException.OBJECT;
+import static com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower.*;
+import static com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower.ContextKey.JSON_ELEMENT_ROOT;
+import static com.github.dakusui.symfonion.compat.exceptions.SymfonionTypeMismatchException.ARRAY;
+import static com.github.dakusui.symfonion.compat.exceptions.SymfonionTypeMismatchException.OBJECT;
 import static com.github.dakusui.valid8j.Requires.requireNonNull;
 
 public class Song {

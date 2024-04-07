@@ -52,7 +52,7 @@
         <logiaslisp.version>1.0</logiaslisp.version>
         <commons-cli.version>1.2</commons-cli.version>
         <gson.version>2.8.9</gson.version>
-        <valid8j-pcond.version>1.0.3</valid8j-pcond.version>
+        <valid8j-pcond.version>1.0.4-SNAPSHOT</valid8j-pcond.version>
         <!-- BEGIN: test dependencies -->
         <junit.version>4.13.2</junit.version>
         <thincrest-pcond.version>1.0.1</thincrest-pcond.version>
@@ -281,7 +281,7 @@
                         <!-- disable generateReports if you don't want to include the built-in reports -->
                         <generateReports>true</generateReports>
                         <generateSitemap>true</generateSitemap>
-                        <relativizeDecorationLinks>false</relativizeDecorationLinks>
+                        <relativizeSiteLinks>false</relativizeSiteLinks>
                         <locales>en</locales>
                         <inputEncoding>UTF-8</inputEncoding>
                         <outputEncoding>UTF-8</outputEncoding>

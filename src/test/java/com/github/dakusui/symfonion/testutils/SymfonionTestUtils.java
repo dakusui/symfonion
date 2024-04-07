@@ -2,7 +2,7 @@ package com.github.dakusui.symfonion.testutils;
 
 import com.github.dakusui.json.CompatJsonException;
 import com.github.dakusui.logias.lisp.Context;
-import com.github.dakusui.symfonion.exceptions.SymfonionException;
+import com.github.dakusui.symfonion.compat.exceptions.SymfonionException;
 import com.github.dakusui.symfonion.core.MidiCompiler;
 import com.github.dakusui.symfonion.song.Song;
 import com.google.gson.JsonObject;

@@ -1,6 +1,6 @@
 package com.github.dakusui.symfonion.tests;
 
-import com.github.dakusui.symfonion.exceptions.SymfonionException;
+import com.github.dakusui.symfonion.compat.exceptions.SymfonionException;
 import com.github.dakusui.symfonion.testutils.CliTestBase;
 import com.github.dakusui.thincrest_pcond.forms.Predicates;
 import org.junit.Test;

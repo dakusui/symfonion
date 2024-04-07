@@ -21,7 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Predicate;
 
-import static com.github.dakusui.symfonion.exceptions.CompatExceptionThrower.*;
+import static com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower.*;
 
 public class Symfonion {
   Context logiasContext;

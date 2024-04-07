@@ -1,79 +1,41 @@
 package com.github.dakusui.exception;
 
-import com.github.dakusui.valid8j_cliche.core.All;
+import com.github.dakusui.valid8j_cliche.core.Expectations;
 
-import java.io.Closeable;
-import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import static com.github.dakusui.valid8j_pcond.fluent.Statement.objectValue;
-import static java.util.Objects.requireNonNull;
+import static com.github.dakusui.valid8j_cliche.core.Expectations.that;
 
-public interface ExceptionContext extends Closeable {
-  enum Key {
-    FILENAME;
+public interface ExceptionContext<K extends ExceptionContext.Key> extends AutoCloseable {
+
+  default Object valueFor(K key) {
+    assert Expectations.$(that(key).satisfies().isNotNull());
+    Map<K, Object> data = data();
+    return data.containsKey(key) ?
+        data().get(key) :
+        parent().map(p -> p.valueFor(key)).orElseGet(() -> {
+          assert false : "No value for key:<" + key + ">";
+          return null;
+        });
   }
 
-  final class Entry {
-    final Key key;
-    final Object value;
+  Optional<ExceptionContext<K>> parent();
 
-    public Entry(Key key, Object value) {
-      this.key = requireNonNull(key);
-      this.value = value;
-    }
-  }
+  Map<K, Object> data();
 
-  default String fileBrokenMessage() {
-    return "fileBroken";
-  }
-
-  Object valueFor(Key key);
-
-  boolean hasValueFor(Key key);
-
-  Optional<ExceptionContext> parent();
+  Manager<K> manager();
 
   @Override
-  default void close() throws IOException {
+  default void close() {
+    this.manager().close(this);
   }
 
-  static ExceptionContext newExceptionContext(Entry... entries) {
-    return createExceptionContext(null, entries);
-  }
-  static ExceptionContext newExceptionContext(ExceptionContext parent, Entry... entries) {
-    assert All.$(objectValue(parent).then().isNotNull());
-    return createExceptionContext(parent, entries);
-  }
 
-  private static ExceptionContext createExceptionContext(ExceptionContext parent, Entry... entries) {
-    Map<Key, Object> data = new HashMap<>();
-    for (var entry : entries) {
-      data.put(entry.key, entry.value);
-    }
-    return new ExceptionContext() {
-      @Override
-      public Object valueFor(Key key) {
-        assert All.$(objectValue(key).then().isNotNull());
-        return data.get(key);
-      }
-
-      @Override
-      public boolean hasValueFor(Key key) {
-        return data.containsKey(key) || parent().map(p -> hasValueFor(key)).orElse(false);
-      }
-
-      @Override
-      public Optional<ExceptionContext> parent() {
-        return Optional.ofNullable(parent);
-      }
-    };
-  }
-
-  static Entry entry(Key key, Object value) {
-    return new Entry(key, value);
+  static <K extends Key> Entry<K> entry(K key, Object value) {
+    return new Entry<>(key, value);
   }
 
   /**
@@ -84,7 +46,74 @@ public interface ExceptionContext extends Closeable {
    * @param value A value of an entry.
    * @return An entry.
    */
-  static Entry $(Key key, Object value) {
+  static <K extends Key> Entry<K> $(K key, Object value) {
     return entry(key, value);
+  }
+
+  interface Key {
+  }
+
+  record Entry<K extends Key>(K key, Object value) {
+  }
+
+  class Factory<K extends Key> {
+    @SafeVarargs
+    final ExceptionContext<K> create(Manager<K> manager, ExceptionContext<K> parent, Entry<K>... entries) {
+      Map<K, Object> data = new HashMap<>();
+      for (var entry : entries) {
+        data.put(entry.key, entry.value);
+      }
+      return createContext(manager, parent, data);
+    }
+
+    protected ExceptionContext<K> createContext(Manager<K> manager, ExceptionContext<K> parent, Map<K, Object> data) {
+      return new ExceptionContext<K>() {
+        @Override
+        public Optional<ExceptionContext<K>> parent() {
+          return Optional.ofNullable(parent);
+        }
+
+        @Override
+        public Map<K, Object> data() {
+          return Collections.unmodifiableMap(data);
+        }
+
+        @Override
+        public Manager<K> manager() {
+          return manager;
+        }
+      };
+    }
+  }
+
+  class Manager<K extends Key> {
+    private final Factory<K> factory;
+    private ExceptionContext<K> current = null;
+
+    public Manager() {
+      this(new Factory<>());
+    }
+
+    public Manager(Factory<K> factory) {
+      assert Expectations.$(that(factory).satisfies().isNotNull());
+      this.factory = factory;
+    }
+
+    @SafeVarargs
+    public final ExceptionContext<K> open(Entry<K>... entries) {
+      return this.current = this.factory.create(this,  this.current, entries);
+    }
+
+    public void close(ExceptionContext<K> context) {
+      assert Expectations.$(that(context).satisfies()
+          .isNotNull()
+          .isEqualTo(this.current));
+      this.current = this.current.parent().orElse(null);
+    }
+
+    public ExceptionContext<K> current() {
+      assert this.current != null;
+      return this.current;
+    }
   }
 }

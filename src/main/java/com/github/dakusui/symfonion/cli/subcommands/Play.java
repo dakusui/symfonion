@@ -3,7 +3,7 @@ package com.github.dakusui.symfonion.cli.subcommands;
 import com.github.dakusui.symfonion.cli.Cli;
 import com.github.dakusui.symfonion.cli.Subcommand;
 import com.github.dakusui.symfonion.core.Symfonion;
-import com.github.dakusui.symfonion.exceptions.SymfonionException;
+import com.github.dakusui.symfonion.compat.exceptions.SymfonionException;
 import com.github.dakusui.symfonion.song.Song;
 import com.github.dakusui.symfonion.utils.midi.MidiDeviceScanner;
 import com.github.dakusui.symfonion.utils.midi.MidiUtils;
@@ -16,8 +16,8 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 
-import static com.github.dakusui.symfonion.exceptions.CompatExceptionThrower.*;
-import static com.github.dakusui.symfonion.exceptions.CompatExceptionThrower.ContextKey.SOURCE_FILE;
+import static com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower.*;
+import static com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower.ContextKey.SOURCE_FILE;
 
 public class Play implements Subcommand {
 

@@ -1,6 +1,6 @@
 package com.github.dakusui.symfonion.utils.midi;
 
-import com.github.dakusui.symfonion.exceptions.CompatExceptionThrower;
+import com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower;
 import com.github.dakusui.valid8j_pcond.forms.Printables;
 
 import javax.sound.midi.MidiDevice;
@@ -11,9 +11,9 @@ import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
-import static com.github.dakusui.symfonion.exceptions.CompatExceptionThrower.*;
-import static com.github.dakusui.symfonion.exceptions.CompatExceptionThrower.ContextKey.MIDI_DEVICE_INFO;
-import static com.github.dakusui.symfonion.exceptions.CompatExceptionThrower.ContextKey.MIDI_DEVICE_INFO_IO;
+import static com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower.*;
+import static com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower.ContextKey.MIDI_DEVICE_INFO;
+import static com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower.ContextKey.MIDI_DEVICE_INFO_IO;
 import static com.github.dakusui.symfonion.utils.Utils.onlyElement;
 
 public class MidiDeviceManager {

@@ -4,8 +4,8 @@ import com.github.dakusui.symfonion.cli.Cli;
 import com.github.dakusui.symfonion.cli.CliUtils;
 import com.github.dakusui.symfonion.cli.Subcommand;
 import com.github.dakusui.symfonion.core.Symfonion;
-import com.github.dakusui.symfonion.exceptions.CompatExceptionThrower;
-import com.github.dakusui.symfonion.exceptions.SymfonionException;
+import com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower;
+import com.github.dakusui.symfonion.compat.exceptions.SymfonionException;
 import com.github.dakusui.symfonion.song.Song;
 
 import javax.sound.midi.MidiSystem;
@@ -16,7 +16,7 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.Map;
 
-import static com.github.dakusui.symfonion.exceptions.CompatExceptionThrower.$;
+import static com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower.$;
 
 public class Compile implements Subcommand {
     @Override

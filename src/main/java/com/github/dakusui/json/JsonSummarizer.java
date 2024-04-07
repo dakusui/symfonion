@@ -1,6 +1,6 @@
 package com.github.dakusui.json;
 
-import com.github.dakusui.valid8j_cliche.core.All;
+import com.github.dakusui.valid8j_cliche.core.Expectations;
 import com.github.dakusui.valid8j_cliche.core.Transform;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -80,7 +80,7 @@ public class JsonSummarizer {
   public static JsonElement parentElement(Object focus, JsonElement parent) {
     Predicate<Object> focusIsInstanceOfString = predicate("focusIsInstanceOfString", v -> focus instanceof String);
     Predicate<Object> focusIsInstanceOfInteger = predicate("focusIsInstanceOfInteger", v -> focus instanceof Integer);
-    assert All.$(
+    assert Expectations.all(
         statement(focus, isNotNull()),
         statement(parent, allOf(isNotNull(), or(
             callp("isJsonObject").and(focusIsInstanceOfString),
@@ -93,7 +93,7 @@ public class JsonSummarizer {
   }
 
   public static JsonObject parentObject(String focusedChildKey, JsonObject object) {
-    assert All.$(
+    assert Expectations.all(
         statement(focusedChildKey, isNotNull()),
         statement(object, allOf(
             isNotNull(),
@@ -114,7 +114,7 @@ public class JsonSummarizer {
   }
 
   public static JsonArray parentArray(int focusedChildIndex, JsonArray array) {
-    assert All.$(
+    assert Expectations.all(
         statement(array, isNotNull()),
         statement(focusedChildIndex, greaterThanOrEqualTo(0).and(lessThan(array.size()))));
     JsonArray ret = new JsonArray();

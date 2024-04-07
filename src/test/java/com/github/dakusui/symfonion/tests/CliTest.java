@@ -2,8 +2,8 @@ package com.github.dakusui.symfonion.tests;
 
 import com.github.dakusui.symfonion.cli.Cli;
 import com.github.dakusui.symfonion.cli.subcommands.PresetSubcommand;
-import com.github.dakusui.symfonion.exceptions.CliException;
-import com.github.dakusui.symfonion.exceptions.SymfonionException;
+import com.github.dakusui.symfonion.compat.exceptions.CliException;
+import com.github.dakusui.symfonion.compat.exceptions.SymfonionException;
 import com.github.dakusui.symfonion.testutils.TestBase;
 import org.apache.commons.cli.ParseException;
 import org.junit.Test;

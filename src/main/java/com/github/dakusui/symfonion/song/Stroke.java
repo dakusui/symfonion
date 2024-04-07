@@ -3,9 +3,9 @@ package com.github.dakusui.symfonion.song;
 import com.github.dakusui.json.*;
 import com.github.dakusui.symfonion.core.MidiCompiler;
 import com.github.dakusui.symfonion.core.MidiCompilerContext;
-import com.github.dakusui.symfonion.exceptions.CompatExceptionThrower;
-import com.github.dakusui.symfonion.exceptions.SymfonionException;
-import com.github.dakusui.symfonion.exceptions.SymfonionIllegalFormatException;
+import com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower;
+import com.github.dakusui.symfonion.compat.exceptions.SymfonionException;
+import com.github.dakusui.symfonion.compat.exceptions.SymfonionIllegalFormatException;
 import com.github.dakusui.symfonion.song.Pattern.Parameters;
 import com.github.dakusui.symfonion.utils.Fraction;
 import com.github.dakusui.symfonion.utils.Utils;
@@ -18,9 +18,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
 
-import static com.github.dakusui.symfonion.exceptions.CompatExceptionThrower.*;
-import static com.github.dakusui.symfonion.exceptions.SymfonionIllegalFormatException.NOTE_LENGTH_EXAMPLE;
-import static com.github.dakusui.symfonion.exceptions.SymfonionTypeMismatchException.PRIMITIVE;
+import static com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower.*;
+import static com.github.dakusui.symfonion.compat.exceptions.SymfonionIllegalFormatException.NOTE_LENGTH_EXAMPLE;
+import static com.github.dakusui.symfonion.compat.exceptions.SymfonionTypeMismatchException.PRIMITIVE;
 
 public class Stroke {
   private static final int UNDEFINED_NUM = -1;

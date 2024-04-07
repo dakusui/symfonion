@@ -1,4 +1,4 @@
-package com.github.dakusui.symfonion.exceptions;
+package com.github.dakusui.symfonion.compat.exceptions;
 
 import com.github.dakusui.json.JsonUtils;
 import com.github.dakusui.symfonion.utils.midi.MidiDeviceRecord;
@@ -15,7 +15,7 @@ import java.util.function.Predicate;
 import java.util.regex.Matcher;
 
 import static com.github.dakusui.symfonion.cli.CliUtils.composeErrMsg;
-import static com.github.dakusui.symfonion.exceptions.CompatExceptionThrower.ContextKey.*;
+import static com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower.ContextKey.*;
 import static com.github.dakusui.valid8j.ValidationFluents.all;
 import static com.github.dakusui.valid8j.ValidationFluents.that;
 import static com.github.dakusui.valid8j_pcond.fluent.Statement.objectValue;

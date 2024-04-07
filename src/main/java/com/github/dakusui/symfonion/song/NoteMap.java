@@ -1,7 +1,7 @@
 package com.github.dakusui.symfonion.song;
 
 import com.github.dakusui.json.JsonUtils;
-import com.github.dakusui.symfonion.exceptions.SymfonionException;
+import com.github.dakusui.symfonion.compat.exceptions.SymfonionException;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import static com.github.dakusui.symfonion.exceptions.CompatExceptionThrower.noteNotDefinedException;
+import static com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower.noteNotDefinedException;
 
 
 public class NoteMap {

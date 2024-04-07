@@ -8,7 +8,7 @@ import com.github.dakusui.thincrest_cliche.core.AllOf;
 import com.github.dakusui.thincrest_cliche.core.Transform;
 import org.junit.Before;
 
-import com.github.dakusui.symfonion.exceptions.SymfonionException;
+import com.github.dakusui.symfonion.compat.exceptions.SymfonionException;
 import com.github.dakusui.symfonion.utils.Utils;
 
 import static com.github.dakusui.thincrest.TestAssertions.assertThat;

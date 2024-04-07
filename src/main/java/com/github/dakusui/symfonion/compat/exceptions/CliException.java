@@ -1,6 +1,5 @@
-package com.github.dakusui.symfonion.exceptions;
+package com.github.dakusui.symfonion.compat.exceptions;
 
-import java.io.File;
 import java.io.Serial;
 
 public class CliException extends SymfonionException {

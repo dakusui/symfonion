@@ -7,7 +7,7 @@ import javax.sound.midi.*;
 import java.util.*;
 import java.util.regex.Pattern;
 
-import static com.github.dakusui.symfonion.exceptions.CompatExceptionThrower.*;
+import static com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower.*;
 import static com.github.dakusui.symfonion.utils.midi.MidiDeviceManager.isMidiDeviceForOutput;
 import static com.github.dakusui.symfonion.utils.midi.MidiDeviceManager.matchesPortNameInDefinitions;
 

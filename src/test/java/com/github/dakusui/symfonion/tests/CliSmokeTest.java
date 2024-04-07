@@ -13,10 +13,8 @@ import org.junit.Test;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Objects;
-import java.util.Optional;
 
 import static com.github.dakusui.symfonion.testutils.json.SymfonionJsonTestUtils.sixteenBeatsGroove;
-import static com.github.dakusui.symfonion.testutils.json.SymfonionJsonTestUtils.sixteenBeatsGrooveFlat;
 import static com.github.dakusui.testutils.TestUtils.isRunUnderPitest;
 import static com.github.dakusui.testutils.json.JsonTestUtils.*;
 import static com.github.dakusui.testutils.midi.MidiTestUtils.assumeRequiredMidiDevicesPresent;

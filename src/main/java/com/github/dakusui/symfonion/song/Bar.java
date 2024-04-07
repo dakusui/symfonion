@@ -3,8 +3,8 @@ package com.github.dakusui.symfonion.song;
 import com.github.dakusui.json.CompatJsonException;
 import com.github.dakusui.json.JsonInvalidPathException;
 import com.github.dakusui.json.JsonUtils;
-import com.github.dakusui.symfonion.exceptions.FractionFormatException;
-import com.github.dakusui.symfonion.exceptions.SymfonionException;
+import com.github.dakusui.symfonion.compat.exceptions.FractionFormatException;
+import com.github.dakusui.symfonion.compat.exceptions.SymfonionException;
 import com.github.dakusui.symfonion.utils.Fraction;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -16,11 +16,11 @@ import java.util.function.Predicate;
 import java.util.stream.StreamSupport;
 
 import static com.github.dakusui.json.JsonUtils.asJsonElement;
-import static com.github.dakusui.symfonion.exceptions.CompatExceptionThrower.*;
-import static com.github.dakusui.symfonion.exceptions.CompatExceptionThrower.ContextKey.JSON_ELEMENT_ROOT;
-import static com.github.dakusui.symfonion.exceptions.CompatExceptionThrower.ContextKey.REFERENCING_JSON_NODE;
-import static com.github.dakusui.symfonion.exceptions.SymfonionIllegalFormatException.FRACTION_EXAMPLE;
-import static com.github.dakusui.symfonion.exceptions.SymfonionTypeMismatchException.ARRAY;
+import static com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower.*;
+import static com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower.ContextKey.JSON_ELEMENT_ROOT;
+import static com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower.ContextKey.REFERENCING_JSON_NODE;
+import static com.github.dakusui.symfonion.compat.exceptions.SymfonionIllegalFormatException.FRACTION_EXAMPLE;
+import static com.github.dakusui.symfonion.compat.exceptions.SymfonionTypeMismatchException.ARRAY;
 import static java.util.Collections.singletonList;
 
 public class Bar {
