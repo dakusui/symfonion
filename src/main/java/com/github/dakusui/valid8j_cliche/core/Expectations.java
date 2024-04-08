@@ -31,6 +31,7 @@ public enum Expectations {
 
   /**
    * A shorthand method of {@link Expectations#all(Statement[])}.
+   * Prefer this method if you only have one statement to be asserted.
    *
    * @param statements to be evaluated by `assert` statement of Java.
    * @return `true` if all the given statements are satisfied.

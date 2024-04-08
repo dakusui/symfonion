@@ -7,19 +7,23 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import static com.github.dakusui.valid8j.Requires.require;
+import static com.github.dakusui.valid8j.Requires.requireNonNull;
 import static com.github.dakusui.valid8j_cliche.core.Expectations.that;
+import static com.github.dakusui.valid8j_pcond.forms.Predicates.isInstanceOf;
 
 public interface ExceptionContext<K extends ExceptionContext.Key> extends AutoCloseable {
 
-  default Object valueFor(K key) {
+  @SuppressWarnings("unchecked")
+  default <T> T valueFor(K key) {
     assert Expectations.$(that(key).satisfies().isNotNull());
     Map<K, Object> data = data();
-    return data.containsKey(key) ?
+    return (T) (data.containsKey(key) ?
         data().get(key) :
         parent().map(p -> p.valueFor(key)).orElseGet(() -> {
           assert false : "No value for key:<" + key + ">";
           return null;
-        });
+        }));
   }
 
   Optional<ExceptionContext<K>> parent();
@@ -51,9 +55,16 @@ public interface ExceptionContext<K extends ExceptionContext.Key> extends AutoCl
   }
 
   interface Key {
+    default Class<?> expectedClass() {
+      return Object.class;
+    }
   }
 
   record Entry<K extends Key>(K key, Object value) {
+    public Entry(K key, Object value) {
+      this.key = requireNonNull(key);
+      this.value = require(value, isInstanceOf(this.key.expectedClass()));
+    }
   }
 
   class Factory<K extends Key> {
@@ -101,7 +112,7 @@ public interface ExceptionContext<K extends ExceptionContext.Key> extends AutoCl
 
     @SafeVarargs
     public final ExceptionContext<K> open(Entry<K>... entries) {
-      return this.current = this.factory.create(this,  this.current, entries);
+      return this.current = this.factory.create(this, this.current, entries);
     }
 
     public void close(ExceptionContext<K> context) {
