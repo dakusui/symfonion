@@ -1,11 +1,11 @@
 package com.github.dakusui.symfonion.song;
 
-import com.github.dakusui.json.*;
-import com.github.dakusui.symfonion.core.MidiCompiler;
-import com.github.dakusui.symfonion.core.MidiCompilerContext;
 import com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower;
 import com.github.dakusui.symfonion.compat.exceptions.SymfonionException;
 import com.github.dakusui.symfonion.compat.exceptions.SymfonionIllegalFormatException;
+import com.github.dakusui.symfonion.compat.json.*;
+import com.github.dakusui.symfonion.core.MidiCompiler;
+import com.github.dakusui.symfonion.core.MidiCompilerContext;
 import com.github.dakusui.symfonion.song.Pattern.Parameters;
 import com.github.dakusui.symfonion.utils.Fraction;
 import com.github.dakusui.symfonion.utils.Utils;
@@ -47,13 +47,13 @@ public class Stroke {
     Fraction len = params.length();
     double gate = params.gate();
     this.strokeJson = strokeJson;
-    JsonObject obj = JsonUtils.asJsonObjectWithPromotion(strokeJson, new String[]{
+    JsonObject obj = CompatJsonUtils.asJsonObjectWithPromotion(strokeJson, new String[]{
         Keyword.$notes.name(),
         Keyword.$length.name()
     });
-    notes = JsonUtils.asStringWithDefault(obj, null, Keyword.$notes);
-    if (JsonUtils.hasPath(obj, Keyword.$length)) {
-      JsonElement lenJSON = JsonUtils.asJsonElement(obj, Keyword.$length);
+    notes = CompatJsonUtils.asStringWithDefault(obj, null, Keyword.$notes);
+    if (CompatJsonUtils.hasPath(obj, Keyword.$length)) {
+      JsonElement lenJSON = CompatJsonUtils.asJsonElement(obj, Keyword.$length);
       if (lenJSON.isJsonPrimitive()) {
         len = Utils.parseNoteLength(lenJSON.getAsString());
         if (len == null) {
@@ -63,13 +63,13 @@ public class Stroke {
         throw typeMismatchException(lenJSON, PRIMITIVE);
       }
     }
-    if (JsonUtils.hasPath(obj, Keyword.$gate)) {
-      gate = JsonUtils.asDouble(obj, Keyword.$gate);
+    if (CompatJsonUtils.hasPath(obj, Keyword.$gate)) {
+      gate = CompatJsonUtils.asDouble(obj, Keyword.$gate);
     }
-    this.tempo = JsonUtils.hasPath(obj, Keyword.$tempo) ? JsonUtils.asInt(obj, Keyword.$tempo) : UNDEFINED_NUM;
-    this.pgno = JsonUtils.hasPath(obj, Keyword.$program) ? JsonUtils.asInt(obj, Keyword.$program) : UNDEFINED_NUM;
-    if (JsonUtils.hasPath(obj, Keyword.$bank)) {
-      this.bkno = JsonUtils.asString(obj, Keyword.$bank);
+    this.tempo = CompatJsonUtils.hasPath(obj, Keyword.$tempo) ? CompatJsonUtils.asInt(obj, Keyword.$tempo) : UNDEFINED_NUM;
+    this.pgno = CompatJsonUtils.hasPath(obj, Keyword.$program) ? CompatJsonUtils.asInt(obj, Keyword.$program) : UNDEFINED_NUM;
+    if (CompatJsonUtils.hasPath(obj, Keyword.$bank)) {
+      this.bkno = CompatJsonUtils.asString(obj, Keyword.$bank);
       // Checks if this.bkno can be parsed as a double value.
       assert this.bkno != null;
       //noinspection ResultOfMethodCallIgnored
@@ -82,7 +82,7 @@ public class Stroke {
     this.pitch = getIntArray(obj, Keyword.$pitch);
     this.modulation = getIntArray(obj, Keyword.$modulation);
     this.aftertouch = getIntArray(obj, Keyword.$aftertouch);
-    this.sysex = JsonUtils.asJsonArrayWithDefault(obj, null, Keyword.$sysex);
+    this.sysex = CompatJsonUtils.asJsonArrayWithDefault(obj, null, Keyword.$sysex);
     /*
      * } else {
      * // unsupported
@@ -114,16 +114,16 @@ public class Stroke {
 
   private int[] getIntArray(JsonObject cur, Keyword kw) throws JsonInvalidPathException, JsonTypeMismatchException, JsonFormatException {
     int[] ret;
-    if (!JsonUtils.hasPath(cur, kw)) {
+    if (!CompatJsonUtils.hasPath(cur, kw)) {
       return null;
     }
-    JsonElement json = JsonUtils.asJsonElement(cur, kw);
+    JsonElement json = CompatJsonUtils.asJsonElement(cur, kw);
     if (json.isJsonArray()) {
       JsonArray arr = json.getAsJsonArray();
       ret = interpolate(expandDots(arr));
     } else {
       ret = new int[1];
-      ret[0] = JsonUtils.asInt(cur, kw);
+      ret[0] = CompatJsonUtils.asInt(cur, kw);
     }
     return ret;
   }

@@ -1,7 +1,7 @@
 package com.github.dakusui.symfonion.tests.json;
 
-import com.github.dakusui.json.JsonInvalidPathException;
-import com.github.dakusui.json.JsonUtils;
+import com.github.dakusui.symfonion.compat.json.JsonInvalidPathException;
+import com.github.dakusui.symfonion.compat.json.CompatJsonUtils;
 import com.github.dakusui.symfonion.testutils.TestBase;
 import com.github.dakusui.thincrest_cliche.core.Transform;
 import com.github.dakusui.thincrest_pcond.forms.Printables;
@@ -11,10 +11,10 @@ import static com.github.dakusui.testutils.json.JsonTestUtils.*;
 import static com.github.dakusui.thincrest.TestAssertions.assertThat;
 import static com.github.dakusui.thincrest_pcond.forms.Predicates.isEqualTo;
 
-public class JsonUtilsTest extends TestBase {
+public class CompatJsonUtilsTest extends TestBase {
   @Test
   public void givenEmptyObjects_whenMerge_thenEmpty() throws JsonInvalidPathException {
-    assertThat(JsonUtils.merge(
+    assertThat(CompatJsonUtils.merge(
             object(),
             object()),
         isEqualTo(object())
@@ -23,7 +23,7 @@ public class JsonUtilsTest extends TestBase {
 
   @Test
   public void givenEmptyAndSingleEntryObjects_whenMerge_thenSingleEntry() throws JsonInvalidPathException {
-    assertThat(JsonUtils.merge(
+    assertThat(CompatJsonUtils.merge(
             object(),
             object($("key", json("value")))),
         isEqualTo(object($("key", json("value"))))
@@ -32,7 +32,7 @@ public class JsonUtilsTest extends TestBase {
 
   @Test
   public void givenSingleEntryAndEmptyObjects_whenMerge_thenSingleEntry() throws JsonInvalidPathException {
-    assertThat(JsonUtils.merge(
+    assertThat(CompatJsonUtils.merge(
             object($("key", json("value"))),
             object()),
         isEqualTo(object($("key", json("value"))))
@@ -41,7 +41,7 @@ public class JsonUtilsTest extends TestBase {
 
   @Test
   public void givenTwoSingleEntryObjects_whenMerge_thenTwoEntries() throws JsonInvalidPathException {
-    assertThat(JsonUtils.merge(
+    assertThat(CompatJsonUtils.merge(
             object($("key1", json("value1"))),
             object($("key2", json("value2")))),
         Transform.$(Printables.function("toString", Object::toString)).check(isEqualTo(object(
@@ -52,7 +52,7 @@ public class JsonUtilsTest extends TestBase {
 
   @Test
   public void givenTwoNestedEntryObjects_whenMerge_thenMergesTwoEntries() throws JsonInvalidPathException {
-    assertThat(JsonUtils.merge(
+    assertThat(CompatJsonUtils.merge(
             object($("key", object($("key1", json("value1"))))),
             object($("key", object($("key2", json("value2")))))),
         Transform.$(Printables.function("toString", Object::toString)).check(isEqualTo(object(
@@ -64,7 +64,7 @@ public class JsonUtilsTest extends TestBase {
 
   @Test(expected = JsonInvalidPathException.class)
   public void givenConflictingTwoSingleEntryObjects_whenMerge_thenExceptionThrown() throws JsonInvalidPathException {
-    JsonUtils.merge(
+    CompatJsonUtils.merge(
         object($("key", json("value1"))),
         object($("key", json("value2"))));
   }

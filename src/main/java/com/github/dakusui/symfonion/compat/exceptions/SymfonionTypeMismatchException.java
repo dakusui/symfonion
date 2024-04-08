@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.Serial;
 import java.util.Arrays;
 
-import com.github.dakusui.json.JsonUtils;
+import com.github.dakusui.symfonion.compat.json.CompatJsonUtils;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
@@ -28,9 +28,9 @@ public class SymfonionTypeMismatchException extends SymfonionSyntaxException {
 	private static String formatMessage(String[] expectedTypes, JsonElement actualJSON) {
 		String ret;
 		if (expectedTypes == null) {
-			ret = String.format("%s is not allowed here.", JsonUtils.summarizeJsonElement(actualJSON));
+			ret = String.format("%s is not allowed here.", CompatJsonUtils.summarizeJsonElement(actualJSON));
 		} else {
-			ret = String.format("%s is not allowed here. Acceptable type(s) are %s", JsonUtils.summarizeJsonElement(actualJSON), Arrays.toString(expectedTypes));
+			ret = String.format("%s is not allowed here. Acceptable type(s) are %s", CompatJsonUtils.summarizeJsonElement(actualJSON), Arrays.toString(expectedTypes));
 		}
 		return ret;
 	}

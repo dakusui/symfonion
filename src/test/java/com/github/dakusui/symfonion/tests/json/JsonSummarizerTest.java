@@ -1,7 +1,7 @@
 package com.github.dakusui.symfonion.tests.json;
 
-import com.github.dakusui.json.JsonSummarizer;
-import com.github.dakusui.json.JsonUtils;
+import com.github.dakusui.symfonion.compat.json.JsonSummarizer;
+import com.github.dakusui.symfonion.compat.json.CompatJsonUtils;
 import com.github.dakusui.symfonion.testutils.TestBase;
 import com.github.dakusui.thincrest_cliche.core.AllOf;
 import com.github.dakusui.thincrest_cliche.core.Transform;
@@ -64,7 +64,7 @@ public class JsonSummarizerTest extends TestBase {
 
   @Test
   public void whenCreateSummaryJsonObjectFromPaths_thenSummaryCreated() {
-    JsonObject summarizedValue = JsonUtils.createSummaryJsonObjectFromPaths(
+    JsonObject summarizedValue = CompatJsonUtils.createSummaryJsonObjectFromPaths(
         createTestDataJsonObject2(), asList("k1", "k11"));
     System.out.println(prettyPrintJsonElement(summarizedValue));
   }

@@ -1,4 +1,4 @@
-package com.github.dakusui.json;
+package com.github.dakusui.symfonion.compat.json;
 
 import java.io.Serial;
 import java.util.Arrays;

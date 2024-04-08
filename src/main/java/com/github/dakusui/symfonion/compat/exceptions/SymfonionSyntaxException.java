@@ -3,13 +3,13 @@ package com.github.dakusui.symfonion.compat.exceptions;
 import java.io.File;
 import java.io.Serial;
 
-import com.github.dakusui.json.JsonUtils;
+import com.github.dakusui.symfonion.compat.json.CompatJsonUtils;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import static com.github.dakusui.json.JsonUtils.createSummaryJsonObjectFromPaths;
-import static com.github.dakusui.json.JsonUtils.findPathOf;
+import static com.github.dakusui.symfonion.compat.json.CompatJsonUtils.createSummaryJsonObjectFromPaths;
+import static com.github.dakusui.symfonion.compat.json.CompatJsonUtils.findPathOf;
 
 public class SymfonionSyntaxException extends SymfonionException {
 
@@ -35,7 +35,7 @@ public class SymfonionSyntaxException extends SymfonionException {
   public String toJsonPathString() {
     if (rootJsonObjectNode == null || problemCausingJsonNode == null)
       return "(n/a)";
-    return JsonUtils.findPathStringOf(this.problemCausingJsonNode, this.rootJsonObjectNode);
+    return CompatJsonUtils.findPathStringOf(this.problemCausingJsonNode, this.rootJsonObjectNode);
   }
 
   @Override

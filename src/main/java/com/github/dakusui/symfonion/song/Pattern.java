@@ -1,7 +1,7 @@
 package com.github.dakusui.symfonion.song;
 
-import com.github.dakusui.json.CompatJsonException;
-import com.github.dakusui.json.JsonUtils;
+import com.github.dakusui.symfonion.compat.json.CompatJsonException;
+import com.github.dakusui.symfonion.compat.json.CompatJsonUtils;
 import com.github.dakusui.symfonion.compat.exceptions.SymfonionException;
 import com.github.dakusui.symfonion.utils.Fraction;
 import com.github.dakusui.symfonion.utils.Utils;
@@ -14,7 +14,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import static com.github.dakusui.json.JsonUtils.asJsonElement;
+import static com.github.dakusui.symfonion.compat.json.CompatJsonUtils.asJsonElement;
 import static com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower.illegalFormatException;
 import static com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower.noteMapNotFoundException;
 import static com.github.dakusui.symfonion.compat.exceptions.SymfonionIllegalFormatException.NOTE_LENGTH_EXAMPLE;
@@ -40,20 +40,20 @@ public class Pattern {
     
     private void init(JsonObject json) throws SymfonionException, CompatJsonException {
       if (json == null) {
-        json = JsonUtils.toJson("{}").getAsJsonObject();
+        json = CompatJsonUtils.toJson("{}").getAsJsonObject();
       }
-      this.velocityBase = JsonUtils.asIntWithDefault(json, 64, Keyword.$velocitybase);
-      this.velocityDelta = JsonUtils.asIntWithDefault(json, 5, Keyword.$velocitydelta);
-      this.gate = JsonUtils.asDoubleWithDefault(json, 0.8, Keyword.$gate);
-      this.length = Utils.parseNoteLength(JsonUtils.asStringWithDefault(json, "16", Keyword.$length));
+      this.velocityBase = CompatJsonUtils.asIntWithDefault(json, 64, Keyword.$velocitybase);
+      this.velocityDelta = CompatJsonUtils.asIntWithDefault(json, 5, Keyword.$velocitydelta);
+      this.gate = CompatJsonUtils.asDoubleWithDefault(json, 0.8, Keyword.$gate);
+      this.length = Utils.parseNoteLength(CompatJsonUtils.asStringWithDefault(json, "16", Keyword.$length));
       if (this.length == null) {
         throw illegalFormatException(
             asJsonElement(json, Keyword.$length),
             NOTE_LENGTH_EXAMPLE
         );
       }
-      this.transpose = JsonUtils.asIntWithDefault(json, 0, Keyword.$transpose);
-      this.arpeggio = JsonUtils.asIntWithDefault(json, 0, Keyword.$arpeggio);
+      this.transpose = CompatJsonUtils.asIntWithDefault(json, 0, Keyword.$transpose);
+      this.arpeggio = CompatJsonUtils.asIntWithDefault(json, 0, Keyword.$arpeggio);
     }
     
     public Fraction length() {
@@ -79,8 +79,8 @@ public class Pattern {
   
   public static Pattern createPattern(JsonObject json, Map<String, NoteMap> noteMaps) throws SymfonionException, CompatJsonException {
     NoteMap noteMap = NoteMap.defaultNoteMap;
-    if (JsonUtils.hasPath(json, Keyword.$notemap)) {
-      String noteMapName = JsonUtils.asString(json, Keyword.$notemap);
+    if (CompatJsonUtils.hasPath(json, Keyword.$notemap)) {
+      String noteMapName = CompatJsonUtils.asString(json, Keyword.$notemap);
       noteMap = noteMaps.get(noteMapName);
       if (noteMap == null) {
         throw noteMapNotFoundException(asJsonElement(json, Keyword.$notemap), noteMapName);
@@ -108,7 +108,7 @@ public class Pattern {
       bodyJSON = new JsonArray();
       bodyJSON.add(asJsonElement(json, Keyword.$body));
     } else {
-      bodyJSON = JsonUtils.asJsonArray(json, Keyword.$body);
+      bodyJSON = CompatJsonUtils.asJsonArray(json, Keyword.$body);
     }
     int len = bodyJSON.size();
     for (int i = 0; i < len; i++) {

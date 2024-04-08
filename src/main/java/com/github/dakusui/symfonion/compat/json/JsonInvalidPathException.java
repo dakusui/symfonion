@@ -1,4 +1,4 @@
-package com.github.dakusui.json;
+package com.github.dakusui.symfonion.compat.json;
 
 import com.google.gson.JsonElement;
 

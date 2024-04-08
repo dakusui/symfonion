@@ -1,6 +1,6 @@
 package com.github.dakusui.symfonion.song;
 
-import com.github.dakusui.json.JsonUtils;
+import com.github.dakusui.symfonion.compat.json.CompatJsonUtils;
 import com.github.dakusui.symfonion.compat.exceptions.SymfonionException;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -36,7 +36,7 @@ public class NoteMap {
 		this.name = name;
 	}
 	public NoteMap(final JsonObject json) {
-		Iterator<String> i = JsonUtils.keyIterator(json);
+		Iterator<String> i = CompatJsonUtils.keyIterator(json);
 		while (i.hasNext()) {
 			String cur = i.next();
 			int v = json.get(cur).getAsInt();

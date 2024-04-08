@@ -1,9 +1,9 @@
 package com.github.dakusui.symfonion.core;
 
-import com.github.dakusui.json.CompatJsonException;
-import com.github.dakusui.json.JsonInvalidPathException;
-import com.github.dakusui.json.JsonPathNotFoundException;
-import com.github.dakusui.json.JsonUtils;
+import com.github.dakusui.symfonion.compat.json.CompatJsonException;
+import com.github.dakusui.symfonion.compat.json.JsonInvalidPathException;
+import com.github.dakusui.symfonion.compat.json.JsonPathNotFoundException;
+import com.github.dakusui.symfonion.compat.json.CompatJsonUtils;
 import com.github.dakusui.logias.lisp.Context;
 import com.github.dakusui.symfonion.song.Bar;
 import com.github.dakusui.symfonion.song.Keyword;
@@ -45,7 +45,7 @@ public class Symfonion {
       } catch (IllegalStateException e) {
         throw loadFileException(e);
       } catch (JsonPathNotFoundException e) {
-        throw requiredElementMissingException(e.getProblemCausingNode(), this.json, JsonUtils.formatPath(e.getPath()));
+        throw requiredElementMissingException(e.getProblemCausingNode(), this.json, CompatJsonUtils.formatPath(e.getPath()));
       } catch (CompatJsonException e) {
         throw new RuntimeException(e.getMessage(), e);
       }
@@ -55,20 +55,20 @@ public class Symfonion {
   
   private static JsonObject loadSymfonionFile(String fileName, Map<String, JsonObject> alreadyReadFiles) {
     if (alreadyReadFiles.containsKey(fileName)) return alreadyReadFiles.get(fileName);
-    JsonObject ret = JsonUtils.toJson(Utils.loadFile(fileName)).getAsJsonObject();
+    JsonObject ret = CompatJsonUtils.toJson(Utils.loadFile(fileName)).getAsJsonObject();
     if (ret.has(Keyword.$include.name())) {
       File dir = new File(fileName).getParentFile();
-      JsonArray includedFiles = JsonUtils.asJsonArray(ret, Keyword.$include.name());
+      JsonArray includedFiles = CompatJsonUtils.asJsonArray(ret, Keyword.$include.name());
       int i = 0;
       for (JsonElement each : includedFiles) {
-        String eachFileName = JsonUtils.asString(each);
+        String eachFileName = CompatJsonUtils.asString(each);
         if (eachFileName == null) {
           throw new JsonInvalidPathException(ret, new Object[]{Keyword.$include, i});
         }
         String eachAbsFileName = new File(dir, eachFileName).getAbsolutePath();
-        JsonObject included = JsonUtils.toJson(Utils.loadFile(eachAbsFileName)).getAsJsonObject();
+        JsonObject included = CompatJsonUtils.toJson(Utils.loadFile(eachAbsFileName)).getAsJsonObject();
         alreadyReadFiles.put(eachAbsFileName, included);
-        ret = JsonUtils.merge(ret, included);
+        ret = CompatJsonUtils.merge(ret, included);
         i++;
       }
     }

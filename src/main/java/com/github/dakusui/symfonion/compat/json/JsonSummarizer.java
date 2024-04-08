@@ -1,4 +1,4 @@
-package com.github.dakusui.json;
+package com.github.dakusui.symfonion.compat.json;
 
 import com.github.dakusui.valid8j_cliche.core.Expectations;
 import com.github.dakusui.valid8j_cliche.core.Transform;
@@ -19,7 +19,7 @@ import static com.github.dakusui.valid8j_pcond.forms.Printables.predicate;
 
 public class JsonSummarizer {
   public static JsonElement summaryObject(JsonObject root, List<Object> pathToParent, Object focus) {
-    JsonElement previousElement = parentElement(focus, JsonUtils.asJsonElement(root, pathToParent.toArray()));
+    JsonElement previousElement = parentElement(focus, CompatJsonUtils.asJsonElement(root, pathToParent.toArray()));
     JsonElement ret = focus instanceof String ? new JsonObject() : new JsonArray();
     for (int i = pathToParent.size() - 1; i >= 0; i--) {
       Object currentKey = pathToParent.get(i);

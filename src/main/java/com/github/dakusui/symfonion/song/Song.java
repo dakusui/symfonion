@@ -1,7 +1,7 @@
 package com.github.dakusui.symfonion.song;
 
-import com.github.dakusui.json.CompatJsonException;
-import com.github.dakusui.json.JsonUtils;
+import com.github.dakusui.symfonion.compat.json.CompatJsonException;
+import com.github.dakusui.symfonion.compat.json.CompatJsonUtils;
 import com.github.dakusui.logias.Logias;
 import com.github.dakusui.logias.lisp.Context;
 import com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower;
@@ -63,15 +63,15 @@ public class Song {
     }
 
     private static Context loadMidiDeviceProfile(JsonObject json, Context logiasContext) throws SymfonionException, CompatJsonException {
-      JsonElement tmp = JsonUtils.asJsonObjectWithDefault(json, new JsonObject(), Keyword.$settings);
+      JsonElement tmp = CompatJsonUtils.asJsonObjectWithDefault(json, new JsonObject(), Keyword.$settings);
       if (!tmp.isJsonObject()) {
         throw typeMismatchException(tmp, OBJECT);
       }
-      String profileName = JsonUtils.asStringWithDefault(tmp.getAsJsonObject(), "", Keyword.$mididevice);
+      String profileName = CompatJsonUtils.asStringWithDefault(tmp.getAsJsonObject(), "", Keyword.$mididevice);
       Logias logias = new Logias(logiasContext);
       if (!"".equals(profileName)) {
-        JsonObject deviceDef = JsonUtils.toJson(Utils.loadResource(profileName + ".json")).getAsJsonObject();
-        Iterator<String> i = JsonUtils.keyIterator(deviceDef);
+        JsonObject deviceDef = CompatJsonUtils.toJson(Utils.loadResource(profileName + ".json")).getAsJsonObject();
+        Iterator<String> i = CompatJsonUtils.keyIterator(deviceDef);
         while (i.hasNext()) {
           String k = i.next();
           JsonElement v = deviceDef.get(k);
@@ -89,7 +89,7 @@ public class Song {
         Predicate<Bar> barFilter,
         Predicate<String> partFilter) throws SymfonionException, CompatJsonException {
       List<Bar> bars = new LinkedList<>();
-      JsonElement tmp = JsonUtils.asJsonElement(json, Keyword.$sequence);
+      JsonElement tmp = CompatJsonUtils.asJsonElement(json, Keyword.$sequence);
       if (!tmp.isJsonArray()) {
         throw typeMismatchException(tmp, ARRAY);
       }
@@ -117,14 +117,14 @@ public class Song {
      */
     private static Map<String, NoteMap> initNoteMaps(JsonObject json) throws SymfonionException, CompatJsonException {
       Map<String, NoteMap> noteMaps = new HashMap<>();
-      final JsonObject noteMapsJSON = JsonUtils.asJsonObjectWithDefault(json, new JsonObject(), Keyword.$notemaps);
+      final JsonObject noteMapsJSON = CompatJsonUtils.asJsonObjectWithDefault(json, new JsonObject(), Keyword.$notemaps);
 
-      Iterator<String> i = JsonUtils.keyIterator(noteMapsJSON);
+      Iterator<String> i = CompatJsonUtils.keyIterator(noteMapsJSON);
       noteMaps.put(Keyword.$normal.toString(), NoteMap.defaultNoteMap);
       noteMaps.put(Keyword.$percussion.toString(), NoteMap.defaultPercussionMap);
       while (i.hasNext()) {
         String name = i.next();
-        NoteMap cur = new NoteMap(JsonUtils.asJsonObject(noteMapsJSON, name));
+        NoteMap cur = new NoteMap(CompatJsonUtils.asJsonObject(noteMapsJSON, name));
         noteMaps.put(name, cur);
       }
       return noteMaps;
@@ -132,13 +132,13 @@ public class Song {
 
     private static Map<String, Pattern> initPatterns(JsonObject json, Map<String, NoteMap> noteMaps) throws SymfonionException, CompatJsonException {
       Map<String, Pattern> patterns = new HashMap<>();
-      JsonObject patternsJSON = JsonUtils.asJsonObjectWithDefault(json, new JsonObject(), Keyword.$patterns);
+      JsonObject patternsJSON = CompatJsonUtils.asJsonObjectWithDefault(json, new JsonObject(), Keyword.$patterns);
 
       try (CompatExceptionThrower.Context ignored = context($(JSON_ELEMENT_ROOT, json))) {
-        Iterator<String> i = JsonUtils.keyIterator(patternsJSON);
+        Iterator<String> i = CompatJsonUtils.keyIterator(patternsJSON);
         while (i.hasNext()) {
           String name = i.next();
-          Pattern cur = Pattern.createPattern(JsonUtils.asJsonObject(patternsJSON, name), noteMaps);
+          Pattern cur = Pattern.createPattern(CompatJsonUtils.asJsonObject(patternsJSON, name), noteMaps);
           patterns.put(name, cur);
         }
       }
@@ -147,12 +147,12 @@ public class Song {
 
     private static Map<String, Part> initParts(JsonObject json) throws SymfonionException, CompatJsonException {
       Map<String, Part> parts = new HashMap<>();
-      if (JsonUtils.hasPath(json, Keyword.$parts)) {
-        JsonObject instrumentsJSON = JsonUtils.asJsonObject(json, Keyword.$parts);
-        Iterator<String> i = JsonUtils.keyIterator(instrumentsJSON);
+      if (CompatJsonUtils.hasPath(json, Keyword.$parts)) {
+        JsonObject instrumentsJSON = CompatJsonUtils.asJsonObject(json, Keyword.$parts);
+        Iterator<String> i = CompatJsonUtils.keyIterator(instrumentsJSON);
         while (i.hasNext()) {
           String name = i.next();
-          Part cur = new Part(name, JsonUtils.asJsonObject(instrumentsJSON, name));
+          Part cur = new Part(name, CompatJsonUtils.asJsonObject(instrumentsJSON, name));
           parts.put(name, cur);
         }
       }
@@ -161,13 +161,13 @@ public class Song {
 
     private static Map<String, Groove> initGrooves(JsonObject json) throws SymfonionException, CompatJsonException {
       Map<String, Groove> grooves = new HashMap<>();
-      if (JsonUtils.hasPath(json, Keyword.$grooves)) {
-        JsonObject groovesJSON = JsonUtils.asJsonObject(json, Keyword.$grooves);
+      if (CompatJsonUtils.hasPath(json, Keyword.$grooves)) {
+        JsonObject groovesJSON = CompatJsonUtils.asJsonObject(json, Keyword.$grooves);
 
-        Iterator<String> i = JsonUtils.keyIterator(groovesJSON);
+        Iterator<String> i = CompatJsonUtils.keyIterator(groovesJSON);
         while (i.hasNext()) {
           String name = i.next();
-          Groove cur = Groove.createGroove(JsonUtils.asJsonArray(groovesJSON, name));
+          Groove cur = Groove.createGroove(CompatJsonUtils.asJsonArray(groovesJSON, name));
           grooves.put(name, cur);
         }
       }

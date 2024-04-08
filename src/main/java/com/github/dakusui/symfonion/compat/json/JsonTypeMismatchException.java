@@ -1,12 +1,12 @@
-package com.github.dakusui.json;
+package com.github.dakusui.symfonion.compat.json;
 
-import com.github.dakusui.json.JsonUtils.JsonTypes;
+import com.github.dakusui.symfonion.compat.json.CompatJsonUtils.JsonTypes;
 import com.google.gson.JsonElement;
 
 import java.io.Serial;
 import java.util.Arrays;
 
-import static com.github.dakusui.json.JsonUtils.summarizeJsonElement;
+import static com.github.dakusui.symfonion.compat.json.CompatJsonUtils.summarizeJsonElement;
 
 /**
  * An exception thrown when a Json element is found on a certain path has an
@@ -24,7 +24,7 @@ public class JsonTypeMismatchException extends CompatJsonException {
 	/**
 	 * An array of strings that describe types or values that are allowed on the path
 	 */
-	private final JsonUtils.JsonTypes[] expectedTypes;
+	private final CompatJsonUtils.JsonTypes[] expectedTypes;
 
 	/**
 	 * A string that describes the reason why the element is considered invalid.
@@ -37,7 +37,7 @@ public class JsonTypeMismatchException extends CompatJsonException {
 	 * @param elem A JSON element whose value is found invalid.
 	 * @param expectedTypes Strings which describe expected values.
 	 */
-	JsonTypeMismatchException(JsonElement elem, JsonUtils.JsonTypes... expectedTypes) {
+	JsonTypeMismatchException(JsonElement elem, CompatJsonUtils.JsonTypes... expectedTypes) {
 		this(elem, null, expectedTypes);
 	}
 
@@ -58,7 +58,7 @@ public class JsonTypeMismatchException extends CompatJsonException {
 	 * @param expectedTypes Strings which describe expected values.
 	 * @param reason A string that describes the reason why `elem` was considered invalid.
 	 */
-	JsonTypeMismatchException(JsonElement elem, String reason, JsonUtils.JsonTypes... expectedTypes) {
+	JsonTypeMismatchException(JsonElement elem, String reason, CompatJsonUtils.JsonTypes... expectedTypes) {
 		super(elem);
 		this.expectedTypes = expectedTypes;
 		this.reason = reason;
@@ -67,7 +67,7 @@ public class JsonTypeMismatchException extends CompatJsonException {
 	/*
 	 * Formats an message.
 	 */
-	private static String formatMessage(String reason, JsonUtils.JsonTypes[] types, JsonElement actualJSON) {
+	private static String formatMessage(String reason, CompatJsonUtils.JsonTypes[] types, JsonElement actualJSON) {
 		String ret = null;
 		String r = "";
 		if (reason != null) {

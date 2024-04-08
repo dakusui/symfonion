@@ -1,6 +1,6 @@
 package com.github.dakusui.symfonion.compat.exceptions;
 
-import com.github.dakusui.json.JsonUtils;
+import com.github.dakusui.symfonion.compat.json.CompatJsonUtils;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
@@ -21,9 +21,9 @@ public class SymfonionMissingElementException extends SymfonionSyntaxException {
   
   private static String formatMessage(JsonElement problemCausingJsonNode, Object relPath) {
     if (relPath instanceof Integer) {
-      return String.format("%s at this path requires %dth element", JsonUtils.summarizeJsonElement(problemCausingJsonNode), relPath);
+      return String.format("%s at this path requires %dth element", CompatJsonUtils.summarizeJsonElement(problemCausingJsonNode), relPath);
     }
-    return String.format("%s at this path requires child element %s", JsonUtils.summarizeJsonElement(problemCausingJsonNode), relPath);
+    return String.format("%s at this path requires child element %s", CompatJsonUtils.summarizeJsonElement(problemCausingJsonNode), relPath);
   }
   
 }

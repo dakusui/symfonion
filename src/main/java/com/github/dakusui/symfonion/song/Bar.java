@@ -1,8 +1,8 @@
 package com.github.dakusui.symfonion.song;
 
-import com.github.dakusui.json.CompatJsonException;
-import com.github.dakusui.json.JsonInvalidPathException;
-import com.github.dakusui.json.JsonUtils;
+import com.github.dakusui.symfonion.compat.json.CompatJsonException;
+import com.github.dakusui.symfonion.compat.json.JsonInvalidPathException;
+import com.github.dakusui.symfonion.compat.json.CompatJsonUtils;
 import com.github.dakusui.symfonion.compat.exceptions.FractionFormatException;
 import com.github.dakusui.symfonion.compat.exceptions.SymfonionException;
 import com.github.dakusui.symfonion.utils.Fraction;
@@ -15,7 +15,7 @@ import java.util.Map.Entry;
 import java.util.function.Predicate;
 import java.util.stream.StreamSupport;
 
-import static com.github.dakusui.json.JsonUtils.asJsonElement;
+import static com.github.dakusui.symfonion.compat.json.CompatJsonUtils.asJsonElement;
 import static com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower.*;
 import static com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower.ContextKey.JSON_ELEMENT_ROOT;
 import static com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower.ContextKey.REFERENCING_JSON_NODE;
@@ -77,16 +77,16 @@ public class Bar {
   }
 
   private List<String> resolveLabelsForBar(JsonObject barJsonObject) {
-    if (JsonUtils.hasPath(barJsonObject, Keyword.$labels)) {
-      return StreamSupport.stream(JsonUtils.asJsonArray(barJsonObject, Keyword.$labels).spliterator(), false).map(JsonUtils::asString).toList();
+    if (CompatJsonUtils.hasPath(barJsonObject, Keyword.$labels)) {
+      return StreamSupport.stream(CompatJsonUtils.asJsonArray(barJsonObject, Keyword.$labels).spliterator(), false).map(CompatJsonUtils::asString).toList();
     }
     return Collections.emptyList();
   }
 
   private static Groove resolveGrooveForBar(JsonObject barJsonObject, Map<String, Groove> grooves) {
     Groove g = Groove.DEFAULT_INSTANCE;
-    if (JsonUtils.hasPath(barJsonObject, Keyword.$groove)) {
-      String grooveName = JsonUtils.asString(barJsonObject, Keyword.$groove.name());
+    if (CompatJsonUtils.hasPath(barJsonObject, Keyword.$groove)) {
+      String grooveName = CompatJsonUtils.asString(barJsonObject, Keyword.$groove.name());
       g = grooves.get(grooveName);
       if (g == null) {
         throw grooveNotDefinedException(asJsonElement(barJsonObject, Keyword.$groove), grooveName);
@@ -98,7 +98,7 @@ public class Bar {
   private Fraction resolveBeatsForBar(JsonObject barJsonObject) {
     Fraction beats;
     try {
-      beats = Fraction.parseFraction(JsonUtils.asString(barJsonObject, Keyword.$beats));
+      beats = Fraction.parseFraction(CompatJsonUtils.asString(barJsonObject, Keyword.$beats));
     } catch (FractionFormatException e) {
       throw illegalFormatException(asJsonElement(barJsonObject, Keyword.$beats), FRACTION_EXAMPLE);
     }
@@ -107,7 +107,7 @@ public class Bar {
   }
 
   private static JsonArray getPatternsForPartJsonElements(String partName, JsonObject patternsJsonObjectInBar) {
-    JsonArray partPatternsJsonArray = JsonUtils.asJsonArray(patternsJsonObjectInBar, partName);
+    JsonArray partPatternsJsonArray = CompatJsonUtils.asJsonArray(patternsJsonObjectInBar, partName);
     if (!partPatternsJsonArray.isJsonArray()) {
       throw typeMismatchException(partPatternsJsonArray, ARRAY);
     }
@@ -115,7 +115,7 @@ public class Bar {
   }
 
   private static JsonObject getPartsInBarAsJsonObject(JsonObject jsonObject) {
-    JsonObject patternsJsonObjectInBar = JsonUtils.asJsonObject(jsonObject, Keyword.$parts);
+    JsonObject patternsJsonObjectInBar = CompatJsonUtils.asJsonObject(jsonObject, Keyword.$parts);
     if (patternsJsonObjectInBar == null) {
       throw requiredElementMissingException(jsonObject, Keyword.$parts);
     }
@@ -132,7 +132,7 @@ public class Bar {
   private List<Pattern> createPattern(String patternNames) {
     List<Pattern> patternList;
     if (patternNames.startsWith("$inline:")) {
-      patternList = singletonList(Pattern.createPattern(JsonUtils.toJson(patternNames.substring("$inline:".length())).getAsJsonObject(), this.noteMaps));
+      patternList = singletonList(Pattern.createPattern(CompatJsonUtils.toJson(patternNames.substring("$inline:".length())).getAsJsonObject(), this.noteMaps));
     } else {
       patternList = new LinkedList<>();
       for (String eachPatternName : patternNames.split(";")) {

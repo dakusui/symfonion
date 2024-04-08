@@ -6,8 +6,8 @@ import com.google.gson.JsonObject;
 import java.io.File;
 import java.io.Serial;
 
-import static com.github.dakusui.json.JsonUtils.createSummaryJsonObjectFromPaths;
-import static com.github.dakusui.json.JsonUtils.findPathOf;
+import static com.github.dakusui.symfonion.compat.json.CompatJsonUtils.createSummaryJsonObjectFromPaths;
+import static com.github.dakusui.symfonion.compat.json.CompatJsonUtils.findPathOf;
 
 public class SymfonionReferenceException extends SymfonionSyntaxException {
   /**
