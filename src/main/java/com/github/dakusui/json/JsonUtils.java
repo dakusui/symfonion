@@ -1,5 +1,6 @@
 package com.github.dakusui.json;
 
+import com.github.dakusui.symfonion.compat.json.JsonSummarizer;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
@@ -22,7 +23,7 @@ public enum JsonUtils {
   public static String summarizeJson(JsonElement rootJsonElement, JsonElement focus) {
     requireAll(
         that(rootJsonElement).satisfies().isNotNull(),
-        that(focus).satisfies().isNotNull().checkWithPredicate(not(isInstanceOf(JsonNull.class))));
+        that(focus).satisfies().isNotNull().predicate(not(isInstanceOf(JsonNull.class))));
     return summarizeJson(
         rootJsonElement,
         locate(rootJsonElement, focus)
@@ -33,13 +34,13 @@ public enum JsonUtils {
     requireAll(
         that(rootJsonElement).satisfies().isNotNull(),
         that(jsonPath).satisfies().isNotNull());
-    return null;
+    return null; // JsonSummarizer.summaryObject();
   }
 
   public static Optional<JsonPath> locate(JsonElement root, JsonElement target) {
     requireAll(
         that(target).satisfies().isNotNull(),
-        that(target).satisfies().isNotNull().checkWithPredicate(not(isInstanceOf(JsonNull.class))));
+        that(target).satisfies().isNotNull().predicate(not(isInstanceOf(JsonNull.class))));
     Map<JsonElement, JsonPath> map = buildJsonPathMap(root);
     return map.containsKey(target) ?
         Optional.of(map.get(target)) :

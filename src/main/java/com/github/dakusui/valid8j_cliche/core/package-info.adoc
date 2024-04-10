@@ -1,0 +1,82 @@
+:toc:
+
+= The `valid8j` library
+
+The `valid8j` library is a facade library for `pcond` library, which offers "printable" predicates and mechanisms to build them.
+
+It allows us to write
+
+- value checking logics,
+- DbC (Design by Contract) style pre-, post-, and invariant condition checking,
+- and test assertions
+
+in a way where:
+
+- uniformed
+- readable in codes
+- readable in printable messages
+- easy to write
+- easy to enhance
+
+The library was named after valid4j<<valid4j>>, which is a DbC library leveraging Hamcrest<<hamcrest>>'s matchers to compose a human-readable message when a given condition is violated.
+
+== Code Examples
+
+=== Programming Models
+
+`valid8j` has two different programming models, which are "fluent" model and the other is "plain predicate" programming model.
+Internally, the mechanism for the "fluent" model utilizes the other's mechanism to implement its capabilities.
+
+The facade class of both of them is `Expectations` class in this package.
+Type `Expectations` in your IDE to let it find what you want, then do `static import` the stuff to make your code look clean and readable.
+
+[source, xml]
+.Maven coordinate
+----
+<t.b.d/>
+----
+
+==== Fluent Programming Model
+
+Fun thing first.
+
+[source, java]
+.Before static import
+----
+class TBD {}
+----
+
+[source, java]
+.After static import
+----
+class TBD {}
+----
+
+==== Plain Predicate Programming Model
+
+Sometimes, you may want to use your own predicate from inside the fluent programming model.
+
+[java]
+.
+----
+(t.b.d.)
+----
+
+
+=== Usage Contexts
+
+- Guava-like value checking
+- Overhead-free DbC assertions
+- Test assertions
+
+== Design of `valid8j` (and `pcond`)
+
+- "Transform-and-check" model: Decomposing a check into a printable-function and a printable-predicate.
+- "all of" and "any of": Avoiding fail-check-fix-fail loop.
+
+
+[bibliography]
+== References
+
+- [[[valid4j, 1]]]: valid8j, http://valid4j.org.t.b.d.
+- [[[hamcrest, 2]]]: hamcrest, http://hamcrest.org.t.b.d.

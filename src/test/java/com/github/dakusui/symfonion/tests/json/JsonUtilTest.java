@@ -1,42 +1,38 @@
 package com.github.dakusui.symfonion.tests.json;
 
-import static com.github.dakusui.thincrest.TestAssertions.assertThat;
-import static com.github.dakusui.thincrest_pcond.forms.Functions.*;
-import static com.github.dakusui.thincrest_pcond.forms.Predicates.*;
-import static java.util.Arrays.asList;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-import com.github.dakusui.symfonion.compat.exceptions.json.*;
 import com.github.dakusui.symfonion.compat.json.*;
+import com.github.dakusui.symfonion.testutils.TestBase;
 import com.github.dakusui.thincrest_pcond.forms.Printables;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 
-public class JsonUtilTest {
+import static com.github.dakusui.thincrest.TestAssertions.assertThat;
+import static com.github.dakusui.thincrest_pcond.forms.Functions.*;
+import static com.github.dakusui.thincrest_pcond.forms.Predicates.*;
+import static java.util.Arrays.asList;
+import static org.junit.Assert.*;
+
+public class JsonUtilTest extends TestBase {
   private JsonObject obj;
   private JsonArray arr;
   
   /**
    * <code>
    * {
-   * "key1":"val1",
-   * "key2":2,
-   * "key3":3.0f,
-   * "key4":4L,
-   * "key5":5.0d,
+   *   "key1":"val1",
+   *   "key2":2,
+   *   "key3":3.0f,
+   *   "key4":4L,
+   *   "key5":5.0d,
    * "key6":"600",
    * "key7":[
    * "val71",
@@ -79,7 +75,7 @@ public class JsonUtilTest {
    * [ "val1", 123, { "hello":"world", "hi":null } ]
    * </code>
    *
-   * @return
+   * @return returns a test array shown above.
    */
   private JsonArray testArray() {
     JsonArray ret = new JsonArray();
@@ -237,6 +233,7 @@ public class JsonUtilTest {
       CompatJsonUtils.asJsonObjectWithDefault(this.obj, new JsonObject(), "key7", 4);
       fail();
     } catch (JsonIndexOutOfBoundsException e) {
+      e.printStackTrace();
       passed = true;
     }
     assertTrue(passed);
@@ -248,6 +245,7 @@ public class JsonUtilTest {
       CompatJsonUtils.asInt(this.obj, "_key2");
       fail();
     } catch (JsonPathNotFoundException e) {
+      e.printStackTrace();
       assertEquals(this.obj, e.getProblemCausingNode());
       assertArrayEquals(new Object[]{"_key2"}, e.getPath());
       assertEquals(0, e.getIndex());
@@ -260,6 +258,7 @@ public class JsonUtilTest {
       System.out.println(CompatJsonUtils.asStringWithDefault(this.obj, "VAL1", "key7", "STRING", "key72"));
       fail();
     } catch (JsonInvalidPathException e) {
+      e.printStackTrace();
       assertThat(
           e,
           allOf(

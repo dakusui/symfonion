@@ -22,11 +22,11 @@ public enum SymfonionExceptionThrower implements ExceptionThrower<SymfonionExcep
           ----
           %s
           ----
-          """,
+          """/*,
           JsonUtils.summarizeJson(
               context.valueFor(ROOT_JSON_ELEMENT),
               context.valueFor(JSON_PATH)
-          ));
+          )*/);
     }
   },
   JSON_ARRAY_INDEX_OUT_OF_BOUNDS {
