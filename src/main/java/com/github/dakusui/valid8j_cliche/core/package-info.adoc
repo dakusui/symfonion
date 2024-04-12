@@ -80,3 +80,4 @@ Sometimes, you may want to use your own predicate from inside the fluent program
 
 - [[[valid4j, 1]]]: valid8j, http://valid4j.org.t.b.d.
 - [[[hamcrest, 2]]]: hamcrest, http://hamcrest.org.t.b.d.
+- [[[specsheet, 3]]]: Specifications of Expectations and ClassicExpectations classes , https://docs.google.com/spreadsheets/d/1wR9QM99LwVnx--89oFmUddcFvPvzIkTyO7-1zVGvWoU/edit#gid=0[spec-sheet]
