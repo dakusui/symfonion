@@ -10,7 +10,7 @@ import java.util.List;
 import static com.github.dakusui.symfonion.exception.SymfonionExceptionThrower.*;
 import static com.github.dakusui.symfonion.exception.SymfonionExceptionThrower.Key.ROOT_JSON_ELEMENT;
 import static com.github.dakusui.valid8j.Requires.require;
-import static com.github.dakusui.valid8j_cliche.core.Cliche.validate;
+import static com.github.dakusui.valid8j_cliche.core.ClassicExpectations.validate;
 import static com.github.dakusui.valid8j_pcond.forms.Functions.stream;
 import static com.github.dakusui.valid8j_pcond.forms.Predicates.*;
 import static java.util.Arrays.asList;

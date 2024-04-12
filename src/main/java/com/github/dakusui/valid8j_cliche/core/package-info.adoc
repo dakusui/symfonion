@@ -7,16 +7,16 @@ The `valid8j` library is a facade library for `pcond` library, which offers "pri
 It allows us to write
 
 - value checking logics,
-- DbC (Design by Contract) style pre-, post-, and invariant condition checking,
+- *Overhead-free* DbC (Design by Contract) style pre-, post-, and invariant condition checking,
 - and test assertions
 
 in a way where:
 
-- uniformed
-- readable in codes
-- readable in printable messages
-- easy to write
-- easy to enhance
+- uniformed and consistent,
+- readable in codes,
+- readable in printed messages,
+- easy to write,
+- and easy to enhance.
 
 The library was named after valid4j<<valid4j>>, which is a DbC library leveraging Hamcrest<<hamcrest>>'s matchers to compose a human-readable message when a given condition is violated.
 

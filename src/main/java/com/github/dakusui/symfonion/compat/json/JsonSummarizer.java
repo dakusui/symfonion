@@ -12,7 +12,7 @@ import java.util.Objects;
 import java.util.function.Predicate;
 
 import static com.github.dakusui.valid8j.Assertions.that;
-import static com.github.dakusui.valid8j_cliche.core.Cliche.statement;
+import static com.github.dakusui.valid8j_cliche.core.Expectations.statement;
 import static com.github.dakusui.valid8j_cliche.json.JsonObjectTo.keyList;
 import static com.github.dakusui.valid8j_pcond.forms.Predicates.*;
 import static com.github.dakusui.valid8j_pcond.forms.Printables.predicate;
