@@ -21,26 +21,69 @@ import static com.github.dakusui.valid8j_pcond.internals.InternalUtils.trivialId
 import static java.util.stream.Collectors.toList;
 
 /**
+ * //@formatter:off
  * A facade class for the "fluent" style programming model of `valid8j` library.
  *
- * .General Usage
+ * Following is an example for "overhead-less precondition checking for DbC style programming".
+ *
+ * [source,java]
  * ----
- * ((assert (all|
+ * public class DbC {
+ *   public void aMethod(int a) {
+ *     assert Expectations.precondition(Expectations.that(a).satisfies().isGreaterThan(0));
+ *   }
+ * }
+ * ----
+ *
+ * Then, do `static import` to improve readability.
+ *
+ * [source,java]
+ * ----
+ * public class DbC {
+ *   public void aMethod(int a) {
+ *     assert precondition(that(a).satisfies().isGreaterThan(0));
+ *   }
+ * }
+ * ----
+ *
+ * Static methods in this class are designed so that the readability will become the best when they are static imported.
+ *
+ * An example for a test assertion looks like following.
+ *
+ * [source,java]
+ * ----
+ * public class TestClass {
+ *   @Test
+ *   public void aTestMethod() {
+ *     assert
+ *   }
+ * }
+ * ----
+ *
+ * Formalizing those use cases as a regular expression, but not respecting the differences of call-chain and call for a parameter value resolution,
+ * it will be like as follows.:
+ *
+ * ----
+ * ((assert<1>
+ *         (all|
  *          $|
- *          precondition(s)?|
- *          invariant(s)?|
- *          postcondition(s)?))|
+ *          precondition|preconditions|
+ *          invariant|invariants|
+ *          postcondition|postconditions))|
  *   assertAll|
  *   assertStatement|
  *   require|
  *   hold|
  *   ensure|
- *   requireArgument(s)?|
- *   requireState(s)?)
- *     (that satisfies predicate)|
- *     (satisfies predicate)|
+ *   requireArgument|requireArguments|
+ *   requireState|requireStates)
+ *     (that satisfies predicate<2>)|
+ *     (satisfies predicate<2>)|
  *     statement
  * ----
+ * <1> `assert` is a Java's statement (a reserved word). Not a method in this class.
+ * <2> `predicate` is a method that accepts a predicate, and it checks if the given predicate is satisfied by on the call-chain.
+ * //@formatter:on
  */
 public enum Expectations {
   ;
@@ -56,7 +99,6 @@ public enum Expectations {
    *
    * - yor are checking invariant conditions in DbC ("Design by Contract") approach.
    * - you are not interested in DbC approach.
-   *
    *
    * @param statements Statements to be asserted.
    * @return `true` if all the statements are satisfied.
@@ -221,16 +263,16 @@ public enum Expectations {
    *
    * @param statements Invariant conditions.
    */
-  public static void retain(Statement<?>... statements) {
+  public static void hold(Statement<?>... statements) {
     ValidationFluents.all(statements);
   }
 
   /**
-   * A singular version of {@link Expectations#retain(Statement[])}.
+   * A singular version of {@link Expectations#hold(Statement[])}.
    *
    * @param statement An invariant condition.
    */
-  public static <T> T retain(Statement<T> statement) {
+  public static <T> T hold(Statement<T> statement) {
     ValidationFluents.all(statement);
     return statement.statementValue();
   }
@@ -250,8 +292,23 @@ public enum Expectations {
    * @param statement An invariant condition.
    */
   public static <T> T ensure(Statement<T> statement) {
-    ValidationFluents.ensureAll(statement);
-    return statement.statementValue();
+    return ValidationFluents.ensureStatement(statement);
+  }
+
+  public static void requireArguments(Statement<?>... statements) {
+    ValidationFluents.requireArguments(statements);
+  }
+
+  public static <T> T requireArgument(Statement<T> statement) {
+    return ValidationFluents.requireArgument(statement);
+  }
+
+  public static void requireStates(Statement<?>... statements) {
+    ValidationFluents.requireStates(statements);
+  }
+
+  public static <T> T requireState(Statement<T> statement) {
+    return ValidationFluents.requireState(statement);
   }
 
   public static <T, TX extends Transformer<TX, V, T, T>, V extends Checker<V, T, T>> TX that(T value, Function<T, TX> transformer) {
@@ -341,7 +398,6 @@ public enum Expectations {
   public static BooleanChecker<Boolean> satisfies(boolean value) {
     return satisfies(value, v -> booleanValue(v).satisfies());
   }
-
 
   public static <T> Statement<T> statement(T value, Predicate<T> cond) {
     return satisfies(value).predicate(cond);

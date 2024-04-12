@@ -217,7 +217,7 @@
                         <overview>src/main/javadoc/overview.adoc</overview>
                         <doclet>org.asciidoctor.asciidoclet.Asciidoclet</doclet>
                         <docletArtifact>
-                            <groupId>com.github.dakusui</groupId>
+                            <groupId>org.asciidoctor</groupId>
                             <artifactId>asciidoclet</artifactId>
                             <version>${asciidoclet.version}</version>
                             <classifier>shaded</classifier>
@@ -459,6 +459,36 @@
                             <arguments>
                                 <argument>
                                     ${basedir}/src/build_tools/remove-adoc-diags.sh
+                                </argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <execution><!-- Remove diagram caches -->
+                        <id>remove package-info.java files</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>bash</executable>
+                            <arguments>
+                                <argument>
+                                    ${basedir}/src/build_tools/remove-package-info-java.sh
+                                </argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <execution><!-- Run our version calculation script -->
+                        <id>package-info.java generation</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>bash</executable>
+                            <arguments>
+                                <argument>
+                                    ${basedir}/src/build_tools/package-info-adoc_to_package-info-java.sh
                                 </argument>
                             </arguments>
                         </configuration>
