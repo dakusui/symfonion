@@ -18,9 +18,9 @@ import static com.github.dakusui.symfonion.testutils.json.SymfonionJsonTestUtils
 import static com.github.dakusui.testutils.TestUtils.isRunUnderPitest;
 import static com.github.dakusui.testutils.json.JsonTestUtils.*;
 import static com.github.dakusui.testutils.midi.MidiTestUtils.assumeRequiredMidiDevicesPresent;
-import static com.github.dakusui.thincrest.TestAssertions.assertThat;
-import static com.github.dakusui.thincrest.TestAssertions.assumeThat;
-import static com.github.dakusui.thincrest_pcond.forms.Predicates.isFalse;
+import static com.github.valid8j.classic.TestAssertions.assertThat;
+import static com.github.valid8j.classic.TestAssertions.assumeThat;
+import static com.github.valid8j.pcond.forms.Predicates.isFalse;
 
 public class CliSmokeTest extends CliTestBase {
   /**

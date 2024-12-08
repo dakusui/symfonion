@@ -16,9 +16,9 @@ import java.util.List;
 import static com.github.dakusui.thincrest_cliche.gson.JsonElementTo.jsonArrayAt;
 import static com.github.dakusui.thincrest_cliche.gson.JsonElementTo.jsonObjectAt;
 import static com.github.dakusui.testutils.json.JsonTestUtils.*;
-import static com.github.dakusui.thincrest.TestAssertions.assertThat;
-import static com.github.dakusui.thincrest_pcond.forms.Predicates.isInstanceOf;
-import static com.github.dakusui.thincrest_pcond.forms.Predicates.isNotNull;
+import static com.github.valid8j.classic.TestAssertions.assertThat;
+import static com.github.valid8j.pcond.forms.Predicates.isInstanceOf;
+import static com.github.valid8j.pcond.forms.Predicates.isNotNull;
 import static java.util.Arrays.asList;
 
 public class JsonSummarizerTest extends TestBase {

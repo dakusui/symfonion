@@ -1,7 +1,7 @@
 package com.github.dakusui.symfonion.utils;
 
 import com.github.dakusui.symfonion.compat.exceptions.SymfonionException;
-import com.github.dakusui.valid8j_pcond.forms.Printables;
+import com.github.valid8j.pcond.forms.Printables;
 
 import java.io.*;
 import java.util.Optional;
@@ -12,8 +12,9 @@ import java.util.regex.Matcher;
 import java.util.stream.Collector;
 
 import static com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower.*;
-import static com.github.dakusui.valid8j.Requires.require;
-import static com.github.dakusui.valid8j_pcond.forms.Predicates.isNotNull;
+
+import static com.github.valid8j.classic.Requires.require;
+import static com.github.valid8j.pcond.forms.Predicates.isNotNull;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 

@@ -3,8 +3,8 @@ package com.github.dakusui.thincrest_cliche.sut.symfonion;
 import com.github.dakusui.thincrest_cliche.core.Transform;
 import com.github.dakusui.thincrest_cliche.core.TransformingPredicateFactory;
 
-import static com.github.dakusui.thincrest_pcond.forms.Functions.call;
-import static com.github.dakusui.thincrest_pcond.forms.Functions.stringify;
+import static com.github.valid8j.pcond.forms.Functions.call;
+import static com.github.valid8j.pcond.forms.Functions.stringify;
 
 public class ResultTo {
   public static TransformingPredicateFactory<Object, Object> exitCode() {

@@ -4,12 +4,12 @@ import com.github.dakusui.symfonion.compat.json.JsonInvalidPathException;
 import com.github.dakusui.symfonion.compat.json.CompatJsonUtils;
 import com.github.dakusui.symfonion.testutils.TestBase;
 import com.github.dakusui.thincrest_cliche.core.Transform;
-import com.github.dakusui.thincrest_pcond.forms.Printables;
+import com.github.valid8j.pcond.forms.Printables;
 import org.junit.Test;
 
 import static com.github.dakusui.testutils.json.JsonTestUtils.*;
-import static com.github.dakusui.thincrest.TestAssertions.assertThat;
-import static com.github.dakusui.thincrest_pcond.forms.Predicates.isEqualTo;
+import static com.github.valid8j.classic.TestAssertions.assertThat;
+import static com.github.valid8j.pcond.forms.Predicates.isEqualTo;
 
 public class CompatJsonUtilsTest extends TestBase {
   @Test

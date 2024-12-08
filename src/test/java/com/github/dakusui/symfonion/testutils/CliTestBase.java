@@ -1,33 +1,34 @@
 package com.github.dakusui.symfonion.testutils;
 
-import java.io.*;
-import java.util.Objects;
-
 import com.github.dakusui.symfonion.cli.Cli;
+import com.github.dakusui.symfonion.compat.exceptions.SymfonionException;
+import com.github.dakusui.symfonion.utils.Utils;
 import com.github.dakusui.thincrest_cliche.core.AllOf;
 import com.github.dakusui.thincrest_cliche.core.Transform;
 import org.junit.Before;
 
-import com.github.dakusui.symfonion.compat.exceptions.SymfonionException;
-import com.github.dakusui.symfonion.utils.Utils;
+import java.io.*;
+import java.util.Objects;
 
-import static com.github.dakusui.thincrest.TestAssertions.assertThat;
-import static com.github.dakusui.thincrest_pcond.forms.Functions.call;
-import static com.github.dakusui.thincrest_pcond.forms.Predicates.*;
+import static com.github.valid8j.classic.TestAssertions.assertThat;
+import static com.github.valid8j.pcond.forms.Functions.call;
+import static com.github.valid8j.pcond.forms.Predicates.containsString;
+import static com.github.valid8j.pcond.forms.Predicates.isEqualTo;
+import static java.util.function.Predicate.not;
 
 public class CliTestBase extends TestBase {
   public record Result(int exitCode, String out, String err) {
     @Override
     public String toString() {
       return String.format("""
-          EXIT_CODE:
-          %s
-          STDOUT:
-          %s
-                    
-          STDERR:
-          %s
-          """,
+              EXIT_CODE:
+              %s
+              STDOUT:
+              %s
+                        
+              STDERR:
+              %s
+              """,
           insertOneWhiteSpaceBeforeEveryLine(Objects.toString(this.exitCode())),
           insertOneWhiteSpaceBeforeEveryLine(this.out()),
           insertOneWhiteSpaceBeforeEveryLine(this.err()));

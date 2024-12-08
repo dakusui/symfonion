@@ -13,9 +13,9 @@ import java.io.PrintStream;
 import static com.github.dakusui.testutils.TestUtils.immediatelyClosingInputStream;
 import static com.github.dakusui.testutils.TestUtils.outputCapturingPrintStream;
 import static com.github.dakusui.testutils.midi.MidiTestUtils.assumeRequiredMidiDevicesPresent;
-import static com.github.dakusui.thincrest.TestAssertions.assertThat;
-import static com.github.dakusui.thincrest_pcond.experimentals.cursor.Cursors.findElements;
-import static com.github.dakusui.thincrest_pcond.forms.Predicates.containsString;
+import static com.github.valid8j.classic.TestAssertions.assertThat;
+import static com.github.valid8j.pcond.experimentals.cursor.Cursors.findElements;
+import static com.github.valid8j.pcond.forms.Predicates.containsString;
 
 public class HelpTest {
   private PrintStream systemOut;

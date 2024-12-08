@@ -7,14 +7,14 @@ import static com.github.dakusui.symfonion.exception.SymfonionExceptionThrower.*
 import static com.github.dakusui.symfonion.exception.SymfonionExceptionThrower.Key.FILENAME;
 
 public class ExceptionThrowerTest extends TestBase {
-  @Test
+  @Test(expected = RuntimeException.class)
   public void tryExceptionThrower() {
     try (var ignored = context(entry(FILENAME, "aFilename"))) {
       exampleMethod();
     }
   }
 
-  @Test
+  @Test(expected = RuntimeException.class)
   public void tryExceptionThrowerNestedContext() {
     try (var ignored = context(entry(FILENAME, "aFilename"))) {
       try (var ignored2 = context(entry(FILENAME, "bFilename"))) {
@@ -24,7 +24,7 @@ public class ExceptionThrowerTest extends TestBase {
   }
 
 
-  @Test
+  @Test(expected = RuntimeException.class)
   public void tryExceptionThrowerNestedContextWithShorthand() {
     try (var ignored = context($(FILENAME, "aFilename"))) {
       try (var ignored2 = context($(FILENAME, "bFilename"))) {

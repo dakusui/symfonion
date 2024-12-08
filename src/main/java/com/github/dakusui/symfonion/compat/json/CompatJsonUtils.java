@@ -5,8 +5,8 @@ import com.google.gson.*;
 import java.util.*;
 import java.util.Map.Entry;
 
-import static com.github.dakusui.valid8j.Requires.require;
-import static com.github.dakusui.valid8j_pcond.forms.Predicates.callp;
+import static com.github.valid8j.classic.Requires.require;
+import static com.github.valid8j.pcond.forms.Predicates.callp;
 import static java.util.Objects.requireNonNull;
 
 public class CompatJsonUtils {

@@ -1,10 +1,8 @@
 package com.github.dakusui.valid8j_cliche.core;
 
-import com.github.dakusui.valid8j_pcond.core.printable.PrintablePredicateFactory;
-import com.github.dakusui.valid8j_pcond.forms.Predicates;
-import com.google.gson.JsonObject;
+import com.github.valid8j.pcond.core.printable.PrintablePredicateFactory;
+import com.github.valid8j.pcond.forms.Predicates;
 
-import java.util.List;
 import java.util.function.Function;
 
 public enum Transform {

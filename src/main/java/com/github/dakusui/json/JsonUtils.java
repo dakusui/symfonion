@@ -1,5 +1,6 @@
 package com.github.dakusui.json;
 
+import com.github.valid8j.fluent.Expectations;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
@@ -10,9 +11,9 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
-import static com.github.dakusui.valid8j.ValidationFluents.requireAll;
-import static com.github.dakusui.valid8j_cliche.core.Expectations.that;
-import static com.github.dakusui.valid8j_pcond.forms.Predicates.isInstanceOf;
+import static com.github.valid8j.fluent.Expectations.that;
+import static com.github.valid8j.fluent.Expectations.value;
+import static com.github.valid8j.pcond.forms.Predicates.isInstanceOf;
 import static java.util.Collections.emptyList;
 import static java.util.function.Predicate.not;
 
@@ -20,9 +21,9 @@ public enum JsonUtils {
   ;
 
   public static String summarizeJson(JsonElement rootJsonElement, JsonElement focus) {
-    requireAll(
-        that(rootJsonElement).satisfies().isNotNull(),
-        that(focus).satisfies().isNotNull().predicate(not(isInstanceOf(JsonNull.class))));
+    Expectations.require(
+        Expectations.value(rootJsonElement).satisfies().notNull(),
+        Expectations.value(focus).satisfies().notNull().predicate(not(isInstanceOf(JsonNull.class))));
     return summarizeJson(
         rootJsonElement,
         locate(rootJsonElement, focus)
@@ -30,16 +31,16 @@ public enum JsonUtils {
   }
 
   public static String summarizeJson(JsonElement rootJsonElement, JsonPath jsonPath) {
-    requireAll(
-        that(rootJsonElement).satisfies().isNotNull(),
-        that(jsonPath).satisfies().isNotNull());
+    Expectations.require(
+        that(rootJsonElement).satisfies().notNull(),
+        that(jsonPath).satisfies().notNull());
     return null; // JsonSummarizer.summaryObject();
   }
 
   public static Optional<JsonPath> locate(JsonElement root, JsonElement target) {
-    requireAll(
-        that(target).satisfies().isNotNull(),
-        that(target).satisfies().isNotNull().predicate(not(isInstanceOf(JsonNull.class))));
+    Expectations.require(
+        value(target).satisfies().notNull(),
+        value(target).satisfies().notNull().predicate(not(isInstanceOf(JsonNull.class))));
     Map<JsonElement, JsonPath> map = buildJsonPathMap(root);
     return map.containsKey(target) ?
         Optional.of(map.get(target)) :

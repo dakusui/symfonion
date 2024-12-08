@@ -1,13 +1,13 @@
 package com.github.dakusui.valid8j_cliche.core;
 
-import com.github.dakusui.valid8j.Assertions;
-import com.github.dakusui.valid8j.ValidationFluents;
-import com.github.dakusui.valid8j_pcond.core.fluent.AbstractObjectTransformer;
-import com.github.dakusui.valid8j_pcond.core.fluent.Checker;
-import com.github.dakusui.valid8j_pcond.core.fluent.Matcher;
-import com.github.dakusui.valid8j_pcond.core.fluent.Transformer;
-import com.github.dakusui.valid8j_pcond.core.fluent.builtins.*;
-import com.github.dakusui.valid8j_pcond.fluent.Statement;
+import com.github.valid8j.classic.Assertions;
+import com.github.valid8j.fluent.internals.ValidationFluents;
+import com.github.valid8j.pcond.core.fluent.AbstractObjectTransformer;
+import com.github.valid8j.pcond.core.fluent.Checker;
+import com.github.valid8j.pcond.core.fluent.Matcher;
+import com.github.valid8j.pcond.core.fluent.Transformer;
+import com.github.valid8j.pcond.core.fluent.builtins.*;
+import com.github.valid8j.pcond.fluent.Statement;
 
 import java.util.Arrays;
 import java.util.List;
@@ -16,8 +16,8 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import static com.github.dakusui.valid8j_pcond.fluent.Statement.*;
-import static com.github.dakusui.valid8j_pcond.internals.InternalUtils.trivialIdentityFunction;
+import static com.github.valid8j.pcond.fluent.Statement.*;
+import static com.github.valid8j.pcond.internals.InternalUtils.trivialIdentityFunction;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -85,6 +85,7 @@ import static java.util.stream.Collectors.toList;
  * <2> `predicate` is a method that accepts a predicate, and it checks if the given predicate is satisfied by on the call-chain.
  * //@formatter:on
  */
+@SuppressWarnings("JavadocDeclaration")
 public enum Expectations {
   ;
 
@@ -129,7 +130,7 @@ public enum Expectations {
   }
 
   /**
-   * Checks if the all the given `statements` are satisfied.
+   * Checks if all the given `statements` are satisfied.
    *
    * Purpose:: DbC
    * Intended Style:: Overhead-Free Assertion
@@ -141,6 +142,7 @@ public enum Expectations {
    * @return `true` if all the statements are satisfied.
    */
   public static boolean preconditions(Statement<?>... statements) {
+
     List<?> values = Arrays.stream(statements).map(Statement::statementValue).collect(toList());
     return Assertions.precondition(values, Statement.createPredicateForAllOf(statements));
   }

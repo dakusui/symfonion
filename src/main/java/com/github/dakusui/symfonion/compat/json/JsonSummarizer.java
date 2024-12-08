@@ -11,11 +11,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
 
-import static com.github.dakusui.valid8j.Assertions.that;
+import static com.github.valid8j.classic.Assertions.that;
 import static com.github.dakusui.valid8j_cliche.core.Expectations.statement;
 import static com.github.dakusui.valid8j_cliche.json.JsonObjectTo.keyList;
-import static com.github.dakusui.valid8j_pcond.forms.Predicates.*;
-import static com.github.dakusui.valid8j_pcond.forms.Printables.predicate;
+import static com.github.valid8j.pcond.forms.Predicates.*;
+import static com.github.valid8j.pcond.forms.Printables.predicate;
 
 public class JsonSummarizer {
   public static JsonElement summaryObject(JsonObject root, List<Object> pathToParent, Object focus) {
