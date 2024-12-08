@@ -28,9 +28,17 @@ import static com.github.dakusui.symfonion.compat.json.CompatJsonUtils.asJsonEle
 public class Pattern {
   /**
    * A class that models a set of default parameter applied to each `Stroke` in this `Pattern`.
+   *
+   * Following is a list of available parameters.:
+   *
+   * * `$velocitybase`
+   * * `$velocitydelta`
+   * * `$gate`
+   * * `$length`
+   * * `$transpose`
+   * * `$arpeggio`
    */
   public static class Parameters {
-    static final Fraction QUARTER = new Fraction(1, 4);
     final double gate;
     final Fraction length;
     final int transpose;
@@ -53,18 +61,34 @@ public class Pattern {
       this.arpeggio = CompatJsonUtils.asIntWithDefault(json, 0, Keyword.$arpeggio);
     }
 
+    /**
+     * Returns a `$gate` value.
+     * @return a `$gate` value
+     */
     public double gate() {
       return this.gate;
     }
 
+    /**
+     * Returns a `$length` value.
+     * @return a `$length` value
+     */
     public Fraction length() {
       return this.length;
     }
 
+    /**
+     * Returns a `$transpose` value.
+     * @return a `$transpose` value
+     */
     public int transpose() {
       return this.transpose;
     }
 
+    /**
+     * Returns a `$velocitybase` value.
+     * @return a `$velocitybase` value
+     */
     public int velocityBase() {
       return this.velocityBase;
     }
@@ -78,6 +102,11 @@ public class Pattern {
       return this.velocityDelta;
     }
 
+    /**
+     * Returns a `$arpeggio` value.
+     *
+     * @return a `$arpeggio` value
+     */
     public int arpeggio() {
       return this.arpeggio;
     }
@@ -86,35 +115,6 @@ public class Pattern {
   private final List<Stroke> body;
   private final Parameters params;
 
-  /**
-   * // @formatter:off
-   * Creates an object of this class from a given `jsonObject` and `noteMap`.
-   * The `jsonObject` can be either:
-   *
-   * [source, JSON]
-   * ----
-   * {
-   *   "$body": "{stroke string}"
-   * }
-   * ----
-   *
-   * Or:
-   * [source, JSON]
-   * ----
-   * {
-   *   "$body": [
-   *     "{stroke 1}",
-   *     "{stroke 2}"
-   *   ]
-   * }
-   * ----
-   * // @formatter:on
-   *
-   * @param jsonObject A JSON object which contains the definition of a `Pattern` object.
-   * @param noteMap    A note map used to create an object of this class.
-   * @see NoteMap
-   * a@see Stroke
-   */
   Pattern(JsonObject jsonObject, NoteMap noteMap) {
     // Initialize 'body'.
     this.body = new LinkedList<>();
@@ -153,15 +153,53 @@ public class Pattern {
     return this.params;
   }
 
-  public static Pattern createPattern(JsonObject json, Map<String, NoteMap> noteMaps) throws SymfonionException, CompatJsonException {
+  /**
+   * // @formatter:off
+   * Creates an object of this class from a given `jsonObject` and `noteMap`.
+   * The `jsonObject` can be either:
+   *
+   * [source, JSON]
+   * ----
+   * {
+   *   "$body": "{stroke string}",
+   * }
+   * ----
+   *
+   * Or:
+   * [source, JSON]
+   * ----
+   * {
+   *   "$body": [
+   *     "{stroke 1}",
+   *     "{stroke 2}"
+   *   ],
+   *   "$length": "<bodyValue>",
+   *   "$gate": "<gateValue>",
+   *   "$otherParameter": "<otherParameterValue>",
+   * }
+   * ----
+   * // @formatter:on
+   *
+   * `<otherParameterValue>` can be one of `Pattern.Parameters`.
+   * This method creates `Pattern` object and a note map (`Map<String, NoteMap>`) used for it is chosen from the `noteMaps`
+   * passed to this method.
+   * If no matching entry is found in `noteMaps`, an exception will be thrown.
+   *
+   * @param jsonObject A JSON object which contains the definition of a `Pattern` object.
+   * @param noteMaps note maps available for this pattern.
+   * @see NoteMap
+   * @see Pattern.Parameters
+   * @see Stroke
+   */
+  public static Pattern createPattern(JsonObject jsonObject, Map<String, NoteMap> noteMaps) throws SymfonionException, CompatJsonException {
     NoteMap noteMap = NoteMap.defaultNoteMap;
-    if (CompatJsonUtils.hasPath(json, Keyword.$notemap)) {
-      String noteMapName = CompatJsonUtils.asString(json, Keyword.$notemap);
+    if (CompatJsonUtils.hasPath(jsonObject, Keyword.$notemap)) {
+      String noteMapName = CompatJsonUtils.asString(jsonObject, Keyword.$notemap);
       noteMap = noteMaps.get(noteMapName);
       if (noteMap == null) {
-        throw noteMapNotFoundException(asJsonElement(json, Keyword.$notemap), noteMapName);
+        throw noteMapNotFoundException(asJsonElement(jsonObject, Keyword.$notemap), noteMapName);
       }
     }
-    return new Pattern(json, noteMap);
+    return new Pattern(jsonObject, noteMap);
   }
 }

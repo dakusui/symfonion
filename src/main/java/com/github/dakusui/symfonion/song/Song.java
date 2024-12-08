@@ -1,11 +1,11 @@
 package com.github.dakusui.symfonion.song;
 
-import com.github.dakusui.symfonion.compat.json.CompatJsonException;
-import com.github.dakusui.symfonion.compat.json.CompatJsonUtils;
 import com.github.dakusui.logias.Logias;
 import com.github.dakusui.logias.lisp.Context;
 import com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower;
 import com.github.dakusui.symfonion.compat.exceptions.SymfonionException;
+import com.github.dakusui.symfonion.compat.json.CompatJsonException;
+import com.github.dakusui.symfonion.compat.json.CompatJsonUtils;
 import com.github.dakusui.symfonion.utils.Utils;
 import com.github.valid8j.classic.Requires;
 import com.github.valid8j.pcond.forms.Predicates;
@@ -22,6 +22,23 @@ import static com.github.dakusui.symfonion.compat.exceptions.SymfonionTypeMismat
 import static com.github.dakusui.symfonion.compat.exceptions.SymfonionTypeMismatchException.OBJECT;
 import static com.github.valid8j.classic.Requires.requireNonNull;
 
+/**
+ * //@formatter:off
+ * Entries that directly matter in this class are following:
+ *
+ * .Entries `Song` class processes
+ * ----
+ * {
+ *   "$noteMaps": { "<noteMapName>": { "...": "..." }},
+ *   "$parts": { "<partName>": { "...": "..." } },
+ *   "$patterns": { "<patternName>": {"...": "..." }},
+ *   "$grooves": { "<grooveName>": ["..."] },
+ *   "$sequence": [ "<bar>", "...", "..." ]
+ * }
+ * ----
+ *
+ * //@formatter:on
+ */
 public class Song {
 
   public static class Builder {
@@ -55,7 +72,6 @@ public class Song {
             loadMidiDeviceProfile(json, logiasContext),
             initParts(this.json),
             patterns,
-            noteMaps,
             grooves,
             initSequence(json, grooves, noteMaps, patterns, this.barFilter, this.partFilter)
         );
@@ -112,8 +128,8 @@ public class Song {
      *
      * @param json A JSON object that defines note-maps.
      * @return A map of note-map name to note-map.
-     * @throws SymfonionException An error found in {@code json} argument.
-     * @throws CompatJsonException      An error found in {@code json} argument.
+     * @throws SymfonionException  An error found in {@code json} argument.
+     * @throws CompatJsonException An error found in {@code json} argument.
      */
     private static Map<String, NoteMap> initNoteMaps(JsonObject json) throws SymfonionException, CompatJsonException {
       Map<String, NoteMap> noteMaps = new HashMap<>();
@@ -178,7 +194,6 @@ public class Song {
   private final Context logiasContext;
   private final Map<String, Part> parts;
   private final Map<String, Pattern> patterns;
-  private final Map<String, NoteMap> noteMaps;
   private final Map<String, Groove> grooves;
   private final List<Bar> bars;
 
@@ -186,14 +201,11 @@ public class Song {
   public Song(Context logiasContext,
               Map<String, Part> parts,
               Map<String, Pattern> patterns,
-              Map<String, NoteMap> noteMaps,
               Map<String, Groove> grooves,
-              List<Bar> bars
-  ) {
+              List<Bar> bars) {
     this.logiasContext = logiasContext;
     this.parts = Requires.requireNonNull(parts);
     this.patterns = Requires.requireNonNull(patterns);
-    this.noteMaps = requireNonNull(noteMaps);
     this.grooves = requireNonNull(grooves);
     this.bars = requireNonNull(bars);
   }
@@ -201,10 +213,6 @@ public class Song {
 
   public Pattern pattern(String patternName) {
     return this.patterns.get(patternName);
-  }
-
-  public NoteMap noteMap(String noteMapName) {
-    return this.noteMaps.get(noteMapName);
   }
 
   public List<Bar> bars() {
