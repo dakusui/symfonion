@@ -2,7 +2,7 @@ package com.github.dakusui.thincrest_cliche.gson;
 
 import com.github.dakusui.symfonion.compat.json.CompatJsonUtils;
 import com.github.dakusui.testutils.json.JsonTestUtils;
-import com.github.dakusui.thincrest_pcond.forms.Printables;
+import com.github.valid8j.pcond.forms.Printables;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;

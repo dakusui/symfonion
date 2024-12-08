@@ -52,10 +52,8 @@
         <logiaslisp.version>1.0</logiaslisp.version>
         <commons-cli.version>1.2</commons-cli.version>
         <gson.version>2.8.9</gson.version>
-        <valid8j-pcond.version>1.0.4-SNAPSHOT</valid8j-pcond.version>
         <!-- BEGIN: test dependencies -->
         <junit.version>4.13.2</junit.version>
-        <thincrest-pcond.version>1.0.1</thincrest-pcond.version>
         <!-- END: test dependencies -->
         <!-- BEGIN: build dependencies -->
         <asciidoclet.version>2.0.0-SNAPSHOT</asciidoclet.version>
@@ -83,6 +81,7 @@
         <maven-assembly-plugin.version>3.7.1</maven-assembly-plugin.version>
         <maven-shade-plugin.version>3.5.2</maven-shade-plugin.version>
         <!-- END: build dependencies -->
+        <valid8j.version>2.1.2</valid8j.version>
     </properties>
 
     <dependencies>
@@ -103,17 +102,12 @@
         </dependency>
         <dependency>
             <groupId>com.github.dakusui</groupId>
-            <artifactId>valid8j-pcond</artifactId>
+            <artifactId>valid8j</artifactId>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.github.dakusui</groupId>
-            <artifactId>thincrest-pcond</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -138,18 +132,13 @@
             </dependency>
             <dependency>
                 <groupId>com.github.dakusui</groupId>
-                <artifactId>valid8j-pcond</artifactId>
-                <version>${valid8j-pcond.version}</version>
+                <artifactId>valid8j</artifactId>
+                <version>${valid8j.version}</version>
             </dependency>
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
                 <version>${junit.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.github.dakusui</groupId>
-                <artifactId>thincrest-pcond</artifactId>
-                <version>${thincrest-pcond.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -223,19 +212,32 @@
                             <classifier>shaded</classifier>
                         </docletArtifact>
                         <additionalJOptions>
-                            <additionalJOption>--add-exports=jdk.javadoc/jdk.javadoc.internal.api=asciidoclet</additionalJOption>
-                            <additionalJOption>--add-exports=jdk.javadoc/jdk.javadoc.internal.tool=asciidoclet</additionalJOption>
-                            <additionalJOption>--add-exports=jdk.compiler/com.sun.tools.javac.api=asciidoclet</additionalJOption>
-                            <additionalJOption>--add-exports=jdk.compiler/com.sun.tools.javac.parser=asciidoclet</additionalJOption>
-                            <additionalJOption>--add-exports=jdk.compiler/com.sun.tools.javac.tree=asciidoclet</additionalJOption>
-                            <additionalJOption>--add-exports=jdk.compiler/com.sun.tools.javac.model=asciidoclet</additionalJOption>
-                            <additionalJOption>--add-opens=jdk.compiler/com.sun.tools.javac.api=asciidoclet</additionalJOption>
-                            <additionalJOption>--add-opens=jdk.compiler/com.sun.tools.javac.parser=asciidoclet</additionalJOption>
-                            <additionalJOption>-J--add-opens=jdk.javadoc/jdk.javadoc.internal.api=ALL-UNNAMED</additionalJOption>
-                            <additionalJOption>-J--add-opens=jdk.javadoc/jdk.javadoc.internal.tool=ALL-UNNAMED</additionalJOption>
-                            <additionalJOption>-J--add-opens=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED</additionalJOption>
-                            <additionalJOption>-J--add-opens=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED</additionalJOption>
-                            <additionalJOption>-J--add-opens=jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED</additionalJOption>
+                            <additionalJOption>--add-exports=jdk.javadoc/jdk.javadoc.internal.api=asciidoclet
+                            </additionalJOption>
+                            <additionalJOption>--add-exports=jdk.javadoc/jdk.javadoc.internal.tool=asciidoclet
+                            </additionalJOption>
+                            <additionalJOption>--add-exports=jdk.compiler/com.sun.tools.javac.api=asciidoclet
+                            </additionalJOption>
+                            <additionalJOption>--add-exports=jdk.compiler/com.sun.tools.javac.parser=asciidoclet
+                            </additionalJOption>
+                            <additionalJOption>--add-exports=jdk.compiler/com.sun.tools.javac.tree=asciidoclet
+                            </additionalJOption>
+                            <additionalJOption>--add-exports=jdk.compiler/com.sun.tools.javac.model=asciidoclet
+                            </additionalJOption>
+                            <additionalJOption>--add-opens=jdk.compiler/com.sun.tools.javac.api=asciidoclet
+                            </additionalJOption>
+                            <additionalJOption>--add-opens=jdk.compiler/com.sun.tools.javac.parser=asciidoclet
+                            </additionalJOption>
+                            <additionalJOption>-J--add-opens=jdk.javadoc/jdk.javadoc.internal.api=ALL-UNNAMED
+                            </additionalJOption>
+                            <additionalJOption>-J--add-opens=jdk.javadoc/jdk.javadoc.internal.tool=ALL-UNNAMED
+                            </additionalJOption>
+                            <additionalJOption>-J--add-opens=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED
+                            </additionalJOption>
+                            <additionalJOption>-J--add-opens=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED
+                            </additionalJOption>
+                            <additionalJOption>-J--add-opens=jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED
+                            </additionalJOption>
                             <additionalJOption>-Xdoclint:all,-html,-accessibility</additionalJOption>
                         </additionalJOptions>
                         <additionalOptions>
@@ -610,7 +612,7 @@
             <dependencies>
                 <dependency>
                     <groupId>com.github.dakusui</groupId>
-                    <artifactId>valid8j-pcond</artifactId>
+                    <artifactId>valid8j</artifactId>
                     <scope>compile</scope>
                 </dependency>
             </dependencies>
@@ -623,7 +625,7 @@
             <dependencies>
                 <dependency>
                     <groupId>com.github.dakusui</groupId>
-                    <artifactId>valid8j-pcond</artifactId>
+                    <artifactId>valid8j</artifactId>
                     <scope>compile</scope>
                 </dependency>
             </dependencies>

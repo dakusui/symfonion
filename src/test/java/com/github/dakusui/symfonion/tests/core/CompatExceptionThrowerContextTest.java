@@ -8,9 +8,9 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import static com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower.$;
-import static com.github.dakusui.thincrest.TestAssertions.assertThat;
-import static com.github.dakusui.thincrest_pcond.forms.Predicates.containsString;
-import static com.github.dakusui.thincrest_pcond.forms.Functions.call;
+import static com.github.valid8j.classic.TestAssertions.assertThat;
+import static com.github.valid8j.pcond.forms.Functions.call;
+import static com.github.valid8j.pcond.forms.Predicates.containsString;
 
 public class CompatExceptionThrowerContextTest {
   @Ignore

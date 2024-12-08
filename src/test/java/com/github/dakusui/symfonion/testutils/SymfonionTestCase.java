@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.function.Predicate;
 
 import static com.github.dakusui.testutils.midi.MidiTestUtils.formatMidiMessage;
-import static com.github.dakusui.thincrest.TestAssertions.assertThat;
+import static com.github.valid8j.classic.TestAssertions.assertThat;
 import static java.lang.String.format;
 
 public record SymfonionTestCase(String name, JsonObject input, Predicate<Map<String, Sequence>> testOracleForOutput,

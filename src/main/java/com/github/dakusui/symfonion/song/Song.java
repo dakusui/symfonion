@@ -7,8 +7,8 @@ import com.github.dakusui.logias.lisp.Context;
 import com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower;
 import com.github.dakusui.symfonion.compat.exceptions.SymfonionException;
 import com.github.dakusui.symfonion.utils.Utils;
-import com.github.dakusui.valid8j.Requires;
-import com.github.dakusui.valid8j_pcond.forms.Predicates;
+import com.github.valid8j.classic.Requires;
+import com.github.valid8j.pcond.forms.Predicates;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -20,7 +20,7 @@ import static com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThro
 import static com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower.ContextKey.JSON_ELEMENT_ROOT;
 import static com.github.dakusui.symfonion.compat.exceptions.SymfonionTypeMismatchException.ARRAY;
 import static com.github.dakusui.symfonion.compat.exceptions.SymfonionTypeMismatchException.OBJECT;
-import static com.github.dakusui.valid8j.Requires.requireNonNull;
+import static com.github.valid8j.classic.Requires.requireNonNull;
 
 public class Song {
 

@@ -6,7 +6,7 @@ import com.github.dakusui.symfonion.core.Symfonion;
 import com.github.dakusui.symfonion.compat.exceptions.CliException;
 import com.github.dakusui.symfonion.compat.exceptions.SymfonionException;
 import com.github.dakusui.symfonion.song.Bar;
-import com.github.dakusui.valid8j_pcond.forms.Predicates;
+import com.github.valid8j.pcond.forms.Predicates;
 import org.apache.commons.cli.*;
 
 import javax.swing.*;

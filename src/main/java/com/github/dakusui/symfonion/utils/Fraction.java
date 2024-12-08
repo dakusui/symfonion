@@ -10,9 +10,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower.throwFractionFormatException;
-import static com.github.dakusui.valid8j.Requires.requireArgument;
-import static com.github.dakusui.valid8j_pcond.forms.Predicates.isEqualTo;
-import static com.github.dakusui.valid8j_pcond.forms.Predicates.not;
+import static com.github.valid8j.classic.Requires.requireArgument;
+import static com.github.valid8j.pcond.forms.Predicates.isEqualTo;
+import static com.github.valid8j.pcond.forms.Predicates.not;
 
 
 /**

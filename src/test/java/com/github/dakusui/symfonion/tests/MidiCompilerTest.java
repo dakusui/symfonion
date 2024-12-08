@@ -10,7 +10,7 @@ import com.github.dakusui.thincrest_cliche.core.AllOf;
 import com.github.dakusui.thincrest_cliche.core.Transform;
 import com.github.dakusui.thincrest_cliche.java.util.FromList;
 import com.github.dakusui.thincrest_cliche.java.util.FromMap;
-import com.github.dakusui.thincrest_pcond.validator.Validator;
+import com.github.valid8j.pcond.validator.Validator;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,7 +37,7 @@ import static com.github.dakusui.thincrest_cliche.javax.sound.midi.IfMidiMessage
 import static com.github.dakusui.thincrest_cliche.javax.sound.midi.SequenceTo.tickLength;
 import static com.github.dakusui.thincrest_cliche.javax.sound.midi.SequenceTo.trackList;
 import static com.github.dakusui.thincrest_cliche.javax.sound.midi.TrackTo.*;
-import static com.github.dakusui.thincrest_pcond.forms.Predicates.*;
+import static com.github.valid8j.pcond.forms.Predicates.*;
 
 @RunWith(Parameterized.class)
 public class MidiCompilerTest extends TestBase {

@@ -1,6 +1,6 @@
 package com.github.dakusui.thincrest_cliche.javax.sound.midi;
 
-import com.github.dakusui.thincrest_pcond.forms.Printables;
+import com.github.valid8j.pcond.forms.Printables;
 
 import javax.sound.midi.MidiMessage;
 import java.util.function.Predicate;

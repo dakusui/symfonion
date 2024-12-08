@@ -1,7 +1,7 @@
 package com.github.dakusui.symfonion.utils.midi;
 
 import com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower;
-import com.github.dakusui.valid8j_pcond.forms.Printables;
+import com.github.valid8j.pcond.forms.Printables;
 
 import javax.sound.midi.MidiDevice;
 import javax.sound.midi.MidiSystem;

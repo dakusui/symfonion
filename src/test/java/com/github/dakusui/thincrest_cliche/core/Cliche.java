@@ -1,6 +1,6 @@
 package com.github.dakusui.thincrest_cliche.core;
 
-import com.github.dakusui.thincrest_pcond.forms.Printables;
+import com.github.valid8j.pcond.forms.Printables;
 
 import java.util.Map;
 import java.util.Set;

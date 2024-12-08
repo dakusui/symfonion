@@ -16,9 +16,7 @@ import java.util.regex.Matcher;
 
 import static com.github.dakusui.symfonion.cli.CliUtils.composeErrMsg;
 import static com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower.ContextKey.*;
-import static com.github.dakusui.valid8j.ValidationFluents.all;
-import static com.github.dakusui.valid8j.ValidationFluents.that;
-import static com.github.dakusui.valid8j_pcond.fluent.Statement.objectValue;
+import static com.github.valid8j.fluent.Expectations.*;
 import static java.lang.String.format;
 
 public class CompatExceptionThrower {
@@ -51,9 +49,9 @@ public class CompatExceptionThrower {
     }
 
     public Context set(CompatExceptionThrower.ContextKey key, Object value) {
-      assert all(
-          objectValue(key).then().isNotNull().$(),
-          objectValue(value).then().isNotNull().isInstanceOf(key.type).$());
+      assert preconditions(
+          value(key).then().notNull().$(),
+          value(value).then().notNull().instanceOf(key.type).$());
       this.values.put(key, value);
       return this;
     }
@@ -67,13 +65,13 @@ public class CompatExceptionThrower {
      */
     @SuppressWarnings({"unchecked"})
     <T> T get(ContextKey key) {
-      assert that(objectValue(key).then().isNotNull().$());
+      assert preconditions(value(key).then().notNull().$());
       // In production, we do not want to produce a NullPointerException, even if the key is null.
       // Just return null in such a situation.
       if (key == null)
         return null;
       if (!this.values.containsKey(key)) {
-        assert that(objectValue(this).invoke("parent").then().isNotNull());
+        assert invariant(value(this).invoke("parent").then().notNull());
         // In production, we do not want to produce a NullPointerException, even if a value associated with the key doesn't exist.
         // Just return null, in such a situation.
         if (this.parent() == null)
@@ -97,9 +95,8 @@ public class CompatExceptionThrower {
   private static final ThreadLocal<Context> context = new ThreadLocal<>();
 
   public static ContextEntry contextEntry(ContextKey key, Object value) {
-    assert all(
-        objectValue(key).then().isNotNull().$(),
-        objectValue(value).then().isNotNull().isInstanceOf(classOfValueFor(key)).$());
+    assert preconditions(value(key).then().notNull().$(),
+        value(value).then().notNull().instanceOf(classOfValueFor(key)).$());
     return new ContextEntry(key, value);
   }
 
@@ -169,7 +166,7 @@ public class CompatExceptionThrower {
         errorContainingJsonArray,
         "In this array, a string can contain only dots. E.g. '[1, \"...\",3]'. This will be expanded and interpolation of integer values will happen.",
         contextValueOf(JSON_ELEMENT_ROOT),
-        contextValueOf(SOURCE_FILE) );
+        contextValueOf(SOURCE_FILE));
   }
 
   public static SymfonionIllegalFormatException typeMismatchWhenExpandingDotsIn(JsonArray errorContainingJsonArray) {
@@ -177,7 +174,7 @@ public class CompatExceptionThrower {
         errorContainingJsonArray,
         "This array, only integers, nulls, and strings containing only dots (...) are allowed.",
         contextValueOf(JSON_ELEMENT_ROOT),
-        contextValueOf(SOURCE_FILE) );
+        contextValueOf(SOURCE_FILE));
   }
 
   public static SymfonionMissingElementException requiredElementMissingException(JsonElement problemCausingJsonNode, Object relativePathFromProblemCausingJsonNode) throws SymfonionMissingElementException {

@@ -1,6 +1,7 @@
 package com.github.dakusui.valid8j_cliche.core;
 
-import com.github.dakusui.valid8j_pcond.validator.Validator;
+
+import com.github.valid8j.pcond.validator.Validator;
 
 import java.util.function.Function;
 import java.util.function.Predicate;

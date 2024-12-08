@@ -7,23 +7,22 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import static com.github.dakusui.valid8j.Requires.require;
-import static com.github.dakusui.valid8j.Requires.requireNonNull;
-import static com.github.dakusui.valid8j_cliche.core.Expectations.that;
-import static com.github.dakusui.valid8j_pcond.forms.Predicates.isInstanceOf;
+import static com.github.valid8j.classic.Requires.require;
+import static com.github.valid8j.classic.Requires.requireNonNull;
+import static com.github.valid8j.fluent.Expectations.that;
+import static com.github.valid8j.pcond.forms.Predicates.isInstanceOf;
+
 
 public interface ExceptionContext<K extends ExceptionContext.Key> extends AutoCloseable {
 
   @SuppressWarnings("unchecked")
   default <T> T valueFor(K key) {
-    assert Expectations.$(that(key).satisfies().isNotNull());
+    assert Expectations.$(that(key).satisfies().notNull());
     Map<K, Object> data = data();
-    return (T) (data.containsKey(key) ?
-        data().get(key) :
-        parent().map(p -> p.valueFor(key)).orElseGet(() -> {
-          assert false : "No value for key:<" + key + ">";
-          return null;
-        }));
+    return (T) (data.containsKey(key) ? data().get(key) : parent().map(p -> p.valueFor(key)).orElseGet(() -> {
+      assert false : "No value for key:<" + key + ">";
+      return null;
+    }));
   }
 
   Optional<ExceptionContext<K>> parent();
@@ -44,7 +43,7 @@ public interface ExceptionContext<K extends ExceptionContext.Key> extends AutoCl
 
   /**
    * A shorthand method for `entry(Key, Object)`.
-   * Do `static import` to use this method for make your code look concise.
+   * Do `static import` to use this method to make your code look concise.
    *
    * @param key   A key of an entry.
    * @param value A value of an entry.
@@ -78,7 +77,7 @@ public interface ExceptionContext<K extends ExceptionContext.Key> extends AutoCl
     }
 
     protected ExceptionContext<K> createContext(Manager<K> manager, ExceptionContext<K> parent, Map<K, Object> data) {
-      return new ExceptionContext<K>() {
+      return new ExceptionContext<>() {
         @Override
         public Optional<ExceptionContext<K>> parent() {
           return Optional.ofNullable(parent);
@@ -106,7 +105,7 @@ public interface ExceptionContext<K extends ExceptionContext.Key> extends AutoCl
     }
 
     public Manager(Factory<K> factory) {
-      assert Expectations.$(that(factory).satisfies().isNotNull());
+      assert Expectations.$(that(factory).satisfies().notNull());
       this.factory = factory;
     }
 
@@ -116,9 +115,7 @@ public interface ExceptionContext<K extends ExceptionContext.Key> extends AutoCl
     }
 
     public void close(ExceptionContext<K> context) {
-      assert Expectations.$(that(context).satisfies()
-          .isNotNull()
-          .isEqualTo(this.current));
+      assert Expectations.$(that(context).satisfies().notNull().equalTo(this.current));
       this.current = this.current.parent().orElse(null);
     }
 
