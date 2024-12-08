@@ -13,6 +13,12 @@ import static com.github.valid8j.fluent.Expectations.that;
 import static com.github.valid8j.pcond.forms.Predicates.isInstanceOf;
 
 
+/**
+ * An interface that models a context that handles exceptions.
+ * This provides a mechanism to print meaningful exception messages utilizing contextual information.
+ *
+ * @param <K> Type of key in this context.
+ */
 public interface ExceptionContext<K extends ExceptionContext.Key> extends AutoCloseable {
 
   @SuppressWarnings("unchecked")
@@ -25,10 +31,20 @@ public interface ExceptionContext<K extends ExceptionContext.Key> extends AutoCl
     }));
   }
 
+  /**
+   * Returns a parent of this object, if any.
+   *
+   * @return A parent context of this object.
+   */
   Optional<ExceptionContext<K>> parent();
 
   Map<K, Object> data();
 
+  /**
+   * Returns a manager of this object.
+   *
+   * @return A manager object.
+   */
   Manager<K> manager();
 
   @Override
@@ -47,6 +63,7 @@ public interface ExceptionContext<K extends ExceptionContext.Key> extends AutoCl
    *
    * @param key   A key of an entry.
    * @param value A value of an entry.
+   * @param <K>   Type of key
    * @return An entry.
    */
   static <K extends Key> Entry<K> $(K key, Object value) {

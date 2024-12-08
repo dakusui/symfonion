@@ -5,11 +5,11 @@ import com.github.dakusui.logias.lisp.Context;
 import com.github.dakusui.logias.lisp.s.Literal;
 import com.github.dakusui.logias.lisp.s.Sexp;
 import com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower;
-import com.github.dakusui.symfonion.utils.Fraction;
 import com.github.dakusui.symfonion.compat.exceptions.SymfonionException;
-import com.github.dakusui.symfonion.utils.Utils;
 import com.github.dakusui.symfonion.song.*;
 import com.github.dakusui.symfonion.song.Pattern.Parameters;
+import com.github.dakusui.symfonion.utils.Fraction;
+import com.github.dakusui.symfonion.utils.Utils;
 import com.google.gson.JsonArray;
 
 import javax.sound.midi.*;
@@ -23,10 +23,20 @@ import java.util.Map;
 import static com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower.*;
 import static com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower.ContextKey.JSON_ELEMENT_ROOT;
 
+/**
+ * A class that models a "compiler", which generates MIDI data (`Sequence`) from a given `Song` object.
+ */
 public class MidiCompiler {
 
   private final Context logiasContext;
 
+  /**
+   * Creates an object of this class.
+   *
+   * @param logiasContext A context of an interpreter that executes a JSON array as an S-expression.
+   * @see Logias
+   * @see Context
+   */
   public MidiCompiler(Context logiasContext) {
     this.logiasContext = (logiasContext);
   }

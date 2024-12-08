@@ -22,11 +22,14 @@ import static com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThro
 import static com.github.dakusui.symfonion.compat.exceptions.SymfonionIllegalFormatException.NOTE_LENGTH_EXAMPLE;
 import static com.github.dakusui.symfonion.compat.exceptions.SymfonionTypeMismatchException.PRIMITIVE;
 
+/**
+ * A class that models a stroke, which is one action of a human in a musical piece.
+ */
 public class Stroke {
+  private static final java.util.regex.Pattern NOTES_REGEX_PATTERN = java.util.regex.Pattern.compile("([A-Zac-z])([#b]*)([><]*)([+\\-]*)?");
   private static final int UNDEFINED_NUM = -1;
   private final Fraction length;
-  static java.util.regex.Pattern notesPattern = java.util.regex.Pattern.compile("([A-Zac-z])([#b]*)([><]*)([\\+\\-]*)?");
-  List<NoteSet> notes = new LinkedList<>();
+  private final List<NoteSet> notes = new LinkedList<>();
   private final double gate;
   private final NoteMap noteMap;
   private final int[] volume;
@@ -42,6 +45,48 @@ public class Stroke {
   private final int[] aftertouch;
   private final JsonElement strokeJson;
 
+  /**
+   *
+   * // @formatter:off
+   *
+   * The ```strokeJson``` needs to be a JSON element which can promote to the following object with ```CompatJsonUtils#asJsonArrayWithPromotion( JsonElement, Object...)```
+   * [source, JSON]
+   * .strokeJson
+   * ----
+   * {
+   *   "$notes": "NOTES: String",
+   *   "$length": "LENGTH: Fraction String",
+   *   "$gate": "GATE: DOUBLE",
+   *   "$volume": "VOLUME: Int Array",
+   *   "$pan": "PAN: Int Array",
+   *   "$reverb": "REVERB: Int Array",
+   *   "$chorus": "CHORUS: Int Array",
+   *   "$modulation": "MODULATION: Int Array",
+   *   "$aftertouch": "AFTER TOUCH: Int Array",
+   *   "$sysex": "SYSTEM EXCLUSIVE: Array",
+   * }
+   * ----
+   *
+   * If it doesn't have a corresponding element, it will be considered `null` is specified.
+   * The **NOTES String** should match the following regular expression or such strings concatenated by `;`.
+   *
+   * `([A-Zac-z])([#b]*)([><]*)([\\+\\-]*)?`
+   *
+   * That is, the data this class host is actually a sequence of strokes, not merely a stroke.
+   * Historical reason introduced this naming inconsistency.
+   *
+   * // Using `@see` at the bottom of this comment will break `mvn javadoc:javadoc` for unknown reason.
+   * See also {@code Pattern.Parameters} and {@code CompatJsonUtils#asJsonArrayWithDefault(JsonElement, JsonArray, Object...)}.
+   *
+   * // @formatter:on
+   *
+   * @param strokeJson A JSON object to be interpreted as a stroke.
+   * @param params Default values of strokes when omitted.
+   * @param noteMap An object that defines mappings from a character to a MIDI note number.
+   * @throws SymfonionException Failed to process `strokeJson`.
+   * @throws CompatJsonException Failed to interpret `strokeJson`.
+   *
+   */
   public Stroke(JsonElement strokeJson, Parameters params, NoteMap noteMap) throws SymfonionException, CompatJsonException {
     String notes;
     Fraction len = params.length();
@@ -112,7 +157,153 @@ public class Stroke {
     this.length = strokeLen;
   }
 
-  private int[] getIntArray(JsonObject cur, Keyword kw) throws JsonInvalidPathException, JsonTypeMismatchException, JsonFormatException {
+  /**
+   * Returns the length of a stroke in this object.
+   * @return The length of a stroke.
+   */
+  public Fraction length() {
+    return length;
+  }
+
+  /**
+   * Returns the gate of a stroke in this object.
+   * It shows the ratio to keep pressing a key to the entire length of a stroke.
+   *
+   * @return The gate of a stroke.
+   */
+  public double gate() {
+    return this.gate;
+  }
+
+  public List<NoteSet> noteSets() {
+    return this.notes;
+  }
+
+  /*
+   * Returns the 'length' portion of the string <code>s</code>.
+   */
+  private String parseNotes(String s, List<Note> notes) throws SymfonionException {
+    Matcher m = NOTES_REGEX_PATTERN.matcher(s);
+    int i;
+    for (i = 0; m.find(i); i = m.end()) {
+      if (i != m.start()) {
+        throw syntaxErrorInNotePattern(s, i, m);
+      }
+      int n_ = this.noteMap.note(m.group(1), this.strokeJson);
+      if (n_ >= 0) {
+        int n =
+            n_ +
+                Utils.count('#', m.group(2)) - Utils.count('b', m.group(2)) +
+                Utils.count('>', m.group(3)) * 12 - Utils.count('<', m.group(3)) * 12;
+        int a = Utils.count('+', m.group(4)) - Utils.count('-', m.group(4));
+        Note nn = new Note(n, a);
+        notes.add(nn);
+      }
+    }
+    Matcher n = Utils.lengthPattern.matcher(s);
+    String ret = null;
+    if (n.find(i)) {
+      ret = s.substring(n.start(), n.end());
+      i = n.end();
+    }
+    if (i != s.length()) {
+      String msg = s.substring(0, i) + "`" + s.substring(i) + "' isn't a valid note expression. Notes must be like 'C', 'CEG8.', and so on.";
+      throw illegalFormatException(this.strokeJson, msg);
+    }
+    return ret;
+
+  }
+
+  private void renderValues(int[] values, long pos, long strokeLen, MidiCompiler compiler, EventCreator creator) throws
+      InvalidMidiDataException {
+    if (values == null) {
+      return;
+    }
+    long step = strokeLen / values.length;
+    for (int i = 0; i < values.length; i++) {
+      creator.createEvent(values[i], pos + step * i);
+      compiler.controlEventProcessed();
+    }
+  }
+
+  /**
+   * Compiles this object using a given `compiler` and store its result in the `context`.
+   *
+   * @param compiler A compiler with which this object is processed.
+   * @param context  A context in which the compiled result is stored.
+   * @throws InvalidMidiDataException Failed to generate MIDI data.
+   */
+  public void compile(final MidiCompiler compiler, MidiCompilerContext context) throws InvalidMidiDataException {
+    final Track track = context.track();
+    final int ch = context.channel();
+    long absolutePosition = context.convertRelativePositionInStrokeToAbsolutePosition(Fraction.zero);
+    long strokeLen = context.getStrokeLengthInTicks(this);
+    if (tempo != UNDEFINED_NUM) {
+      track.add(compiler.createTempoEvent(this.tempo, absolutePosition));
+      compiler.controlEventProcessed();
+    }
+    if (bkno != null) {
+      int msb = Integer.parseInt(bkno.substring(0, this.bkno.indexOf('.')));
+      track.add(compiler.createBankSelectMSBEvent(ch, msb, absolutePosition));
+      if (this.bkno.indexOf('.') != -1) {
+        int lsb = Integer.parseInt(bkno.substring(this.bkno.indexOf('.') + 1));
+        track.add(compiler.createBankSelectLSBEvent(ch, lsb, absolutePosition));
+      }
+      compiler.controlEventProcessed();
+    }
+    if (pgno != UNDEFINED_NUM) {
+      track.add(compiler.createProgramChangeEvent(ch, this.pgno, absolutePosition));
+      compiler.controlEventProcessed();
+    }
+    if (sysex != null) {
+      MidiEvent ev = compiler.createSysexEvent(ch, sysex, absolutePosition);
+      if (ev != null) {
+        track.add(ev);
+        compiler.sysexEventProcessed();
+      }
+    }
+    renderValues(volume, absolutePosition, strokeLen, compiler, (v, pos) -> track.add(compiler.createVolumeChangeEvent(ch, v, pos)));
+    renderValues(pan, absolutePosition, strokeLen, compiler, (v, pos) -> track.add(compiler.createPanChangeEvent(ch, v, pos)));
+    renderValues(reverb, absolutePosition, strokeLen, compiler, (v, pos) -> track.add(compiler.createReverbEvent(ch, v, pos)));
+    renderValues(chorus, absolutePosition, strokeLen, compiler, (v, pos) -> track.add(compiler.createChorusEvent(ch, v, pos)));
+    renderValues(pitch, absolutePosition, strokeLen, compiler, (v, pos) -> track.add(compiler.createPitchBendEvent(ch, v, pos)));
+    renderValues(modulation, absolutePosition, strokeLen, compiler, (v, pos) -> track.add(compiler.createModulationEvent(ch, v, pos)));
+    renderValues(aftertouch, absolutePosition, strokeLen, compiler, (v, pos) -> track.add(compiler.createAfterTouchChangeEvent(ch, v, pos)));
+    int transpose = context.params().transpose();
+    int arpegiodelay = context.params().arpeggio();
+    int delta = 0;
+    Fraction relPosInStroke = Fraction.zero;
+    for (NoteSet noteSet : this.noteSets()) {
+      absolutePosition = context.convertRelativePositionInStrokeToAbsolutePosition(relPosInStroke);
+      long absolutePositionWhereNoteFinishes = context.convertRelativePositionInStrokeToAbsolutePosition(
+          Fraction.add(
+              relPosInStroke,
+              noteSet.getLength()
+          )
+      );
+      long noteLengthInTicks = absolutePositionWhereNoteFinishes - absolutePosition;
+      for (Note note : noteSet) {
+        int key = note.key() + transpose;
+        int velocity = Math.max(
+            0,
+            Math.min(
+                127,
+                context.params().velocityBase() +
+                    note.accent() * context.params().velocityDelta() +
+                    context.getGrooveAccent(relPosInStroke)
+            )
+        );
+        track.add(compiler.createNoteOnEvent(ch, key, velocity, absolutePosition + delta));
+        track.add(compiler.createNoteOffEvent(ch, key, (long) (absolutePosition + delta + noteLengthInTicks * this.gate())));
+        compiler.noteProcessed();
+        delta += arpegiodelay;
+      }
+      compiler.noteSetProcessed();
+      relPosInStroke = Fraction.add(relPosInStroke, noteSet.getLength());
+    }
+  }
+
+  private static int[] getIntArray(JsonObject cur, Keyword kw) throws JsonInvalidPathException, JsonTypeMismatchException, JsonFormatException {
     int[] ret;
     if (!CompatJsonUtils.hasPath(cur, kw)) {
       return null;
@@ -191,136 +382,10 @@ public class Stroke {
     return ret;
   }
 
-  public Fraction length() {
-    return length;
-  }
-
-  public double gate() {
-    return this.gate;
-  }
-
-  public List<NoteSet> noteSets() {
-    return this.notes;
-  }
-
-  /*
-   * Returns the 'length' portion of the string <code>s</code>.
+  /**
+   * An interface to abstract an operation to create a MIDI event.
    */
-  private String parseNotes(String s, List<Note> notes) throws SymfonionException {
-    Matcher m = notesPattern.matcher(s);
-    int i;
-    for (i = 0; m.find(i); i = m.end()) {
-      if (i != m.start()) {
-        throw syntaxErrorInNotePattern(s, i, m);
-      }
-      int n_ = this.noteMap.note(m.group(1), this.strokeJson);
-      if (n_ >= 0) {
-        int n =
-            n_ +
-                Utils.count('#', m.group(2)) - Utils.count('b', m.group(2)) +
-                Utils.count('>', m.group(3)) * 12 - Utils.count('<', m.group(3)) * 12;
-        int a = Utils.count('+', m.group(4)) - Utils.count('-', m.group(4));
-        Note nn = new Note(n, a);
-        notes.add(nn);
-      }
-    }
-    Matcher n = Utils.lengthPattern.matcher(s);
-    String ret = null;
-    if (n.find(i)) {
-      ret = s.substring(n.start(), n.end());
-      i = n.end();
-    }
-    if (i != s.length()) {
-      String msg = s.substring(0, i) + "`" + s.substring(i) + "' isn't a valid note expression. Notes must be like 'C', 'CEG8.', and so on.";
-      throw illegalFormatException(this.strokeJson, msg);
-    }
-    return ret;
-
-  }
-
   interface EventCreator {
     void createEvent(int v, long pos) throws InvalidMidiDataException;
-  }
-
-  private void renderValues(int[] values, long pos, long strokeLen, MidiCompiler compiler, EventCreator creator) throws
-      InvalidMidiDataException {
-    if (values == null) {
-      return;
-    }
-    long step = strokeLen / values.length;
-    for (int i = 0; i < values.length; i++) {
-      creator.createEvent(values[i], pos + step * i);
-      compiler.controlEventProcessed();
-    }
-  }
-
-  public void compile(final MidiCompiler compiler, MidiCompilerContext context) throws InvalidMidiDataException {
-    final Track track = context.track();
-    final int ch = context.channel();
-    long absolutePosition = context.convertRelativePositionInStrokeToAbsolutePosition(Fraction.zero);
-    long strokeLen = context.getStrokeLengthInTicks(this);
-    if (tempo != UNDEFINED_NUM) {
-      track.add(compiler.createTempoEvent(this.tempo, absolutePosition));
-      compiler.controlEventProcessed();
-    }
-    if (bkno != null) {
-      int msb = Integer.parseInt(bkno.substring(0, this.bkno.indexOf('.')));
-      track.add(compiler.createBankSelectMSBEvent(ch, msb, absolutePosition));
-      if (this.bkno.indexOf('.') != -1) {
-        int lsb = Integer.parseInt(bkno.substring(this.bkno.indexOf('.') + 1));
-        track.add(compiler.createBankSelectLSBEvent(ch, lsb, absolutePosition));
-      }
-      compiler.controlEventProcessed();
-    }
-    if (pgno != UNDEFINED_NUM) {
-      track.add(compiler.createProgramChangeEvent(ch, this.pgno, absolutePosition));
-      compiler.controlEventProcessed();
-    }
-    if (sysex != null) {
-      MidiEvent ev = compiler.createSysexEvent(ch, sysex, absolutePosition);
-      if (ev != null) {
-        track.add(ev);
-        compiler.sysexEventProcessed();
-      }
-    }
-    renderValues(volume, absolutePosition, strokeLen, compiler, (v, pos) -> track.add(compiler.createVolumeChangeEvent(ch, v, pos)));
-    renderValues(pan, absolutePosition, strokeLen, compiler, (v, pos) -> track.add(compiler.createPanChangeEvent(ch, v, pos)));
-    renderValues(reverb, absolutePosition, strokeLen, compiler, (v, pos) -> track.add(compiler.createReverbEvent(ch, v, pos)));
-    renderValues(chorus, absolutePosition, strokeLen, compiler, (v, pos) -> track.add(compiler.createChorusEvent(ch, v, pos)));
-    renderValues(pitch, absolutePosition, strokeLen, compiler, (v, pos) -> track.add(compiler.createPitchBendEvent(ch, v, pos)));
-    renderValues(modulation, absolutePosition, strokeLen, compiler, (v, pos) -> track.add(compiler.createModulationEvent(ch, v, pos)));
-    renderValues(aftertouch, absolutePosition, strokeLen, compiler, (v, pos) -> track.add(compiler.createAfterTouchChangeEvent(ch, v, pos)));
-    int transpose = context.params().transpose();
-    int arpegiodelay = context.params().arpeggio();
-    int delta = 0;
-    Fraction relPosInStroke = Fraction.zero;
-    for (NoteSet noteSet : this.noteSets()) {
-      absolutePosition = context.convertRelativePositionInStrokeToAbsolutePosition(relPosInStroke);
-      long absolutePositionWhereNoteFinishes = context.convertRelativePositionInStrokeToAbsolutePosition(
-          Fraction.add(
-              relPosInStroke,
-              noteSet.getLength()
-          )
-      );
-      long noteLengthInTicks = absolutePositionWhereNoteFinishes - absolutePosition;
-      for (Note note : noteSet) {
-        int key = note.key() + transpose;
-        int velocity = Math.max(
-            0,
-            Math.min(
-                127,
-                context.params().velocityBase() +
-                    note.accent() * context.params().velocityDelta() +
-                    context.getGrooveAccent(relPosInStroke)
-            )
-        );
-        track.add(compiler.createNoteOnEvent(ch, key, velocity, absolutePosition + delta));
-        track.add(compiler.createNoteOffEvent(ch, key, (long) (absolutePosition + delta + noteLengthInTicks * this.gate())));
-        compiler.noteProcessed();
-        delta += arpegiodelay;
-      }
-      compiler.noteSetProcessed();
-      relPosInStroke = Fraction.add(relPosInStroke, noteSet.getLength());
-    }
   }
 }

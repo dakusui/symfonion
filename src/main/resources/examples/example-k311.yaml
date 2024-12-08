@@ -20,10 +20,20 @@
     "$body": B>;F#A;EG>;D#F#>;E4;r4
     "$length": 8
     "$gate": 0.3
+"$song":
+  - "$beats": 2/4
+    "$parts":
+      piano-r:
+        "$body": r4;B;A;G#;A
+        "$length": 16,
+      piano-l:
+        "$body": r4;r;A;r;A
+        "$length": 16,
 "$sequence":
   - "$parts":
       pianor:
-        - 01r
+        - "$body": r4;B;A;G#;A
+          "$length": 16
     "$beats": 2/4
   - "$parts":
       pianor:

@@ -12,6 +12,9 @@ import java.util.Map;
 import static com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower.noteNotDefinedException;
 
 
+/**
+ * An object which stores mappings from characters to MIDI note numbers defined in the `SyMFONION` language.
+ */
 public class NoteMap {
 	public static final NoteMap defaultNoteMap = new NoteMap(Keyword.$normal.name()); 
 	public static final NoteMap defaultPercussionMap = new NoteMap(Keyword.$percussion.name()); 
