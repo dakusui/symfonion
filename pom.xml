@@ -5,7 +5,7 @@
     <groupId>com.github.dakusui</groupId>
     <artifactId>symfonion</artifactId>
     <version>1.0.2-SNAPSHOT</version>
-    <description>A JSON based music macro language processor.</description>
+    <description>A JSON-based music macro language processor.</description>
     <packaging>jar</packaging>
 
     <name>symfonion</name>
