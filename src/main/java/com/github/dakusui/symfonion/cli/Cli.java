@@ -245,7 +245,7 @@ public record Cli(
   public static class Builder {
     private final String[] args;
     private File source;
-    private File sink = new File("a.midi");
+    private File sink = new File("target/a.midi");
     private MidiRouteRequest routeRequest = null;
     private Map<String, Pattern> midiInRegexPatterns = new HashMap<>();
     private Map<String, Pattern> midiOutRegexPatterns = new HashMap<>();
