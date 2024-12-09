@@ -24,18 +24,23 @@ import static com.github.valid8j.classic.Requires.requireNonNull;
 
 /**
  * //@formatter:off
- * Entries that directly matter in this class are following:
+ * This class models the logical aspect of the entire musical piece, described by the application syntax.
+ *
+ * Entries that directly matter in this class are as follows:
  *
  * .Entries `Song` class processes
  * ----
  * {
- *   "$noteMaps": { "<noteMapName>": { "...": "..." }},
- *   "$parts": { "<partName>": { "...": "..." } },
- *   "$patterns": { "<patternName>": {"...": "..." }},
- *   "$grooves": { "<grooveName>": ["..."] },
- *   "$sequence": [ "<bar>", "...", "..." ]
+ *   "$noteMaps": { "<noteMapName>": "<NoteMap>"},
+ *   "$parts": { "<partName>": "<Part>" },
+ *   "$patterns": { "<patternName>": "<Pattern>"},
+ *   "$grooves": { "<grooveName>": ["<Groove>", "<Groove>", "..."] },
+ *   "$sequence": [ "<Bar>", "<Bar>", "..." ]
  * }
  * ----
+ *
+ * Each element in `$sequence` array is a {@link Bar} object.
+ * A bar contains notes and its related information played during a certain period of time.
  *
  * //@formatter:on
  */

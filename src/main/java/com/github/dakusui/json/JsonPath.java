@@ -9,7 +9,7 @@ import java.util.List;
 
 import static com.github.dakusui.symfonion.exception.SymfonionExceptionThrower.*;
 import static com.github.dakusui.symfonion.exception.SymfonionExceptionThrower.Key.ROOT_JSON_ELEMENT;
-import static com.github.dakusui.valid8j_cliche.core.ClassicExpectations.validate;
+import static com.github.valid8j.classic.Validates.validate;
 import static com.github.valid8j.classic.Requires.require;
 import static com.github.valid8j.pcond.forms.Functions.stream;
 import static com.github.valid8j.pcond.forms.Predicates.*;

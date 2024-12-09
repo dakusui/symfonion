@@ -1,7 +1,6 @@
 package com.github.dakusui.symfonion.utils;
 
 
-
 import com.github.dakusui.symfonion.compat.exceptions.FractionFormatException;
 
 import java.io.Serial;
@@ -19,11 +18,11 @@ import static com.github.valid8j.pcond.forms.Predicates.not;
  * A class to implement simple Fraction functions
  * there is basically a constructor (which reduces)
  *
- * @param numerator A numerator of a fraction
- * @param  denominator A denominator of a fraction
+ * @param numerator   A numerator of a fraction
+ * @param denominator A denominator of a fraction
  */
 public record Fraction(int numerator, int denominator) implements Cloneable, Serializable {
-  public static final Pattern fractionPattern = Pattern.compile("([0-9]+)/([1-9][0-9]*)");
+  public static final Pattern FRACTION_PATTERN = Pattern.compile("([0-9]+)/([1-9][0-9]*)");
   @Serial
   private static final long serialVersionUID = 9185757132113L;
 
@@ -31,6 +30,12 @@ public record Fraction(int numerator, int denominator) implements Cloneable, Ser
   public static final Fraction zero = new Fraction(0, 1);
   public static final Fraction one = new Fraction(1, 1);
 
+  /**
+   * Creates an object of this class.
+   *
+   * @param numerator   A numerator
+   * @param denominator A denominator
+   */
   public Fraction(int numerator, int denominator) {
     requireArgument(denominator, not(isEqualTo(0)));
     int n = numerator;
@@ -48,11 +53,23 @@ public record Fraction(int numerator, int denominator) implements Cloneable, Ser
     this.denominator = d;
   }
 
+  /**
+   * Parses a given string `str` and creates a `Fraction` object
+   * The str must match with a regular expression:
+   *
+   * - `([0-9]+)/([1-9][0-9]*)`
+   *
+   * If it doesn't, A `FractionFormatException` will be thrown.
+   *
+   * @param str A string containing a fraction.
+   * @return A `Fraction` object.
+   * @see FractionFormatException
+   */
   public static Fraction parseFraction(String str) throws FractionFormatException {
     if (str == null) {
       return null;
     }
-    Matcher m = fractionPattern.matcher(str);
+    Matcher m = FRACTION_PATTERN.matcher(str);
     if (!m.matches()) {
       throw throwFractionFormatException(str);
     }
@@ -62,6 +79,11 @@ public record Fraction(int numerator, int denominator) implements Cloneable, Ser
     );
   }
 
+  /**
+   * Creates a clone of this object
+   *
+   * @return A cloned object.
+   */
   @Override
   public Fraction clone() {
     Fraction ret;
@@ -84,14 +106,29 @@ public record Fraction(int numerator, int denominator) implements Cloneable, Ser
     return (a);
   }
 
+  /**
+   * Returns a double representation of this object.
+   *
+   * @return value of this objet in `double`.
+   */
   public double doubleValue() {
     return (1.0 * this.numerator() / this.denominator());
   }
 
+  /**
+   * Returns a whole portion of this fraction.
+   *
+   * @return A whole portion of this fraction.
+   */
   public int wholePortion() {
     return (int) this.doubleValue();
   }
 
+  /**
+   * Returns a fraction portion of this fraction.
+   *
+   * @return A fraction portion of this fraction.
+   */
   public Fraction fractionPortion() {
     Fraction f = new Fraction(this.wholePortion(), 1);
     return subtract(this, f);
@@ -109,6 +146,13 @@ public record Fraction(int numerator, int denominator) implements Cloneable, Ser
     return (this.numerator() + "/" + this.denominator());
   }
 
+  /**
+   * Returns the addition of `f1` and `f2`.
+   *
+   * @param f1 A first fraction
+   * @param f2 A second fraction
+   * @return Result of the addition.
+   */
   public static Fraction add(Fraction f1, Fraction f2) {
     int n,
         d;

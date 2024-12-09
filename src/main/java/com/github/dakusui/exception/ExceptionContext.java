@@ -1,6 +1,7 @@
 package com.github.dakusui.exception;
 
-import com.github.dakusui.valid8j_cliche.core.Expectations;
+
+import com.github.valid8j.fluent.Expectations;
 
 import java.util.Collections;
 import java.util.HashMap;

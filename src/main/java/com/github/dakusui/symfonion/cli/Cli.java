@@ -56,7 +56,7 @@ public record Cli(
    * @return an {@code Options} object for this {@code CLI} class.
    */
   static Options buildOptions() {
-    // create Options object
+    // create `Options` object
     Options options = new Options();
 
     // //

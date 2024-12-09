@@ -25,7 +25,23 @@ import static com.github.dakusui.symfonion.utils.Fraction.parseFraction;
 import static java.util.Collections.*;
 
 /**
+ * // @formatter:off
  * A class that models a "bar" in a musical score.
+ *
+ * [source, JSON]
+ * .A bar element
+ * ----
+ * {
+ *   "$beats": "<beatsDefiningString>",
+ *   "$parts": {
+ *     "<partName>": ["<patternName>", "<patternName>", "..."],
+ *   },
+ *   "$groove": "<grooveName>",
+ *   "$noteMap": "<noteMapName>",
+ *   "$labels": ["<label1>", "<label2>", "..."]
+ * }
+ * ----
+ * // @formatter:on
  */
 public class Bar {
   private final Map<String, Pattern> patterns;
@@ -89,23 +105,39 @@ public class Bar {
 
   /**
    * Returns a list of a list of patterns for the `partName`.
-   * TODO
    *
    * @param partName A part name for which patterns should be returned.
-   * @return A list of a list of patterns.
+   * @return A double list of patterns.
    */
   public List<List<Pattern>> part(String partName) {
     return unmodifiableList(this.patternLists.get(partName));
   }
 
+  /**
+   * Returns `Beats` that determine the duration of this object.
+   * @return Beats
+   */
   public Fraction beats() {
     return this.beats;
   }
 
+  /**
+   * Returns a `Groove` object that determines "groove" of this bar
+   *
+   * @return A `Groove` object.
+   * @see Groove
+   */
   public Groove groove() {
     return this.groove;
   }
 
+  /**
+   * Find up a `JsonElement`, which matches `partName` under `barJsonObject`.
+   * @param partName partName used for searching for `JsonElement`.
+   * @return A matching JSON element. If not found, `null` will be returned.
+   *
+   * @see Bar#Bar(JsonObject, JsonObject, Map, Map, Map, Predicate)
+   */
   public JsonElement lookUpJsonNode(String partName) {
     try {
       return asJsonElement(this.barJsonObject, Keyword.$parts, partName);
