@@ -199,11 +199,17 @@ public record Fraction(int numerator, int denominator) implements Cloneable, Ser
       return f2;
   }
 
+  /**
+   * Returns a non-greater fraction from `f1` and `f2`.
+   *
+   * @param f1 A fraction
+   * @param f2 Another fraction
+   * @return A non-greater fraction.
+   */
   public static Fraction min(Fraction f1, Fraction f2) {
     if (f1.doubleValue() - f2.doubleValue() <= 0)
       return f1;
     else
       return f2;
   }
-
 }

@@ -95,17 +95,12 @@ public class MidiCompiler {
                 try {
                   Fraction endingPos = Fraction.add(relPosInBar, stroke.length());
 
-                  stroke.compile(
-                      this,
-                      new MidiCompilerContext(
-                          track,
-                          channel,
-                          params,
-                          relPosInBar,
-                          barPositionInTicks,
-                          groove
-                      )
-                  );
+                  stroke.compile(this, new MidiCompilerContext(track,
+                                                               channel,
+                                                               params,
+                                                               relPosInBar,
+                                                               barPositionInTicks,
+                                                               groove));
 
                   relPosInBar = endingPos;
                   ////
@@ -133,18 +128,18 @@ public class MidiCompiler {
 
   public MidiEvent createNoteOnEvent(int ch, int nKey, int velocity, long lTick) throws InvalidMidiDataException {
     return createNoteEvent(ShortMessage.NOTE_ON,
-        ch,
-        nKey,
-        velocity,
-        lTick);
+                           ch,
+                           nKey,
+                           velocity,
+                           lTick);
   }
 
   public MidiEvent createNoteOffEvent(int ch, int nKey, long lTick) throws InvalidMidiDataException {
     return createNoteEvent(ShortMessage.NOTE_OFF,
-        ch,
-        nKey,
-        0,
-        lTick);
+                           ch,
+                           nKey,
+                           0,
+                           lTick);
   }
 
   protected MidiEvent createNoteEvent(int nCommand,
@@ -154,11 +149,11 @@ public class MidiCompiler {
                                       long lTick) throws InvalidMidiDataException {
     ShortMessage message = new ShortMessage();
     message.setMessage(nCommand,
-        ch,
-        nKey,
-        nVelocity);
+                       ch,
+                       nKey,
+                       nVelocity);
     return new MidiEvent(message,
-        lTick);
+                         lTick);
   }
 
   public MidiEvent createProgramChangeEvent(int ch, int pgnum, long lTick) throws InvalidMidiDataException {
