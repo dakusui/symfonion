@@ -20,6 +20,7 @@ import static com.github.dakusui.symfonion.compat.exceptions.SymfonionTypeMismat
 
 /**
  * A class that models a musical "groove", which gives slightly different stresses and lengths of notes in a score.
+ * A groove is modeled as a sequence of beats.
  */
 public class Groove {
   /**
@@ -27,6 +28,13 @@ public class Groove {
    */
   public static final Groove DEFAULT_INSTANCE = new Groove();
 
+  /**
+   * A record that models each element in a groove.
+   *
+   * @param length A length of a beat on a score.
+   * @param ticks  Actual length of the beat in ticks.
+   * @param accent An accent of the groove.
+   */
   record Beat(Fraction length, long ticks, int accent) {
   }
 

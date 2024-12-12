@@ -21,6 +21,8 @@ import static com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThro
 import static com.github.dakusui.symfonion.compat.exceptions.SymfonionTypeMismatchException.ARRAY;
 import static com.github.dakusui.symfonion.compat.exceptions.SymfonionTypeMismatchException.OBJECT;
 import static com.github.valid8j.classic.Requires.requireNonNull;
+import static java.util.Collections.unmodifiableList;
+import static java.util.Collections.unmodifiableSet;
 
 /**
  * //@formatter:off
@@ -45,6 +47,71 @@ import static com.github.valid8j.classic.Requires.requireNonNull;
  * //@formatter:on
  */
 public class Song {
+  private final Context logiasContext;
+  private final Map<String, Part> parts;
+  private final Map<String, Pattern> patterns;
+  private final Map<String, Groove> grooves;
+  private final List<Bar> bars;
+
+  /**
+   * Creates an object of this class.
+   *
+   * @param logiasContext A context, in which JSON array can be executed as an S-expression.
+   * @param parts         Parts of a musical work.
+   * @param patterns      Patterns referenced from `bars`.
+   * @param grooves       Grooves referenced from `bars`.
+   * @param bars          Bars of a musical work.
+   */
+  public Song(Context logiasContext,
+              Map<String, Part> parts,
+              Map<String, Pattern> patterns,
+              Map<String, Groove> grooves,
+              List<Bar> bars) {
+    this.logiasContext = logiasContext;
+    this.parts = Requires.requireNonNull(parts);
+    this.patterns = Requires.requireNonNull(patterns);
+    this.grooves = requireNonNull(grooves);
+    this.bars = requireNonNull(bars);
+  }
+
+  /**
+   * Returns a pattern for `patternName`.
+   *
+   * @param patternName A name of a pattern to be looked up.
+   * @return A pattern for `patternName`.
+   */
+  public Pattern pattern(String patternName) {
+    return this.patterns.get(patternName);
+  }
+
+  /**
+   * Returns bars.
+   * @return Bars.
+   */
+  public List<Bar> bars() {
+    return unmodifiableList(this.bars);
+  }
+
+  /**
+   * Returns all known part names.
+   *
+   * @return A list of part names.
+   */
+  public Set<String> partNames() {
+    return unmodifiableSet(this.parts.keySet());
+  }
+
+  public Part part(String name) {
+    return this.parts.get(name);
+  }
+
+  public Context getLogiasContext() {
+    return this.logiasContext;
+  }
+
+  public Groove groove(String grooveName) {
+    return this.grooves.get(grooveName);
+  }
 
   public static class Builder {
     private final Context logiasContext;
@@ -194,49 +261,5 @@ public class Song {
       }
       return grooves;
     }
-  }
-
-  private final Context logiasContext;
-  private final Map<String, Part> parts;
-  private final Map<String, Pattern> patterns;
-  private final Map<String, Groove> grooves;
-  private final List<Bar> bars;
-
-
-  public Song(Context logiasContext,
-              Map<String, Part> parts,
-              Map<String, Pattern> patterns,
-              Map<String, Groove> grooves,
-              List<Bar> bars) {
-    this.logiasContext = logiasContext;
-    this.parts = Requires.requireNonNull(parts);
-    this.patterns = Requires.requireNonNull(patterns);
-    this.grooves = requireNonNull(grooves);
-    this.bars = requireNonNull(bars);
-  }
-
-
-  public Pattern pattern(String patternName) {
-    return this.patterns.get(patternName);
-  }
-
-  public List<Bar> bars() {
-    return Collections.unmodifiableList(this.bars);
-  }
-
-  public Set<String> partNames() {
-    return Collections.unmodifiableSet(this.parts.keySet());
-  }
-
-  public Part part(String name) {
-    return this.parts.get(name);
-  }
-
-  public Context getLogiasContext() {
-    return this.logiasContext;
-  }
-
-  public Groove groove(String grooveName) {
-    return this.grooves.get(grooveName);
   }
 }
