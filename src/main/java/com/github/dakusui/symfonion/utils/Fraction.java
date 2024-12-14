@@ -27,8 +27,8 @@ public record Fraction(int numerator, int denominator) implements Cloneable, Ser
   private static final long serialVersionUID = 9185757132113L;
 
   /* some useful constant fractions */
-  public static final Fraction zero = new Fraction(0, 1);
-  public static final Fraction one = new Fraction(1, 1);
+  public static final Fraction ZERO = new Fraction(0, 1);
+  public static final Fraction one  = new Fraction(1, 1);
 
   /**
    * Creates an object of this class.

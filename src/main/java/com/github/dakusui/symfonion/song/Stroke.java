@@ -135,7 +135,7 @@ public class Stroke {
      */
     this.noteMap = noteMap;
     this.gate = gate;
-    Fraction strokeLen = Fraction.zero;
+    Fraction strokeLen = Fraction.ZERO;
     if (notes != null) {
       for (String nn : notes.split(";")) {
         NoteSet ns = new NoteSet();
@@ -151,7 +151,7 @@ public class Stroke {
         strokeLen = Fraction.add(strokeLen, nsLen);
       }
     }
-    if (Fraction.zero.equals(strokeLen)) {
+    if (Fraction.ZERO.equals(strokeLen)) {
       strokeLen = len;
     }
     this.length = strokeLen;
@@ -236,7 +236,7 @@ public class Stroke {
   public void compile(final MidiCompiler compiler, MidiCompilerContext context) throws InvalidMidiDataException {
     final Track track = context.track();
     final int ch = context.channel();
-    long absolutePosition = context.convertRelativePositionInStrokeToAbsolutePosition(Fraction.zero);
+    long absolutePosition = context.convertRelativePositionInStrokeToAbsolutePosition(Fraction.ZERO);
     long strokeLen = context.getStrokeLengthInTicks(this);
     if (tempo != UNDEFINED_NUM) {
       track.add(compiler.createTempoEvent(this.tempo, absolutePosition));
@@ -272,7 +272,7 @@ public class Stroke {
     int transpose = context.params().transpose();
     int arpegiodelay = context.params().arpeggio();
     int delta = 0;
-    Fraction relPosInStroke = Fraction.zero;
+    Fraction relPosInStroke = Fraction.ZERO;
     for (NoteSet noteSet : this.noteSets()) {
       absolutePosition = context.convertRelativePositionInStrokeToAbsolutePosition(relPosInStroke);
       long absolutePositionWhereNoteFinishes = context.convertRelativePositionInStrokeToAbsolutePosition(

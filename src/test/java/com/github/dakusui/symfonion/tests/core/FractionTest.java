@@ -36,7 +36,7 @@ public class FractionTest {
 
   @Test
   public void test_compare_03() {
-    assertEquals(0, Fraction.compare(Fraction.zero, Fraction.subtract(new Fraction(1, 16), new Fraction(1, 16))));
+    assertEquals(0, Fraction.compare(Fraction.ZERO, Fraction.subtract(new Fraction(1, 16), new Fraction(1, 16))));
   }
 
   @Test

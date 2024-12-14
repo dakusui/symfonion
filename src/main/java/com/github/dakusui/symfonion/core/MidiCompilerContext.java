@@ -26,7 +26,7 @@ public record MidiCompilerContext(Track track, int channel, Pattern.Parameters p
   
   public int getGrooveAccent(Fraction relPosInStroke) {
     Groove.Unit unit = resolveRelativePositionInStroke(relPosInStroke);
-    return unit.accent();
+    return unit.accentDelta();
   }
   
   private Groove.Unit resolveRelativePositionInStroke(

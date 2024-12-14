@@ -87,7 +87,7 @@ public class MidiCompiler {
             ////
             // relativePosition is a relative position from the beginning
             // of the bar the pattern belongs to.
-            Fraction relPosInBar = Fraction.zero;
+            Fraction relPosInBar = Fraction.ZERO;
             for (Pattern each : patterns) {
               Parameters params = each.parameters();
               patternStarted();
