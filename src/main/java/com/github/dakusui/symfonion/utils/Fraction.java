@@ -22,9 +22,9 @@ import static com.github.valid8j.pcond.forms.Predicates.not;
  * @param denominator A denominator of a fraction
  */
 public record Fraction(int numerator, int denominator) implements Cloneable, Serializable {
-  public static final Pattern FRACTION_PATTERN = Pattern.compile("([0-9]+)/([1-9][0-9]*)");
+  public static final  Pattern FRACTION_PATTERN = Pattern.compile("([0-9]+)/([1-9][0-9]*)");
   @Serial
-  private static final long serialVersionUID = 9185757132113L;
+  private static final long    serialVersionUID = 9185757132113L;
 
   /* some useful constant fractions */
   public static final Fraction ZERO = new Fraction(0, 1);
@@ -49,7 +49,7 @@ public record Fraction(int numerator, int denominator) implements Cloneable, Ser
       n /= gcd;
       d /= gcd;
     }
-    this.numerator = n;
+    this.numerator   = n;
     this.denominator = d;
   }
 
@@ -162,6 +162,13 @@ public record Fraction(int numerator, int denominator) implements Cloneable, Ser
     return new Fraction(n, d);
   }
 
+  /**
+   * Returns the subtraction of `f1` and `f2
+   *
+   * @param f1 A fraction
+   * @param f2 A fraction to be subtracted from `f1`.
+   * @return Result of the subtraction
+   */
   public static Fraction subtract(Fraction f1, Fraction f2) {
     int n,
         d;
@@ -183,15 +190,37 @@ public record Fraction(int numerator, int denominator) implements Cloneable, Ser
     return new Fraction(f1.numerator * f2.numerator, f1.denominator * f2.denominator);
   }
 
+  /**
+   * Divides `f1` by `f2`.
+   *
+   * @param f1 A fraction to be divided.
+   * @param f2 A divisor.
+   * @return Result of the division.
+   */
   public static Fraction div(Fraction f1, Fraction f2) {
     return new Fraction(f1.numerator * f2.denominator, f1.denominator * f2.numerator);
   }
 
+  /**
+   * Returns the comparison result.
+   *
+   * @param f1 A fraction.
+   * @param f2 A fraction to be compared with `f1`.
+   * @return negative - `f1` is little than `f2`/ 0 - `f1` and `f2` are equal/ positive - `f1`is greater than `f2`.
+   */
   public static int compare(Fraction f1, Fraction f2) {
     Fraction sub = subtract(f1, f2);
     return sub.numerator * sub.denominator;
   }
 
+  /**
+   * Returns a greater one from `f1`and `f2`.
+   * When `f1` and `f2`, either of them may be returned.
+   *
+   * @param f1 A fraction
+   * @param f2 Another fraction
+   * @return Greater one of `f1` and `f2`.
+   */
   public static Fraction max(Fraction f1, Fraction f2) {
     if (f1.doubleValue() - f2.doubleValue() >= 0)
       return f1;

@@ -39,7 +39,7 @@ public class Stroke {
   private final int[] pitch;
   private final int[] modulation;
   private final int pgno;
-  private String bkno = null;
+  private final String bkno;
   private final int tempo;
   private final JsonArray sysex;
   private final int[] aftertouch;
@@ -119,7 +119,8 @@ public class Stroke {
       assert this.bkno != null;
       //noinspection ResultOfMethodCallIgnored
       Double.parseDouble(this.bkno);
-    }
+    } else
+      this.bkno = null;
     this.volume = getIntArray(obj, Keyword.$volume);
     this.pan = getIntArray(obj, Keyword.$pan);
     this.reverb = getIntArray(obj, Keyword.$reverb);

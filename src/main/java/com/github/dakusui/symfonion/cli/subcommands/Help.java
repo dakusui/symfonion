@@ -7,10 +7,19 @@ import org.apache.commons.cli.HelpFormatter;
 import java.io.InputStream;
 import java.io.PrintStream;
 
+/**
+ * A subcommand that shows a help message of the CLI.
+ */
 public class Help implements Subcommand {
-    @Override
-    public void invoke(Cli cli, PrintStream ps, InputStream inputStream)  {
-        HelpFormatter formatter = new HelpFormatter();
-        formatter.printHelp("SYNTAX", cli.options());
-    }
+  /**
+   * Creates an object of this class.
+   */
+  public Help() {
+  }
+
+  @Override
+  public void invoke(Cli cli, PrintStream ps, InputStream inputStream) {
+    HelpFormatter formatter = new HelpFormatter();
+    formatter.printHelp("SYNTAX", cli.options());
+  }
 }

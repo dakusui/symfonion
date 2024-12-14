@@ -1,10 +1,13 @@
 package com.github.dakusui.symfonion.compat.json;
 
+import com.google.gson.JsonElement;
+
 import java.io.Serial;
 import java.util.Arrays;
 
-import com.google.gson.JsonElement;
-
+/**
+ * Indicates access happens at an index that a JSON array doesn't have.
+ */
 public class JsonIndexOutOfBoundsException extends JsonInvalidPathException {
 
   /**
@@ -14,6 +17,13 @@ public class JsonIndexOutOfBoundsException extends JsonInvalidPathException {
   private static final long serialVersionUID = -1088233926881743647L;
 
 
+  /**
+   * Creates an object of this method.
+   *
+   * @param base  A JSON element that holds
+   * @param path  A path to the position of the array.
+   * @param index An index, where out of bounds access happened.
+   */
   public JsonIndexOutOfBoundsException(JsonElement base, Object[] path, int index) {
     super(base, path, index);
   }
