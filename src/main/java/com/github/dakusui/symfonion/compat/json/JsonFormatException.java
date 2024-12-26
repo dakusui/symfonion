@@ -5,7 +5,7 @@ import com.google.gson.JsonElement;
 import java.io.Serial;
 
 /**
- * An exception that indicates JSON data format is not complying with **SyMFONION**'s specification.
+ * An exception to be thrown a JSON element did not have a value that an application expects.
  */
 public class JsonFormatException extends CompatJsonException {
 

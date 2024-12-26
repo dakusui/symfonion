@@ -16,12 +16,11 @@ public class JsonIndexOutOfBoundsException extends JsonInvalidPathException {
   @Serial
   private static final long serialVersionUID = -1088233926881743647L;
 
-
   /**
-   * Creates an object of this method.
+   * Creates an object of this class.
    *
-   * @param base  A JSON element that holds
-   * @param path  A path to the position of the array.
+   * @param base  A JSON, where a request is made.
+   * @param path  A path to an JSON array.
    * @param index An index, where out of bounds access happened.
    */
   public JsonIndexOutOfBoundsException(JsonElement base, Object[] path, int index) {

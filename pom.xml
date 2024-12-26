@@ -56,7 +56,7 @@
         <junit.version>4.13.2</junit.version>
         <!-- END: test dependencies -->
         <!-- BEGIN: build dependencies -->
-        <asciidoclet.version>2.0.0-SNAPSHOT</asciidoclet.version>
+        <asciidoclet.version>2.0.0</asciidoclet.version>
         <asciidoctor.maven.plugin.version>2.0.0-RC.1</asciidoctor.maven.plugin.version>
         <asciidoctorj.version>2.5.11</asciidoctorj.version>
         <asciidoctorj.diagram.version>2.0.1</asciidoctorj.diagram.version>
@@ -208,7 +208,6 @@
                             <groupId>org.asciidoctor</groupId>
                             <artifactId>asciidoclet</artifactId>
                             <version>${asciidoclet.version}</version>
-                            <classifier>shaded</classifier>
                         </docletArtifact>
                         <additionalJOptions>
                             <additionalJOption>--add-exports=jdk.javadoc/jdk.javadoc.internal.api=asciidoclet
