@@ -26,12 +26,12 @@ public class FractionTest {
 
   @Test
   public void test_compare01() {
-    Assert.assertEquals(0, Fraction.compare(Fraction.one, Fraction.one));
+    Assert.assertEquals(0, Fraction.compare(Fraction.ONE, Fraction.ONE));
   }
 
   @Test
   public void test_compare_02() {
-    assertTrue(Fraction.compare(new Fraction(1, 2), Fraction.one) < 0);
+    assertTrue(Fraction.compare(new Fraction(1, 2), Fraction.ONE) < 0);
   }
 
   @Test
@@ -41,7 +41,7 @@ public class FractionTest {
 
   @Test
   public void test_subtract_02() {
-    assertEquals(Double.valueOf(-0.5), Double.valueOf(Fraction.subtract(new Fraction(1, 2), Fraction.one).doubleValue()));
+    assertEquals(Double.valueOf(-0.5), Double.valueOf(Fraction.subtract(new Fraction(1, 2), Fraction.ONE).doubleValue()));
   }
 
   @Test

@@ -22,13 +22,16 @@ import static com.github.valid8j.pcond.forms.Predicates.not;
  * @param denominator A denominator of a fraction
  */
 public record Fraction(int numerator, int denominator) implements Cloneable, Serializable {
+  /**
+   * A regular expression that matches a fraction.
+   */
   public static final  Pattern FRACTION_PATTERN = Pattern.compile("([0-9]+)/([1-9][0-9]*)");
   @Serial
   private static final long    serialVersionUID = 9185757132113L;
 
   /* some useful constant fractions */
   public static final Fraction ZERO = new Fraction(0, 1);
-  public static final Fraction one  = new Fraction(1, 1);
+  public static final Fraction ONE  = new Fraction(1, 1);
 
   /**
    * Creates an object of this class.

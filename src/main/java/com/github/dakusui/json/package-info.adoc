@@ -1,9 +1,0 @@
-== Exceptions
-
-* `JsonException`
-  ** `JsonTypeMismatchException`
-  ** `JsonPathExceptioin`
-     *** `JsonPathNotFoundException`
-     *** `JsonIndexOutOfBoundsException`
-
-  ** `JsonFormatException`
