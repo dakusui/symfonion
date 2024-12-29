@@ -163,14 +163,17 @@ public class Bar {
   }
 
   /**
+   * // formatter:off
    * Composes a map of pattern sequences.
    *
    * ----
-   * List<List<Pattern>>
-   *      ^^^^^^^^^^^^^   Layered Patterns
-   * ^^^^^^^^^^^^^^^^^^^  A sequence of layered patterns
+   * Map<String, List<List<Pattern>>>
+   *     ^^^^^^       ^^^^^^^^^^^^^   Layered Patterns
+   *          |  ^^^^^^^^^^^^^^^^^^^  A sequence of layered patterns
+   *          +---------------------  A part name
    * ----
    *
+   * // formatter:on
    * @param bar                  A bar object from which pattern sequence map is created.
    * @param partFilter           A predicate that filters a part to be rendered.
    * @param partsJsonObjectInBar A JSON object associated with `$parts` key in the JSON object from which `bar` was created.
