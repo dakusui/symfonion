@@ -16,6 +16,7 @@ public class JsonIndexOutOfBoundsException extends JsonInvalidPathException {
   @Serial
   private static final long serialVersionUID = -1088233926881743647L;
 
+  private final int index;
 
   /**
    * Creates an object of this method.
@@ -25,7 +26,12 @@ public class JsonIndexOutOfBoundsException extends JsonInvalidPathException {
    * @param index An index, where out of bounds access happened.
    */
   public JsonIndexOutOfBoundsException(JsonElement base, Object[] path, int index) {
-    super(base, path, index);
+    super(base, path);
+    this.index   = index;
+  }
+
+  public int getIndex() {
+    return this.index;
   }
 
   @Override

@@ -151,7 +151,7 @@ public class CompatJsonUtils {
     }
     JsonElement newbase;
     if (path[from] == null) {
-      throw new JsonInvalidPathException(base, path, from); // invalid path;
+      throw new JsonInvalidPathException(base, pathArray(path, from)); // invalid path;
     }
     if (base.isJsonObject()) {
       newbase = base.getAsJsonObject().get(path[from].toString());
@@ -163,7 +163,7 @@ public class CompatJsonUtils {
           index = ((Number) path[from]).intValue();
         } else {
           if ((index = parseInt(path[from])) == null) {
-            throw new JsonInvalidPathException(base, path, from);
+            throw new JsonInvalidPathException(base, pathArray(path, from));
           }
         }
         if (index < 0 || index >= base.getAsJsonArray().size()) {
@@ -187,6 +187,13 @@ public class CompatJsonUtils {
     }
     return ret;
   }
+
+  private static Object[] pathArray(Object[] wholePath, int pos) {
+    Object[] ret = new Object[pos + 1];
+    System.arraycopy(wholePath, 0, ret, 0, pos + 1);
+    return ret;
+  }
+
 
   private static Integer parseInt(Object object) {
     Integer ret = null;
