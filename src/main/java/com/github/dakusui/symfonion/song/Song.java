@@ -188,7 +188,7 @@ public class Song {
         if (!barJson.isJsonObject()) {
           throw typeMismatchException(seqJson, OBJECT);
         }
-        Bar bar = new Bar(barJson.getAsJsonObject(), json, grooves, noteMaps, patterns, partFilter);
+        Bar bar = new Bar(barJson.getAsJsonObject(), grooves, noteMaps, patterns, partFilter, json);
         if (barFilter.test(bar))
           bars.add(bar);
       }

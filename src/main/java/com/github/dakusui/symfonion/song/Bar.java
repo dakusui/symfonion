@@ -44,14 +44,14 @@ import static java.util.Collections.*;
  * // @formatter:on
  */
 public class Bar {
-  private final Map<String, Pattern> patterns;
-  private final JsonObject rootJsonObject;
-  private final Map<String, NoteMap> noteMaps;
-  private final Fraction beats;
+  private final Map<String, Pattern>             patterns;
+  private final JsonObject                       rootJsonObject;
+  private final Map<String, NoteMap>             noteMaps;
+  private final Fraction                         beats;
   private final Map<String, List<List<Pattern>>> patternLists;
-  private final Groove groove;
-  private final List<String> labels;
-  private final JsonObject barJsonObject;
+  private final Groove                           groove;
+  private final List<String>                     labels;
+  private final JsonObject                       barJsonObject;
 
 
   /**
@@ -60,28 +60,34 @@ public class Bar {
    * `root` is used only for composing messages on errors.
    *
    * @param barJsonObject A JSON object from which a bar is created.
-   * @param root          A root JSON object that `barJsonObject` belongs to.
    * @param grooves       A map that defines a groove on which this bar should be played.
    * @param noteMaps      A note map with which this bar should be played.
    * @param patterns      A map that holds that defines patterns this bar references.
    * @param partFilter    A predicate that filters parts to be played in this bar.
+   * @param root          A root JSON object that `barJsonObject` belongs to.
    * @throws SymfonionException  Data processing was failed.
    * @throws CompatJsonException Invalid JSON is given.
    */
-  public Bar(JsonObject barJsonObject, JsonObject root, Map<String, Groove> grooves, Map<String, NoteMap> noteMaps, Map<String, Pattern> patterns, Predicate<String> partFilter) throws SymfonionException, CompatJsonException {
-    this.patterns = patterns;
-    this.noteMaps = noteMaps;
-    this.barJsonObject = barJsonObject;
+  public Bar(JsonObject barJsonObject,
+             Map<String, Groove> grooves,
+             Map<String, NoteMap> noteMaps,
+             Map<String, Pattern> patterns,
+             Predicate<String> partFilter,
+             JsonObject root) throws SymfonionException,
+                                     CompatJsonException {
+    this.patterns       = patterns;
+    this.noteMaps       = noteMaps;
+    this.barJsonObject  = barJsonObject;
     this.rootJsonObject = root;
     try (Context ignored = context($(JSON_ELEMENT_ROOT, root))) {
-      this.beats = resolveBeatsForBar(barJsonObject);
+      this.beats  = resolveBeatsForBar(barJsonObject);
       this.groove = resolveGrooveForBar(barJsonObject, grooves);
       this.labels = resolveLabelsForBar(barJsonObject);
       /*
         partName -> [ patternName ]
        */
-      JsonObject patternsJsonObjectInBar = getPartsInBarAsJsonObject(barJsonObject);
-      this.patternLists = composePatternListMap(this, partFilter, patternsJsonObjectInBar);
+      JsonObject partsJsonObjectInBar = getPartsInBarAsJsonObject(barJsonObject);
+      this.patternLists = composePatternListMap(this, partFilter, partsJsonObjectInBar);
     }
   }
 
@@ -115,6 +121,7 @@ public class Bar {
 
   /**
    * Returns `Beats` that determine the duration of this object.
+   *
    * @return Beats
    */
   public Fraction beats() {
@@ -133,10 +140,10 @@ public class Bar {
 
   /**
    * Find up a `JsonElement`, which matches `partName` under `barJsonObject`.
+   *
    * @param partName partName used for searching for `JsonElement`.
    * @return A matching JSON element. If not found, `null` will be returned.
-   *
-   * @see Bar#Bar(JsonObject, JsonObject, Map, Map, Map, Predicate)
+   * @see Bar#Bar(JsonObject, Map, Map, Map, Predicate, JsonObject)
    */
   public JsonElement lookUpJsonNode(String partName) {
     try {
@@ -155,14 +162,30 @@ public class Bar {
     return this.rootJsonObject;
   }
 
-  private static Map<String, List<List<Pattern>>> composePatternListMap(Bar bar, Predicate<String> partFilter, JsonObject patternsJsonObjectInBar) {
+  /**
+   * Composes a map of pattern sequences.
+   *
+   * ----
+   * List<List<Pattern>>
+   *      ^^^^^^^^^^^^^   Layered Patterns
+   * ^^^^^^^^^^^^^^^^^^^  A sequence of layered patterns
+   * ----
+   *
+   * @param bar                  A bar object from which pattern sequence map is created.
+   * @param partFilter           A predicate that filters a part to be rendered.
+   * @param partsJsonObjectInBar A JSON object associated with `$parts` key in the JSON object from which `bar` was created.
+   * @return A map of pattern sequence
+   */
+  private static Map<String, List<List<Pattern>>> composePatternListMap(Bar bar,
+                                                                        Predicate<String> partFilter,
+                                                                        JsonObject partsJsonObjectInBar) {
     Map<String, List<List<Pattern>>> patternListsMap = new HashMap<>();
-    for (Entry<String, JsonElement> patternEntryJsonElement : patternsJsonObjectInBar.entrySet()) {
+    for (Entry<String, JsonElement> patternEntryJsonElement : partsJsonObjectInBar.entrySet()) {
       if (!partFilter.test(patternEntryJsonElement.getKey()))
         continue;
-      final List<List<Pattern>> patternLists = new LinkedList<>();
-      String partName = patternEntryJsonElement.getKey();
-      JsonArray partPatternsJsonArray = getPatternsForPartJsonElements(partName, patternsJsonObjectInBar);
+      final List<List<Pattern>> patternLists          = new LinkedList<>();
+      String                    partName              = patternEntryJsonElement.getKey();
+      JsonArray                 partPatternsJsonArray = getPatternsForPartJsonElements(partName, partsJsonObjectInBar);
       for (JsonElement jsonPatterns : partPatternsJsonArray) {
         String patternName = jsonPatterns.getAsString();
         try (Context ignored2 = context($(REFERENCING_JSON_NODE, jsonPatterns))) {
@@ -177,8 +200,8 @@ public class Bar {
   private static List<String> resolveLabelsForBar(JsonObject barJsonObject) {
     if (CompatJsonUtils.hasPath(barJsonObject, Keyword.$labels)) {
       return StreamSupport.stream(CompatJsonUtils.asJsonArray(barJsonObject, Keyword.$labels).spliterator(), false)
-          .map(CompatJsonUtils::asString)
-          .toList();
+                          .map(CompatJsonUtils::asString)
+                          .toList();
     }
     return emptyList();
   }
@@ -202,7 +225,7 @@ public class Bar {
     } catch (FractionFormatException e) {
       throw illegalFormatException(asJsonElement(barJsonObject, Keyword.$beats), FRACTION_EXAMPLE);
     }
-    beats = beats == null ? Fraction.one : beats;
+    beats = beats == null ? Fraction.ONE : beats;
     return beats;
   }
 
@@ -214,10 +237,14 @@ public class Bar {
     return partPatternsJsonArray;
   }
 
-  private static JsonObject getPartsInBarAsJsonObject(JsonObject jsonObject) {
-    JsonObject patternsJsonObjectInBar = CompatJsonUtils.asJsonObject(jsonObject, Keyword.$parts);
+  /**
+   * @param barJsonObject A JSON object that models a bar in a musical score.
+   * @return JSON object under `$parts` element
+   */
+  private static JsonObject getPartsInBarAsJsonObject(JsonObject barJsonObject) {
+    JsonObject patternsJsonObjectInBar = CompatJsonUtils.asJsonObject(barJsonObject, Keyword.$parts);
     if (patternsJsonObjectInBar == null) {
-      throw requiredElementMissingException(jsonObject, Keyword.$parts);
+      throw requiredElementMissingException(barJsonObject, Keyword.$parts);
     }
     return patternsJsonObjectInBar;
   }

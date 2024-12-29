@@ -19,10 +19,10 @@ public class JsonIndexOutOfBoundsException extends JsonInvalidPathException {
   private final int index;
 
   /**
-   * Creates an object of this method.
+   * Creates an object of this class.
    *
-   * @param base  A JSON element that holds
-   * @param path  A path to the position of the array.
+   * @param base  A JSON, where request to `path[index]` is made.
+   * @param path  A path to an JSON array.
    * @param index An index, where out of bounds access happened.
    */
   public JsonIndexOutOfBoundsException(JsonElement base, Object[] path, int index) {
