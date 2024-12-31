@@ -17,7 +17,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import static com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower.*;
@@ -51,13 +50,13 @@ public class MidiCompiler {
    */
   public Map<String, Sequence> compile(Song song) throws InvalidMidiDataException, SymfonionException {
     System.err.println("Now compiling...");
-    int resolution = 384;
-    Map<String, Sequence> ret = new HashMap<>();
-    Map<String, Track> tracks;
+    int                   resolution = 384;
+    Map<String, Sequence> ret        = new HashMap<>();
+    Map<String, Track>    tracks;
     tracks = new HashMap<>();
     for (String partName : song.partNames()) {
-      Part part = song.part(partName);
-      String portName = part.portName();
+      Part     part     = song.part(partName);
+      String   portName = part.portName();
       Sequence sequence = ret.get(portName);
       if (sequence == null) {
         sequence = new Sequence(Sequence.PPQ, resolution / 4);
@@ -70,7 +69,7 @@ public class MidiCompiler {
     // position is the offset of a bar from the beginning of the sequence.
     // Giving the sequencer a grace period to initialize its internal state.
     long barPositionInTicks = 0; //= resolution / 4;
-    int barid = 0;
+    int  barid              = 0;
     for (Bar bar : song.bars()) {
       try (var ignored = context($(JSON_ELEMENT_ROOT, bar.rootJsonObject()))) {
         barStarted(barid);
@@ -83,15 +82,15 @@ public class MidiCompiler {
             throw partNotFound(bar.lookUpJsonNode(partName), partName);
           }
           int channel = song.part(partName).channel();
-          for (List<Pattern> patterns : bar.part(partName)) {
+          for (PatternSequence patternSequence : bar.part(partName)) {
             ////
             // relativePosition is a relative position from the beginning
             // of the bar the pattern belongs to.
             Fraction relPosInBar = Fraction.ZERO;
-            for (Pattern each : patterns) {
-              Parameters params = each.parameters();
+            for (Pattern eachPattern : patternSequence) {
+              Parameters params = eachPattern.parameters();
               patternStarted();
-              for (Stroke stroke : each.strokes()) {
+              for (Stroke stroke : eachPattern.strokes()) {
                 try {
                   Fraction endingPos = Fraction.add(relPosInBar, stroke.length());
 
@@ -165,12 +164,12 @@ public class MidiCompiler {
 
   public MidiEvent createSysexEvent(int ch, JsonArray arr, long lTick) throws InvalidMidiDataException {
     SysexMessage message = new SysexMessage();
-    Context lctxt = this.logiasContext.createChild();
-    Sexp channel = new Literal(ch);
+    Context      lctxt   = this.logiasContext.createChild();
+    Sexp         channel = new Literal(ch);
     lctxt.bind("channel", channel);
-    Logias logias = new Logias(lctxt);
-    Sexp sysexsexp = logias.buildSexp(arr);
-    Sexp sexp = logias.run(sysexsexp);
+    Logias logias    = new Logias(lctxt);
+    Sexp   sysexsexp = logias.buildSexp(arr);
+    Sexp   sexp      = logias.run(sysexsexp);
     if (Sexp.nil.equals(sexp)) {
       return null;
     }
@@ -239,9 +238,9 @@ public class MidiCompiler {
   }
 
   public MidiEvent createTempoEvent(int tempo, long lTick) throws InvalidMidiDataException {
-    int mpqn = 60000000 / tempo;
-    MetaMessage mm = new MetaMessage();
-    byte[] data = Utils.getIntBytes(mpqn);
+    int         mpqn = 60000000 / tempo;
+    MetaMessage mm   = new MetaMessage();
+    byte[]      data = Utils.getIntBytes(mpqn);
     mm.setMessage(0x51, data, data.length);
     return new MidiEvent(mm, lTick);
   }
