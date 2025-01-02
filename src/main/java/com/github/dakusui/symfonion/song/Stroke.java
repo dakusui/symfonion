@@ -27,23 +27,23 @@ import static com.github.dakusui.symfonion.compat.exceptions.SymfonionTypeMismat
  */
 public class Stroke {
   private static final java.util.regex.Pattern NOTES_REGEX_PATTERN = java.util.regex.Pattern.compile("([A-Zac-z])([#b]*)([><]*)([+\\-]*)?");
-  private static final int UNDEFINED_NUM = -1;
-  private final Fraction length;
-  private final List<NoteSet> notes = new LinkedList<>();
-  private final double gate;
-  private final NoteMap noteMap;
-  private final int[] volume;
-  private final int[] pan;
-  private final int[] reverb;
-  private final int[] chorus;
-  private final int[] pitch;
-  private final int[] modulation;
-  private final int pgno;
-  private final String bkno;
-  private final int tempo;
-  private final JsonArray sysex;
-  private final int[] aftertouch;
-  private final JsonElement strokeJson;
+  private static final int                     UNDEFINED_NUM       = -1;
+  private final        Fraction                length;
+  private final        List<NoteSet>           notes               = new LinkedList<>();
+  private final        double                  gate;
+  private final        NoteMap                 noteMap;
+  private final        int[]                   volume;
+  private final        int[]                   pan;
+  private final        int[]                   reverb;
+  private final        int[]                   chorus;
+  private final        int[]                   pitch;
+  private final        int[]                   modulation;
+  private final        int                     pgno;
+  private final        String                  bkno;
+  private final        int                     tempo;
+  private final        JsonArray               sysex;
+  private final        int[]                   aftertouch;
+  private final        JsonElement             strokeJson;
 
   /**
    *
@@ -88,9 +88,9 @@ public class Stroke {
    *
    */
   public Stroke(JsonElement strokeJson, Parameters params, NoteMap noteMap) throws SymfonionException, CompatJsonException {
-    String notes;
-    Fraction len = params.length();
-    double gate = params.gate();
+    String   notes;
+    Fraction len  = params.length();
+    double   gate = params.gate();
     this.strokeJson = strokeJson;
     JsonObject obj = CompatJsonUtils.asJsonObjectWithPromotion(strokeJson, new String[]{
         Keyword.$notes.name(),
@@ -112,7 +112,7 @@ public class Stroke {
       gate = CompatJsonUtils.asDouble(obj, Keyword.$gate);
     }
     this.tempo = CompatJsonUtils.hasPath(obj, Keyword.$tempo) ? CompatJsonUtils.asInt(obj, Keyword.$tempo) : UNDEFINED_NUM;
-    this.pgno = CompatJsonUtils.hasPath(obj, Keyword.$program) ? CompatJsonUtils.asInt(obj, Keyword.$program) : UNDEFINED_NUM;
+    this.pgno  = CompatJsonUtils.hasPath(obj, Keyword.$program) ? CompatJsonUtils.asInt(obj, Keyword.$program) : UNDEFINED_NUM;
     if (CompatJsonUtils.hasPath(obj, Keyword.$bank)) {
       this.bkno = CompatJsonUtils.asString(obj, Keyword.$bank);
       // Checks if this.bkno can be parsed as a double value.
@@ -121,34 +121,33 @@ public class Stroke {
       Double.parseDouble(this.bkno);
     } else
       this.bkno = null;
-    this.volume = getIntArray(obj, Keyword.$volume);
-    this.pan = getIntArray(obj, Keyword.$pan);
-    this.reverb = getIntArray(obj, Keyword.$reverb);
-    this.chorus = getIntArray(obj, Keyword.$chorus);
-    this.pitch = getIntArray(obj, Keyword.$pitch);
+    this.volume     = getIntArray(obj, Keyword.$volume);
+    this.pan        = getIntArray(obj, Keyword.$pan);
+    this.reverb     = getIntArray(obj, Keyword.$reverb);
+    this.chorus     = getIntArray(obj, Keyword.$chorus);
+    this.pitch      = getIntArray(obj, Keyword.$pitch);
     this.modulation = getIntArray(obj, Keyword.$modulation);
     this.aftertouch = getIntArray(obj, Keyword.$aftertouch);
-    this.sysex = CompatJsonUtils.asJsonArrayWithDefault(obj, null, Keyword.$sysex);
+    this.sysex      = CompatJsonUtils.asJsonArrayWithDefault(obj, null, Keyword.$sysex);
     /*
      * } else {
      * // unsupported
      * }
      */
     this.noteMap = noteMap;
-    this.gate = gate;
+    this.gate    = gate;
     Fraction strokeLen = Fraction.ZERO;
     if (notes != null) {
       for (String nn : notes.split(";")) {
-        NoteSet ns = new NoteSet();
-        Fraction nsLen;
-        String l;
-        if ((l = parseNotes(nn, ns)) != null) {
+        LinkedList<Note> ns = new LinkedList<>();
+        Fraction         nsLen;
+        String           l;
+        if ((l = parseStroke(ns, nn)) != null) {
           nsLen = Utils.parseNoteLength(l);
         } else {
           nsLen = len;
         }
-        ns.setLength(nsLen);
-        this.notes.add(ns);
+        this.notes.add(new NoteSet(nsLen, ns));
         strokeLen = Fraction.add(strokeLen, nsLen);
       }
     }
@@ -160,6 +159,7 @@ public class Stroke {
 
   /**
    * Returns the length of a stroke in this object.
+   *
    * @return The length of a stroke.
    */
   public Fraction length() {
@@ -180,35 +180,39 @@ public class Stroke {
     return this.notes;
   }
 
-  /*
-   * Returns the 'length' portion of the string <code>s</code>.
+  /**
+   * Returns the 'length' portion of the string <code>stroke</code>.
+   *
+   * @param out A list that stores parsed result will be added.
+   * @return The remaining part that was not parsed by this invocation.
+   * `null` if this invocation parses the entire `notes` string.
    */
-  private String parseNotes(String s, List<Note> notes) throws SymfonionException {
-    Matcher m = NOTES_REGEX_PATTERN.matcher(s);
-    int i;
+  private String parseStroke(List<Note> out, String stroke) throws SymfonionException {
+    Matcher m = NOTES_REGEX_PATTERN.matcher(stroke);
+    int     i;
     for (i = 0; m.find(i); i = m.end()) {
       if (i != m.start()) {
-        throw syntaxErrorInNotePattern(s, i, m);
+        throw syntaxErrorInNotePattern(stroke, i, m);
       }
       int n_ = this.noteMap.note(m.group(1), this.strokeJson);
       if (n_ >= 0) {
         int n =
             n_ +
-                Utils.count('#', m.group(2)) - Utils.count('b', m.group(2)) +
-                Utils.count('>', m.group(3)) * 12 - Utils.count('<', m.group(3)) * 12;
-        int a = Utils.count('+', m.group(4)) - Utils.count('-', m.group(4));
+            Utils.count('#', m.group(2)) - Utils.count('b', m.group(2)) +
+            Utils.count('>', m.group(3)) * 12 - Utils.count('<', m.group(3)) * 12;
+        int  a  = Utils.count('+', m.group(4)) - Utils.count('-', m.group(4));
         Note nn = new Note(n, a);
-        notes.add(nn);
+        out.add(nn);
       }
     }
-    Matcher n = Utils.lengthPattern.matcher(s);
-    String ret = null;
+    Matcher n   = Utils.lengthPattern.matcher(stroke);
+    String  ret = null;
     if (n.find(i)) {
-      ret = s.substring(n.start(), n.end());
-      i = n.end();
+      ret = stroke.substring(n.start(), n.end());
+      i   = n.end();
     }
-    if (i != s.length()) {
-      String msg = s.substring(0, i) + "`" + s.substring(i) + "' isn't a valid note expression. Notes must be like 'C', 'CEG8.', and so on.";
+    if (i != stroke.length()) {
+      String msg = stroke.substring(0, i) + "`" + stroke.substring(i) + "' isn't a valid note expression. Notes must be like 'C', 'CEG8.', and so on.";
       throw illegalFormatException(this.strokeJson, msg);
     }
     return ret;
@@ -216,7 +220,7 @@ public class Stroke {
   }
 
   private void renderValues(int[] values, long pos, long strokeLen, MidiCompiler compiler, EventCreator creator) throws
-      InvalidMidiDataException {
+                                                                                                                 InvalidMidiDataException {
     if (values == null) {
       return;
     }
@@ -235,10 +239,10 @@ public class Stroke {
    * @throws InvalidMidiDataException Failed to generate MIDI data.
    */
   public void compile(final MidiCompiler compiler, MidiCompilerContext context) throws InvalidMidiDataException {
-    final Track track = context.track();
-    final int ch = context.channel();
-    long absolutePosition = context.convertRelativePositionInStrokeToAbsolutePosition(Fraction.ZERO);
-    long strokeLen = context.getStrokeLengthInTicks(this);
+    final Track track            = context.track();
+    final int   ch               = context.channel();
+    long        absolutePosition = context.convertRelativePositionInStrokeToAbsolutePosition(Fraction.ZERO);
+    long        strokeLen        = context.getStrokeLengthInTicks(this);
     if (tempo != UNDEFINED_NUM) {
       track.add(compiler.createTempoEvent(this.tempo, absolutePosition));
       compiler.controlEventProcessed();
@@ -270,37 +274,35 @@ public class Stroke {
     renderValues(pitch, absolutePosition, strokeLen, compiler, (v, pos) -> track.add(compiler.createPitchBendEvent(ch, v, pos)));
     renderValues(modulation, absolutePosition, strokeLen, compiler, (v, pos) -> track.add(compiler.createModulationEvent(ch, v, pos)));
     renderValues(aftertouch, absolutePosition, strokeLen, compiler, (v, pos) -> track.add(compiler.createAfterTouchChangeEvent(ch, v, pos)));
-    int transpose = context.params().transpose();
-    int arpegiodelay = context.params().arpeggio();
-    int delta = 0;
+    int      transpose      = context.params().transpose();
+    int      arpegioDelay   = context.params().arpeggio();
+    int      delta          = 0;
     Fraction relPosInStroke = Fraction.ZERO;
     for (NoteSet noteSet : this.noteSets()) {
       absolutePosition = context.convertRelativePositionInStrokeToAbsolutePosition(relPosInStroke);
       long absolutePositionWhereNoteFinishes = context.convertRelativePositionInStrokeToAbsolutePosition(
-          Fraction.add(
-              relPosInStroke,
-              noteSet.getLength()
-          )
-      );
+          Fraction.add(relPosInStroke,
+                       noteSet.length())
+                                                                                                        );
       long noteLengthInTicks = absolutePositionWhereNoteFinishes - absolutePosition;
-      for (Note note : noteSet) {
+      for (Note note : noteSet.notes()) {
         int key = note.key() + transpose;
         int velocity = Math.max(
             0,
             Math.min(
                 127,
                 context.params().velocityBase() +
-                    note.accent() * context.params().velocityDelta() +
-                    context.getGrooveAccent(relPosInStroke)
-            )
-        );
+                note.accent() * context.params().velocityDelta() +
+                context.getGrooveAccent(relPosInStroke)
+                    )
+                               );
         track.add(compiler.createNoteOnEvent(ch, key, velocity, absolutePosition + delta));
         track.add(compiler.createNoteOffEvent(ch, key, (long) (absolutePosition + delta + noteLengthInTicks * this.gate())));
         compiler.noteProcessed();
-        delta += arpegiodelay;
+        delta += arpegioDelay;
       }
       compiler.noteSetProcessed();
-      relPosInStroke = Fraction.add(relPosInStroke, noteSet.getLength());
+      relPosInStroke = Fraction.add(relPosInStroke, noteSet.length());
     }
   }
 
@@ -314,7 +316,7 @@ public class Stroke {
       JsonArray arr = json.getAsJsonArray();
       ret = interpolate(expandDots(arr));
     } else {
-      ret = new int[1];
+      ret    = new int[1];
       ret[0] = CompatJsonUtils.asInt(cur, kw);
     }
     return ret;
@@ -346,7 +348,7 @@ public class Stroke {
   }
 
   private static int[] interpolate(JsonArray arr) {
-    int[] ret;
+    int[]     ret;
     Integer[] tmp = new Integer[arr.size()];
     for (int i = 0; i < tmp.length; i++) {
       if (arr.get(i) == null || arr.get(i).isJsonNull()) {
@@ -357,7 +359,7 @@ public class Stroke {
     }
     ret = new int[arr.size()];
     int start = 0;
-    int end = 0;
+    int end   = 0;
     for (int i = 0; i < tmp.length; i++) {
       if (tmp[i] != null) {
         start = ret[i] = tmp[i];
@@ -365,16 +367,16 @@ public class Stroke {
         int j = i + 1;
         while (j < tmp.length) {
           if (tmp[j] != null) {
-            end = tmp[j];
+            end    = tmp[j];
             ret[j] = end;
             break;
           }
           j++;
         }
-        int step = (end - start) / (j - i);
+        int step   = (end - start) / (j - i);
         int curval = start;
         for (int k = i; k < j; k++) {
-          curval += step;
+                   curval += step;
           ret[k] = curval;
         }
         i = j;

@@ -218,7 +218,9 @@ public class MidiCompiler {
   }
 
   public MidiEvent createChorusEvent(int ch, int depth, long lTick) throws InvalidMidiDataException {
-    return createControlChangeEvent(ch, 93, depth, lTick);
+    ShortMessage message = new ShortMessage();
+    message.setMessage(ShortMessage.CONTROL_CHANGE, ch, 93, depth);
+    return new MidiEvent(message, lTick);
   }
 
   public MidiEvent createPitchBendEvent(int ch, int depth, long lTick) throws InvalidMidiDataException {

@@ -7,7 +7,10 @@ import com.github.dakusui.symfonion.song.Stroke;
 
 import javax.sound.midi.Track;
 
-public record MidiCompilerContext(Track track, int channel, Pattern.Parameters params, Fraction relativeStrokePositionInBar,
+public record MidiCompilerContext(Track track,
+                                  int channel,
+                                  Pattern.Parameters params,
+                                  Fraction relativeStrokePositionInBar,
                                   long barPositionInTicks, Groove groove) {
   
   // this.position = position;

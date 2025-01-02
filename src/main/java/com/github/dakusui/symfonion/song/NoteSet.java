@@ -1,26 +1,14 @@
 package com.github.dakusui.symfonion.song;
 
-import java.io.Serial;
-import java.util.LinkedList;
-
 import com.github.dakusui.symfonion.utils.Fraction;
 
-public class NoteSet extends LinkedList<Note> {
+import java.util.List;
 
-	/**
-	 * Serial version UID.
-	 */
-	@Serial
-	private static final long serialVersionUID = -6221696604950143374L;
-	
-	Fraction length;
-	
-	public void setLength(Fraction length) {
-		this.length = length;
-	}
-	
-	public Fraction getLength() {
-		return this.length;
-	}
+import static java.util.Collections.unmodifiableList;
 
+public record NoteSet(Fraction length, List<Note> notes) {
+  public NoteSet(Fraction length, List<Note> notes) {
+    this.length = length;
+    this.notes  = unmodifiableList(notes);
+  }
 }

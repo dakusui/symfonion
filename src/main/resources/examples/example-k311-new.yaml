@@ -1,0 +1,149 @@
+---
+"$parts":
+  pianor:
+    "$channel": 0
+"$patterns":
+  01r:
+    "$body": r4;B;A;G#;A
+    "$length": 16
+  02r:
+    "$body": C>8;r8;D>;C>;B;C>;E>8;r8;F>;E>;D#>;E>
+    "$length": 16
+  04r:
+    "$body": B>;A>;G#>;A>;B>;A>;G#>;A>;C>>4;A>8;C>>8
+    "$length": 16
+  06r:
+    "$body": B>;F#A>;EG>;F#A>;B>;F#A>;EG>;F#A>
+    "$length": 8
+    "$gate": 0.3
+  '08r':
+    "$body": B>;F#A;EG>;D#F#>;E4;r4
+    "$length": 8
+    "$gate": 0.3
+"$local":
+  "default-16":
+    "$length": 16
+    "$gate": 0.3,
+  "default-8":
+    "$length": 8
+    "$gate": 0.3
+"$midiActionMaps":
+  "controlChanges":
+    "X":
+      "$description": >
+        An action type for sending system exclusive messages.
+      "$type": "$sysex"
+      "$data1": ["value"]
+      "$data2": ["quote", 0]
+    "V":
+      "$description": >
+        An action type for sending "volume" control change messages.
+      "$type": "$control"
+      "$command": 176
+      "$data1": 7,
+      "$data2":
+    "P":
+      "$description": >
+        An action type for sending "pan" control change messages.
+      "$type": 176
+      "$value": 10
+    "R":
+      "$description": >
+        An action type for sending "pan" control change messages.
+      "$command": 176
+      "$value": 91
+    "Q":
+      "$description": >
+        An action type for sending "pitch bend" control change messages.
+      "$command": 224
+      "$value": 91
+    "M":
+      "$description": >
+        An action type for sending "modulation" control change messages.
+      "$command": "$control"
+      "$value": 1
+  "notes":
+    "C":
+      "$command": "$note"
+      "$value": 60
+    "D":
+      "$command": "$note"
+      "$value": 62
+    "E":
+      "$type": "$note"
+      "$value": 64
+    "F":
+      "$type": "$note"
+      "$value": 65
+    "G":
+      "$type": "$note"
+      "$value": 67
+    "A":
+      "$type": "$note"
+      "$value": 69
+    "B":
+      "$type": "$note"
+      "$value": 71
+  "percussion":
+    "B":
+      "$type": "$note"
+      "$value": 36
+    "S":
+      "$type": "$note"
+      "$value": 38
+    "C":
+      "$type": "$note"
+      "$value": 49
+    "O":
+      "$type": "$note"
+      "$value": 46
+    "H":
+      "$type": "$note"
+      "$value": 42
+    "T":
+      "$type": "$note"
+      "$value": 47
+
+
+"$song":
+  - "$beats": 2/4
+    "$parts":
+      piano-r:
+        "$extends": default-16
+        "$body": r4;B;A;G#;A
+      piano-l:
+        "$extends": default-16
+        "events":
+          - r4;r;A;r;A
+          - V@10;V@20;V@30;V@40;
+          - P@0;P@10;P@20;P@30;P@40;P@50;P@127
+        "$parameters":
+          "$length": 16
+          "$gate": 0.8,
+          "$transpose": 0,
+          "$arpegio": 10,
+          "$velocityBase": 100,
+          "$valocityDelta": 10
+"$sequence":
+  - "$parts":
+      pianor:
+        - "$body": r4;B;A;G#;A
+          "$length": 16
+          "$gate": 0.8
+    "$beats": 2/4
+  - "$parts":
+      pianor:
+        - 02r
+    "$beats": 4/4
+  - "$parts":
+      pianor:
+        - 04r
+    "$beats": 4/4
+  - "$parts":
+      pianor:
+        - 06r
+    "$beats": 4/4
+  - "$parts":
+      pianor:
+        - '08r'
+    "$beats": 4/4
