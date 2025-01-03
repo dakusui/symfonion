@@ -20,10 +20,6 @@ import static com.github.valid8j.fluent.Expectations.*;
 import static java.lang.String.format;
 
 public class CompatExceptionThrower {
-  public static String composeIllegalNoteFormatMessage(String stroke, int position) {
-    return stroke.substring(0, position) + "``" + stroke.substring(position) + "'' isn't a valid note expression. Notes must be like 'C', 'CEG8.', and so on.";
-  }
-
   public enum ContextKey {
     MIDI_DEVICE_INFO(MidiDevice.Info.class),
     MIDI_DEVICE_INFO_IO(String.class),
@@ -42,7 +38,7 @@ public class CompatExceptionThrower {
   }
 
   public static class Context implements Closeable {
-    private final Context parent;
+    private final Context                                            parent;
     private final HashMap<CompatExceptionThrower.ContextKey, Object> values = HashMap.newHashMap(100);
 
     private Context(Context parent) {
@@ -101,7 +97,7 @@ public class CompatExceptionThrower {
 
   public static ContextEntry contextEntry(ContextKey key, Object value) {
     assert preconditions(value(key).then().notNull().$(),
-        value(value).then().notNull().instanceOf(classOfValueFor(key)).$());
+                         value(value).then().notNull().instanceOf(classOfValueFor(key)).$());
     return new ContextEntry(key, value);
   }
 
@@ -138,8 +134,8 @@ public class CompatExceptionThrower {
     throw new SymfonionReferenceException(missingReference, "notemap", problemCausingJsonNode, contextValueOf(JSON_ELEMENT_ROOT), contextValueOf(SOURCE_FILE), contextValueOf(JSON_ELEMENT_ROOT));
   }
 
-  public static SymfonionReferenceException noteNotDefinedException(JsonElement problemCausingJsonNode, String missingReference, String notemapName) throws SymfonionException {
-    throw new SymfonionReferenceException(missingReference, format("note in %s", notemapName), problemCausingJsonNode, contextValueOf(JSON_ELEMENT_ROOT), contextValueOf(SOURCE_FILE), contextValueOf(JSON_ELEMENT_ROOT));
+  public static SymfonionReferenceException noteNotDefinedException(String missingReference, String notemapName) throws SymfonionException {
+    throw new SymfonionReferenceException(missingReference, format("note in %s", notemapName), contextValueOf(PART_MEASURE_JSON), contextValueOf(JSON_ELEMENT_ROOT), contextValueOf(SOURCE_FILE), contextValueOf(JSON_ELEMENT_ROOT));
   }
 
   public static SymfonionException syntaxErrorInNotePattern(String s, int i, Matcher m) {
@@ -164,6 +160,10 @@ public class CompatExceptionThrower {
 
   public static SymfonionIllegalFormatException illegalNoteFormat(String stroke, int position) throws SymfonionException {
     throw illegalFormatException(contextValueOf(PART_MEASURE_JSON), composeIllegalNoteFormatMessage(stroke, position));
+  }
+
+  private static String composeIllegalNoteFormatMessage(String partMeasureString, int position) {
+    return partMeasureString.substring(0, position) + "``" + partMeasureString.substring(position) + "'' isn't a valid note expression. Notes must be like 'C', 'CEG8.', and so on.";
   }
 
   public static SymfonionIllegalFormatException illegalFormatException(JsonElement actualJSON, String acceptableExample) throws SymfonionIllegalFormatException {
@@ -217,8 +217,8 @@ public class CompatExceptionThrower {
 
   public static CliException failedToOpenMidiDevice(MidiUnavailableException ee) {
     throw new CliException(format("(-) Failed to open MIDI-%s device (%s)",
-        CompatExceptionThrower.<MidiDevice.Info>contextValueOf(MIDI_DEVICE_INFO),
-        CompatExceptionThrower.<String>contextValueOf(MIDI_DEVICE_INFO_IO).toLowerCase()), ee);
+                                  CompatExceptionThrower.<MidiDevice.Info>contextValueOf(MIDI_DEVICE_INFO),
+                                  CompatExceptionThrower.<String>contextValueOf(MIDI_DEVICE_INFO_IO).toLowerCase()), ee);
   }
 
   public static CliException failedToAccessMidiDevice(String deviceType, MidiUnavailableException e, MidiDevice.Info[] matchedInfos) {

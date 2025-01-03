@@ -7,7 +7,7 @@ import com.github.dakusui.logias.lisp.s.Sexp;
 import com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower;
 import com.github.dakusui.symfonion.compat.exceptions.SymfonionException;
 import com.github.dakusui.symfonion.song.*;
-import com.github.dakusui.symfonion.song.Pattern.Parameters;
+import com.github.dakusui.symfonion.song.PartMeasureParameters;
 import com.github.dakusui.symfonion.utils.Fraction;
 import com.github.dakusui.symfonion.utils.Utils;
 import com.google.gson.JsonArray;
@@ -88,18 +88,18 @@ public class MidiCompiler {
             // of the bar the pattern belongs to.
             Fraction relPosInBar = Fraction.ZERO;
             for (Pattern eachPattern : patternSequence) {
-              Parameters params = eachPattern.parameters();
+              PartMeasureParameters params = eachPattern.parameters();
               patternStarted();
-              for (PartMeasure stroke : eachPattern.strokes()) {
+              for (PartMeasure partMeasure : eachPattern.partMeasures()) {
                 try {
-                  Fraction endingPos = Fraction.add(relPosInBar, stroke.length());
+                  Fraction endingPos = Fraction.add(relPosInBar, partMeasure.length());
 
-                  stroke.compile(this, new MidiCompilerContext(track,
-                                                               channel,
-                                                               params,
-                                                               relPosInBar,
-                                                               barPositionInTicks,
-                                                               groove));
+                  partMeasure.compile(this, new MidiCompilerContext(track,
+                                                                    channel,
+                                                                    params,
+                                                                    relPosInBar,
+                                                                    barPositionInTicks,
+                                                                    groove));
 
                   relPosInBar = endingPos;
                   ////
@@ -108,7 +108,7 @@ public class MidiCompiler {
                     break;
                   }
                 } finally {
-                  strokeEnded();
+                  partMeasureEnded();
                 }
               }
               patternEnded();
@@ -278,7 +278,7 @@ public class MidiCompiler {
     System.out.print("    " + partName + ":");
   }
 
-  public void strokeEnded() {
+  public void partMeasureEnded() {
     System.out.print("|");
   }
 

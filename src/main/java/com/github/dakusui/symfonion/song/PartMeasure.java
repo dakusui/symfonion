@@ -6,7 +6,6 @@ import com.github.dakusui.symfonion.compat.exceptions.SymfonionIllegalFormatExce
 import com.github.dakusui.symfonion.compat.json.*;
 import com.github.dakusui.symfonion.core.MidiCompiler;
 import com.github.dakusui.symfonion.core.MidiCompilerContext;
-import com.github.dakusui.symfonion.song.Pattern.Parameters;
 import com.github.dakusui.symfonion.utils.Fraction;
 import com.github.dakusui.symfonion.utils.Utils;
 import com.google.gson.*;
@@ -19,7 +18,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 
 import static com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower.*;
-import static com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower.ContextKey.PART_MEASURE_JSON;
 import static com.github.dakusui.symfonion.compat.exceptions.SymfonionIllegalFormatException.NOTE_LENGTH_EXAMPLE;
 import static com.github.dakusui.symfonion.compat.exceptions.SymfonionTypeMismatchException.PRIMITIVE;
 
@@ -27,7 +25,8 @@ import static com.github.dakusui.symfonion.compat.exceptions.SymfonionTypeMismat
  * A class that models a stroke, which is one action of a human in a musical piece.
  */
 public class PartMeasure {
-  private static final java.util.regex.Pattern NOTES_REGEX_PATTERN = java.util.regex.Pattern.compile("(?<noteName>[A-Zac-z])(?<accidentals>[#b]*)(?<octaveShifts>[><]*)(?<accents>[+\\-]*)?");
+  private static final java.util.regex.Pattern NOTES_REGEX_PATTERN =
+      java.util.regex.Pattern.compile("(?<noteName>[A-Zac-z])(?<accidentals>[#b]*)(?<octaveShifts>[><]*)(?<accents>[+\\-]*)?");
   private static final int                     UNDEFINED_NUM       = -1;
   private final        Fraction                length;
   private final        List<NoteSet>           notes               = new LinkedList<>();
@@ -48,9 +47,9 @@ public class PartMeasure {
    *
    * // @formatter:off
    *
-   * The ```strokeJson``` needs to be a JSON element which can promote to the following object with ```CompatJsonUtils#asJsonArrayWithPromotion( JsonElement, Object...)```
+   * The ```partMeasureJson``` needs to be a JSON element which can promote to the following object with ```CompatJsonUtils#asJsonArrayWithPromotion( JsonElement, Object...)```
    * [source, JSON]
-   * .strokeJson
+   * .partMeasureJson
    * ----
    * {
    *   "$notes": "NOTES: String",
@@ -79,82 +78,89 @@ public class PartMeasure {
    *
    * // @formatter:on
    *
-   * @param strokeJson A JSON object to be interpreted as a stroke.
+   * @param partMeasureJson A JSON object to be interpreted as a stroke.
    * @param params Default values of strokes when omitted.
    * @param noteMap An object that defines mappings from a character to a MIDI note number.
-   * @throws SymfonionException Failed to process `strokeJson`.
-   * @throws CompatJsonException Failed to interpret `strokeJson`.
+   * @throws SymfonionException Failed to process `partMeasureJson`.
+   * @throws CompatJsonException Failed to interpret `partMeasureJson`.
    *
    */
-  public PartMeasure(JsonElement strokeJson, Parameters params, NoteMap noteMap) throws SymfonionException, CompatJsonException {
-    try (var ignored = context($(PART_MEASURE_JSON, strokeJson))) {
-      String   notes;
-      Fraction len  = params.length();
-      double   gate = params.gate();
-      JsonObject obj = CompatJsonUtils.asJsonObjectWithPromotion(strokeJson, new String[]{
-          Keyword.$notes.name(),
-          Keyword.$length.name()
-      });
-      notes = CompatJsonUtils.asStringWithDefault(obj, null, Keyword.$notes);
-      if (CompatJsonUtils.hasPath(obj, Keyword.$length)) {
-        JsonElement lenJSON = CompatJsonUtils.asJsonElement(obj, Keyword.$length);
-        if (lenJSON.isJsonPrimitive()) {
-          len = Utils.parseNoteLength(lenJSON.getAsString());
-          if (len == null) {
-            throw illegalFormatException(lenJSON, NOTE_LENGTH_EXAMPLE);
-          }
-        } else {
-          throw typeMismatchException(lenJSON, PRIMITIVE);
-        }
-      }
-      if (CompatJsonUtils.hasPath(obj, Keyword.$gate)) {
-        gate = CompatJsonUtils.asDouble(obj, Keyword.$gate);
-      }
-      this.tempo = CompatJsonUtils.hasPath(obj, Keyword.$tempo) ? CompatJsonUtils.asInt(obj, Keyword.$tempo) : UNDEFINED_NUM;
-      this.pgno  = CompatJsonUtils.hasPath(obj, Keyword.$program) ? CompatJsonUtils.asInt(obj, Keyword.$program) : UNDEFINED_NUM;
-      if (CompatJsonUtils.hasPath(obj, Keyword.$bank)) {
-        this.bkno = CompatJsonUtils.asString(obj, Keyword.$bank);
-        // Checks if this.bkno can be parsed as a double value.
-        assert this.bkno != null;
-        //noinspection ResultOfMethodCallIgnored
-        Double.parseDouble(this.bkno);
-      } else
-        this.bkno = null;
-      this.volume     = getIntArray(obj, Keyword.$volume);
-      this.pan        = getIntArray(obj, Keyword.$pan);
-      this.reverb     = getIntArray(obj, Keyword.$reverb);
-      this.chorus     = getIntArray(obj, Keyword.$chorus);
-      this.pitch      = getIntArray(obj, Keyword.$pitch);
-      this.modulation = getIntArray(obj, Keyword.$modulation);
-      this.aftertouch = getIntArray(obj, Keyword.$aftertouch);
-      this.sysex      = CompatJsonUtils.asJsonArrayWithDefault(obj, null, Keyword.$sysex);
-      /*
-       * } else {
-       * // unsupported
-       * }
-       */
-      this.gate = gate;
-      Fraction strokeLen = Fraction.ZERO;
-      if (notes != null) {
-        StrokeSequence parsedStrokeSequence = parseStrokeSequence(notes, len, noteMap, strokeJson);
-        strokeLen = Fraction.add(strokeLen, parsedStrokeSequence.length());
-        this.notes.addAll(parsedStrokeSequence.noteSet());
-      }
-      if (Fraction.ZERO.equals(strokeLen)) {
-        strokeLen = len;
-      }
-      this.length = strokeLen;
+  public PartMeasure(JsonElement partMeasureJson, PartMeasureParameters params, NoteMap noteMap) throws SymfonionException, CompatJsonException {
+    this(CompatJsonUtils.asJsonObjectWithPromotion(partMeasureJson, new String[]{
+        Keyword.$notes.name(),
+        Keyword.$length.name()
+    }), params, noteMap);
+  }
+
+  public PartMeasure(JsonObject obj, PartMeasureParameters params, NoteMap noteMap) throws SymfonionException, CompatJsonException {
+    String   notes;
+    Fraction len  = params.length();
+    double   gate = params.gate();
+    notes = CompatJsonUtils.asStringWithDefault(obj, null, Keyword.$notes);
+    if (CompatJsonUtils.hasPath(obj, Keyword.$length)) {
+      JsonElement lenJSON = CompatJsonUtils.asJsonElement(obj, Keyword.$length);
+      len = validateLegth(lenJSON);
     }
+    if (CompatJsonUtils.hasPath(obj, Keyword.$gate)) {
+      gate = CompatJsonUtils.asDouble(obj, Keyword.$gate);
+    }
+    this.tempo = CompatJsonUtils.hasPath(obj, Keyword.$tempo) ? CompatJsonUtils.asInt(obj, Keyword.$tempo) : UNDEFINED_NUM;
+    this.pgno  = CompatJsonUtils.hasPath(obj, Keyword.$program) ? CompatJsonUtils.asInt(obj, Keyword.$program) : UNDEFINED_NUM;
+    if (CompatJsonUtils.hasPath(obj, Keyword.$bank)) {
+      this.bkno = CompatJsonUtils.asString(obj, Keyword.$bank);
+      // Checks if this.bkno can be parsed as a double value.
+      assert this.bkno != null;
+      //noinspection ResultOfMethodCallIgnored
+      Double.parseDouble(this.bkno);
+    } else
+      this.bkno = null;
+    this.volume     = getIntArray(obj, Keyword.$volume);
+    this.pan        = getIntArray(obj, Keyword.$pan);
+    this.reverb     = getIntArray(obj, Keyword.$reverb);
+    this.chorus     = getIntArray(obj, Keyword.$chorus);
+    this.pitch      = getIntArray(obj, Keyword.$pitch);
+    this.modulation = getIntArray(obj, Keyword.$modulation);
+    this.aftertouch = getIntArray(obj, Keyword.$aftertouch);
+    this.sysex      = CompatJsonUtils.asJsonArrayWithDefault(obj, null, Keyword.$sysex);
+    /*
+     * } else {
+     * // unsupported
+     * }
+     */
+    this.gate = gate;
+    Fraction partMeasureLen = Fraction.ZERO;
+    if (notes != null) {
+      StrokeSequence parsedStrokeSequence = parseStrokeSequence(notes, len, noteMap);
+      partMeasureLen = Fraction.add(partMeasureLen, parsedStrokeSequence.length());
+      this.notes.addAll(parsedStrokeSequence.noteSet());
+    }
+    if (Fraction.ZERO.equals(partMeasureLen)) {
+      partMeasureLen = len;
+    }
+    this.length = partMeasureLen;
+  }
+
+  private static Fraction validateLegth(JsonElement lenJSON) {
+    Fraction len;
+    if (lenJSON.isJsonPrimitive()) {
+      len = Utils.parseNoteLength(lenJSON.getAsString());
+      if (len == null) {
+        throw illegalFormatException(lenJSON, NOTE_LENGTH_EXAMPLE);
+      }
+    } else {
+      throw typeMismatchException(lenJSON, PRIMITIVE);
+    }
+    return len;
   }
 
   private record StrokeSequence(List<NoteSet> noteSet, Fraction length) {
   }
 
-  private static StrokeSequence parseStrokeSequence(String in, Fraction defaultNoteLength, NoteMap noteMap, JsonElement strokeJson) {
+  private static StrokeSequence parseStrokeSequence(String in, Fraction defaultNoteLength, NoteMap noteMap) {
     List<NoteSet> noteSets        = new LinkedList<>();
     Fraction      currentPosition = Fraction.ZERO;
     for (String nn : in.split(";")) {
-      Stroke result = parseStroke(nn, defaultNoteLength, noteMap, strokeJson);
+      Stroke result = parseStroke(nn, defaultNoteLength, noteMap);
       noteSets.add(new NoteSet(result.length(), result.ns()));
       currentPosition = Fraction.add(currentPosition, result.length());
     }
@@ -162,11 +168,11 @@ public class PartMeasure {
     return new StrokeSequence(noteSets, p);
   }
 
-  private static Stroke parseStroke(String nn, Fraction defaultNoteLength, NoteMap noteMap, JsonElement strokeJson) {
+  private static Stroke parseStroke(String nn, Fraction defaultNoteLength, NoteMap noteMap) {
     LinkedList<Note> ns = new LinkedList<>();
     Fraction         nsLen;
     String           l;
-    if ((l = parseStroke(ns, nn, noteMap, strokeJson)) != null) {
+    if ((l = parseStroke(ns, nn, noteMap)) != null) {
       nsLen = Utils.parseNoteLength(l);
     } else {
       nsLen = defaultNoteLength;
@@ -178,7 +184,7 @@ public class PartMeasure {
   }
 
   /**
-   * Returns the length of a stroke in this object.
+   * Returns the length of this object.
    *
    * @return The length of a stroke.
    */
@@ -203,21 +209,19 @@ public class PartMeasure {
   /**
    * Returns the 'length' portion of the string <code>stroke</code>.
    *
-   * @param noteMap    A note map that stores a map from  a code (`A`, `B`, `C`, ...) to a note.
-   * @param strokeJson A string that stores a stroke to be parsed.
-   * @param out        A list that stores parsed result will be added.
+   * @param noteMap A note map that stores a map from  a code (`A`, `B`, `C`, ...) to a note.
+   * @param out     A list that stores parsed result will be added.
    * @return The remaining part that was not parsed by this invocation.
    * `null` if this invocation parses the entire `notes` string.
    */
-  private static String parseStroke(List<Note> out,
-                                    String stroke, NoteMap noteMap, JsonElement strokeJson) throws SymfonionException {
+  private static String parseStroke(List<Note> out, String stroke, NoteMap noteMap) throws SymfonionException {
     Matcher m = NOTES_REGEX_PATTERN.matcher(stroke);
     int     i;
     for (i = 0; m.find(i); i = m.end()) {
       if (i != m.start()) {
         throw syntaxErrorInNotePattern(stroke, i, m);
       }
-      int n_ = noteMap.note(m.group("noteName"), strokeJson);
+      int n_ = noteMap.note(m.group("noteName"));
       if (n_ >= 0) {
         int n =
             n_ +
@@ -235,7 +239,7 @@ public class PartMeasure {
       i   = n.end();
     }
     if (i != stroke.length()) {
-      throw CompatExceptionThrower.illegalNoteFormat(stroke, i);
+      throw illegalNoteFormat(stroke, i);
     }
     return ret;
 
@@ -262,8 +266,8 @@ public class PartMeasure {
   public void compile(final MidiCompiler compiler, MidiCompilerContext context) throws InvalidMidiDataException {
     final Track track            = context.track();
     final int   ch               = context.channel();
-    long        absolutePosition = context.convertRelativePositionInStrokeToAbsolutePosition(Fraction.ZERO);
-    long        strokeLen        = context.getStrokeLengthInTicks(this);
+    long        absolutePosition = context.convertRelativePositionInPartMeasureToAbsolutePosition(Fraction.ZERO);
+    long        strokeLen        = context.getPartMeasureLengthInTicks(this);
     if (tempo != UNDEFINED_NUM) {
       track.add(compiler.createTempoEvent(this.tempo, absolutePosition));
       compiler.controlEventProcessed();
@@ -300,11 +304,11 @@ public class PartMeasure {
     int      delta          = 0;
     Fraction relPosInStroke = Fraction.ZERO;
     for (NoteSet noteSet : this.noteSets()) {
-      absolutePosition = context.convertRelativePositionInStrokeToAbsolutePosition(relPosInStroke);
-      long absolutePositionWhereNoteFinishes = context.convertRelativePositionInStrokeToAbsolutePosition(
+      absolutePosition = context.convertRelativePositionInPartMeasureToAbsolutePosition(relPosInStroke);
+      long absolutePositionWhereNoteFinishes = context.convertRelativePositionInPartMeasureToAbsolutePosition(
           Fraction.add(relPosInStroke,
                        noteSet.length())
-                                                                                                        );
+                                                                                                             );
       long noteLengthInTicks = absolutePositionWhereNoteFinishes - absolutePosition;
       for (Note note : noteSet.notes()) {
         int key = note.key() + transpose;

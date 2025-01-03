@@ -2,7 +2,6 @@ package com.github.dakusui.symfonion.song;
 
 import com.github.dakusui.symfonion.compat.json.CompatJsonUtils;
 import com.github.dakusui.symfonion.compat.exceptions.SymfonionException;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import java.util.HashMap;
@@ -47,12 +46,12 @@ public class NoteMap {
 		}
 	}
 	
-	public int note(String notename, JsonElement problemCausingJsonNode) throws SymfonionException {
+	public int note(String notename) throws SymfonionException {
 		if ("r".equals(notename)) {
 			return -1;
 		}
 		if (!this.map.containsKey(notename)) {
-			throw noteNotDefinedException(problemCausingJsonNode, notename, this.name);
+			throw noteNotDefinedException(notename, this.name);
 		}
 		return this.map.get(notename);
 	}
