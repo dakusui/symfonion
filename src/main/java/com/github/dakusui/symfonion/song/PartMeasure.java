@@ -20,16 +20,18 @@ import java.util.regex.Matcher;
 import static com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower.*;
 import static com.github.dakusui.symfonion.compat.exceptions.SymfonionIllegalFormatException.NOTE_LENGTH_EXAMPLE;
 import static com.github.dakusui.symfonion.compat.exceptions.SymfonionTypeMismatchException.PRIMITIVE;
+import static com.github.dakusui.symfonion.compat.json.CompatJsonUtils.asJsonArrayWithDefault;
+import static com.github.dakusui.symfonion.compat.json.CompatJsonUtils.asStringWithDefault;
 
 /**
- * A class that models a stroke, which is one action of a human in a musical piece.
+ * A class that models a measure of a part.
  */
 public class PartMeasure {
   private static final java.util.regex.Pattern NOTES_REGEX_PATTERN =
       java.util.regex.Pattern.compile("(?<noteName>[A-Zac-z])(?<accidentals>[#b]*)(?<octaveShifts>[><]*)(?<accents>[+\\-]*)?");
   private static final int                     UNDEFINED_NUM       = -1;
   private final        Fraction                length;
-  private final        List<NoteSet>           notes               = new LinkedList<>();
+  private final        List<NoteSet>           notes;
   private final        double                  gate;
   private final        int[]                   volume;
   private final        int[]                   pan;
@@ -93,27 +95,9 @@ public class PartMeasure {
   }
 
   public PartMeasure(JsonObject obj, PartMeasureParameters params, NoteMap noteMap) throws SymfonionException, CompatJsonException {
-    String   notes;
-    Fraction len  = params.length();
-    double   gate = params.gate();
-    notes = CompatJsonUtils.asStringWithDefault(obj, null, Keyword.$notes);
-    if (CompatJsonUtils.hasPath(obj, Keyword.$length)) {
-      JsonElement lenJSON = CompatJsonUtils.asJsonElement(obj, Keyword.$length);
-      len = validateLegth(lenJSON);
-    }
-    if (CompatJsonUtils.hasPath(obj, Keyword.$gate)) {
-      gate = CompatJsonUtils.asDouble(obj, Keyword.$gate);
-    }
-    this.tempo = CompatJsonUtils.hasPath(obj, Keyword.$tempo) ? CompatJsonUtils.asInt(obj, Keyword.$tempo) : UNDEFINED_NUM;
-    this.pgno  = CompatJsonUtils.hasPath(obj, Keyword.$program) ? CompatJsonUtils.asInt(obj, Keyword.$program) : UNDEFINED_NUM;
-    if (CompatJsonUtils.hasPath(obj, Keyword.$bank)) {
-      this.bkno = CompatJsonUtils.asString(obj, Keyword.$bank);
-      // Checks if this.bkno can be parsed as a double value.
-      assert this.bkno != null;
-      //noinspection ResultOfMethodCallIgnored
-      Double.parseDouble(this.bkno);
-    } else
-      this.bkno = null;
+    this.tempo      = CompatJsonUtils.hasPath(obj, Keyword.$tempo) ? CompatJsonUtils.asInt(obj, Keyword.$tempo) : UNDEFINED_NUM;
+    this.pgno       = CompatJsonUtils.hasPath(obj, Keyword.$program) ? CompatJsonUtils.asInt(obj, Keyword.$program) : UNDEFINED_NUM;
+    this.bkno       = resolveBankNumber(obj);
     this.volume     = getIntArray(obj, Keyword.$volume);
     this.pan        = getIntArray(obj, Keyword.$pan);
     this.reverb     = getIntArray(obj, Keyword.$reverb);
@@ -121,66 +105,12 @@ public class PartMeasure {
     this.pitch      = getIntArray(obj, Keyword.$pitch);
     this.modulation = getIntArray(obj, Keyword.$modulation);
     this.aftertouch = getIntArray(obj, Keyword.$aftertouch);
-    this.sysex      = CompatJsonUtils.asJsonArrayWithDefault(obj, null, Keyword.$sysex);
-    /*
-     * } else {
-     * // unsupported
-     * }
-     */
-    this.gate = gate;
-    Fraction partMeasureLen = Fraction.ZERO;
-    if (notes != null) {
-      StrokeSequence parsedStrokeSequence = parseStrokeSequence(notes, len, noteMap);
-      partMeasureLen = Fraction.add(partMeasureLen, parsedStrokeSequence.length());
-      this.notes.addAll(parsedStrokeSequence.noteSet());
-    }
-    if (Fraction.ZERO.equals(partMeasureLen)) {
-      partMeasureLen = len;
-    }
-    this.length = partMeasureLen;
-  }
-
-  private static Fraction validateLegth(JsonElement lenJSON) {
-    Fraction len;
-    if (lenJSON.isJsonPrimitive()) {
-      len = Utils.parseNoteLength(lenJSON.getAsString());
-      if (len == null) {
-        throw illegalFormatException(lenJSON, NOTE_LENGTH_EXAMPLE);
-      }
-    } else {
-      throw typeMismatchException(lenJSON, PRIMITIVE);
-    }
-    return len;
-  }
-
-  private record StrokeSequence(List<NoteSet> noteSet, Fraction length) {
-  }
-
-  private static StrokeSequence parseStrokeSequence(String in, Fraction defaultNoteLength, NoteMap noteMap) {
-    List<NoteSet> noteSets        = new LinkedList<>();
-    Fraction      currentPosition = Fraction.ZERO;
-    for (String nn : in.split(";")) {
-      Stroke result = parseStroke(nn, defaultNoteLength, noteMap);
-      noteSets.add(new NoteSet(result.length(), result.ns()));
-      currentPosition = Fraction.add(currentPosition, result.length());
-    }
-    Fraction p = currentPosition;
-    return new StrokeSequence(noteSets, p);
-  }
-
-  private static Stroke parseStroke(String nn, Fraction defaultNoteLength, NoteMap noteMap) {
-    LinkedList<Note> ns = new LinkedList<>();
-    Fraction         nsLen;
-    String           l;
-    if ((l = parseStroke(ns, nn, noteMap)) != null) {
-      nsLen = Utils.parseNoteLength(l);
-    } else {
-      nsLen = defaultNoteLength;
-    }
-    return new Stroke(ns, nsLen);
-  }
-
-  private record Stroke(LinkedList<Note> ns, Fraction length) {
+    this.sysex      = asJsonArrayWithDefault(obj, null, Keyword.$sysex);
+    this.gate       = resolveGate(obj, params);
+    StrokeSequence strokeSequence = parseStrokeSequence(asStringWithDefault(obj, null, Keyword.$notes),
+                                                        resolveDefaultStrokeLength(obj, params), noteMap);
+    this.length = strokeSequence.length();
+    this.notes  = strokeSequence.noteSet();
   }
 
   /**
@@ -204,6 +134,76 @@ public class PartMeasure {
 
   public List<NoteSet> noteSets() {
     return this.notes;
+  }
+
+  private static StrokeSequence parseStrokeSequence(String strokes,
+                                                    Fraction defaultNoteLength,
+                                                    NoteMap noteMap) {
+    if (strokes == null)
+      return new StrokeSequence(new LinkedList<>(), defaultNoteLength);
+    List<NoteSet> noteSets        = new LinkedList<>();
+    Fraction      currentPosition = Fraction.ZERO;
+    for (String stroke : strokes.split(";")) {
+      Stroke result = parseStroke(stroke, defaultNoteLength, noteMap);
+      noteSets.add(new NoteSet(result.length(), result.ns()));
+      currentPosition = Fraction.add(currentPosition, result.length());
+    }
+    Fraction p = currentPosition;
+    return new StrokeSequence(noteSets, p);
+  }
+
+  private static Fraction resolveDefaultStrokeLength(JsonObject obj, PartMeasureParameters params) {
+    Fraction len = params.length();
+    if (CompatJsonUtils.hasPath(obj, Keyword.$length)) {
+      len = validateLength(CompatJsonUtils.asJsonElement(obj, Keyword.$length));
+    }
+    return len;
+  }
+
+  private static double resolveGate(JsonObject obj, PartMeasureParameters params) {
+    double gate = params.gate();
+    if (CompatJsonUtils.hasPath(obj, Keyword.$gate)) {
+      gate = CompatJsonUtils.asDouble(obj, Keyword.$gate);
+    }
+    return gate;
+  }
+
+  private static String resolveBankNumber(JsonObject obj) {
+    final String bkno;
+    if (CompatJsonUtils.hasPath(obj, Keyword.$bank)) {
+      bkno = CompatJsonUtils.asString(obj, Keyword.$bank);
+      // Checks if this.bkno can be parsed as a double value.
+      assert bkno != null;
+      //noinspection ResultOfMethodCallIgnored
+      Double.parseDouble(bkno);
+    } else
+      bkno = null;
+    return bkno;
+  }
+
+  private static Fraction validateLength(JsonElement lenJSON) {
+    Fraction len;
+    if (lenJSON.isJsonPrimitive()) {
+      len = Utils.parseNoteLength(lenJSON.getAsString());
+      if (len == null) {
+        throw illegalFormatException(lenJSON, NOTE_LENGTH_EXAMPLE);
+      }
+    } else {
+      throw typeMismatchException(lenJSON, PRIMITIVE);
+    }
+    return len;
+  }
+
+  private static Stroke parseStroke(String nn, Fraction defaultNoteLength, NoteMap noteMap) {
+    LinkedList<Note> ns = new LinkedList<>();
+    Fraction         nsLen;
+    String           l;
+    if ((l = parseStroke(ns, nn, noteMap)) != null) {
+      nsLen = Utils.parseNoteLength(l);
+    } else {
+      nsLen = defaultNoteLength;
+    }
+    return new Stroke(ns, nsLen);
   }
 
   /**
@@ -411,5 +411,11 @@ public class PartMeasure {
    */
   interface EventCreator {
     void createEvent(int v, long pos) throws InvalidMidiDataException;
+  }
+
+  private record StrokeSequence(List<NoteSet> noteSet, Fraction length) {
+  }
+
+  private record Stroke(LinkedList<Note> ns, Fraction length) {
   }
 }
