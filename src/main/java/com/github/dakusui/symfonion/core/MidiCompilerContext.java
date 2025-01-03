@@ -3,7 +3,7 @@ package com.github.dakusui.symfonion.core;
 import com.github.dakusui.symfonion.utils.Fraction;
 import com.github.dakusui.symfonion.song.Groove;
 import com.github.dakusui.symfonion.song.Pattern;
-import com.github.dakusui.symfonion.song.Stroke;
+import com.github.dakusui.symfonion.song.PartMeasure;
 
 import javax.sound.midi.Track;
 
@@ -17,7 +17,7 @@ public record MidiCompilerContext(Track track,
   // this.grooveAccent = grooveAccent;
   // this.strokeLengthInTicks = strokeLengthInTicks;
   
-  public long getStrokeLengthInTicks(Stroke stroke) {
+  public long getStrokeLengthInTicks(PartMeasure stroke) {
     return convertRelativePositionInStrokeToAbsolutePosition(stroke.length());
   }
   

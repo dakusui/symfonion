@@ -23,7 +23,7 @@ import static com.github.dakusui.symfonion.compat.json.CompatJsonUtils.asJsonEle
 /**
  * A reusable unit which consists of a sequence of strokes.
  *
- * @see Stroke
+ * @see PartMeasure
  */
 public class Pattern {
   /**
@@ -112,8 +112,8 @@ public class Pattern {
     }
   }
 
-  private final List<Stroke> body;
-  private final Parameters params;
+  private final List<PartMeasure> body;
+  private final Parameters        params;
 
   Pattern(JsonObject jsonObject, NoteMap noteMap) {
     // Initialize 'body'.
@@ -128,8 +128,8 @@ public class Pattern {
     }
     int len = bodyJSON.size();
     for (int i = 0; i < len; i++) {
-      JsonElement cur = bodyJSON.get(i);
-      Stroke stroke = new Stroke(cur, params, noteMap);
+      JsonElement cur    = bodyJSON.get(i);
+      PartMeasure stroke = new PartMeasure(cur, params, noteMap);
       body.add(stroke);
     }
   }
@@ -139,7 +139,7 @@ public class Pattern {
    *
    * @return A list of strokes.
    */
-  public List<Stroke> strokes() {
+  public List<PartMeasure> strokes() {
     return Collections.unmodifiableList(this.body);
   }
 
@@ -189,7 +189,7 @@ public class Pattern {
    * @param noteMaps note maps available for this pattern.
    * @see NoteMap
    * @see Pattern.Parameters
-   * @see Stroke
+   * @see PartMeasure
    */
   public static Pattern createPattern(JsonObject jsonObject, Map<String, NoteMap> noteMaps) throws SymfonionException, CompatJsonException {
     NoteMap noteMap = NoteMap.defaultNoteMap;

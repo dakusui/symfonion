@@ -90,7 +90,7 @@ public class MidiCompiler {
             for (Pattern eachPattern : patternSequence) {
               Parameters params = eachPattern.parameters();
               patternStarted();
-              for (Stroke stroke : eachPattern.strokes()) {
+              for (PartMeasure stroke : eachPattern.strokes()) {
                 try {
                   Fraction endingPos = Fraction.add(relPosInBar, stroke.length());
 

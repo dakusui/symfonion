@@ -20,12 +20,17 @@ import static com.github.valid8j.fluent.Expectations.*;
 import static java.lang.String.format;
 
 public class CompatExceptionThrower {
+  public static String composeIllegalNoteFormatMessage(String stroke, int position) {
+    return stroke.substring(0, position) + "``" + stroke.substring(position) + "'' isn't a valid note expression. Notes must be like 'C', 'CEG8.', and so on.";
+  }
+
   public enum ContextKey {
     MIDI_DEVICE_INFO(MidiDevice.Info.class),
     MIDI_DEVICE_INFO_IO(String.class),
     JSON_ELEMENT_ROOT(JsonObject.class),
     SOURCE_FILE(File.class),
-    REFERENCING_JSON_NODE(JsonElement.class);
+    REFERENCING_JSON_NODE(JsonElement.class),
+    PART_MEASURE_JSON(JsonElement.class);
     private final Class<?> type;
 
     ContextKey(Class<?> type) {
@@ -155,6 +160,10 @@ public class CompatExceptionThrower {
 
   public static SymfonionTypeMismatchException typeMismatchException(JsonElement actualJSON, String... expectedTypes) throws SymfonionSyntaxException {
     throw new SymfonionTypeMismatchException(expectedTypes, actualJSON, actualJSON, contextValueOf(JSON_ELEMENT_ROOT), contextValueOf(SOURCE_FILE));
+  }
+
+  public static SymfonionIllegalFormatException illegalNoteFormat(String stroke, int position) throws SymfonionException {
+    throw illegalFormatException(contextValueOf(PART_MEASURE_JSON), composeIllegalNoteFormatMessage(stroke, position));
   }
 
   public static SymfonionIllegalFormatException illegalFormatException(JsonElement actualJSON, String acceptableExample) throws SymfonionIllegalFormatException {
