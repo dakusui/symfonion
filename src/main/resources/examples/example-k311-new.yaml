@@ -5,13 +5,13 @@
 // - ControlChange (0xB0; 176)         
 //   - BankSelectMSB  (; 0)            --
 //   - BankSelectLSB  (; 32)           --
-//   - Volume         (0x07; 7)        YV 
-//   - Pan            (0x0A; 10)       YP
-//   - Reverb         (0x; 91)         YR
-//   - Chorus         (0x;93)          YC        
-//   - Modulation     (0x01; 1)        YM
-// - ProgramChange(0xC0; 192)          XP
-// - PitchBend (0xE0; 224)             XQ
+//   - Volume         (0x07; 7)        XV 
+//   - Pan            (0x0A; 10)       XP
+//   - Reverb         (0x; 91)         XR
+//   - Chorus         (0x;93)          XC        
+//   - Modulation     (0x01; 1)        XM
+// - ProgramChange(0xC0; 192)          XG
+// - PitchBend (0xE0; 224)             XB
 // - AfterTouch (0xD0; 208)            XA
 // - Tempo (0x51; )                    XT
 // SystemExclusive                     

@@ -26,7 +26,7 @@ import static com.github.dakusui.symfonion.compat.exceptions.SymfonionTypeMismat
  * A class that models a stroke, which is one action of a human in a musical piece.
  */
 public class Stroke {
-  private static final java.util.regex.Pattern NOTES_REGEX_PATTERN = java.util.regex.Pattern.compile("([A-Zac-z])([#b]*)([><]*)([+\\-]*)?");
+  private static final java.util.regex.Pattern NOTES_REGEX_PATTERN = java.util.regex.Pattern.compile("(?<extension>X)?(?<noteName>[A-Zac-z])(?<accidentals>[#b]*)(?<octaveShifts>[><]*)(?<accents>[+\\-]*)?(@\\[(?<arg>[A-Za-z0-9:]*)])?");
   private static final int                     UNDEFINED_NUM       = -1;
   private final        Fraction                length;
   private final        List<NoteSet>           notes               = new LinkedList<>();
@@ -138,23 +138,39 @@ public class Stroke {
     this.gate    = gate;
     Fraction strokeLen = Fraction.ZERO;
     if (notes != null) {
-      for (String nn : notes.split(";")) {
-        LinkedList<Note> ns = new LinkedList<>();
-        Fraction         nsLen;
-        String           l;
-        if ((l = parseStroke(ns, nn)) != null) {
-          nsLen = Utils.parseNoteLength(l);
-        } else {
-          nsLen = len;
-        }
-        this.notes.add(new NoteSet(nsLen, ns));
-        strokeLen = Fraction.add(strokeLen, nsLen);
-      }
+      List<NoteSet> noteSets = new LinkedList<>();
+      strokeLen = parseStrokes(notes, len, noteSets, strokeLen, this.noteMap, this.strokeJson);
+      this.notes.addAll(noteSets);
     }
     if (Fraction.ZERO.equals(strokeLen)) {
       strokeLen = len;
     }
     this.length = strokeLen;
+  }
+
+  private static Fraction parseStrokes(String in, Fraction defaultNoteLength, List<NoteSet> out, Fraction currentPosition, NoteMap noteMap1, JsonElement strokeJson) {
+    for (String nn : in.split(";")) {
+      Result result = getResult(nn, defaultNoteLength, noteMap1, strokeJson);
+      out.add(new NoteSet(result.nsLen(), result.ns()));
+      currentPosition = Fraction.add(currentPosition, result.nsLen());
+    }
+    return currentPosition;
+  }
+
+  private static Result getResult(String nn, Fraction defaultNoteLength, NoteMap noteMap, JsonElement strokeJson1) {
+    LinkedList<Note> ns = new LinkedList<>();
+    Fraction         nsLen;
+    String           l;
+    if ((l = parseStroke(ns, nn, noteMap, strokeJson1)) != null) {
+      nsLen = Utils.parseNoteLength(l);
+    } else {
+      nsLen = defaultNoteLength;
+    }
+    Result result = new Result(ns, nsLen);
+    return result;
+  }
+
+  private record Result(LinkedList<Note> ns, Fraction nsLen) {
   }
 
   /**
@@ -183,24 +199,27 @@ public class Stroke {
   /**
    * Returns the 'length' portion of the string <code>stroke</code>.
    *
-   * @param out A list that stores parsed result will be added.
+   * @param noteMap
+   * @param strokeJson
+   * @param out        A list that stores parsed result will be added.
    * @return The remaining part that was not parsed by this invocation.
    * `null` if this invocation parses the entire `notes` string.
    */
-  private String parseStroke(List<Note> out, String stroke) throws SymfonionException {
+  private static String parseStroke(List<Note> out, String stroke, NoteMap noteMap, JsonElement strokeJson) throws SymfonionException {
     Matcher m = NOTES_REGEX_PATTERN.matcher(stroke);
     int     i;
     for (i = 0; m.find(i); i = m.end()) {
       if (i != m.start()) {
         throw syntaxErrorInNotePattern(stroke, i, m);
       }
-      int n_ = this.noteMap.note(m.group(1), this.strokeJson);
+      int n_ = noteMap.note(m.group("noteName"), strokeJson);
       if (n_ >= 0) {
         int n =
             n_ +
-            Utils.count('#', m.group(2)) - Utils.count('b', m.group(2)) +
-            Utils.count('>', m.group(3)) * 12 - Utils.count('<', m.group(3)) * 12;
-        int  a  = Utils.count('+', m.group(4)) - Utils.count('-', m.group(4));
+            Utils.count('#', m.group("accidentals")) - Utils.count('b', m.group("accidentals")) +
+            Utils.count('>', m.group("octaveShifts")) * 12 - Utils.count('<', m.group("octaveShifts")) * 12;
+        int a = Utils.count('+', m.group("accents")) - Utils.count('-', m.group("accents"));
+        System.out.println("arg:" + m.group("arg"));
         Note nn = new Note(n, a);
         out.add(nn);
       }
@@ -213,7 +232,7 @@ public class Stroke {
     }
     if (i != stroke.length()) {
       String msg = stroke.substring(0, i) + "`" + stroke.substring(i) + "' isn't a valid note expression. Notes must be like 'C', 'CEG8.', and so on.";
-      throw illegalFormatException(this.strokeJson, msg);
+      throw illegalFormatException(strokeJson, msg);
     }
     return ret;
 
