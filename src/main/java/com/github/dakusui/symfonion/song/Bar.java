@@ -169,7 +169,7 @@ public class Bar {
   }
 
   /**
-   * // formatter:off
+   * // @formatter:off
    * Composes a map of pattern sequences.
    *
    * ----
@@ -183,14 +183,14 @@ public class Bar {
    * .partsJsonObjectInBar
    * ----
    * {
-   * "<partName>": [
-   * "patternName;patternName",
-   * "$inline:patternDefinition",
-   * "..."
-   * ]
+   *   "<partName>": [
+   *     "patternName;patternName",
+   *     "$inline:patternDefinition",
+   *     "..."
+   *    ]
    * }
    * ----
-   * // formatter:on
+   * // @formatter:on
    *
    * @param bar                  A bar object from which pattern sequence map is created.
    * @param partFilter           A predicate that filters a part to be rendered.

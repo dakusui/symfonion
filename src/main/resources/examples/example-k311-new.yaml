@@ -1,3 +1,22 @@
+// notes:([A-Zac-z])([#b]*)([><]*)([+\-]*)?
+// Short                               
+// - NoteOn (0x90; 144)                N,C,D,E,F,G,A,B,S,C,H
+// - NoteOff (0x80; 128)               - 
+// - ControlChange (0xB0; 176)         
+//   - BankSelectMSB  (; 0)            --
+//   - BankSelectLSB  (; 32)           --
+//   - Volume         (0x07; 7)        YV 
+//   - Pan            (0x0A; 10)       YP
+//   - Reverb         (0x; 91)         YR
+//   - Chorus         (0x;93)          YC        
+//   - Modulation     (0x01; 1)        YM
+// - ProgramChange(0xC0; 192)          XP
+// - PitchBend (0xE0; 224)             XQ
+// - AfterTouch (0xD0; 208)            XA
+// - Tempo (0x51; )                    XT
+// SystemExclusive                     
+// - SysEx(0xF0;  240)                 XX
+// - SpecialSystemExclusive(0xF7; 247) XZ
 ---
 "$parts":
   pianor:
@@ -34,19 +53,21 @@
         An action type for sending system exclusive messages.
       "$type": "$sysex"
       "$data1": ["value"]
-      "$data2": ["quote", 0]
+      "$data2": 0
     "V":
       "$description": >
         An action type for sending "volume" control change messages.
       "$type": "$control"
       "$command": 176
-      "$data1": 7,
-      "$data2":
+      "$data1": 7
+      "$data2": ["value"]
     "P":
       "$description": >
         An action type for sending "pan" control change messages.
-      "$type": 176
-      "$value": 10
+      "$type": "$control"
+      "$command": 176
+      "$data1": 10,
+      "$data2":
     "R":
       "$description": >
         An action type for sending "pan" control change messages.
