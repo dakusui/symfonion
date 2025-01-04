@@ -244,4 +244,8 @@ public record Fraction(int numerator, int denominator) implements Cloneable, Ser
     else
       return f2;
   }
+
+  public boolean isNegative() {
+    return Math.signum(this.numerator) * Math.signum(this.denominator) < 0;
+  }
 }

@@ -23,16 +23,16 @@ import static com.github.dakusui.symfonion.compat.exceptions.SymfonionIllegalFor
 import static com.github.dakusui.symfonion.compat.exceptions.SymfonionTypeMismatchException.PRIMITIVE;
 import static com.github.dakusui.symfonion.compat.json.CompatJsonUtils.asJsonArrayWithDefault;
 import static com.github.dakusui.symfonion.compat.json.CompatJsonUtils.asStringWithDefault;
+import static com.github.dakusui.symfonion.utils.Fraction.ZERO;
 
 /**
  * A class that models a measure of a part.
  */
 public class PartMeasure {
-  private static final java.util.regex.Pattern NOTES_REGEX_PATTERN =
-      java.util.regex.Pattern.compile("(?<noteName>[A-Zac-z])(?<accidentals>[#b]*)(?<octaveShifts>[><]*)(?<accents>[+\\-]*)?");
+  private static final java.util.regex.Pattern NOTES_REGEX_PATTERN = java.util.regex.Pattern.compile("(?<noteName>[A-Zac-z])(?<accidentals>[#b]*)(?<octaveShifts>[><]*)(?<accents>[+\\-]*)?");
   private static final int                     UNDEFINED_NUM       = -1;
   private final        Fraction                length;
-  private final        List<Stroke>            notes;
+  private final        List<Stroke>            strokes;
   private final        double                  gate;
   private final        int[]                   volume;
   private final        int[]                   pan;
@@ -45,6 +45,7 @@ public class PartMeasure {
   private final        int                     tempo;
   private final        JsonArray               sysex;
   private final        int[]                   aftertouch;
+  private final        Fraction                pickUpLength;
 
   /**
    *
@@ -89,10 +90,7 @@ public class PartMeasure {
    *
    */
   public PartMeasure(JsonElement partMeasureJson, PartMeasureParameters params, NoteMap noteMap) throws SymfonionException, CompatJsonException {
-    this(CompatJsonUtils.asJsonObjectWithPromotion(partMeasureJson, new String[]{
-        Keyword.$notes.name(),
-        Keyword.$length.name()
-    }), params, noteMap);
+    this(CompatJsonUtils.asJsonObjectWithPromotion(partMeasureJson, new String[]{Keyword.$notes.name(), Keyword.$length.name()}), params, noteMap);
   }
 
   public PartMeasure(JsonObject obj, PartMeasureParameters params, NoteMap noteMap) throws SymfonionException, CompatJsonException {
@@ -108,10 +106,10 @@ public class PartMeasure {
     this.aftertouch = getIntArray(obj, Keyword.$aftertouch);
     this.sysex      = asJsonArrayWithDefault(obj, null, Keyword.$sysex);
     this.gate       = resolveGate(obj, params);
-    StrokeSequence strokeSequence = parseStrokeSequence(asStringWithDefault(obj, null, Keyword.$notes),
-                                                        resolveDefaultStrokeLength(obj, params), noteMap);
-    this.length = strokeSequence.length();
-    this.notes  = strokeSequence.noteSet();
+    StrokeSequence strokeSequence = parseStrokeSequence(asStringWithDefault(obj, null, Keyword.$notes), resolveDefaultStrokeLength(obj, params), noteMap);
+    this.pickUpLength = strokeSequence.pickUpLength();
+    this.length       = strokeSequence.length();
+    this.strokes      = strokeSequence.body();
   }
 
   /**
@@ -134,25 +132,26 @@ public class PartMeasure {
   }
 
   List<Stroke> strokes() {
-    return this.notes;
+    return this.strokes;
   }
 
-  private static StrokeSequence parseStrokeSequence(String strokes,
-                                                    Fraction defaultNoteLength,
-                                                    NoteMap noteMap) {
-    if (strokes == null)
-      return new StrokeSequence(defaultNoteLength, new LinkedList<>());
+  private static StrokeSequence parseStrokeSequence(String strokes, Fraction defaultNoteLength, NoteMap noteMap) {
+    if (strokes == null) return new StrokeSequence(ZERO, defaultNoteLength, new LinkedList<>());
     List<Stroke> noteSets        = new LinkedList<>();
-    Fraction     currentPosition = Fraction.ZERO;
-    for (String stroke : strokes.splitWithDelimiters(";", 0)) {
-      if (";".equals(stroke))
+    Fraction     currentPosition = ZERO;
+    Fraction     pickUpLength    = ZERO;
+    for (String stroke : strokes.splitWithDelimiters("[;\\|]", 0)) {
+      if (";".equals(stroke)) continue;
+      if ("|".equals(stroke)) {
+        pickUpLength    = currentPosition;
+        currentPosition = ZERO;
         continue;
+      }
       Stroke result = parseStroke(stroke, defaultNoteLength, noteMap);
       noteSets.add(new Stroke(result.length(), result.notes()));
       currentPosition = Fraction.add(currentPosition, result.length());
     }
-    Fraction p = currentPosition;
-    return new StrokeSequence(p, noteSets);
+    return new StrokeSequence(pickUpLength, currentPosition, noteSets);
   }
 
   private static Fraction resolveDefaultStrokeLength(JsonObject obj, PartMeasureParameters params) {
@@ -179,8 +178,7 @@ public class PartMeasure {
       assert bkno != null;
       //noinspection ResultOfMethodCallIgnored
       Double.parseDouble(bkno);
-    } else
-      bkno = null;
+    } else bkno = null;
     return bkno;
   }
 
@@ -199,9 +197,7 @@ public class PartMeasure {
 
   private static Stroke parseStroke(String nn, Fraction defaultNoteLength, NoteMap noteMap) {
     LinkedList<Note> ns = new LinkedList<>();
-    return new Stroke(Optional.ofNullable(parseStroke(ns, nn, noteMap))
-                              .map(Utils::parseNoteLength)
-                              .orElse(defaultNoteLength), ns);
+    return new Stroke(Optional.ofNullable(parseStroke(ns, nn, noteMap)).map(Utils::parseNoteLength).orElse(defaultNoteLength), ns);
   }
 
   /**
@@ -221,10 +217,7 @@ public class PartMeasure {
       }
       int n_ = noteMap.note(m.group("noteName"));
       if (n_ >= 0) {
-        int n =
-            n_ +
-            Utils.count('#', m.group("accidentals")) - Utils.count('b', m.group("accidentals")) +
-            Utils.count('>', m.group("octaveShifts")) * 12 - Utils.count('<', m.group("octaveShifts")) * 12;
+        int n = n_ + Utils.count('#', m.group("accidentals")) - Utils.count('b', m.group("accidentals")) + Utils.count('>', m.group("octaveShifts")) * 12 - Utils.count('<', m.group("octaveShifts")) * 12;
         int  a  = Utils.count('+', m.group("accents")) - Utils.count('-', m.group("accents"));
         Note nn = new Note(n, a);
         out.add(nn);
@@ -264,7 +257,7 @@ public class PartMeasure {
   public void compile(final MidiCompiler compiler, MidiCompilerContext context) throws InvalidMidiDataException {
     final Track track            = context.track();
     final int   ch               = context.channel();
-    long        absolutePosition = context.convertRelativePositionInPartMeasureToAbsolutePosition(Fraction.ZERO);
+    long        absolutePosition = context.convertRelativePositionInPartMeasureToAbsolutePosition(ZERO);
     long        strokeLen        = context.getPartMeasureLengthInTicks(this);
     if (tempo != UNDEFINED_NUM) {
       track.add(compiler.createTempoEvent(this.tempo, absolutePosition));
@@ -300,19 +293,14 @@ public class PartMeasure {
     int      transpose      = context.params().transpose();
     int      arpegioDelay   = context.params().arpeggio();
     int      delta          = 0;
-    Fraction relPosInStroke = Fraction.ZERO;
+    Fraction relPosInStroke = Fraction.subtract(ZERO, this.pickUpLength);
     for (Stroke stroke : this.strokes()) {
       absolutePosition = context.convertRelativePositionInPartMeasureToAbsolutePosition(relPosInStroke);
-      long absolutePositionWhereNoteFinishes = context.convertRelativePositionInPartMeasureToAbsolutePosition(
-          Fraction.add(relPosInStroke, stroke.length()));
+      long absolutePositionWhereNoteFinishes = context.convertRelativePositionInPartMeasureToAbsolutePosition(Fraction.add(relPosInStroke, stroke.length()));
       long noteLengthInTicks = absolutePositionWhereNoteFinishes - absolutePosition;
       for (Note note : stroke.notes()) {
         int key = note.key() + transpose;
-        int velocity = Math.max(0,
-                                Math.min(127,
-                                         context.params().velocityBase() +
-                                         note.accent() * context.params().velocityDelta() +
-                                         context.getGrooveAccent(relPosInStroke)));
+        int velocity = Math.max(0, Math.min(127, context.params().velocityBase() + note.accent() * context.params().velocityDelta() + context.getGrooveAccent(relPosInStroke)));
         track.add(compiler.createNoteOnEvent(ch, key, velocity, absolutePosition + delta));
         track.add(compiler.createNoteOffEvent(ch, key, (long) (absolutePosition + delta + noteLengthInTicks * this.gate())));
         compiler.noteProcessed();
@@ -345,21 +333,16 @@ public class PartMeasure {
       JsonElement cur = arr.get(i);
       if (cur.isJsonPrimitive()) {
         JsonPrimitive p = cur.getAsJsonPrimitive();
-        if (p.isBoolean() || p.isNumber())
-          ret.add(p);
+        if (p.isBoolean() || p.isNumber()) ret.add(p);
         else if (p.isString()) {
           String s = p.getAsString();
           for (int j = 0; j < s.length(); j++) {
-            if (s.charAt(j) == '.')
-              ret.add(JsonNull.INSTANCE);
-            else
-              throw syntaxErrorWhenExpandingDotsIn(arr);
+            if (s.charAt(j) == '.') ret.add(JsonNull.INSTANCE);
+            else throw syntaxErrorWhenExpandingDotsIn(arr);
           }
         }
-      } else if (cur.isJsonNull())
-        ret.add(cur);
-      else
-        throw CompatExceptionThrower.typeMismatchWhenExpandingDotsIn(arr);
+      } else if (cur.isJsonNull()) ret.add(cur);
+      else throw CompatExceptionThrower.typeMismatchWhenExpandingDotsIn(arr);
     }
     return ret;
   }
@@ -409,7 +392,7 @@ public class PartMeasure {
     void createEvent(int v, long pos) throws InvalidMidiDataException;
   }
 
-  private record StrokeSequence(Fraction length, List<Stroke> noteSet) {
+  private record StrokeSequence(Fraction pickUpLength, Fraction length, List<Stroke> body) {
   }
 
   private record Stroke(Fraction length, List<Note> notes) {

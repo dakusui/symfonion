@@ -30,11 +30,6 @@ public record MidiCompilerContext(Track track,
 
   private Groove.Unit resolveRelativePositionInStroke(
       Fraction relativePositionInStroke) {
-    return this.groove().resolve(
-        Fraction.add(
-            this.relativeStrokePositionInBar(),
-            relativePositionInStroke
-                    )
-                                );
+    return this.groove().resolve(Fraction.add(this.relativeStrokePositionInBar(), relativePositionInStroke));
   }
 }
