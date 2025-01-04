@@ -232,7 +232,7 @@ public class PartMeasure {
         out.add(nn);
       }
     }
-    Matcher n   = Utils.lengthPattern.matcher(stroke);
+    Matcher n   = Utils.NOTE_LENGTH_REGEX_PATTERN.matcher(stroke);
     String  ret = null;
     if (n.find(i)) {
       ret = stroke.substring(n.start(), n.end());
