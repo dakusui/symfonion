@@ -1,5 +1,6 @@
 package com.github.dakusui.symfonion.song;
 
+import com.github.dakusui.symfonion.compat.exceptions.ExceptionContext;
 import com.github.dakusui.symfonion.compat.exceptions.SymfonionException;
 import com.github.dakusui.symfonion.compat.json.CompatJsonException;
 import com.github.dakusui.symfonion.compat.json.CompatJsonUtils;
@@ -14,6 +15,7 @@ import java.util.Map;
 
 import static com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower.*;
 import static com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower.ContextKey.PART_MEASURE_JSON;
+import static com.github.dakusui.symfonion.compat.exceptions.ExceptionContext.entry;
 import static com.github.dakusui.symfonion.compat.json.CompatJsonUtils.asJsonArray;
 import static com.github.dakusui.symfonion.compat.json.CompatJsonUtils.asJsonElement;
 
@@ -41,7 +43,7 @@ public class Pattern {
     int len = bodyJSON.size();
     for (int i = 0; i < len; i++) {
       JsonElement cur = bodyJSON.get(i);
-      try (var ignored = context($(PART_MEASURE_JSON, cur))) {
+      try (var ignored = exceptionContext(entry(PART_MEASURE_JSON, cur))) {
         body.add(new PartMeasure(cur, params, noteMap));
       }
     }

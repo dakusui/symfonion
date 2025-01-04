@@ -5,9 +5,9 @@ import com.github.dakusui.logias.lisp.Context;
 import com.github.dakusui.logias.lisp.s.Literal;
 import com.github.dakusui.logias.lisp.s.Sexp;
 import com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower;
+import com.github.dakusui.symfonion.compat.exceptions.ExceptionContext;
 import com.github.dakusui.symfonion.compat.exceptions.SymfonionException;
 import com.github.dakusui.symfonion.song.*;
-import com.github.dakusui.symfonion.song.PartMeasureParameters;
 import com.github.dakusui.symfonion.utils.Fraction;
 import com.github.dakusui.symfonion.utils.Utils;
 import com.google.gson.JsonArray;
@@ -19,8 +19,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import static com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower.*;
 import static com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower.ContextKey.JSON_ELEMENT_ROOT;
+import static com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower.exceptionContext;
+import static com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower.partNotFound;
+import static com.github.dakusui.symfonion.compat.exceptions.ExceptionContext.entry;
 
 /**
  * A class that models a "compiler", which generates MIDI data (`Sequence`) from a given `Song` object.
@@ -71,7 +73,8 @@ public class MidiCompiler {
     long barPositionInTicks = 0; //= resolution / 4;
     int  barid              = 0;
     for (Bar bar : song.bars()) {
-      try (var ignored = context($(JSON_ELEMENT_ROOT, bar.rootJsonObject()))) {
+      Object value = bar.rootJsonObject();
+      try (var ignored = exceptionContext(entry(JSON_ELEMENT_ROOT, value))) {
         barStarted(barid);
         Groove groove = bar.groove();
         for (String partName : bar.partNames()) {
@@ -82,7 +85,7 @@ public class MidiCompiler {
             throw partNotFound(bar.lookUpJsonNode(partName), partName);
           }
           int channel = song.part(partName).channel();
-          for (PatternSequence patternSequence : bar.part(partName)) {
+          for (PatternSequence patternSequence : bar.patternSequencePileForPart(partName)) {
             ////
             // relativePosition is a relative position from the beginning
             // of the bar the pattern belongs to.

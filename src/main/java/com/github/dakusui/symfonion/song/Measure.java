@@ -7,7 +7,12 @@ package com.github.dakusui.symfonion.song;
  * {
  *   "$beats": "<beatsDefiningString>",
  *   "$parts": {
- *     "<partName>": ["<eventSequence>", "<eventSequence>", "..."],
+ *     "<partName>": {
+ *         "$notes": "<strokeSequence>",
+ *         "$velocityBase": "<number>",
+ *         "$reverb": ["<number>", "...", "<number>"],
+ *         "...": "..."
+ *     }
  *   },
  *   "$groove": "<groove>",
  *   "$noteMap": {

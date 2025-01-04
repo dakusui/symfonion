@@ -1,5 +1,6 @@
 package com.github.dakusui.symfonion.core;
 
+import com.github.dakusui.symfonion.compat.exceptions.ExceptionContext;
 import com.github.dakusui.symfonion.compat.json.CompatJsonException;
 import com.github.dakusui.symfonion.compat.json.JsonInvalidPathException;
 import com.github.dakusui.symfonion.compat.json.JsonPathNotFoundException;
@@ -22,6 +23,7 @@ import java.util.Map;
 import java.util.function.Predicate;
 
 import static com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower.*;
+import static com.github.dakusui.symfonion.compat.exceptions.ExceptionContext.entry;
 
 public class Symfonion {
   Context logiasContext;
@@ -33,7 +35,7 @@ public class Symfonion {
   
   public Song load(String fileName, Predicate<Bar> barFilter, Predicate<String> partFilter)  {
     Song ret;
-    try (var ignored = context($(ContextKey.SOURCE_FILE, new File(fileName)))) {
+    try (var ignored = exceptionContext(entry(ContextKey.SOURCE_FILE, new File(fileName)))) {
       try {
         this.json = loadSymfonionFile(fileName, new HashMap<>());
         ret = new Song.Builder(logiasContext, json)

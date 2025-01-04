@@ -1,7 +1,6 @@
 package com.github.dakusui.symfonion.song;
 
-import com.github.dakusui.symfonion.compat.exceptions.FractionFormatException;
-import com.github.dakusui.symfonion.compat.exceptions.SymfonionException;
+import com.github.dakusui.symfonion.compat.exceptions.*;
 import com.github.dakusui.symfonion.compat.json.CompatJsonException;
 import com.github.dakusui.symfonion.compat.json.CompatJsonUtils;
 import com.github.dakusui.symfonion.compat.json.JsonInvalidPathException;
@@ -14,9 +13,10 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.StreamSupport;
 
-import static com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower.*;
 import static com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower.ContextKey.JSON_ELEMENT_ROOT;
 import static com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower.ContextKey.REFERENCING_JSON_NODE;
+import static com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower.*;
+import static com.github.dakusui.symfonion.compat.exceptions.ExceptionContext.entry;
 import static com.github.dakusui.symfonion.compat.exceptions.SymfonionIllegalFormatException.FRACTION_EXAMPLE;
 import static com.github.dakusui.symfonion.compat.exceptions.SymfonionTypeMismatchException.ARRAY;
 import static com.github.dakusui.symfonion.compat.json.CompatJsonUtils.asJsonElement;
@@ -81,7 +81,7 @@ public class Bar {
     this.noteMaps       = noteMaps;
     this.barJsonObject  = barJsonObject;
     this.rootJsonObject = root;
-    try (Context ignored = context($(JSON_ELEMENT_ROOT, root))) {
+    try (ExceptionContext ignored = exceptionContext(entry(JSON_ELEMENT_ROOT, root))) {
       this.beats  = resolveBeatsForBar(barJsonObject);
       this.groove = resolveGrooveForBar(barJsonObject, grooves);
       this.labels = resolveLabelsForBar(barJsonObject);
@@ -118,7 +118,7 @@ public class Bar {
    * @param partName A part name for which patterns should be returned.
    * @return A list of pattern sequences.
    */
-  public List<PatternSequence> part(String partName) {
+  public List<PatternSequence> patternSequencePileForPart(String partName) {
     return this.patternSequences.get(partName)
                                 .stream()
                                 .map(PatternSequence::create)
@@ -205,7 +205,7 @@ public class Bar {
       if (!partFilter.test(eachPartName))
         continue;
       ret.put(eachPartName,
-              composePatternPileSequence(bar, patternSequenceJsonArrayForPart(eachPartName,
+              composePatternSequencePile(bar, patternSequenceJsonArrayForPart(eachPartName,
                                                                               partsJsonObjectInBar)));
     }
     return ret;
@@ -220,12 +220,12 @@ public class Bar {
     return partPatternsJsonArray;
   }
 
-  private static List<PatternSequence> composePatternPileSequence(Bar bar,
+  private static List<PatternSequence> composePatternSequencePile(Bar bar,
                                                                   JsonArray patternSequenceSequenceJsonArray) {
     final List<PatternSequence> patternSequenceSequence = new LinkedList<>();
     for (JsonElement patternSequenceJsonElement : patternSequenceSequenceJsonArray) {
       String sequencedPatternNames = patternSequenceJsonElement.getAsString();
-      try (Context ignored = context($(REFERENCING_JSON_NODE, patternSequenceJsonElement))) {
+      try (ExceptionContext ignored = exceptionContext(entry(REFERENCING_JSON_NODE, patternSequenceJsonElement))) {
         patternSequenceSequence.add(Bar.createPatternPile(sequencedPatternNames, bar.patterns, bar.noteMaps));
       }
     }

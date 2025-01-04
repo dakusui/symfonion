@@ -2,7 +2,7 @@ package com.github.dakusui.symfonion.song;
 
 import com.github.dakusui.logias.Logias;
 import com.github.dakusui.logias.lisp.Context;
-import com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower;
+import com.github.dakusui.symfonion.compat.exceptions.ExceptionContext;
 import com.github.dakusui.symfonion.compat.exceptions.SymfonionException;
 import com.github.dakusui.symfonion.compat.json.CompatJsonException;
 import com.github.dakusui.symfonion.compat.json.CompatJsonUtils;
@@ -18,6 +18,7 @@ import java.util.function.Predicate;
 
 import static com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower.*;
 import static com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower.ContextKey.JSON_ELEMENT_ROOT;
+import static com.github.dakusui.symfonion.compat.exceptions.ExceptionContext.entry;
 import static com.github.dakusui.symfonion.compat.exceptions.SymfonionTypeMismatchException.ARRAY;
 import static com.github.dakusui.symfonion.compat.exceptions.SymfonionTypeMismatchException.OBJECT;
 import static com.github.valid8j.classic.Requires.requireNonNull;
@@ -136,7 +137,7 @@ public class Song {
     }
 
     public Song build() throws CompatJsonException, SymfonionException {
-      try (CompatExceptionThrower.Context ignored = context($(JSON_ELEMENT_ROOT, json))) {
+      try (ExceptionContext ignored = exceptionContext(entry(JSON_ELEMENT_ROOT, json))) {
         Map<String, NoteMap> noteMaps = initNoteMaps(json);
         Map<String, Groove> grooves = initGrooves(json);
         Map<String, Pattern> patterns = initPatterns(json, noteMaps);
@@ -222,7 +223,7 @@ public class Song {
       Map<String, Pattern> patterns = new HashMap<>();
       JsonObject patternsJSON = CompatJsonUtils.asJsonObjectWithDefault(json, new JsonObject(), Keyword.$patterns);
 
-      try (CompatExceptionThrower.Context ignored = context($(JSON_ELEMENT_ROOT, json))) {
+      try (ExceptionContext ignored = exceptionContext(entry(JSON_ELEMENT_ROOT, json))) {
         Iterator<String> i = CompatJsonUtils.keyIterator(patternsJSON);
         while (i.hasNext()) {
           String name = i.next();

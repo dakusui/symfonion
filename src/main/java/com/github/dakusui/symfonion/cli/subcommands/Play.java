@@ -2,6 +2,7 @@ package com.github.dakusui.symfonion.cli.subcommands;
 
 import com.github.dakusui.symfonion.cli.Cli;
 import com.github.dakusui.symfonion.cli.Subcommand;
+import com.github.dakusui.symfonion.compat.exceptions.ExceptionContext;
 import com.github.dakusui.symfonion.core.Symfonion;
 import com.github.dakusui.symfonion.compat.exceptions.SymfonionException;
 import com.github.dakusui.symfonion.song.Song;
@@ -18,12 +19,13 @@ import java.util.regex.Pattern;
 
 import static com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower.*;
 import static com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower.ContextKey.SOURCE_FILE;
+import static com.github.dakusui.symfonion.compat.exceptions.ExceptionContext.entry;
 
 public class Play implements Subcommand {
 
   @Override
   public void invoke(Cli cli, PrintStream ps, InputStream inputStream) throws IOException {
-    try (Context ignored = context($(SOURCE_FILE, cli.source()))) {
+    try (ExceptionContext ignored = exceptionContext(entry(SOURCE_FILE, cli.source()))) {
       Symfonion symfonion = cli.symfonion();
 
       Song song = symfonion.load(cli.source().getAbsolutePath(), cli.barFilter(), cli.partFilter());

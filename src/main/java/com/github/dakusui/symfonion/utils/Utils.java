@@ -80,8 +80,7 @@ public enum Utils {
         l *= 2;
         ret = Fraction.add(ret, new Fraction(1, l));
       }
-    } else if (!"0".equals(length)) {
-    } else {
+    } else if ("0".equals(length)) {
       ret = new Fraction(0, 1);
     }
     return ret;
