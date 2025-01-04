@@ -144,7 +144,9 @@ public class PartMeasure {
       return new StrokeSequence(defaultNoteLength, new LinkedList<>());
     List<Stroke> noteSets        = new LinkedList<>();
     Fraction     currentPosition = Fraction.ZERO;
-    for (String stroke : strokes.split(";")) {
+    for (String stroke : strokes.splitWithDelimiters(";", 0)) {
+      if (";".equals(stroke))
+        continue;
       Stroke result = parseStroke(stroke, defaultNoteLength, noteMap);
       noteSets.add(new Stroke(result.length(), result.notes()));
       currentPosition = Fraction.add(currentPosition, result.length());
@@ -302,9 +304,7 @@ public class PartMeasure {
     for (Stroke stroke : this.strokes()) {
       absolutePosition = context.convertRelativePositionInPartMeasureToAbsolutePosition(relPosInStroke);
       long absolutePositionWhereNoteFinishes = context.convertRelativePositionInPartMeasureToAbsolutePosition(
-          Fraction.add(relPosInStroke,
-                       stroke.length())
-                                                                                                             );
+          Fraction.add(relPosInStroke, stroke.length()));
       long noteLengthInTicks = absolutePositionWhereNoteFinishes - absolutePosition;
       for (Note note : stroke.notes()) {
         int key = note.key() + transpose;
