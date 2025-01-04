@@ -15,6 +15,7 @@ import javax.sound.midi.MidiEvent;
 import javax.sound.midi.Track;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Matcher;
 
 import static com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower.*;
@@ -31,7 +32,7 @@ public class PartMeasure {
       java.util.regex.Pattern.compile("(?<noteName>[A-Zac-z])(?<accidentals>[#b]*)(?<octaveShifts>[><]*)(?<accents>[+\\-]*)?");
   private static final int                     UNDEFINED_NUM       = -1;
   private final        Fraction                length;
-  private final        List<NoteSet>           notes;
+  private final        List<Stroke>            notes;
   private final        double                  gate;
   private final        int[]                   volume;
   private final        int[]                   pan;
@@ -132,7 +133,7 @@ public class PartMeasure {
     return this.gate;
   }
 
-  public List<NoteSet> noteSets() {
+  List<Stroke> strokes() {
     return this.notes;
   }
 
@@ -140,16 +141,16 @@ public class PartMeasure {
                                                     Fraction defaultNoteLength,
                                                     NoteMap noteMap) {
     if (strokes == null)
-      return new StrokeSequence(new LinkedList<>(), defaultNoteLength);
-    List<NoteSet> noteSets        = new LinkedList<>();
-    Fraction      currentPosition = Fraction.ZERO;
+      return new StrokeSequence(defaultNoteLength, new LinkedList<>());
+    List<Stroke> noteSets        = new LinkedList<>();
+    Fraction     currentPosition = Fraction.ZERO;
     for (String stroke : strokes.split(";")) {
       Stroke result = parseStroke(stroke, defaultNoteLength, noteMap);
-      noteSets.add(new NoteSet(result.length(), result.ns()));
+      noteSets.add(new Stroke(result.length(), result.notes()));
       currentPosition = Fraction.add(currentPosition, result.length());
     }
     Fraction p = currentPosition;
-    return new StrokeSequence(noteSets, p);
+    return new StrokeSequence(p, noteSets);
   }
 
   private static Fraction resolveDefaultStrokeLength(JsonObject obj, PartMeasureParameters params) {
@@ -196,14 +197,9 @@ public class PartMeasure {
 
   private static Stroke parseStroke(String nn, Fraction defaultNoteLength, NoteMap noteMap) {
     LinkedList<Note> ns = new LinkedList<>();
-    Fraction         nsLen;
-    String           l;
-    if ((l = parseStroke(ns, nn, noteMap)) != null) {
-      nsLen = Utils.parseNoteLength(l);
-    } else {
-      nsLen = defaultNoteLength;
-    }
-    return new Stroke(ns, nsLen);
+    return new Stroke(Optional.ofNullable(parseStroke(ns, nn, noteMap))
+                              .map(Utils::parseNoteLength)
+                              .orElse(defaultNoteLength), ns);
   }
 
   /**
@@ -303,14 +299,14 @@ public class PartMeasure {
     int      arpegioDelay   = context.params().arpeggio();
     int      delta          = 0;
     Fraction relPosInStroke = Fraction.ZERO;
-    for (NoteSet noteSet : this.noteSets()) {
+    for (Stroke stroke : this.strokes()) {
       absolutePosition = context.convertRelativePositionInPartMeasureToAbsolutePosition(relPosInStroke);
       long absolutePositionWhereNoteFinishes = context.convertRelativePositionInPartMeasureToAbsolutePosition(
           Fraction.add(relPosInStroke,
-                       noteSet.length())
+                       stroke.length())
                                                                                                              );
       long noteLengthInTicks = absolutePositionWhereNoteFinishes - absolutePosition;
-      for (Note note : noteSet.notes()) {
+      for (Note note : stroke.notes()) {
         int key = note.key() + transpose;
         int velocity = Math.max(0,
                                 Math.min(127,
@@ -323,7 +319,7 @@ public class PartMeasure {
         delta += arpegioDelay;
       }
       compiler.noteSetProcessed();
-      relPosInStroke = Fraction.add(relPosInStroke, noteSet.length());
+      relPosInStroke = Fraction.add(relPosInStroke, stroke.length());
     }
   }
 
@@ -413,9 +409,9 @@ public class PartMeasure {
     void createEvent(int v, long pos) throws InvalidMidiDataException;
   }
 
-  private record StrokeSequence(List<NoteSet> noteSet, Fraction length) {
+  private record StrokeSequence(Fraction length, List<Stroke> noteSet) {
   }
 
-  private record Stroke(LinkedList<Note> ns, Fraction length) {
+  private record Stroke(Fraction length, List<Note> notes) {
   }
 }
