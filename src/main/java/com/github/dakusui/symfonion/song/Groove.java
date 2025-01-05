@@ -16,6 +16,9 @@ import static com.github.dakusui.symfonion.compat.exceptions.SymfonionIllegalFor
 import static com.github.dakusui.symfonion.compat.exceptions.SymfonionTypeMismatchException.OBJECT;
 import static com.github.dakusui.symfonion.utils.Fraction.ZERO;
 import static com.github.valid8j.classic.Requires.requireNonNull;
+import static com.github.valid8j.fluent.Expectations.preconditions;
+import static com.github.valid8j.fluent.Expectations.value;
+import static com.github.valid8j.pcond.forms.Functions.parameter;
 import static java.util.Collections.emptyList;
 
 /**
@@ -59,43 +62,42 @@ public class Groove {
    * @return An object that indicates how a note at `offset` should be played.
    */
   public Unit resolve(Fraction offset) {
-    /*
     assert preconditions(value(offset).toBe().notNull(),
-                         value(offset).invokeStatic(Fraction.class, "compare",
-                                                    parameter(),
-                                                    ZERO)
+                         value(offset).invokeStatic(Fraction.class, "compare", parameter(), ZERO)
                                       .asInteger()
                                       .toBe().greaterThanOrEqualTo(0));
-     */
-    long pos = 0;
+    return computeUnit(offset, this.length(), this.beats, this.resolution);
+  }
 
-    Fraction rest = foldPosition(offset.clone(), this.length());
+  private static Unit computeUnit(Fraction offset, Fraction grooveLength, List<Beat> grooveBeats, int grooveResolution) {
+    long     pos  = 0;
+    Fraction rest = foldPosition(offset.clone(), grooveLength);
     Fraction shift = offset.isNegative() ? Fraction.subtract(rest, offset)
                                          : ZERO;
     int i = 0;
     while (Fraction.compare(rest, ZERO) > 0) {
-      if (i >= this.beats.size()) {
+      if (i >= grooveBeats.size()) {
         break;
       }
-      Beat beat = this.beats.get(i);
+      Beat beat = grooveBeats.get(i);
       rest = Fraction.subtract(rest, beat.length);
       pos += beat.ticks;
       i++;
     }
     long p;
     int  d = 0;
-    if (Fraction.compare(rest, ZERO) < 0) {
-      Beat beat = this.beats.get(i - 1);
-      p = (long) (pos + Fraction.div(rest, beat.length).doubleValue() * beat.ticks);
-    } else if (Fraction.compare(rest, ZERO) == 0) {
-      if (i < this.beats.size()) {
-        d = this.beats.get(i).accent;
+    if (Fraction.compare(rest, ZERO) == 0) {
+      if (i < grooveBeats.size()) {
+        d = grooveBeats.get(i).accent;
       }
       p = pos;
+    } else if (Fraction.compare(rest, ZERO) < 0) {
+      Beat beat = grooveBeats.get(i - 1);
+      p = (long) (pos + Fraction.div(rest, beat.length).doubleValue() * beat.ticks);
     } else {
-      p = (pos + (long) (rest.doubleValue() * this.resolution));
+      p = (pos + (long) (rest.doubleValue() * grooveResolution));
     }
-    return new Unit(p - (long) (shift.doubleValue() * this.resolution), d);
+    return new Unit(p - (long) (shift.doubleValue() * grooveResolution), d);
   }
 
   private static Fraction foldPosition(Fraction position, Fraction grooveLength) {
