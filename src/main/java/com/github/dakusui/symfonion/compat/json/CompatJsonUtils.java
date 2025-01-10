@@ -5,8 +5,8 @@ import com.google.gson.*;
 import java.util.*;
 import java.util.Map.Entry;
 
-import static com.github.valid8j.classic.Requires.require;
-import static com.github.valid8j.pcond.forms.Predicates.callp;
+import static com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower.typeMismatchException;
+import static com.github.dakusui.symfonion.compat.exceptions.SymfonionTypeMismatchException.OBJECT;
 import static java.util.Objects.requireNonNull;
 
 public class CompatJsonUtils {
@@ -68,8 +68,10 @@ public class CompatJsonUtils {
     return ret;
   }
 
-  private static JsonObject requireJsonObject(JsonElement jsonElement) {
-    return require(jsonElement, callp("isJsonObject")).getAsJsonObject();
+  public static JsonObject requireJsonObject(JsonElement elem) {
+    if (!elem.isJsonObject())
+      throw typeMismatchException(elem, OBJECT);
+    return elem.getAsJsonObject();
   }
 
   enum JsonTypes {
@@ -299,16 +301,12 @@ public class CompatJsonUtils {
     return asJsonElementWithDefault(base, defaultValue, 0, path);
   }
 
-  public static JsonElement asJsonElement(JsonElement base, Object... path)
-  throws JsonInvalidPathException {
+  public static JsonElement asJsonElement(JsonElement base, Object... path) {
     return asJsonElement(base, 0, path);
   }
 
-  public static String asString(JsonElement base, Object... path)
-  throws JsonTypeMismatchException,
-         JsonInvalidPathException {
-    JsonPrimitive prim = (JsonPrimitive) JsonTypes.PRIMITIVE
-        .validate(asJsonElement(base, path));
+  public static String asString(JsonElement base, Object... path) {
+    JsonPrimitive prim = (JsonPrimitive) JsonTypes.PRIMITIVE.validate(asJsonElement(base, path));
     if (prim == null) {
       return null;
     }

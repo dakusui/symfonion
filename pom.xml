@@ -80,7 +80,7 @@
         <maven-release-plugin.version>3.0.1</maven-release-plugin.version>
         <maven-shade-plugin.version>3.5.2</maven-shade-plugin.version>
         <!-- END: build dependencies -->
-        <valid8j.version>2.1.2</valid8j.version>
+        <valid8j.version>2.1.3</valid8j.version>
     </properties>
 
     <dependencies>

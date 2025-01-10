@@ -1,9 +1,10 @@
 package com.github.dakusui.symfonion.song;
 
-import com.github.dakusui.symfonion.compat.exceptions.*;
+import com.github.dakusui.symfonion.compat.exceptions.ExceptionContext;
+import com.github.dakusui.symfonion.compat.exceptions.FractionFormatException;
+import com.github.dakusui.symfonion.compat.exceptions.SymfonionException;
 import com.github.dakusui.symfonion.compat.json.CompatJsonException;
 import com.github.dakusui.symfonion.compat.json.CompatJsonUtils;
-import com.github.dakusui.symfonion.compat.json.JsonInvalidPathException;
 import com.github.dakusui.symfonion.utils.Fraction;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -27,22 +28,6 @@ import static java.util.Collections.*;
  * // @formatter:off
  * A class that models a "bar" in a musical score.
  *
- * [source, JSON]
- * .A bar element
- * ----
- * {
- *   "$beats": "<beatsDefiningString>",
- *   "$parts": {
- *     "<partName>": ["<patternName>;<patternName>",
- *                    "<patternName>",
- *                    "$inline:<inlined pattern>",
- *                    "..."],
- *   },
- *   "$groove": "<grooveName>",
- *   "$noteMap": "<noteMapName>",
- *   "$labels": ["<label1>", "<label2>", "..."]
- * }
- * ----
  * // @formatter:on
  */
 public class Bar {
@@ -58,6 +43,25 @@ public class Bar {
 
   /**
    * Creates a `Bar` object.
+   *
+   * `barJsonObject` stores content of the bar.
+   *
+   * [source, JSON]
+   * .barJsonObject
+   * ----
+   * {
+   * "$beats": "<beatsDefiningString>",
+   * "$parts": {
+   * "<partName>": ["<patternName>;<patternName>",
+   * "<patternName>",
+   * "$inline:<inlined pattern>",
+   * "..."],
+   * },
+   * "$groove": "<grooveName>",
+   * "$noteMap": "<noteMapName>",
+   * "$labels": ["<label1>", "<label2>", "..."]
+   * }
+   * ----
    *
    * `root` is used only for composing messages on errors.
    *
@@ -83,7 +87,7 @@ public class Bar {
     this.rootJsonObject = root;
     try (ExceptionContext ignored = exceptionContext(entry(JSON_ELEMENT_ROOT, root))) {
       this.beats  = resolveBeatsForBar(barJsonObject);
-      this.groove = resolveGrooveForBar(barJsonObject, grooves);
+      this.groove = resolveGrooveForBar(barJsonObject, this.beats, grooves);
       this.labels = resolveLabelsForBar(barJsonObject);
       /*
         partName -> [ patternName ]
@@ -152,11 +156,7 @@ public class Bar {
    * @see Bar#Bar(JsonObject, Map, Map, Map, Predicate, JsonObject)
    */
   public JsonElement lookUpJsonNode(String partName) {
-    try {
-      return asJsonElement(this.barJsonObject, Keyword.$parts, partName);
-    } catch (JsonInvalidPathException e) {
-      return null;
-    }
+    return asJsonElement(this.barJsonObject, Keyword.$parts, partName);
   }
 
   /**
@@ -241,8 +241,8 @@ public class Bar {
     return emptyList();
   }
 
-  private static Groove resolveGrooveForBar(JsonObject barJsonObject, Map<String, Groove> grooves) {
-    Groove g = Groove.DEFAULT_INSTANCE;
+  private static Groove resolveGrooveForBar(JsonObject barJsonObject, Fraction barLength, Map<String, Groove> grooves) {
+    Groove g = Groove.defaultGrooveOf(barLength);
     if (CompatJsonUtils.hasPath(barJsonObject, Keyword.$groove)) {
       String grooveName = CompatJsonUtils.asString(barJsonObject, Keyword.$groove.name());
       g = grooves.get(grooveName);

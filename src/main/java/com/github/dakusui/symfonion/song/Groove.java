@@ -11,27 +11,20 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower.illegalFormatException;
-import static com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower.typeMismatchException;
 import static com.github.dakusui.symfonion.compat.exceptions.SymfonionIllegalFormatException.NOTE_LENGTH_EXAMPLE;
-import static com.github.dakusui.symfonion.compat.exceptions.SymfonionTypeMismatchException.OBJECT;
 import static com.github.dakusui.symfonion.utils.Fraction.ZERO;
 import static com.github.valid8j.classic.Requires.requireNonNull;
-import static com.github.valid8j.fluent.Expectations.preconditions;
-import static com.github.valid8j.fluent.Expectations.value;
+import static com.github.valid8j.fluent.Expectations.*;
 import static com.github.valid8j.pcond.forms.Functions.parameter;
-import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 
 /**
  * A class that models a musical "groove", which gives slightly different stresses and lengths of notes in a score.
  * A groove is modeled as a sequence of beats.
  */
 public class Groove {
-  /**
-   * A default instance of this class.
-   */
-  public static final Groove DEFAULT_INSTANCE = new Groove(emptyList());
-
-  private final List<Beat> beats;
+  public static final int        TICKS_FOR_QUARTER_NOTE = 384;
+  private final       List<Beat> beats;
 
   private final int resolution;
 
@@ -42,7 +35,7 @@ public class Groove {
    * @param beats Beats with which this groove is defined.
    */
   Groove(List<Beat> beats) {
-    this.resolution = 384;
+    this.resolution = TICKS_FOR_QUARTER_NOTE;
     this.beats      = requireNonNull(beats);
   }
 
@@ -62,16 +55,13 @@ public class Groove {
    * @return An object that indicates how a note at `offset` should be played.
    */
   public Unit resolve(Fraction offset) {
-    assert preconditions(value(offset).toBe().notNull(),
-                         value(offset).invokeStatic(Fraction.class, "compare", parameter(), ZERO)
-                                      .asInteger()
-                                      .toBe().greaterThanOrEqualTo(0));
+    assert preconditions(value(offset).toBe().notNull());
     return computeUnit(offset, this.length(), this.beats, this.resolution);
   }
 
   private static Unit computeUnit(Fraction offset, Fraction grooveLength, List<Beat> grooveBeats, int grooveResolution) {
-    long     pos  = 0;
     Fraction rest = foldPosition(offset.clone(), grooveLength);
+    long     pos  = 0;
     Fraction shift = offset.isNegative() ? Fraction.subtract(rest, offset)
                                          : ZERO;
     int i = 0;
@@ -101,39 +91,50 @@ public class Groove {
   }
 
   private static Fraction foldPosition(Fraction position, Fraction grooveLength) {
+    assert preconditions(value(position).toBe().notNull(),
+                         value(grooveLength).toBe().notNull(),
+                         value(grooveLength).invokeStatic(Fraction.class, "compare", parameter(), ZERO)
+                                            .asInteger()
+                                            .toBe()
+                                            .greaterThan(0));
     Fraction ret = position;
     while (ret.isNegative())
       ret = Fraction.add(grooveLength, ret);
+    assert postconditions(value(ret).toBe().notNull(),
+                          value(ret).invokeStatic(Fraction.class, "compare", parameter(), ZERO)
+                                    .asInteger()
+                                    .toBe()
+                                    .greaterThanOrEqualTo(0));
     return ret;
   }
 
   /**
+   * // @formatter:off
    * Creates a new `Groove` object from a given JsonArray object.
    *
    * The `grooveDef` should look like as follows:
    *
    * [source, JSON]
+   * .grooveDef
    * ----
    * [
-   * {
-   * "$length": "1/16",
-   * "$ticks": 24,
-   * "$accent": 10
-   * },
-   * "..."
+   *   {
+   *     "$length": "1/16",
+   *     "$ticks": 24,
+   *     "$accent": 10
+   *   },
+   *   "..."
    * ]
    * ----
    *
    * @param grooveDef A definition of a groove.
    * @return A new groove object
+   * // @formatter:on
    */
   public static Groove createGroove(JsonArray grooveDef) {
     Groove.Builder b = new Groove.Builder();
     for (JsonElement elem : grooveDef) {
-      if (!elem.isJsonObject()) {
-        throw typeMismatchException(elem, OBJECT);
-      }
-      JsonObject cur    = elem.getAsJsonObject();
+      JsonObject cur    = CompatJsonUtils.requireJsonObject(elem);
       String     len    = CompatJsonUtils.asString(cur, Keyword.$length);
       long       ticks  = CompatJsonUtils.asLong(cur, Keyword.$ticks);
       int        accent = CompatJsonUtils.asInt(cur, Keyword.$accent);
@@ -145,6 +146,12 @@ public class Groove {
       b.add(f, ticks, accent);
     }
     return b.build();
+  }
+
+  static Groove defaultGrooveOf(Fraction barLength) {
+    return new Groove(singletonList(new Beat(barLength,
+                                             (long) Fraction.multi(barLength, new Fraction(TICKS_FOR_QUARTER_NOTE, 1)).doubleValue(),
+                                             0)));
   }
 
   /**
