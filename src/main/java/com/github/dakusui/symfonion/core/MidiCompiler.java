@@ -5,7 +5,6 @@ import com.github.dakusui.logias.lisp.Context;
 import com.github.dakusui.logias.lisp.s.Literal;
 import com.github.dakusui.logias.lisp.s.Sexp;
 import com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower;
-import com.github.dakusui.symfonion.compat.exceptions.ExceptionContext;
 import com.github.dakusui.symfonion.compat.exceptions.SymfonionException;
 import com.github.dakusui.symfonion.song.*;
 import com.github.dakusui.symfonion.utils.Fraction;
@@ -70,10 +69,10 @@ public class MidiCompiler {
     ////
     // position is the offset of a bar from the beginning of the sequence.
     // Giving the sequencer a grace period to initialize its internal state.
-    long barPositionInTicks = 0; //= resolution / 4;
-    int  barid              = 0;
+    long   barPositionInTicks = 0; //= resolution / 4;
+    int    barid              = 0;
+    Object value              = song.rootJsonObject();
     for (Bar bar : song.bars()) {
-      Object value = bar.rootJsonObject();
       try (var ignored = exceptionContext(entry(JSON_ELEMENT_ROOT, value))) {
         barStarted(barid);
         Groove groove = bar.groove();

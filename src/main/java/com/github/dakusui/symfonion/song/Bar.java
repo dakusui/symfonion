@@ -14,7 +14,6 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.StreamSupport;
 
-import static com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower.ContextKey.JSON_ELEMENT_ROOT;
 import static com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower.ContextKey.REFERENCING_JSON_NODE;
 import static com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower.*;
 import static com.github.dakusui.symfonion.compat.exceptions.ExceptionContext.entry;
@@ -32,10 +31,9 @@ import static java.util.Collections.*;
  */
 public class Bar {
   private final Map<String, Pattern>               patterns;
-  private final JsonObject                         rootJsonObject;
   private final Map<String, NoteMap>               noteMaps;
   private final Fraction                           beats;
-  private final Map<String, List<PatternSequence>> patternSequences;
+  private final Map<String, List<PatternSequence>> patternSequencePiles;
   private final Groove                             groove;
   private final List<String>                       labels;
   private final JsonObject                         barJsonObject;
@@ -70,7 +68,6 @@ public class Bar {
    * @param noteMaps      A note map with which this bar should be played.
    * @param patterns      A map that holds that defines patterns this bar references.
    * @param partFilter    A predicate that filters parts to be played in this bar.
-   * @param root          A root JSON object that `barJsonObject` belongs to.
    * @throws SymfonionException  Data processing was failed.
    * @throws CompatJsonException Invalid JSON is given.
    */
@@ -78,24 +75,20 @@ public class Bar {
              Map<String, Groove> grooves,
              Map<String, NoteMap> noteMaps,
              Map<String, Pattern> patterns,
-             Predicate<String> partFilter,
-             JsonObject root) throws SymfonionException,
-                                     CompatJsonException {
-    this.patterns       = patterns;
-    this.noteMaps       = noteMaps;
-    this.barJsonObject  = barJsonObject;
-    this.rootJsonObject = root;
-    try (ExceptionContext ignored = exceptionContext(entry(JSON_ELEMENT_ROOT, root))) {
-      this.beats  = resolveBeatsForBar(barJsonObject);
-      this.groove = resolveGrooveForBar(barJsonObject, this.beats, grooves);
-      this.labels = resolveLabelsForBar(barJsonObject);
+             Predicate<String> partFilter) throws SymfonionException,
+                                                  CompatJsonException {
+    this.patterns      = patterns;
+    this.noteMaps      = noteMaps;
+    this.barJsonObject = barJsonObject;
+    this.beats         = resolveBeatsForBar(barJsonObject);
+    this.groove        = resolveGrooveForBar(barJsonObject, this.beats, grooves);
+    this.labels        = resolveLabelsForBar(barJsonObject);
       /*
         partName -> [ patternName ]
        */
-      this.patternSequences = composePatternSequencesMap(this,
-                                                         partFilter,
-                                                         getPartsInBarAsJsonObject(barJsonObject));
-    }
+    this.patternSequencePiles = composePatternSequencesMap(this,
+                                                           partFilter,
+                                                           getPartsInBarAsJsonObject(barJsonObject));
   }
 
   /**
@@ -113,7 +106,7 @@ public class Bar {
    * @return A set of part names.
    */
   public Set<String> partNames() {
-    return unmodifiableSet(this.patternSequences.keySet());
+    return unmodifiableSet(this.patternSequencePiles.keySet());
   }
 
   /**
@@ -123,10 +116,10 @@ public class Bar {
    * @return A list of pattern sequences.
    */
   public List<PatternSequence> patternSequencePileForPart(String partName) {
-    return this.patternSequences.get(partName)
-                                .stream()
-                                .map(PatternSequence::create)
-                                .toList();
+    return this.patternSequencePiles.get(partName)
+                                    .stream()
+                                    .map(PatternSequence::create)
+                                    .toList();
   }
 
   /**
@@ -157,15 +150,6 @@ public class Bar {
    */
   public JsonElement lookUpJsonNode(String partName) {
     return asJsonElement(this.barJsonObject, Keyword.$parts, partName);
-  }
-
-  /**
-   * Returns a root JSON object to which this bar belongs.
-   *
-   * @return A root JSON object.
-   */
-  public JsonObject rootJsonObject() {
-    return this.rootJsonObject;
   }
 
   /**

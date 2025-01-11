@@ -14,3 +14,16 @@ A song is structured as follows in **JSON**:
   "$sequence": { "<partName>": { "...": "..." } }
 }
 ----
+
+[mermaid]
+----
+classDiagram
+    note for Duck "can fly\ncan swim\ncan dive\ncan help in debugging"
+    Stroke "*" <--* "1" PartMeasure
+    class Stroke {
+        +Fraction length()
+    }
+    class PartMeasure {
+        +Fraction length()
+    }
+----
