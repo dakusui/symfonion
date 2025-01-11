@@ -1,6 +1,5 @@
 package com.github.dakusui.symfonion.song;
 
-import com.github.dakusui.symfonion.compat.exceptions.ExceptionContext;
 import com.github.dakusui.symfonion.compat.exceptions.SymfonionException;
 import com.github.dakusui.symfonion.compat.json.CompatJsonException;
 import com.github.dakusui.symfonion.compat.json.CompatJsonUtils;
@@ -13,8 +12,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import static com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower.*;
 import static com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower.ContextKey.PART_MEASURE_JSON;
+import static com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower.exceptionContext;
+import static com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower.noteMapNotFoundException;
 import static com.github.dakusui.symfonion.compat.exceptions.ExceptionContext.entry;
 import static com.github.dakusui.symfonion.compat.json.CompatJsonUtils.asJsonArray;
 import static com.github.dakusui.symfonion.compat.json.CompatJsonUtils.asJsonElement;

@@ -24,6 +24,7 @@ import static com.github.dakusui.symfonion.compat.exceptions.SymfonionTypeMismat
 import static com.github.dakusui.symfonion.compat.json.CompatJsonUtils.asJsonArrayWithDefault;
 import static com.github.dakusui.symfonion.compat.json.CompatJsonUtils.asStringWithDefault;
 import static com.github.dakusui.symfonion.utils.Fraction.ZERO;
+import static com.github.valid8j.fluent.Expectations.*;
 
 /**
  * A class that models a measure of a part.
@@ -31,8 +32,6 @@ import static com.github.dakusui.symfonion.utils.Fraction.ZERO;
 public class PartMeasure {
   private static final java.util.regex.Pattern NOTES_REGEX_PATTERN = java.util.regex.Pattern.compile("(?<noteName>[A-Zac-z])(?<accidentals>[#b]*)(?<octaveShifts>[><]*)(?<accents>[+\\-]*)?");
   private static final int                     UNDEFINED_NUM       = -1;
-  private final        Fraction                length;
-  private final        List<Stroke>            strokes;
   private final        double                  gate;
   private final        int[]                   volume;
   private final        int[]                   pan;
@@ -45,7 +44,7 @@ public class PartMeasure {
   private final        int                     tempo;
   private final        JsonArray               sysex;
   private final        int[]                   aftertouch;
-  private final        Fraction                pickUpLength;
+  private final        StrokeSequence          strokeSequence;
 
   /**
    *
@@ -94,22 +93,19 @@ public class PartMeasure {
   }
 
   public PartMeasure(JsonObject obj, PartMeasureParameters params, NoteMap noteMap) throws SymfonionException, CompatJsonException {
-    this.tempo      = CompatJsonUtils.hasPath(obj, Keyword.$tempo) ? CompatJsonUtils.asInt(obj, Keyword.$tempo) : UNDEFINED_NUM;
-    this.pgno       = CompatJsonUtils.hasPath(obj, Keyword.$program) ? CompatJsonUtils.asInt(obj, Keyword.$program) : UNDEFINED_NUM;
-    this.bkno       = resolveBankNumber(obj);
-    this.volume     = getIntArray(obj, Keyword.$volume);
-    this.pan        = getIntArray(obj, Keyword.$pan);
-    this.reverb     = getIntArray(obj, Keyword.$reverb);
-    this.chorus     = getIntArray(obj, Keyword.$chorus);
-    this.pitch      = getIntArray(obj, Keyword.$pitch);
-    this.modulation = getIntArray(obj, Keyword.$modulation);
-    this.aftertouch = getIntArray(obj, Keyword.$aftertouch);
-    this.sysex      = asJsonArrayWithDefault(obj, null, Keyword.$sysex);
-    this.gate       = resolveGate(obj, params);
-    StrokeSequence strokeSequence = parseStrokeSequence(asStringWithDefault(obj, null, Keyword.$notes), resolveDefaultStrokeLength(obj, params), noteMap);
-    this.pickUpLength = strokeSequence.pickUpLength();
-    this.length       = strokeSequence.length();
-    this.strokes      = strokeSequence.body();
+    this.tempo          = CompatJsonUtils.hasPath(obj, Keyword.$tempo) ? CompatJsonUtils.asInt(obj, Keyword.$tempo) : UNDEFINED_NUM;
+    this.pgno           = CompatJsonUtils.hasPath(obj, Keyword.$program) ? CompatJsonUtils.asInt(obj, Keyword.$program) : UNDEFINED_NUM;
+    this.bkno           = resolveBankNumber(obj);
+    this.volume         = getIntArray(obj, Keyword.$volume);
+    this.pan            = getIntArray(obj, Keyword.$pan);
+    this.reverb         = getIntArray(obj, Keyword.$reverb);
+    this.chorus         = getIntArray(obj, Keyword.$chorus);
+    this.pitch          = getIntArray(obj, Keyword.$pitch);
+    this.modulation     = getIntArray(obj, Keyword.$modulation);
+    this.aftertouch     = getIntArray(obj, Keyword.$aftertouch);
+    this.sysex          = asJsonArrayWithDefault(obj, null, Keyword.$sysex);
+    this.gate           = resolveGate(obj, params);
+    this.strokeSequence = parseStrokeSequence(asStringWithDefault(obj, null, Keyword.$notes), resolveDefaultStrokeLength(obj, params), noteMap);
   }
 
   /**
@@ -118,7 +114,7 @@ public class PartMeasure {
    * @return The length of a stroke.
    */
   public Fraction length() {
-    return length;
+    return strokeSequence.length();
   }
 
   /**
@@ -132,7 +128,7 @@ public class PartMeasure {
   }
 
   List<Stroke> strokes() {
-    return this.strokes;
+    return this.strokeSequence.body();
   }
 
   private static StrokeSequence parseStrokeSequence(String strokes, Fraction defaultNoteLength, NoteMap noteMap) {
@@ -217,7 +213,7 @@ public class PartMeasure {
       }
       int n_ = noteMap.note(m.group("noteName"));
       if (n_ >= 0) {
-        int n = n_ + Utils.count('#', m.group("accidentals")) - Utils.count('b', m.group("accidentals")) + Utils.count('>', m.group("octaveShifts")) * 12 - Utils.count('<', m.group("octaveShifts")) * 12;
+        int  n  = n_ + Utils.count('#', m.group("accidentals")) - Utils.count('b', m.group("accidentals")) + Utils.count('>', m.group("octaveShifts")) * 12 - Utils.count('<', m.group("octaveShifts")) * 12;
         int  a  = Utils.count('+', m.group("accents")) - Utils.count('-', m.group("accents"));
         Note nn = new Note(n, a);
         out.add(nn);
@@ -293,13 +289,13 @@ public class PartMeasure {
     int      transpose      = context.params().transpose();
     int      arpegioDelay   = context.params().arpeggio();
     int      delta          = 0;
-    Fraction relPosInStroke = Fraction.subtract(ZERO, this.pickUpLength);
+    Fraction relPosInStroke = Fraction.subtract(ZERO, this.strokeSequence.pickUpLength());
     for (Stroke stroke : this.strokes()) {
       absolutePosition = context.convertRelativePositionInPartMeasureToAbsolutePosition(relPosInStroke);
       long absolutePositionWhereNoteFinishes = context.convertRelativePositionInPartMeasureToAbsolutePosition(Fraction.add(relPosInStroke, stroke.length()));
-      long noteLengthInTicks = absolutePositionWhereNoteFinishes - absolutePosition;
+      long noteLengthInTicks                 = absolutePositionWhereNoteFinishes - absolutePosition;
       for (Note note : stroke.notes()) {
-        int key = note.key() + transpose;
+        int key      = note.key() + transpose;
         int velocity = Math.max(0, Math.min(127, context.params().velocityBase() + note.accent() * context.params().velocityDelta() + context.getGrooveAccent(relPosInStroke)));
         track.add(compiler.createNoteOnEvent(ch, key, velocity, absolutePosition + delta));
         track.add(compiler.createNoteOffEvent(ch, key, (long) (absolutePosition + delta + noteLengthInTicks * this.gate())));
@@ -393,6 +389,20 @@ public class PartMeasure {
   }
 
   private record StrokeSequence(Fraction pickUpLength, Fraction length, List<Stroke> body) {
+    StrokeSequence {
+      assert preconditions(value(pickUpLength).satisfies(x -> x.toBe().notNull())
+                                              .satisfies(x -> x.invokeStatic(Fraction.class, "compare", parameter(), ZERO)
+                                                               .asInteger()
+                                                               .toBe()
+                                                               .greaterThanOrEqualTo(0)),
+                           value(length).satisfies(x -> x.toBe().notNull())
+                                        .satisfies(x -> x.invokeStatic(Fraction.class, "compare", parameter(), ZERO)
+                                                         .asInteger()
+                                                         .toBe()
+                                                         .greaterThanOrEqualTo(0)),
+                           value(body).toBe()
+                                      .notNull());
+    }
   }
 
   private record Stroke(Fraction length, List<Note> notes) {

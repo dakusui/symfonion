@@ -2,7 +2,7 @@ A package that hosts classes to model a "song".
 
 A song is structured as follows in **JSON**:
 
-[source, JSON]
+[source,JSON]
 ----
 {
   "$include": [ "includedFile" ],
@@ -18,12 +18,56 @@ A song is structured as follows in **JSON**:
 [mermaid]
 ----
 classDiagram
-    note for Duck "can fly\ncan swim\ncan dive\ncan help in debugging"
-    Stroke "*" <--* "1" PartMeasure
+direction BT
+    note for Stroke "can fly\ncan swim\ncan dive\ncan help in debugging"
+    Note "*" <--* Stroke: "notes"
+    Stroke "*" <--* "1" StrokeSequence: body
+    StrokeSequence "1" <--* "1" PartMeasure: strokeSequence
+    PartMeasure "*" <--* "1" Pattern: body
+    PartMeasureParameters "1" <--* "1" Pattern: params
+    List~Pattern~ <|-- PatternSequence
+    Pattern "*" <--* "1" List~Pattern~
+    PatternSequence "*" <--* "1" PatternSequencePile
+    PatternSequencePile "*" <-- "1" Bar: patternSequencePiles[partName]
+    PatternSequencePile
+    Groove "1" <--* "1" Bar
+    Pattern "*" <--* "1" Bar: patterns[patternName]
+    NoteMap "*" <--* "1" Bar: noteMaps[noteMapName]
+    class List~Pattern~
     class Stroke {
+        +Fraction   length()
+    }
+    class StrokeSequence {
+        +Fraction pickUpLength()
         +Fraction length()
+        +List~Stroke~ body()
+    }
+    class Note {
+        +int key()
+        +int accent()
     }
     class PartMeasure {
         +Fraction length()
+        +List~Stroke~ strokes()
+        +double gate()
     }
+    class PartMeasureParameters {
+        +double gate()
+        +Fraction length()
+        +int transpose()
+        +int velocityBase()
+        +int velocityDelta()
+        +int arpeggio()
+    }
+    class Pattern
+    class PatternSequence
+    class PatternSequencePile["List~PatternSequence~"] {
+    }
+    class Bar {
+        -List~String~ labels
+        +Fraction beats()
+    }
+    class NoteMap
 ----
+
+

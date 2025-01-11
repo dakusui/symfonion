@@ -21,6 +21,7 @@ import static com.github.dakusui.symfonion.compat.exceptions.SymfonionIllegalFor
 import static com.github.dakusui.symfonion.compat.exceptions.SymfonionTypeMismatchException.ARRAY;
 import static com.github.dakusui.symfonion.compat.json.CompatJsonUtils.asJsonElement;
 import static com.github.dakusui.symfonion.utils.Fraction.parseFraction;
+import static com.github.valid8j.classic.Requires.requireNonNull;
 import static java.util.Collections.*;
 
 /**
@@ -77,18 +78,18 @@ public class Bar {
              Map<String, Pattern> patterns,
              Predicate<String> partFilter) throws SymfonionException,
                                                   CompatJsonException {
-    this.patterns      = patterns;
-    this.noteMaps      = noteMaps;
-    this.barJsonObject = barJsonObject;
+    this.patterns      = requireNonNull(patterns);
+    this.noteMaps      = requireNonNull(noteMaps);
+    this.barJsonObject = requireNonNull(barJsonObject);
     this.beats         = resolveBeatsForBar(barJsonObject);
     this.groove        = resolveGrooveForBar(barJsonObject, this.beats, grooves);
     this.labels        = resolveLabelsForBar(barJsonObject);
       /*
         partName -> [ patternName ]
        */
-    this.patternSequencePiles = composePatternSequencesMap(this,
-                                                           partFilter,
-                                                           getPartsInBarAsJsonObject(barJsonObject));
+    this.patternSequencePiles = composePatternSequencePilesMap(this,
+                                                               partFilter,
+                                                               getPartsInBarAsJsonObject(barJsonObject));
   }
 
   /**
@@ -146,7 +147,7 @@ public class Bar {
    *
    * @param partName partName used for searching for `JsonElement`.
    * @return A matching JSON element. If not found, `null` will be returned.
-   * @see Bar#Bar(JsonObject, Map, Map, Map, Predicate, JsonObject)
+   * @see Bar#Bar(JsonObject, Map, Map, Map, Predicate)
    */
   public JsonElement lookUpJsonNode(String partName) {
     return asJsonElement(this.barJsonObject, Keyword.$parts, partName);
@@ -181,9 +182,9 @@ public class Bar {
    * @param partsJsonObjectInBar A JSON object associated with `$parts` key in the JSON object from which `bar` was created.
    * @return A map from part name to a list of pattern sequences.
    */
-  private static Map<String, List<PatternSequence>> composePatternSequencesMap(Bar bar,
-                                                                               Predicate<String> partFilter,
-                                                                               JsonObject partsJsonObjectInBar) {
+  private static Map<String, List<PatternSequence>> composePatternSequencePilesMap(Bar bar,
+                                                                                   Predicate<String> partFilter,
+                                                                                   JsonObject partsJsonObjectInBar) {
     Map<String, List<PatternSequence>> ret = new HashMap<>();
     for (String eachPartName : partsJsonObjectInBar.keySet()) {
       if (!partFilter.test(eachPartName))
@@ -216,7 +217,7 @@ public class Bar {
     return patternSequenceSequence;
   }
 
-  private static List<String> resolveLabelsForBar(JsonObject barJsonObject) {
+  static List<String> resolveLabelsForBar(JsonObject barJsonObject) {
     if (CompatJsonUtils.hasPath(barJsonObject, Keyword.$labels)) {
       return StreamSupport.stream(CompatJsonUtils.asJsonArray(barJsonObject, Keyword.$labels).spliterator(), false)
                           .map(CompatJsonUtils::asString)
@@ -237,7 +238,7 @@ public class Bar {
     return g;
   }
 
-  private static Fraction resolveBeatsForBar(JsonObject barJsonObject) {
+  static Fraction resolveBeatsForBar(JsonObject barJsonObject) {
     Fraction beats;
     try {
       beats = parseFraction(CompatJsonUtils.asString(barJsonObject, Keyword.$beats));

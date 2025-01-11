@@ -3,12 +3,17 @@ package com.github.dakusui.symfonion.song;
 import com.github.dakusui.symfonion.utils.Fraction;
 import com.google.gson.JsonObject;
 
+import java.util.List;
 import java.util.Map;
+
+import static com.github.dakusui.symfonion.song.Bar.resolveBeatsForBar;
+import static com.github.dakusui.symfonion.song.Bar.resolveLabelsForBar;
 
 public class Measure {
   private final Groove              groove;
   private final Fraction            beats;
   private final Map<String, String> noteMapNames;
+  private final List<String>        labels;
 
   /**
    * // @formatter:off
@@ -43,15 +48,12 @@ public class Measure {
    */
   public Measure(JsonObject measureJsonObject) {
     this.groove       = resolveGroove(measureJsonObject);
-    this.beats        = resolveBeats(measureJsonObject);
+    this.beats        = resolveBeatsForBar(measureJsonObject);
     this.noteMapNames = resolveNoteMapNames(measureJsonObject);
+    this.labels       = resolveLabelsForBar(measureJsonObject);
   }
 
   private static Map<String, String> resolveNoteMapNames(JsonObject measureJsonObject) {
-    throw new RuntimeException();
-  }
-
-  private static Fraction resolveBeats(JsonObject measureJsonObject) {
     throw new RuntimeException();
   }
 
