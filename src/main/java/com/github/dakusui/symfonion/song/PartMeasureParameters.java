@@ -4,7 +4,6 @@ import com.github.dakusui.symfonion.compat.exceptions.SymfonionException;
 import com.github.dakusui.symfonion.compat.json.CompatJsonException;
 import com.github.dakusui.symfonion.compat.json.CompatJsonUtils;
 import com.github.dakusui.symfonion.utils.Fraction;
-import com.github.dakusui.symfonion.utils.Utils;
 import com.google.gson.JsonObject;
 
 import static com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower.illegalFormatException;
@@ -38,7 +37,7 @@ public class PartMeasureParameters {
     this.velocityBase  = CompatJsonUtils.asIntWithDefault(json, 64, Keyword.$velocitybase);
     this.velocityDelta = CompatJsonUtils.asIntWithDefault(json, 5, Keyword.$velocitydelta);
     this.gate          = CompatJsonUtils.asDoubleWithDefault(json, 0.8, Keyword.$gate);
-    this.length        = Utils.parseNoteLength(CompatJsonUtils.asStringWithDefault(json, "16", Keyword.$length));
+    this.length        = PartMeasure.parseNoteLength(CompatJsonUtils.asStringWithDefault(json, "16", Keyword.$length));
     if (this.length == null) {
       throw illegalFormatException(asJsonElement(json, Keyword.$length), NOTE_LENGTH_EXAMPLE);
     }

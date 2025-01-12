@@ -2,12 +2,12 @@ package com.github.dakusui.symfonion.tests.song;
 
 import com.github.dakusui.symfonion.compat.exceptions.SymfonionException;
 import com.github.dakusui.symfonion.song.Groove;
+import com.github.dakusui.symfonion.song.PartMeasure;
 import com.github.dakusui.symfonion.testutils.TestBase;
 import com.github.dakusui.symfonion.utils.Fraction;
-import com.github.dakusui.symfonion.utils.Utils;
 import org.junit.Test;
 
-import static com.github.dakusui.symfonion.utils.Utils.parseNoteLength;
+import static com.github.dakusui.symfonion.song.PartMeasure.parseNoteLength;
 import static org.junit.Assert.assertEquals;
 
 public class GrooveTest extends TestBase {
@@ -73,10 +73,10 @@ public class GrooveTest extends TestBase {
   }
 
   Groove testGrooveA() throws SymfonionException {
-    return new Groove.Builder().add(Utils.parseNoteLength("16"), 24, 1)
-                               .add(Utils.parseNoteLength("16"), 24, 2)
-                               .add(Utils.parseNoteLength("16"), 24, 3)
-                               .add(Utils.parseNoteLength("16"), 24, 4)
+    return new Groove.Builder().add(PartMeasure.parseNoteLength("16"), 24, 1)
+                               .add(PartMeasure.parseNoteLength("16"), 24, 2)
+                               .add(PartMeasure.parseNoteLength("16"), 24, 3)
+                               .add(PartMeasure.parseNoteLength("16"), 24, 4)
                                .build();
   }
 
@@ -153,19 +153,19 @@ public class GrooveTest extends TestBase {
   }
 
   Groove testGrooveB() throws SymfonionException {
-    return new Groove.Builder().add(Utils.parseNoteLength("16"), 26, 1)
-                               .add(Utils.parseNoteLength("16"), 22, 2)
-                               .add(Utils.parseNoteLength("16"), 25, 3)
-                               .add(Utils.parseNoteLength("16"), 23, 4)
+    return new Groove.Builder().add(PartMeasure.parseNoteLength("16"), 26, 1)
+                               .add(PartMeasure.parseNoteLength("16"), 22, 2)
+                               .add(PartMeasure.parseNoteLength("16"), 25, 3)
+                               .add(PartMeasure.parseNoteLength("16"), 23, 4)
                                .build();
   }
 
   Groove createGroove() {
     return new Groove.Builder()
-        .add(Utils.parseNoteLength("16"), 26, 1)
-        .add(Utils.parseNoteLength("16"), 22, 2)
-        .add(Utils.parseNoteLength("16"), 25, 3)
-        .add(Utils.parseNoteLength("16"), 23, 4)
+        .add(PartMeasure.parseNoteLength("16"), 26, 1)
+        .add(PartMeasure.parseNoteLength("16"), 22, 2)
+        .add(PartMeasure.parseNoteLength("16"), 25, 3)
+        .add(PartMeasure.parseNoteLength("16"), 23, 4)
         .build();
   }
 }

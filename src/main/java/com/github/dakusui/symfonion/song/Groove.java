@@ -2,7 +2,6 @@ package com.github.dakusui.symfonion.song;
 
 import com.github.dakusui.symfonion.compat.json.CompatJsonUtils;
 import com.github.dakusui.symfonion.utils.Fraction;
-import com.github.dakusui.symfonion.utils.Utils;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -139,7 +138,7 @@ public class Groove {
       long       ticks  = CompatJsonUtils.asLong(cur, Keyword.$ticks);
       int        accent = CompatJsonUtils.asInt(cur, Keyword.$accent);
 
-      Fraction f = Utils.parseNoteLength(len);
+      Fraction f = PartMeasure.parseNoteLength(len);
       if (f == null) {
         throw illegalFormatException(CompatJsonUtils.asJsonElement(cur, Keyword.$length), NOTE_LENGTH_EXAMPLE);
       }

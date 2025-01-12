@@ -14,14 +14,24 @@ A song is structured as follows in **JSON**:
   "$sequence": { "<partName>": { "...": "..." } }
 }
 ----
-
 [mermaid]
+.Song
 ----
 classDiagram
 direction BT
-    note for Stroke "can fly\ncan swim\ncan dive\ncan help in debugging"
-    Note "*" <--* Stroke: "notes"
-    Stroke "*" <--* "1" StrokeSequence: body
+
+  Context "1" <--* "1" Song: logiasContext
+  Part    "*" <--* "1" Song: parts[partName]
+  Pattern "*" <--* "1" Song: patterns[patternName]
+  Groove  "*" <--* "1" Song: grooves[grooveName]
+  Bar     "*" <--* "1" Song: bars
+----
+
+[mermaid]
+.Bar
+----
+classDiagram
+direction BT
     StrokeSequence "1" <--* "1" PartMeasure: strokeSequence
     PartMeasure "*" <--* "1" Pattern: body
     PartMeasureParameters "1" <--* "1" Pattern: params
@@ -34,8 +44,37 @@ direction BT
     Pattern "*" <--* "1" Bar: patterns[patternName]
     NoteMap "*" <--* "1" Bar: noteMaps[noteMapName]
     class List~Pattern~
+    class Pattern
+    class PatternSequence
+    class PatternSequencePile["List~PatternSequence~"] {
+    }
+    class Bar {
+        -List~String~ labels
+        +Fraction beats()
+    }
+    class PartMeasure {
+        +void   compile(MidiCompiler compiler, MidiCompilerContext context)
+    }
+    class NoteMap
+----
+
+[mermaid]
+.Pattern
+----
+classDiagram
+direction BT
+    note for Note "Regular expression for notes: '([A-Zac-z])([#b]*)([><]*)([+\\-]*)?'\nRegular expression for note length: '([1-9][0-9]*)(\.*)([~^']?)'"
+    Note "*" <--* Stroke: "notes"
+    note for Stroke "A stroke is a set of notes played\nby a single action of a human\nsuch as a chord voicing."
+    Stroke "*" <--* "1" StrokeSequence: body
+    StrokeSequence "1" <--* "1" PartMeasure: strokeSequence
+    PartMeasure "*" <--* "1" Pattern: body
+    PartMeasureParameters "1" <--* "1" Pattern: params
+    note for PartMeasureParameters "Parameters that modify how strokes\nin PartMeasure are played.\nThose are not directly converted inton\nMIDI events."
+    PartMeasure ..> Note: creates
     class Stroke {
         +Fraction   length()
+        +List~Note~ notes()
     }
     class StrokeSequence {
         +Fraction pickUpLength()
@@ -47,6 +86,8 @@ direction BT
         +int accent()
     }
     class PartMeasure {
+        +PartMeasure(JsonObject obj PartMeasureParameters params, NoteMap noteMap)
+        +void   compile(MidiCompiler compiler, MidiCompilerContext context)
         +Fraction length()
         +List~Stroke~ strokes()
         +double gate()
@@ -59,15 +100,5 @@ direction BT
         +int velocityDelta()
         +int arpeggio()
     }
-    class Pattern
-    class PatternSequence
-    class PatternSequencePile["List~PatternSequence~"] {
-    }
-    class Bar {
-        -List~String~ labels
-        +Fraction beats()
-    }
-    class NoteMap
+    class Pattern["Pattern or Measure"]
 ----
-
-

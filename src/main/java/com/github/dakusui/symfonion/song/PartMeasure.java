@@ -30,6 +30,8 @@ import static com.github.valid8j.fluent.Expectations.*;
  * A class that models a measure of a part.
  */
 public class PartMeasure {
+  public static final  java.util.regex.Pattern NOTE_LENGTH_REGEX_PATTERN
+                                                                   = java.util.regex.Pattern.compile("(?<num>[1-9][0-9]*)(?<dots>\\.*)(?<articulation>[~^']?)");
   private static final java.util.regex.Pattern NOTES_REGEX_PATTERN = java.util.regex.Pattern.compile("(?<noteName>[A-Zac-z])(?<accidentals>[#b]*)(?<octaveShifts>[><]*)(?<accents>[+\\-]*)?");
   private static final int                     UNDEFINED_NUM       = -1;
   private final        double                  gate;
@@ -108,6 +110,23 @@ public class PartMeasure {
     this.strokeSequence = parseStrokeSequence(asStringWithDefault(obj, null, Keyword.$notes), resolveDefaultStrokeLength(obj, params), noteMap);
   }
 
+  public static Fraction parseNoteLength(String length) {
+    Matcher  m   = NOTE_LENGTH_REGEX_PATTERN.matcher(length);
+    Fraction ret = null;
+    if (m.matches()) {
+      int l = Integer.parseInt(m.group("num"));
+      ret = new Fraction(1, l);
+      int dots = Utils.count('.', m.group("dots"));
+      for (int i = 0; i < dots; i++) {
+        l *= 2;
+        ret = Fraction.add(ret, new Fraction(1, l));
+      }
+    } else if ("0".equals(length)) {
+      ret = new Fraction(0, 1);
+    }
+    return ret;
+  }
+
   /**
    * Returns the length of this object.
    *
@@ -181,7 +200,7 @@ public class PartMeasure {
   private static Fraction validateLength(JsonElement lenJSON) {
     Fraction len;
     if (lenJSON.isJsonPrimitive()) {
-      len = Utils.parseNoteLength(lenJSON.getAsString());
+      len = parseNoteLength(lenJSON.getAsString());
       if (len == null) {
         throw illegalFormatException(lenJSON, NOTE_LENGTH_EXAMPLE);
       }
@@ -193,7 +212,10 @@ public class PartMeasure {
 
   private static Stroke parseStroke(String nn, Fraction defaultNoteLength, NoteMap noteMap) {
     LinkedList<Note> ns = new LinkedList<>();
-    return new Stroke(Optional.ofNullable(parseStroke(ns, nn, noteMap)).map(Utils::parseNoteLength).orElse(defaultNoteLength), ns);
+    return new Stroke(Optional.ofNullable(parseStroke(ns, nn, noteMap))
+                              .map(PartMeasure::parseNoteLength)
+                              .orElse(defaultNoteLength),
+                      ns);
   }
 
   /**
@@ -219,7 +241,7 @@ public class PartMeasure {
         out.add(nn);
       }
     }
-    Matcher n   = Utils.NOTE_LENGTH_REGEX_PATTERN.matcher(stroke);
+    Matcher n   = NOTE_LENGTH_REGEX_PATTERN.matcher(stroke);
     String  ret = null;
     if (n.find(i)) {
       ret = stroke.substring(n.start(), n.end());

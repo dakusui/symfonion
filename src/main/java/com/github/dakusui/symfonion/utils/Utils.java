@@ -8,7 +8,6 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
-import java.util.regex.Matcher;
 import java.util.stream.Collector;
 
 import static com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower.*;
@@ -20,8 +19,6 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 public enum Utils {
   ;
-  public static final java.util.regex.Pattern NOTE_LENGTH_REGEX_PATTERN
-      = java.util.regex.Pattern.compile("(?<num>[1-9][0-9]*)(?<dots>\\.*)(?<articulation>[~^']?)");
 
   /**
    * Count occurrences of a given character {@code ch} in a string {@code s}.
@@ -81,23 +78,6 @@ public enum Utils {
              default -> 1.0;
            });
     }
-  }
-
-  public static Fraction parseNoteLength(String length) {
-    Matcher  m   = NOTE_LENGTH_REGEX_PATTERN.matcher(length);
-    Fraction ret = null;
-    if (m.matches()) {
-      int l = Integer.parseInt(m.group("num"));
-      ret = new Fraction(1, l);
-      int dots = Utils.count('.', m.group("dots"));
-      for (int i = 0; i < dots; i++) {
-        l *= 2;
-        ret = Fraction.add(ret, new Fraction(1, l));
-      }
-    } else if ("0".equals(length)) {
-      ret = new Fraction(0, 1);
-    }
-    return ret;
   }
 
   public static byte[] getIntBytes(int input) {
