@@ -34,7 +34,7 @@ classDiagram
 direction BT
     StrokeSequence "1" <--* "1" PartMeasure: strokeSequence
     PartMeasure "*" <--* "1" Pattern: body
-    PartMeasureParameters "1" <--* "1" Pattern: params
+    PartMeasureParameters "1" <--* "1" PartMeasure: defaultValues
     List~Pattern~ <|-- PatternSequence
     Pattern "*" <--* "1" List~Pattern~
     PatternSequence "*" <--* "1" PatternSequencePile
@@ -59,17 +59,17 @@ direction BT
 ----
 
 [mermaid]
-.Pattern
+.Pattern or Measure
 ----
 classDiagram
 direction BT
     note for Note "Regular expression for notes: '([A-Zac-z])([#b]*)([><]*)([+\\-]*)?'\nRegular expression for note length: '([1-9][0-9]*)(\.*)([~^']?)'"
-    Note "*" <--* Stroke: "notes"
+    Note "*" <--* Stroke: notes
     note for Stroke "A stroke is a set of notes played\nby a single action of a human\nsuch as a chord voicing."
     Stroke "*" <--* "1" StrokeSequence: body
     StrokeSequence "1" <--* "1" PartMeasure: strokeSequence
     PartMeasure "*" <--* "1" Pattern: body
-    PartMeasureParameters "1" <--* "1" Pattern: params
+    PartMeasureParameters "1" <--* "1" PartMeasure: defaultValues
     note for PartMeasureParameters "Parameters that modify how strokes\nin PartMeasure are played.\nThose are not directly converted inton\nMIDI events."
     PartMeasure ..> Note: creates
     class Stroke {

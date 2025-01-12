@@ -98,7 +98,6 @@ public class MidiCompiler {
 
                   partMeasure.compile(this, new MidiCompilerContext(track,
                                                                     channel,
-                                                                    params,
                                                                     relPosInBar,
                                                                     barPositionInTicks,
                                                                     groove));

@@ -1,6 +1,5 @@
 package com.github.dakusui.symfonion.song;
 
-import com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower;
 import com.github.dakusui.symfonion.compat.exceptions.SymfonionException;
 import com.github.dakusui.symfonion.compat.exceptions.SymfonionIllegalFormatException;
 import com.github.dakusui.symfonion.compat.json.*;
@@ -34,6 +33,7 @@ public class PartMeasure {
                                                                    = java.util.regex.Pattern.compile("(?<num>[1-9][0-9]*)(?<dots>\\.*)(?<articulation>[~^']?)");
   private static final java.util.regex.Pattern NOTES_REGEX_PATTERN = java.util.regex.Pattern.compile("(?<noteName>[A-Zac-z])(?<accidentals>[#b]*)(?<octaveShifts>[><]*)(?<accents>[+\\-]*)?");
   private static final int                     UNDEFINED_NUM       = -1;
+  private final        PartMeasureParameters   defaultValues;
   private final        double                  gate;
   private final        int[]                   volume;
   private final        int[]                   pan;
@@ -94,7 +94,7 @@ public class PartMeasure {
     this(CompatJsonUtils.asJsonObjectWithPromotion(partMeasureJson, new String[]{Keyword.$notes.name(), Keyword.$length.name()}), params, noteMap);
   }
 
-  public PartMeasure(JsonObject obj, PartMeasureParameters params, NoteMap noteMap) throws SymfonionException, CompatJsonException {
+  public PartMeasure(JsonObject obj, PartMeasureParameters defaultValues, NoteMap noteMap) throws SymfonionException, CompatJsonException {
     this.tempo          = CompatJsonUtils.hasPath(obj, Keyword.$tempo) ? CompatJsonUtils.asInt(obj, Keyword.$tempo) : UNDEFINED_NUM;
     this.pgno           = CompatJsonUtils.hasPath(obj, Keyword.$program) ? CompatJsonUtils.asInt(obj, Keyword.$program) : UNDEFINED_NUM;
     this.bkno           = resolveBankNumber(obj);
@@ -106,8 +106,9 @@ public class PartMeasure {
     this.modulation     = getIntArray(obj, Keyword.$modulation);
     this.aftertouch     = getIntArray(obj, Keyword.$aftertouch);
     this.sysex          = asJsonArrayWithDefault(obj, null, Keyword.$sysex);
-    this.gate           = resolveGate(obj, params);
-    this.strokeSequence = parseStrokeSequence(asStringWithDefault(obj, null, Keyword.$notes), resolveDefaultStrokeLength(obj, params), noteMap);
+    this.gate           = resolveGate(obj, defaultValues);
+    this.strokeSequence = parseStrokeSequence(asStringWithDefault(obj, null, Keyword.$notes), resolveDefaultStrokeLength(obj, defaultValues), noteMap);
+    this.defaultValues  = defaultValues;
   }
 
   public static Fraction parseNoteLength(String length) {
@@ -144,6 +145,10 @@ public class PartMeasure {
    */
   public double gate() {
     return this.gate;
+  }
+
+  public PartMeasureParameters defaultValues() {
+    return this.defaultValues;
   }
 
   List<Stroke> strokes() {
@@ -308,8 +313,8 @@ public class PartMeasure {
     renderValues(pitch, absolutePosition, strokeLen, compiler, (v, pos) -> track.add(compiler.createPitchBendEvent(ch, v, pos)));
     renderValues(modulation, absolutePosition, strokeLen, compiler, (v, pos) -> track.add(compiler.createModulationEvent(ch, v, pos)));
     renderValues(aftertouch, absolutePosition, strokeLen, compiler, (v, pos) -> track.add(compiler.createAfterTouchChangeEvent(ch, v, pos)));
-    int      transpose      = context.params().transpose();
-    int      arpegioDelay   = context.params().arpeggio();
+    int      transpose      = this.defaultValues().transpose();
+    int      arpegioDelay   = this.defaultValues().arpeggio();
     int      delta          = 0;
     Fraction relPosInStroke = Fraction.subtract(ZERO, this.strokeSequence.pickUpLength());
     for (Stroke stroke : this.strokes()) {
@@ -318,7 +323,7 @@ public class PartMeasure {
       long noteLengthInTicks                 = absolutePositionWhereNoteFinishes - absolutePosition;
       for (Note note : stroke.notes()) {
         int key      = note.key() + transpose;
-        int velocity = Math.max(0, Math.min(127, context.params().velocityBase() + note.accent() * context.params().velocityDelta() + context.getGrooveAccent(relPosInStroke)));
+        int velocity = Math.max(0, Math.min(127, this.defaultValues().velocityBase() + note.accent() * this.defaultValues().velocityDelta() + context.getGrooveAccent(relPosInStroke)));
         track.add(compiler.createNoteOnEvent(ch, key, velocity, absolutePosition + delta));
         track.add(compiler.createNoteOffEvent(ch, key, (long) (absolutePosition + delta + noteLengthInTicks * this.gate())));
         compiler.noteProcessed();
@@ -360,7 +365,7 @@ public class PartMeasure {
           }
         }
       } else if (cur.isJsonNull()) ret.add(cur);
-      else throw CompatExceptionThrower.typeMismatchWhenExpandingDotsIn(arr);
+      else throw typeMismatchWhenExpandingDotsIn(arr);
     }
     return ret;
   }
