@@ -49,7 +49,6 @@ import static java.util.Collections.unmodifiableSet;
  * //@formatter:on
  */
 public class CompatSong {
-  private final Context              logiasContext;
   private final Map<String, Part>    parts;
   private final Map<String, Pattern> patterns;
   private final Map<String, Groove>  grooves;
@@ -59,20 +58,17 @@ public class CompatSong {
   /**
    * Creates an object of this class.
    *
-   * @param logiasContext  A context, in which JSON array can be executed as an S-expression.
    * @param parts          Parts of a musical work.
    * @param patterns       Patterns referenced from `bars`.
    * @param grooves        Grooves referenced from `bars`.
    * @param bars           Bars of a musical work.
    * @param rootJsonObject A root JSON object that `barJsonObject` belongs to.
    */
-  public CompatSong(Context logiasContext,
-                    Map<String, Part> parts,
+  public CompatSong(Map<String, Part> parts,
                     Map<String, Pattern> patterns,
                     Map<String, Groove> grooves,
                     List<Bar> bars,
                     JsonObject rootJsonObject) {
-    this.logiasContext  = logiasContext;
     this.parts          = Requires.requireNonNull(parts);
     this.patterns       = Requires.requireNonNull(patterns);
     this.grooves        = requireNonNull(grooves);
@@ -112,10 +108,6 @@ public class CompatSong {
     return this.parts.get(name);
   }
 
-  public Context getLogiasContext() {
-    return this.logiasContext;
-  }
-
   public Groove groove(String grooveName) {
     return this.grooves.get(grooveName);
   }
@@ -130,15 +122,13 @@ public class CompatSong {
   }
 
   public static class Builder {
-    private final Context    logiasContext;
     private final JsonObject json;
 
     private Predicate<Bar>    barFilter  = Predicates.alwaysTrue();
     private Predicate<String> partFilter = Predicates.alwaysTrue();
 
-    public Builder(Context logiasContext, JsonObject jsonObject) {
-      this.logiasContext = requireNonNull(logiasContext);
-      this.json          = requireNonNull(jsonObject);
+    public Builder(JsonObject jsonObject) {
+      this.json = requireNonNull(jsonObject);
     }
 
     public Builder barFilter(Predicate<Bar> barFilter) {
@@ -156,8 +146,7 @@ public class CompatSong {
         Map<String, NoteMap> noteMaps = initNoteMaps(json);
         Map<String, Groove>  grooves  = initGrooves(json);
         Map<String, Pattern> patterns = initPatterns(json, noteMaps);
-        return new CompatSong(loadMidiDeviceProfile(json, logiasContext),
-                              initParts(this.json),
+        return new CompatSong(initParts(this.json),
                               patterns,
                               grooves,
                               initBars(json,
@@ -170,7 +159,7 @@ public class CompatSong {
       }
     }
 
-    static Context loadMidiDeviceProfile(JsonObject json, Context logiasContext) throws SymfonionException, CompatJsonException {
+    public static Context loadMidiDeviceProfile(JsonObject json, Context logiasContext) throws SymfonionException, CompatJsonException {
       JsonElement tmp = CompatJsonUtils.asJsonObjectWithDefault(json, new JsonObject(), Keyword.$settings);
       if (!tmp.isJsonObject()) {
         throw typeMismatchException(tmp, OBJECT);

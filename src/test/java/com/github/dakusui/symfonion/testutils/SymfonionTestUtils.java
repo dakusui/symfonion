@@ -23,6 +23,6 @@ public enum SymfonionTestUtils {
   }
   
   private static CompatSong createSong(Context context, JsonObject jsonObject) throws CompatJsonException, SymfonionException {
-    return new CompatSong.Builder(context, jsonObject).build();
+    return new CompatSong.Builder(jsonObject).build();
   }
 }

@@ -24,6 +24,7 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import static com.github.dakusui.symfonion.cli.CliUtils.composeErrMsg;
+import static com.github.dakusui.symfonion.song.CompatSong.Builder.loadMidiDeviceProfile;
 import static java.lang.String.format;
 
 public record Cli(
@@ -118,7 +119,7 @@ public record Cli(
   }
 
   static Symfonion createSymfonion() {
-    return new Symfonion(Context.ROOT.createChild());
+    return new Symfonion();
   }
 
   static CommandLine parseArgs(Options options, String[] args) throws ParseException {

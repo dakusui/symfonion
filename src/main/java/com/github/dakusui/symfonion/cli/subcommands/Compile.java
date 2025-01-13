@@ -17,6 +17,7 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.Map;
 
+import static com.github.dakusui.symfonion.cli.subcommands.LogiasUtils.createLogiasContext;
 import static com.github.dakusui.symfonion.compat.exceptions.ExceptionContext.entry;
 
 /**
@@ -28,12 +29,12 @@ public class Compile implements Subcommand {
     try (ExceptionContext ignored = CompatExceptionThrower.exceptionContext(entry(CompatExceptionThrower.ContextKey.SOURCE_FILE, cli.source()))) {
       Symfonion             symfonion = cli.symfonion();
       CompatSong            song      = symfonion.load(cli.source().getAbsolutePath(), cli.barFilter(), cli.partFilter());
-      Map<String, Sequence> sequences = symfonion.compile(song);
+      Map<String, Sequence> sequences = symfonion.compile(song, createLogiasContext());
 
       for (String portName : sequences.keySet()) {
-        Sequence seq = sequences.get(portName);
-        String outfile = cli.sink().getAbsolutePath();
-        File outputFile = CliUtils.composeOutputFile(outfile, portName);
+        Sequence seq        = sequences.get(portName);
+        String   outfile    = cli.sink().getAbsolutePath();
+        File     outputFile = CliUtils.composeOutputFile(outfile, portName);
         MidiSystem.write(seq, 1, outputFile);
       }
     }

@@ -1,6 +1,5 @@
 package com.github.dakusui.symfonion.song;
 
-import com.github.dakusui.logias.lisp.Context;
 import com.github.dakusui.symfonion.compat.exceptions.ExceptionContext;
 import com.github.dakusui.symfonion.compat.exceptions.SymfonionException;
 import com.github.dakusui.symfonion.compat.json.CompatJsonException;
@@ -15,7 +14,8 @@ import java.util.function.Predicate;
 import static com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower.ContextKey.JSON_ELEMENT_ROOT;
 import static com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower.exceptionContext;
 import static com.github.dakusui.symfonion.compat.exceptions.ExceptionContext.entry;
-import static com.github.dakusui.symfonion.song.CompatSong.Builder.*;
+import static com.github.dakusui.symfonion.song.CompatSong.Builder.initNoteMaps;
+import static com.github.dakusui.symfonion.song.CompatSong.Builder.initParts;
 import static com.github.valid8j.classic.Requires.requireNonNull;
 import static java.util.Collections.*;
 
@@ -25,18 +25,33 @@ import static java.util.Collections.*;
  * .The **Song** file format
  * ----
  * {
- *   "$noteMaps": { "<noteMapName>": "<NoteMap>"},
- *   "$parts": { "<partName>": "<Part>" },
- *   "$patterns": { "<patternName>": "<Pattern>"},
- *   "$grooves": { "<grooveName>": ["<Groove>", "<Groove>", "..."] },
- *   "$sequence": [ "<Measure>", "<Measure>", "..." ]
+ *   "$parts": { "<partName1>": "<object:PartDefinition1>"
+ *             },
+ *   "$noteMaps": {
+ *                  "<noteMapName1>": "<object:NoteMap>",
+ *                  "<noteMapName2>": "<object:NoteMap>"
+ *                },
+ *   "$sequence": [
+ *                  "<object:Measure1>",
+ *                  "<object:Measure2>",
+ *                  "...",
+ *                  "<object:MeasureN>"
+ *                ]
  * }
  * ----
  *
  * The each "<Measure>" should be a JSON object and look like as follows:
  * ----
  * {
- *
+*    "$beats": "16/16",
+ *   "$parts": {
+ *     "piano": {
+ *     },
+ *     "guitar": {
+ *     }
+ *   },
+ *   "$groove": [ {}, {}, "...", {}],
+ *   "$labels": [ "label1" ]
  * }
  * ----
  *
@@ -45,20 +60,14 @@ import static java.util.Collections.*;
  * @see Measure
  */
 public class Song {
-  private final Context             logiasContext;
-  private final Map<String, Part>   parts;
-  private final Map<String, Groove> grooves;
-  private final List<Measure>       measures;
-  private final JsonObject          rootJsonObject;
+  private final Map<String, Part> parts;
+  private final List<Measure>     measures;
+  private final JsonObject        rootJsonObject;
 
-  Song(Context logiasContext,
-       Map<String, Part> parts,
-       Map<String, Groove> grooves,
+  Song(Map<String, Part> parts,
        List<Measure> bars,
        JsonObject rootJsonObject) {
-    this.logiasContext  = logiasContext;
     this.parts          = requireNonNull(parts);
-    this.grooves        = requireNonNull(grooves);
     this.measures       = requireNonNull(bars);
     this.rootJsonObject = requireNonNull(rootJsonObject);
   }
@@ -85,14 +94,6 @@ public class Song {
     return this.parts.get(name);
   }
 
-  public Context getLogiasContext() {
-    return this.logiasContext;
-  }
-
-  public Groove groove(String grooveName) {
-    return this.grooves.get(grooveName);
-  }
-
   /**
    * Returns a root JSON object to which this bar belongs.
    *
@@ -103,15 +104,13 @@ public class Song {
   }
 
   public static class Builder {
-    private final Context    logiasContext;
     private final JsonObject json;
 
     private Predicate<Measure> measureFilter = Predicates.alwaysTrue();
     private Predicate<String>  partFilter    = Predicates.alwaysTrue();
 
-    public Builder(Context logiasContext, JsonObject jsonObject) {
-      this.logiasContext = requireNonNull(logiasContext);
-      this.json          = requireNonNull(jsonObject);
+    public Builder(JsonObject jsonObject) {
+      this.json = requireNonNull(jsonObject);
     }
 
     public Builder measureFilter(Predicate<Measure> barFilter) {
@@ -127,12 +126,8 @@ public class Song {
     public Song build() throws CompatJsonException, SymfonionException {
       try (ExceptionContext ignored = exceptionContext(entry(JSON_ELEMENT_ROOT, json))) {
         Map<String, NoteMap> noteMaps = initNoteMaps(json);
-        Map<String, Groove>  grooves  = initGrooves(json);
-        return new Song(loadMidiDeviceProfile(json, logiasContext),
-                        initParts(this.json),
-                        grooves,
+        return new Song(initParts(this.json),
                         initMeasures(json,
-                                     grooves,
                                      noteMaps,
                                      this.measureFilter,
                                      this.partFilter),
@@ -140,7 +135,10 @@ public class Song {
       }
     }
 
-    private List<Measure> initMeasures(JsonObject json, Map<String, Groove> grooves, Map<String, NoteMap> noteMaps, Predicate<Measure> measureFilter, Predicate<String> partFilter) {
+    private List<Measure> initMeasures(JsonObject json,
+                                       Map<String, NoteMap> noteMaps,
+                                       Predicate<Measure> measureFilter,
+                                       Predicate<String> partFilter) {
       return emptyList();
     }
   }
