@@ -9,8 +9,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static com.github.dakusui.symfonion.compat.json.CompatJsonUtils.asJsonObject;
 import static com.github.dakusui.symfonion.song.Bar.extractBeatsFractionFrom;
 import static com.github.dakusui.symfonion.song.Bar.resolveLabelsForBar;
+import static com.github.dakusui.symfonion.song.Keyword.$parts;
 import static com.github.valid8j.fluent.Expectations.precondition;
 import static com.github.valid8j.fluent.Expectations.value;
 
@@ -84,12 +86,12 @@ public class Measure {
 
   private static List<String> resolvePartNames(JsonObject measureJsonObject) {
     assert precondition(value(measureJsonObject).toBe().notNull());
-    return List.copyOf(measureJsonObject.keySet());
+    return List.copyOf(asJsonObject(measureJsonObject, $parts).keySet());
   }
 
   private static Map<String, PartMeasure> composePartMeasures(JsonObject measureJsonObject, List<String> partNames, Map<String, NoteMap> noteMaps) {
     Map<String, PartMeasure> partMeasures = new HashMap<>();
-    partNames.forEach(n -> partMeasures.put(n, composePartMeasure(CompatJsonUtils.asJsonObject(measureJsonObject, Keyword.$parts, n),
+    partNames.forEach(n -> partMeasures.put(n, composePartMeasure(asJsonObject(measureJsonObject, $parts, n),
                                                                   noteMaps.getOrDefault(n, NoteMap.defaultNoteMap))));
     return partMeasures;
   }
@@ -99,7 +101,7 @@ public class Measure {
   }
 
   private static PartMeasureParameters composePartMeasureParameters(JsonObject partMeasureJsonObject, NoteMap noteMap) {
-    return new PartMeasureParameters(CompatJsonUtils.asJsonObject(partMeasureJsonObject, "$parameters"), noteMap);
+    return new PartMeasureParameters(asJsonObject(partMeasureJsonObject, "$parameters"), noteMap);
   }
 
   private static Optional<Groove> composeGroove(JsonObject measureJsonObject) {

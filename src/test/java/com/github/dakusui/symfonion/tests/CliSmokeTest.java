@@ -30,7 +30,7 @@ public class CliSmokeTest extends CliTestBase {
    * @throws FileNotFoundException This shouldn't be thrown.
    */
   @Test
-  public void givenThreeStrokes_whenPlaySubcommandIsInvoked_thenPlayed() throws FileNotFoundException {
+  public void givenFourStrokes_whenPlaySubcommandIsInvoked_thenPlayed() throws FileNotFoundException {
     assumeRequiredMidiDevicesPresent();
     assumeThat(isRunUnderPitest(), isFalse());
     JsonObject song = object(
@@ -80,6 +80,58 @@ public class CliSmokeTest extends CliTestBase {
         AllOf.$(
             ResultTo.exitCode().isEqualTo(0),
             ResultTo.out().findSubstrings("*", "Gervill", "Real Time Sequencer")));
+  }
+
+  /**
+   * Generates three strokes, each of which is a chord. Em, Dm, and C, respectively.
+   * This test plays a generated midi, and you will hear it from your speaker.
+   *
+   * @throws FileNotFoundException This shouldn't be thrown.
+   */
+  @Test
+  public void givenThreeStrokes_whenPlaySubcommandIsInvoked_thenPlayed() throws FileNotFoundException {
+    assumeRequiredMidiDevicesPresent();
+    assumeThat(isRunUnderPitest(), isFalse());
+    JsonObject song = object(
+        $("$settings", object()),
+        $("$parts", object($("piano", object($("$channel", json(0)), $("$port", json("GERVILL_PORT")))))),
+        $("$patterns", object(
+            $("R4", object($("$body", json("r4;r4;r4;r4")))),
+            $("main", object($("$body", array(json("BGE8|BGE8;r8;AFD8;r8;GEC8;r8"))))))),
+        $("$sequence", array(
+            object(
+                $("$labels", array(json("reference"))),
+                $("$beats", json("4/4")),
+                $("$parts", object($("piano", object($("$note", json("R4"))))))),
+            object(
+                $("$labels", array(json("reference"))),
+                $("$beats", json("4/4")),
+                $("$parts", object($("piano", object($("$notes", json("BGE8|BGE8;r8;AFD8;r8;GEC8;r8")))))),
+                $("$groove", sixteenBeatsGroove())),
+            object(
+                $("$labels", array(json("reference"))),
+                $("$beats", json("4/4")),
+                $("$parts", object($("piano", object($("$notes", json("BGE8|BGE8;r8;AFD8;r8;GEC8;r8")))))),
+                $("$groove", sixteenBeatsGroove())))));
+
+    Result result = invokeCliWithArguments("-q", writeContentToTempFile(Objects.toString(song)).getAbsolutePath(), "-OGERVILL_PORT=Gervill", "--bars=*", "--parts=p.*");
+
+    System.err.println("[source]");
+    System.err.println(".Song");
+    System.err.println("----");
+    System.err.println(new GsonBuilder().setPrettyPrinting().create().toJson(song));
+    System.err.println("----");
+    System.err.println();
+
+    System.err.println("[source]");
+    System.err.println(".Result");
+    System.err.println("----");
+    System.err.println(result);
+    System.err.println("----");
+    assertThat(
+        result,
+        AllOf.$(ResultTo.exitCode().isEqualTo(0),
+                ResultTo.out().findSubstrings("*", "Gervill", "Real Time Sequencer")));
   }
 
   @Ignore

@@ -15,7 +15,9 @@ public enum PresetSubcommand implements Subcommand {
   HELP(Help.class),
   LIST(ListDevices.class),
   PLAY(Play.class),
-  COMPILE(Compile.class),
+  PLAY_SONG(PlaySong.class),
+  COMPILE(CompatCompile.class),
+  COMPILE_SONG(Compile.class),
   ROUTE(PatchBay.class);
   
   private final Class<? extends Subcommand> subcommandClass;

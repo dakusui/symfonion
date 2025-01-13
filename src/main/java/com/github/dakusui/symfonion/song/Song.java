@@ -4,6 +4,7 @@ import com.github.dakusui.symfonion.compat.exceptions.ExceptionContext;
 import com.github.dakusui.symfonion.compat.exceptions.SymfonionException;
 import com.github.dakusui.symfonion.compat.json.CompatJsonException;
 import com.github.dakusui.symfonion.compat.json.CompatJsonUtils;
+import com.github.valid8j.fluent.Expectations;
 import com.github.valid8j.pcond.forms.Predicates;
 import com.google.gson.JsonObject;
 
@@ -19,6 +20,8 @@ import static com.github.dakusui.symfonion.compat.exceptions.ExceptionContext.en
 import static com.github.dakusui.symfonion.song.CompatSong.Builder.initNoteMaps;
 import static com.github.dakusui.symfonion.song.CompatSong.Builder.initParts;
 import static com.github.valid8j.classic.Requires.requireNonNull;
+import static com.github.valid8j.fluent.Expectations.precondition;
+import static com.github.valid8j.fluent.Expectations.value;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableSet;
 
@@ -94,6 +97,10 @@ public class Song {
   }
 
   public Part part(String name) {
+    assert precondition(value(parts).invoke("containsKey", name)
+                                    .asBoolean()
+                                    .toBe()
+                                    .trueValue());
     return this.parts.get(name);
   }
 

@@ -1,11 +1,11 @@
 package com.github.dakusui.symfonion.cli;
 
-import com.github.dakusui.logias.lisp.Context;
 import com.github.dakusui.symfonion.cli.subcommands.PresetSubcommand;
-import com.github.dakusui.symfonion.core.Symfonion;
 import com.github.dakusui.symfonion.compat.exceptions.CliException;
 import com.github.dakusui.symfonion.compat.exceptions.SymfonionException;
+import com.github.dakusui.symfonion.core.Symfonion;
 import com.github.dakusui.symfonion.song.Bar;
+import com.github.dakusui.symfonion.song.Measure;
 import com.github.valid8j.pcond.forms.Predicates;
 import org.apache.commons.cli.*;
 
@@ -17,14 +17,13 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import static com.github.dakusui.symfonion.cli.CliUtils.composeErrMsg;
-import static com.github.dakusui.symfonion.song.CompatSong.Builder.loadMidiDeviceProfile;
 import static java.lang.String.format;
 
 public record Cli(
@@ -47,6 +46,7 @@ public record Cli(
      */
     Map<String, Pattern> midiOutRegexPatterns,
     Predicate<Bar> barFilter,
+    Predicate<Measure> measureFilter,
     Predicate<String> partFilter,
     Options options,
     Symfonion symfonion) {
@@ -65,9 +65,12 @@ public record Cli(
     options.addOption("V", "version", false, "print the version information.");
     options.addOption("h", "help", false, "print the command line usage.");
     options.addOption("l", "list", false, "list the available midi devices.");
-    options.addOption("p", "play", true, "play the specified file.");
+    options.addOption("p", "play", true, "play the specified file using old syntax. deprecated.");
+    options.addOption("q", "play-song", true, "play the specified file.");
     options.addOption("c", "compile", true,
-        "compile the specified file to a standard midi file.");
+                      "compile the specified file to a standard midi file using old syntax. deprecated.");
+    options.addOption("x", "compile-song", true,
+                      "compile the specified file to a standard midi file.");
     {
       Option option = OptionBuilder.create("r");
       option.setLongOpt("route");
@@ -129,11 +132,11 @@ public record Cli(
   }
 
   static Map<String, Pattern> parseSpecifiedOptionsInCommandLineAsPortNamePatterns(CommandLine cmd, String optionName) throws CliException {
-    Properties props = cmd.getOptionProperties(optionName);
-    Map<String, Pattern> ret = new HashMap<>();
+    Properties           props = cmd.getOptionProperties(optionName);
+    Map<String, Pattern> ret   = new HashMap<>();
     for (Object key : props.keySet()) {
       String portName = key.toString();
-      String p = props.getProperty(portName);
+      String p        = props.getProperty(portName);
       try {
         Pattern portpattern = Pattern.compile(p);
         ret.put(portName, portpattern);
@@ -188,9 +191,9 @@ public record Cli(
   static void fallbackToSimpleGUI() {
     String selectedFile = filenameFromFileChooser();
     if (selectedFile != null) {
-      String[] args = new String[]{selectedFile};
+      String[]        args     = new String[]{selectedFile};
       final JTextArea textArea = new JTextArea();
-      JFrame frame = new JFrame("symfonion output");
+      JFrame          frame    = new JFrame("symfonion output");
       frame.addWindowListener(new WindowAdapter() {
         public void windowClosing(WindowEvent e) {
           System.exit(0);
@@ -244,20 +247,20 @@ public record Cli(
   }
 
   public static class Builder {
-    private final String[] args;
-    private File source;
-    private File sink = new File("target/a.midi");
-    private MidiRouteRequest routeRequest = null;
-    private Map<String, Pattern> midiInRegexPatterns = new HashMap<>();
-    private Map<String, Pattern> midiOutRegexPatterns = new HashMap<>();
+    private final String[]             args;
+    private       File                 source;
+    private       File                 sink                 = new File("target/a.midi");
+    private       MidiRouteRequest     routeRequest         = null;
+    private       Map<String, Pattern> midiInRegexPatterns  = new HashMap<>();
+    private       Map<String, Pattern> midiOutRegexPatterns = new HashMap<>();
 
     public Builder(String... args) {
       this.args = args;
     }
 
     public Cli build() throws ParseException {
-      Options options1 = buildOptions();
-      CommandLine cmd = parseArgs(options1, args);
+      Options     options1 = buildOptions();
+      CommandLine cmd      = parseArgs(options1, args);
       if (cmd.hasOption('O')) {
         this.midiOutRegexPatterns = parseSpecifiedOptionsInCommandLineAsPortNamePatterns(cmd, "O");
       }
@@ -285,9 +288,23 @@ public record Cli(
           throw new CliException(composeErrMsg("Input filename is required by this option.", "p"));
         }
         this.source = new File(sourceFilename);
+      } else if (cmd.hasOption("q") || cmd.hasOption("play-song")) {
+        subcommand = PresetSubcommand.PLAY_SONG;
+        String sourceFilename = CliUtils.getSingleOptionValueFromCommandLine(cmd, "q");
+        if (sourceFilename == null) {
+          throw new CliException(composeErrMsg("Input filename is required by this option.", "q"));
+        }
+        this.source = new File(sourceFilename);
       } else if (cmd.hasOption("c") || cmd.hasOption("compile")) {
         subcommand = PresetSubcommand.COMPILE;
         String sourceFilename = CliUtils.getSingleOptionValueFromCommandLine(cmd, "c");
+        if (sourceFilename == null) {
+          throw new CliException(composeErrMsg("Input filename is required by this option.", "c"));
+        }
+        this.source = new File(sourceFilename);
+      } else if (cmd.hasOption("x") || cmd.hasOption("compile-song")) {
+        subcommand = PresetSubcommand.COMPILE_SONG;
+        String sourceFilename = CliUtils.getSingleOptionValueFromCommandLine(cmd, "x");
         if (sourceFilename == null) {
           throw new CliException(composeErrMsg("Input filename is required by this option.", "c"));
         }
@@ -305,7 +322,7 @@ public record Cli(
         if (leftovers.isEmpty()) {
           subcommand = PresetSubcommand.HELP;
         } else if (leftovers.size() == 1) {
-          subcommand = PresetSubcommand.PLAY;
+          subcommand  = PresetSubcommand.PLAY;
           this.source = new File(leftovers.getFirst());
         } else {
           throw new CliException(composeErrMsg(format("Unrecognized arguments:%s", leftovers.subList(2, leftovers.size())), "-"));
@@ -314,10 +331,13 @@ public record Cli(
       Predicate<Bar> barFilter = Predicates.alwaysTrue();
       if (cmd.hasOption("bars") && !Objects.equals("*", cmd.getOptionValue("bars")))
         barFilter = bar -> bar.labels().stream().anyMatch(l -> l.matches(cmd.getOptionValue("bars")));
+      Predicate<Measure> measureFilter = Predicates.alwaysTrue();
+      if (cmd.hasOption("ms") && !Objects.equals("*", cmd.getOptionValue("ms")))
+        measureFilter = measure -> measure.labels().stream().anyMatch(l -> l.matches(cmd.getOptionValue("ms")));
       Predicate<String> partFilter = Predicates.alwaysTrue();
       if (cmd.hasOption("parts") && !Objects.equals("*", cmd.getOptionValue("parts")))
         partFilter = partName -> partName != null && partName.matches(cmd.getOptionValue("parts"));
-      return new Cli(subcommand, source, sink, routeRequest, midiInRegexPatterns, midiOutRegexPatterns, barFilter, partFilter, options1, createSymfonion());
+      return new Cli(subcommand, source, sink, routeRequest, midiInRegexPatterns, midiOutRegexPatterns, barFilter, measureFilter, partFilter, options1, createSymfonion());
     }
   }
 }

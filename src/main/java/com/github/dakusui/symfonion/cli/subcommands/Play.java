@@ -139,7 +139,7 @@ public class Play implements Subcommand {
     }
   }
 
-  private static synchronized void play(Map<String, MidiDevice> midiOutDevices, Map<String, Sequence> sequences) throws SymfonionException {
+  static synchronized void play(Map<String, MidiDevice> midiOutDevices, Map<String, Sequence> sequences) throws SymfonionException {
     List<String>           portNames = new LinkedList<>(sequences.keySet());
     Map<String, Sequencer> sequencers;
     try {
