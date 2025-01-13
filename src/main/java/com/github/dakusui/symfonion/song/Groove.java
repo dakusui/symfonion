@@ -38,6 +38,17 @@ public class Groove {
     this.beats      = requireNonNull(beats);
   }
 
+  public int calculateGrooveAccent(Fraction relPosInStroke, Fraction relativePositionInBar) {
+    Unit unit = resolveRelativePositionInStroke(this, relPosInStroke, relativePositionInBar);
+    return unit.accentDelta();
+  }
+
+  public long calculateAbsolutePositionInTicks(Fraction relativePositionInStroke, Fraction relativePositionInBar, long barPositionInTicks) {
+    Unit unit                         = resolveRelativePositionInStroke(this, relativePositionInStroke, relativePositionInBar);
+    long relativePositionInBarInTicks = unit.pos();
+    return barPositionInTicks + relativePositionInBarInTicks;
+  }
+
   public Fraction length() {
     Fraction ret = ZERO;
     for (Beat beat : beats) {
@@ -61,8 +72,7 @@ public class Groove {
   private static Unit computeUnit(Fraction offset, Fraction grooveLength, List<Beat> grooveBeats, int grooveResolution) {
     Fraction rest = foldPosition(offset.clone(), grooveLength);
     long     pos  = 0;
-    Fraction shift = offset.isNegative() ? Fraction.subtract(rest, offset)
-                                         : ZERO;
+    Fraction shift = offset.isNegative() ? Fraction.subtract(rest, offset) : ZERO;
     int i = 0;
     while (Fraction.compare(rest, ZERO) > 0) {
       if (i >= grooveBeats.size()) {
@@ -90,20 +100,10 @@ public class Groove {
   }
 
   private static Fraction foldPosition(Fraction position, Fraction grooveLength) {
-    assert preconditions(value(position).toBe().notNull(),
-                         value(grooveLength).toBe().notNull(),
-                         value(grooveLength).invokeStatic(Fraction.class, "compare", parameter(), ZERO)
-                                            .asInteger()
-                                            .toBe()
-                                            .greaterThan(0));
+    assert preconditions(value(position).toBe().notNull(), value(grooveLength).toBe().notNull(), value(grooveLength).invokeStatic(Fraction.class, "compare", parameter(), ZERO).asInteger().toBe().greaterThan(0));
     Fraction ret = position;
-    while (ret.isNegative())
-      ret = Fraction.add(grooveLength, ret);
-    assert postconditions(value(ret).toBe().notNull(),
-                          value(ret).invokeStatic(Fraction.class, "compare", parameter(), ZERO)
-                                    .asInteger()
-                                    .toBe()
-                                    .greaterThanOrEqualTo(0));
+    while (ret.isNegative()) ret = Fraction.add(grooveLength, ret);
+    assert postconditions(value(ret).toBe().notNull(), value(ret).invokeStatic(Fraction.class, "compare", parameter(), ZERO).asInteger().toBe().greaterThanOrEqualTo(0));
     return ret;
   }
 
@@ -148,9 +148,11 @@ public class Groove {
   }
 
   static Groove defaultGrooveOf(Fraction barLength) {
-    return new Groove(singletonList(new Beat(barLength,
-                                             (long) Fraction.multi(barLength, new Fraction(TICKS_FOR_QUARTER_NOTE, 1)).doubleValue(),
-                                             0)));
+    return new Groove(singletonList(new Beat(barLength, (long) Fraction.multi(barLength, new Fraction(TICKS_FOR_QUARTER_NOTE, 1)).doubleValue(), 0)));
+  }
+
+  private static Unit resolveRelativePositionInStroke(Groove groove, Fraction relativePositionInStroke, Fraction relativePositionInBar) {
+    return groove.resolve(Fraction.add(relativePositionInBar, relativePositionInStroke));
   }
 
   /**

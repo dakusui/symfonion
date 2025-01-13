@@ -7,7 +7,7 @@ import com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower;
 import com.github.dakusui.symfonion.compat.exceptions.ExceptionContext;
 import com.github.dakusui.symfonion.compat.exceptions.SymfonionException;
 import com.github.dakusui.symfonion.core.Symfonion;
-import com.github.dakusui.symfonion.song.Song;
+import com.github.dakusui.symfonion.song.CompatSong;
 
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.Sequence;
@@ -26,8 +26,8 @@ public class Compile implements Subcommand {
   @Override
   public void invoke(Cli cli, PrintStream ps, InputStream inputStream) throws SymfonionException, IOException {
     try (ExceptionContext ignored = CompatExceptionThrower.exceptionContext(entry(CompatExceptionThrower.ContextKey.SOURCE_FILE, cli.source()))) {
-      Symfonion symfonion = cli.symfonion();
-      Song song = symfonion.load(cli.source().getAbsolutePath(), cli.barFilter(), cli.partFilter());
+      Symfonion             symfonion = cli.symfonion();
+      CompatSong            song      = symfonion.load(cli.source().getAbsolutePath(), cli.barFilter(), cli.partFilter());
       Map<String, Sequence> sequences = symfonion.compile(song);
 
       for (String portName : sequences.keySet()) {

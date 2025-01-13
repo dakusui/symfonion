@@ -27,12 +27,11 @@ import static com.github.dakusui.symfonion.compat.json.CompatJsonUtils.asJsonEle
  */
 public class Pattern {
   private final List<PartMeasure>     body;
-  private final PartMeasureParameters params;
 
   Pattern(JsonObject jsonObject, NoteMap noteMap) {
     // Initialize 'body'.
     this.body   = new LinkedList<>();
-    this.params = new PartMeasureParameters(jsonObject);
+    PartMeasureParameters params = new PartMeasureParameters(jsonObject, noteMap);
     JsonArray bodyJSON;
     if (asJsonElement(jsonObject, Keyword.$body).isJsonPrimitive()) {
       bodyJSON = new JsonArray();
@@ -44,7 +43,7 @@ public class Pattern {
     for (int i = 0; i < len; i++) {
       JsonElement cur = bodyJSON.get(i);
       try (var ignored = exceptionContext(entry(PART_MEASURE_JSON, cur))) {
-        body.add(new PartMeasure(cur, params, noteMap));
+        body.add(new PartMeasure(cur, params));
       }
     }
   }
@@ -56,16 +55,6 @@ public class Pattern {
    */
   public List<PartMeasure> partMeasures() {
     return Collections.unmodifiableList(this.body);
-  }
-
-  /**
-   * Returns a `Parameters` object that defines default values of part measures in this object.
-   *
-   * @return A `Parameters` object.
-   * @see PartMeasureParameters
-   */
-  public PartMeasureParameters parameters() {
-    return this.params;
   }
 
   /**

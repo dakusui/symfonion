@@ -147,7 +147,9 @@ public class CompatJsonUtils {
   }
 
   private static JsonElement _asJsonElement(JsonElement base,
-                                            JsonElement defaultValue, int from, Object[] path)
+                                            JsonElement defaultValue,
+                                            int from,
+                                            Object[] path)
   throws JsonInvalidPathException {
     if (path.length == from || base == null) {
       return base;
@@ -161,8 +163,9 @@ public class CompatJsonUtils {
     } else {
       if (base.isJsonArray()) {
         Integer index;
-        if ((path[from] instanceof Integer) || (path[from] instanceof Long)
-            || (path[from] instanceof Short)) {
+        if ((path[from] instanceof Integer) ||
+            (path[from] instanceof Long) ||
+            (path[from] instanceof Short)) {
           index = ((Number) path[from]).intValue();
         } else {
           if ((index = parseInt(path[from])) == null) {
@@ -220,8 +223,7 @@ public class CompatJsonUtils {
                                                    JsonObject defaultValue, Object... path)
   throws JsonTypeMismatchException,
          JsonInvalidPathException {
-    return (JsonObject) JsonTypes.OBJECT.validate(asJsonElementWithDefault(
-        base, defaultValue, path));
+    return (JsonObject) JsonTypes.OBJECT.validate(asJsonElementWithDefault(base, defaultValue, path));
   }
 
   public static JsonObject asJsonObject(JsonObject base, Object... path)
@@ -288,10 +290,12 @@ public class CompatJsonUtils {
   }
 
   public static JsonArray asJsonArrayWithDefault(JsonElement base,
-                                                 JsonArray defaultValue, Object... path) throws JsonTypeMismatchException,
+                                                 JsonArray defaultValue,
+                                                 Object... path) throws JsonTypeMismatchException,
                                                                                                 JsonInvalidPathException {
     return (JsonArray) JsonTypes.ARRAY.validate(asJsonElementWithDefault(base,
-                                                                         defaultValue, path));
+                                                                         defaultValue,
+                                                                         path));
   }
 
   public static JsonElement asJsonElementWithDefault(JsonElement base,

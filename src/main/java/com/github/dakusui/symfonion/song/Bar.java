@@ -43,26 +43,28 @@ public class Bar {
   /**
    * Creates a `Bar` object.
    *
+   * // @formatter:off
    * `barJsonObject` stores content of the bar.
    *
    * [source, JSON]
    * .barJsonObject
    * ----
    * {
-   * "$beats": "<beatsDefiningString>",
-   * "$parts": {
-   * "<partName>": ["<patternName>;<patternName>",
-   * "<patternName>",
-   * "$inline:<inlined pattern>",
-   * "..."],
-   * },
-   * "$groove": "<grooveName>",
-   * "$noteMap": "<noteMapName>",
-   * "$labels": ["<label1>", "<label2>", "..."]
+   *   "$beats": "<beatsDefiningString>",
+   *   "$parts": {
+   *     "<partName>": ["<patternName>;<patternName>",
+   *                    "<patternName>",
+   *                    "$inline:<inlined pattern>",
+   *                    "..."],
+   *   },
+   *   "$groove": "<grooveName>",
+   *   "$noteMap": "<noteMapName>",
+   *   "$labels": ["<label1>", "<label2>", "..."]
    * }
    * ----
    *
    * `root` is used only for composing messages on errors.
+   * // @formatter:on
    *
    * @param barJsonObject A JSON object from which a bar is created.
    * @param grooves       A map that defines a groove on which this bar should be played.
@@ -81,7 +83,7 @@ public class Bar {
     this.patterns      = requireNonNull(patterns);
     this.noteMaps      = requireNonNull(noteMaps);
     this.barJsonObject = requireNonNull(barJsonObject);
-    this.beats         = resolveBeatsForBar(barJsonObject);
+    this.beats         = extractBeatsFractionFrom(barJsonObject);
     this.groove        = resolveGrooveForBar(barJsonObject, this.beats, grooves);
     this.labels        = resolveLabelsForBar(barJsonObject);
       /*
@@ -238,7 +240,7 @@ public class Bar {
     return g;
   }
 
-  static Fraction resolveBeatsForBar(JsonObject barJsonObject) {
+  static Fraction extractBeatsFractionFrom(JsonObject barJsonObject) {
     Fraction beats;
     try {
       beats = parseFraction(CompatJsonUtils.asString(barJsonObject, Keyword.$beats));

@@ -41,15 +41,88 @@ public class MidiCompiler {
     this.logiasContext = (logiasContext);
   }
 
+  public Map<String, Sequence> compile(Song song) throws InvalidMidiDataException {
+    System.err.println("Now compiling...");
+    int                   resolution = 384;
+    Map<String, Sequence> ret        = new HashMap<>();
+    Map<String, Track>    tracks;
+    tracks = new HashMap<>();
+    for (String partName : song.partNames()) {
+      Part     part     = song.part(partName);
+      String   portName = part.portName();
+      Sequence sequence = ret.get(portName);
+      if (sequence == null) {
+        sequence = new Sequence(Sequence.PPQ, resolution / 4);
+        ret.put(portName, sequence);
+      }
+      tracks.put(partName, sequence.createTrack());
+    }
+
+    ////
+    // position is the offset of a bar from the beginning of the sequence.
+    // Giving the sequencer a grace period to initialize its internal state.
+    long   barPositionInTicks = 0; //= resolution / 4;
+    int    measureId          = 0;
+    Object value              = song.rootJsonObject();
+    for (Measure measure : song.measures()) {
+      try (var ignored = exceptionContext(entry(JSON_ELEMENT_ROOT, value))) {
+        barStarted(measureId);
+        Groove groove = measure.groove();
+        for (String partName : measure.activePartNames()) {
+          var         track       = getTrack(partName, tracks);
+          Fraction    relPosInBar = Fraction.ZERO;
+          int         channel     = song.part(partName).channel();
+          PartMeasure partMeasure = measure.partMeasureFor(partName);
+          partStarted(partName);
+          try {
+            Fraction endingPos = Fraction.add(relPosInBar, partMeasure.length());
+
+            partMeasure.compile(this,
+                                new MidiCompilerContext(track,
+                                                        channel,
+                                                        groove,
+                                                        barPositionInTicks,
+                                                        relPosInBar));
+
+            relPosInBar = endingPos;
+            ////
+            // Breaks if relative position goes over the length of the bar.
+            if (Fraction.compare(relPosInBar, measure.beats()) >= 0) {
+              break;
+            }
+          } finally {
+            partEnded();
+          }
+        }
+        barEnded();
+        measureId++;
+        barPositionInTicks += (long) (measure.beats().doubleValue() * resolution);
+      }
+    }
+    System.err.
+
+        println("Compilation finished.");
+    return ret;
+  }
+
+  private Track getTrack(String partName, Map<String, Track> tracks) {
+    Track track = tracks.get(partName);
+    if (track == null) {
+      aborted();
+      //throw partNotFound(measure.lookUpJsonNode(partName), partName);
+    }
+    return track;
+  }
+
   /**
-   * Compiles a {@link Song} object into a map from a port name to {@link Sequence} object.
+   * Compiles a {@link CompatSong} object into a map from a port name to {@link Sequence} object.
    *
    * @param song An object that holds user-provided music data.
    * @return A map from a port name to {@code Sequence} object.
    * @throws InvalidMidiDataException Won't be thrown.
    * @throws SymfonionException       Undefined part name is referenced by a bar.
    */
-  public Map<String, Sequence> compile(Song song) throws InvalidMidiDataException, SymfonionException {
+  public Map<String, Sequence> compile(CompatSong song) throws InvalidMidiDataException, SymfonionException {
     System.err.println("Now compiling...");
     int                   resolution = 384;
     Map<String, Sequence> ret        = new HashMap<>();
@@ -90,17 +163,17 @@ public class MidiCompiler {
             // of the bar the pattern belongs to.
             Fraction relPosInBar = Fraction.ZERO;
             for (Pattern eachPattern : patternSequence) {
-              PartMeasureParameters params = eachPattern.parameters();
               patternStarted();
               for (PartMeasure partMeasure : eachPattern.partMeasures()) {
                 try {
                   Fraction endingPos = Fraction.add(relPosInBar, partMeasure.length());
 
-                  partMeasure.compile(this, new MidiCompilerContext(track,
-                                                                    channel,
-                                                                    relPosInBar,
-                                                                    barPositionInTicks,
-                                                                    groove));
+                  partMeasure.compile(this,
+                                      new MidiCompilerContext(track,
+                                                              channel,
+                                                              groove,
+                                                              barPositionInTicks,
+                                                              relPosInBar));
 
                   relPosInBar = endingPos;
                   ////

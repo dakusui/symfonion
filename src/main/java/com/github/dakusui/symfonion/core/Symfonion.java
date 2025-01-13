@@ -1,6 +1,5 @@
 package com.github.dakusui.symfonion.core;
 
-import com.github.dakusui.symfonion.compat.exceptions.ExceptionContext;
 import com.github.dakusui.symfonion.compat.json.CompatJsonException;
 import com.github.dakusui.symfonion.compat.json.JsonInvalidPathException;
 import com.github.dakusui.symfonion.compat.json.JsonPathNotFoundException;
@@ -8,7 +7,7 @@ import com.github.dakusui.symfonion.compat.json.CompatJsonUtils;
 import com.github.dakusui.logias.lisp.Context;
 import com.github.dakusui.symfonion.song.Bar;
 import com.github.dakusui.symfonion.song.Keyword;
-import com.github.dakusui.symfonion.song.Song;
+import com.github.dakusui.symfonion.song.CompatSong;
 import com.github.dakusui.symfonion.utils.Utils;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -33,12 +32,12 @@ public class Symfonion {
     this.logiasContext = logiasContext;
   }
   
-  public Song load(String fileName, Predicate<Bar> barFilter, Predicate<String> partFilter)  {
-    Song ret;
+  public CompatSong load(String fileName, Predicate<Bar> barFilter, Predicate<String> partFilter)  {
+    CompatSong ret;
     try (var ignored = exceptionContext(entry(ContextKey.SOURCE_FILE, new File(fileName)))) {
       try {
         this.json = loadSymfonionFile(fileName, new HashMap<>());
-        ret = new Song.Builder(logiasContext, json)
+        ret = new CompatSong.Builder(logiasContext, json)
             .barFilter(barFilter)
             .partFilter(partFilter)
             .build();
@@ -78,12 +77,12 @@ public class Symfonion {
   }
 
   /**
-   * Compiles a {@link Song} object into a map of a part name to {@link Sequence} object.
+   * Compiles a {@link CompatSong} object into a map of a part name to {@link Sequence} object.
    *
    * @param song A song object.
    * @return A map from part name to a MIDI sequence object.
    */
-  public Map<String, Sequence> compile(Song song)  {
+  public Map<String, Sequence> compile(CompatSong song)  {
     MidiCompiler compiler = new MidiCompiler(song.getLogiasContext());
     Map<String, Sequence> ret;
     try {

@@ -5,7 +5,7 @@ import com.github.dakusui.symfonion.cli.Subcommand;
 import com.github.dakusui.symfonion.compat.exceptions.ExceptionContext;
 import com.github.dakusui.symfonion.core.Symfonion;
 import com.github.dakusui.symfonion.compat.exceptions.SymfonionException;
-import com.github.dakusui.symfonion.song.Song;
+import com.github.dakusui.symfonion.song.CompatSong;
 import com.github.dakusui.symfonion.utils.midi.MidiDeviceScanner;
 import com.github.dakusui.symfonion.utils.midi.MidiUtils;
 
@@ -28,7 +28,7 @@ public class Play implements Subcommand {
     try (ExceptionContext ignored = exceptionContext(entry(SOURCE_FILE, cli.source()))) {
       Symfonion symfonion = cli.symfonion();
 
-      Song song = symfonion.load(cli.source().getAbsolutePath(), cli.barFilter(), cli.partFilter());
+      CompatSong            song      = symfonion.load(cli.source().getAbsolutePath(), cli.barFilter(), cli.partFilter());
       Map<String, Sequence> sequences = symfonion.compile(song);
       ps.println();
       Map<String, MidiDevice> midiOutDevices = prepareMidiOutDevices(ps, cli.midiOutRegexPatterns());

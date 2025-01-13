@@ -9,6 +9,7 @@ import com.google.gson.JsonObject;
 import static com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower.illegalFormatException;
 import static com.github.dakusui.symfonion.compat.exceptions.SymfonionIllegalFormatException.NOTE_LENGTH_EXAMPLE;
 import static com.github.dakusui.symfonion.compat.json.CompatJsonUtils.asJsonElement;
+import static com.github.valid8j.classic.Requires.requireNonNull;
 
 /**
  * A class that models a set of default parameter applied to each `Stroke` in this `Pattern`.
@@ -29,8 +30,15 @@ public class PartMeasureParameters {
   final int      velocityBase;
   final int      velocityDelta;
   final int      arpeggio;
+  final NoteMap  noteMap;
 
-  public PartMeasureParameters(JsonObject json) throws SymfonionException, CompatJsonException {
+  /**
+   * @param json
+   * @param noteMap An object that defines mappings from a character to a MIDI note number.
+   * @throws SymfonionException
+   * @throws CompatJsonException
+   */
+  public PartMeasureParameters(JsonObject json, NoteMap noteMap) throws SymfonionException, CompatJsonException {
     if (json == null) {
       json = CompatJsonUtils.toJson("{}").getAsJsonObject();
     }
@@ -43,6 +51,7 @@ public class PartMeasureParameters {
     }
     this.transpose = CompatJsonUtils.asIntWithDefault(json, 0, Keyword.$transpose);
     this.arpeggio  = CompatJsonUtils.asIntWithDefault(json, 0, Keyword.$arpeggio);
+    this.noteMap   = requireNonNull(noteMap);
   }
 
   /**
