@@ -20,6 +20,8 @@ import static com.github.dakusui.symfonion.compat.exceptions.ExceptionContext.en
 import static com.github.dakusui.symfonion.compat.exceptions.SymfonionIllegalFormatException.FRACTION_EXAMPLE;
 import static com.github.dakusui.symfonion.compat.exceptions.SymfonionTypeMismatchException.ARRAY;
 import static com.github.dakusui.symfonion.compat.json.CompatJsonUtils.asJsonElement;
+import static com.github.dakusui.symfonion.compat.json.JsonUtils.findJsonObject;
+import static com.github.dakusui.symfonion.compat.json.JsonUtils.path;
 import static com.github.dakusui.symfonion.utils.Fraction.parseFraction;
 import static com.github.valid8j.classic.Requires.requireNonNull;
 import static java.util.Collections.*;
@@ -256,11 +258,8 @@ public class Bar {
    * @return JSON object under `$parts` element
    */
   private static JsonObject getPartsInBarAsJsonObject(JsonObject barJsonObject) {
-    JsonObject patternsJsonObjectInBar = CompatJsonUtils.asJsonObject(barJsonObject, Keyword.$parts);
-    if (patternsJsonObjectInBar == null) {
-      throw requiredElementMissingException(barJsonObject, Keyword.$parts);
-    }
-    return patternsJsonObjectInBar;
+    return findJsonObject(barJsonObject, path(Keyword.$parts)).orElseThrow(() -> requiredElementMissingException(barJsonObject,
+                                                                                                                 Keyword.$parts));
   }
 
   /**

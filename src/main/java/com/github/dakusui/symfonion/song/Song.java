@@ -3,9 +3,9 @@ package com.github.dakusui.symfonion.song;
 import com.github.dakusui.symfonion.compat.exceptions.ExceptionContext;
 import com.github.dakusui.symfonion.compat.exceptions.SymfonionException;
 import com.github.dakusui.symfonion.compat.json.CompatJsonException;
-import com.github.dakusui.symfonion.compat.json.CompatJsonUtils;
-import com.github.valid8j.fluent.Expectations;
+import com.github.dakusui.symfonion.compat.json.JsonUtils;
 import com.github.valid8j.pcond.forms.Predicates;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import java.util.LinkedList;
@@ -17,6 +17,7 @@ import java.util.function.Predicate;
 import static com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower.ContextKey.JSON_ELEMENT_ROOT;
 import static com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower.exceptionContext;
 import static com.github.dakusui.symfonion.compat.exceptions.ExceptionContext.entry;
+import static com.github.dakusui.symfonion.compat.json.JsonUtils.path;
 import static com.github.dakusui.symfonion.song.CompatSong.Builder.initNoteMaps;
 import static com.github.dakusui.symfonion.song.CompatSong.Builder.initParts;
 import static com.github.valid8j.classic.Requires.requireNonNull;
@@ -150,9 +151,12 @@ public class Song {
                                        Predicate<Measure> measureFilter,
                                        Predicate<String> partFilter) {
       List<Measure> ret      = new LinkedList<>();
-      var           sequence = CompatJsonUtils.asJsonArray(json, Keyword.$sequence);
-      for (var entry : sequence)
-        ret.add(new Measure(entry.getAsJsonObject(), noteMaps));
+      var           sequence = JsonUtils.findJsonArray(json, path(Keyword.$sequence)).orElse(new JsonArray());
+      for (var entry : sequence) {
+        var measure = new Measure(entry.getAsJsonObject(), noteMaps);
+        if (measureFilter.test(measure))
+          ret.add(measure);
+      }
       return unmodifiableList(ret);
     }
   }

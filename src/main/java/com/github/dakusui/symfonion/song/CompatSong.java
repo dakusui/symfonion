@@ -226,9 +226,9 @@ public class CompatSong {
       noteMaps.put(Keyword.$normal.toString(), NoteMap.defaultNoteMap);
       noteMaps.put(Keyword.$percussion.toString(), NoteMap.defaultPercussionMap);
       while (i.hasNext()) {
-        String  name = i.next();
-        NoteMap cur  = new NoteMap(CompatJsonUtils.asJsonObject(noteMapsJSON, name));
-        noteMaps.put(name, cur);
+        String  noteMapName = i.next();
+        NoteMap cur         = new NoteMap(CompatJsonUtils.asJsonObject(noteMapsJSON, noteMapName));
+        noteMaps.put(noteMapName, cur);
       }
       return noteMaps;
     }
