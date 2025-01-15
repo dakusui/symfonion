@@ -141,10 +141,8 @@ public record Cli(
         Pattern portpattern = Pattern.compile(p);
         ret.put(portName, portpattern);
       } catch (PatternSyntaxException e) {
-        throw new CliException(composeErrMsg(
-            format("Regular expression '%s' for '%s' isn't valid.", portName, p),
-            optionName,
-            null), e);
+        throw new CliException(composeErrMsg(format("Regular expression '%s' for '%s' isn't valid.", portName, p),
+                                             optionName, null), e);
       }
     }
     return ret;

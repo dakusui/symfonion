@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Predicate;
 
 import static com.github.dakusui.symfonion.compat.json.CompatJsonUtils.asJsonObject;
 import static com.github.dakusui.symfonion.song.Bar.extractBeatsFractionFrom;
@@ -52,11 +53,11 @@ public class Measure {
    * ----
    * // @formatter:on
    */
-  public Measure(JsonObject measureJsonObject, Map<String, NoteMap> noteMaps) {
+  public Measure(JsonObject measureJsonObject, Map<String, NoteMap> noteMaps, Predicate<String> partFilter) {
     this.beats           = extractBeatsFractionFrom(measureJsonObject);
     this.groove          = composeGroove(measureJsonObject).orElse(Groove.defaultGrooveOf(this.beats));
     this.activePartNames = resolvePartNames(measureJsonObject);
-    this.partMeasures    = composePartMeasures(measureJsonObject, this.activePartNames, noteMaps);
+    this.partMeasures    = composePartMeasures(measureJsonObject, this.activePartNames, noteMaps, partFilter);
     this.labels          = resolveLabelsForBar(measureJsonObject);
   }
 
@@ -89,9 +90,11 @@ public class Measure {
     return List.copyOf(asJsonObject(measureJsonObject, $parts).keySet());
   }
 
-  private static Map<String, PartMeasure> composePartMeasures(JsonObject measureJsonObject, List<String> partNames, Map<String, NoteMap> noteMaps) {
+  private static Map<String, PartMeasure> composePartMeasures(JsonObject measureJsonObject, List<String> partNames, Map<String, NoteMap> noteMaps, Predicate<String> partFilter) {
     Map<String, PartMeasure> partMeasures = new HashMap<>();
-    partNames.forEach(n -> partMeasures.put(n, composePartMeasure(asJsonObject(measureJsonObject, $parts, n),
+    partNames.stream()
+             .filter(partFilter)
+             .forEach(n -> partMeasures.put(n, composePartMeasure(asJsonObject(measureJsonObject, $parts, n),
                                                                   noteMaps.getOrDefault(n, NoteMap.defaultNoteMap))));
     return partMeasures;
   }

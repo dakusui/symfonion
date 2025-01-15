@@ -153,7 +153,7 @@ public class Song {
       List<Measure> ret      = new LinkedList<>();
       var           sequence = JsonUtils.findJsonArray(json, path(Keyword.$sequence)).orElse(new JsonArray());
       for (var entry : sequence) {
-        var measure = new Measure(entry.getAsJsonObject(), noteMaps);
+        var measure = new Measure(entry.getAsJsonObject(), noteMaps, partFilter);
         if (measureFilter.test(measure))
           ret.add(measure);
       }
