@@ -1,0 +1,18 @@
+A package to host classes useful for writing `valid8j`-based value-checking code.
+
+[source,java]
+----
+import com.github.dakusui.valid8j_cliche.json.JsonObjectTo;
+import static com.github.valid8j.fluent.Expectations.*;
+class Example {
+  void aMethod(JsonObject object) {
+    assert precondition(statement(object,
+                                  Transform.$(JsonObjectTo.keyList()).check(contains("Key1"))));
+  }
+}
+----
+
+In this method the `assert` validates a statement, where a given `object` satisfies a `precondition`; "When we transform it to a key list, does it contain "key1"?
+Which is almost the same sentence written as the code.
+
+Classes under this package are expected to "promote" to **valid8j**'s main code base once they get matured.

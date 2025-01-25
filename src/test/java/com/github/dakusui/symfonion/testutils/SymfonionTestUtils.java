@@ -4,7 +4,7 @@ import com.github.dakusui.symfonion.compat.json.CompatJsonException;
 import com.github.dakusui.logias.lisp.Context;
 import com.github.dakusui.symfonion.compat.exceptions.SymfonionException;
 import com.github.dakusui.symfonion.core.MidiCompiler;
-import com.github.dakusui.symfonion.song.Song;
+import com.github.dakusui.symfonion.song.CompatSong;
 import com.google.gson.JsonObject;
 
 import javax.sound.midi.InvalidMidiDataException;
@@ -22,7 +22,7 @@ public enum SymfonionTestUtils {
     return new MidiCompiler(context).compile(createSong(context, jsonObject));
   }
   
-  private static Song createSong(Context context, JsonObject jsonObject) throws CompatJsonException, SymfonionException {
-    return new Song.Builder(context, jsonObject).build();
+  private static CompatSong createSong(Context context, JsonObject jsonObject) throws CompatJsonException, SymfonionException {
+    return new CompatSong.Builder(jsonObject).build();
   }
 }

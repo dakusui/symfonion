@@ -1,43 +1,131 @@
 package com.github.dakusui.symfonion.song;
 
-import com.github.dakusui.symfonion.compat.json.CompatJsonException;
-import com.github.dakusui.symfonion.compat.json.CompatJsonUtils;
-import com.github.dakusui.logias.Logias;
-import com.github.dakusui.logias.lisp.Context;
-import com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower;
+import com.github.dakusui.symfonion.compat.exceptions.ExceptionContext;
 import com.github.dakusui.symfonion.compat.exceptions.SymfonionException;
-import com.github.dakusui.symfonion.utils.Utils;
-import com.github.valid8j.classic.Requires;
+import com.github.dakusui.symfonion.compat.json.CompatJsonException;
+import com.github.dakusui.symfonion.compat.json.JsonUtils;
 import com.github.valid8j.pcond.forms.Predicates;
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Predicate;
 
-import static com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower.*;
 import static com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower.ContextKey.JSON_ELEMENT_ROOT;
-import static com.github.dakusui.symfonion.compat.exceptions.SymfonionTypeMismatchException.ARRAY;
-import static com.github.dakusui.symfonion.compat.exceptions.SymfonionTypeMismatchException.OBJECT;
+import static com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower.exceptionContext;
+import static com.github.dakusui.symfonion.compat.exceptions.ExceptionContext.entry;
+import static com.github.dakusui.symfonion.compat.json.JsonUtils.path;
+import static com.github.dakusui.symfonion.song.CompatSong.Builder.initNoteMaps;
+import static com.github.dakusui.symfonion.song.CompatSong.Builder.initParts;
 import static com.github.valid8j.classic.Requires.requireNonNull;
+import static com.github.valid8j.fluent.Expectations.precondition;
+import static com.github.valid8j.fluent.Expectations.value;
+import static java.util.Collections.unmodifiableList;
+import static java.util.Collections.unmodifiableSet;
 
+/**
+ * //@formatter:off
+ * [source, JSON]
+ * .The **Song** file format
+ * ----
+ * {
+ *   "$parts": { "<partName1>": "<object:PartDefinition1>"
+ *             },
+ *   "$noteMaps": {
+ *                  "<noteMapName1>": "<object:NoteMap>",
+ *                  "<noteMapName2>": "<object:NoteMap>"
+ *                },
+ *   "$sequence": [
+ *                  "<object:Measure1>",
+ *                  "<object:Measure2>",
+ *                  "...",
+ *                  "<object:MeasureN>"
+ *                ]
+ * }
+ * ----
+ *
+ * The each "<Measure>" should be a JSON object and look like as follows:
+ * ----
+ * {
+*    "$beats": "16/16",
+ *   "$parts": {
+ *     "piano": {
+ *     },
+ *     "guitar": {
+ *     }
+ *   },
+ *   "$groove": [ {}, {}, "...", {}],
+ *   "$labels": [ "label1" ]
+ * }
+ * ----
+ *
+ * //@formatter:on
+ *
+ * @see Measure
+ */
 public class Song {
+  private final Map<String, Part> parts;
+  private final List<Measure>     measures;
+  private final JsonObject        rootJsonObject;
+
+  Song(Map<String, Part> parts,
+       List<Measure> bars,
+       JsonObject rootJsonObject) {
+    this.parts          = requireNonNull(parts);
+    this.measures       = requireNonNull(bars);
+    this.rootJsonObject = requireNonNull(rootJsonObject);
+  }
+
+  /**
+   * Returns bars.
+   *
+   * @return Bars.
+   */
+  public List<Measure> measures() {
+    return unmodifiableList(this.measures);
+  }
+
+  /**
+   * Returns all known part names.
+   *
+   * @return A list of part names.
+   */
+  public Set<String> partNames() {
+    return unmodifiableSet(this.parts.keySet());
+  }
+
+  public Part part(String name) {
+    assert precondition(value(parts).invoke("containsKey", name)
+                                    .asBoolean()
+                                    .toBe()
+                                    .trueValue());
+    return this.parts.get(name);
+  }
+
+  /**
+   * Returns a root JSON object to which this bar belongs.
+   *
+   * @return A root JSON object.
+   */
+  public JsonObject rootJsonObject() {
+    return this.rootJsonObject;
+  }
 
   public static class Builder {
-    private final Context logiasContext;
     private final JsonObject json;
 
-    private Predicate<Bar> barFilter = Predicates.alwaysTrue();
-    private Predicate<String> partFilter = Predicates.alwaysTrue();
+    private Predicate<Measure> measureFilter = Predicates.alwaysTrue();
+    private Predicate<String>  partFilter    = Predicates.alwaysTrue();
 
-    public Builder(Context logiasContext, JsonObject jsonObject) {
-      this.logiasContext = requireNonNull(logiasContext);
+    public Builder(JsonObject jsonObject) {
       this.json = requireNonNull(jsonObject);
     }
 
-    public Builder barFilter(Predicate<Bar> barFilter) {
-      this.barFilter = requireNonNull(barFilter);
+    public Builder measureFilter(Predicate<Measure> barFilter) {
+      this.measureFilter = requireNonNull(barFilter);
       return this;
     }
 
@@ -47,183 +135,29 @@ public class Song {
     }
 
     public Song build() throws CompatJsonException, SymfonionException {
-      try (CompatExceptionThrower.Context ignored = context($(JSON_ELEMENT_ROOT, json))) {
+      try (ExceptionContext ignored = exceptionContext(entry(JSON_ELEMENT_ROOT, json))) {
         Map<String, NoteMap> noteMaps = initNoteMaps(json);
-        Map<String, Groove> grooves = initGrooves(json);
-        Map<String, Pattern> patterns = initPatterns(json, noteMaps);
-        return new Song(
-            loadMidiDeviceProfile(json, logiasContext),
-            initParts(this.json),
-            patterns,
-            noteMaps,
-            grooves,
-            initSequence(json, grooves, noteMaps, patterns, this.barFilter, this.partFilter)
-        );
+        return new Song(initParts(this.json),
+                        initMeasures(json,
+                                     noteMaps,
+                                     this.measureFilter,
+                                     this.partFilter),
+                        json);
       }
     }
 
-    private static Context loadMidiDeviceProfile(JsonObject json, Context logiasContext) throws SymfonionException, CompatJsonException {
-      JsonElement tmp = CompatJsonUtils.asJsonObjectWithDefault(json, new JsonObject(), Keyword.$settings);
-      if (!tmp.isJsonObject()) {
-        throw typeMismatchException(tmp, OBJECT);
+    private List<Measure> initMeasures(JsonObject json,
+                                       Map<String, NoteMap> noteMaps,
+                                       Predicate<Measure> measureFilter,
+                                       Predicate<String> partFilter) {
+      List<Measure> ret      = new LinkedList<>();
+      var           sequence = JsonUtils.findJsonArray(json, path(Keyword.$sequence)).orElse(new JsonArray());
+      for (var entry : sequence) {
+        var measure = new Measure(entry.getAsJsonObject(), noteMaps, partFilter);
+        if (measureFilter.test(measure))
+          ret.add(measure);
       }
-      String profileName = CompatJsonUtils.asStringWithDefault(tmp.getAsJsonObject(), "", Keyword.$mididevice);
-      Logias logias = new Logias(logiasContext);
-      if (!"".equals(profileName)) {
-        JsonObject deviceDef = CompatJsonUtils.toJson(Utils.loadResource(profileName + ".json")).getAsJsonObject();
-        Iterator<String> i = CompatJsonUtils.keyIterator(deviceDef);
-        while (i.hasNext()) {
-          String k = i.next();
-          JsonElement v = deviceDef.get(k);
-          logiasContext.bind(k, logias.run(logias.buildSexp(v)));
-        }
-      }
-      return logiasContext;
+      return unmodifiableList(ret);
     }
-
-    private static List<Bar> initSequence(
-        JsonObject json,
-        Map<String, Groove> grooves,
-        Map<String, NoteMap> noteMaps,
-        Map<String, Pattern> patterns,
-        Predicate<Bar> barFilter,
-        Predicate<String> partFilter) throws SymfonionException, CompatJsonException {
-      List<Bar> bars = new LinkedList<>();
-      JsonElement tmp = CompatJsonUtils.asJsonElement(json, Keyword.$sequence);
-      if (!tmp.isJsonArray()) {
-        throw typeMismatchException(tmp, ARRAY);
-      }
-      JsonArray seqJson = tmp.getAsJsonArray();
-      int len = seqJson.getAsJsonArray().size();
-      for (int i = 0; i < len; i++) {
-        JsonElement barJson = seqJson.get(i);
-        if (!barJson.isJsonObject()) {
-          throw typeMismatchException(seqJson, OBJECT);
-        }
-        Bar bar = new Bar(barJson.getAsJsonObject(), json, grooves, noteMaps, patterns, partFilter);
-        if (barFilter.test(bar))
-          bars.add(bar);
-      }
-      return bars;
-    }
-
-    /**
-     * Returns a map of note-map name to note-map.
-     *
-     * @param json A JSON object that defines note-maps.
-     * @return A map of note-map name to note-map.
-     * @throws SymfonionException An error found in {@code json} argument.
-     * @throws CompatJsonException      An error found in {@code json} argument.
-     */
-    private static Map<String, NoteMap> initNoteMaps(JsonObject json) throws SymfonionException, CompatJsonException {
-      Map<String, NoteMap> noteMaps = new HashMap<>();
-      final JsonObject noteMapsJSON = CompatJsonUtils.asJsonObjectWithDefault(json, new JsonObject(), Keyword.$notemaps);
-
-      Iterator<String> i = CompatJsonUtils.keyIterator(noteMapsJSON);
-      noteMaps.put(Keyword.$normal.toString(), NoteMap.defaultNoteMap);
-      noteMaps.put(Keyword.$percussion.toString(), NoteMap.defaultPercussionMap);
-      while (i.hasNext()) {
-        String name = i.next();
-        NoteMap cur = new NoteMap(CompatJsonUtils.asJsonObject(noteMapsJSON, name));
-        noteMaps.put(name, cur);
-      }
-      return noteMaps;
-    }
-
-    private static Map<String, Pattern> initPatterns(JsonObject json, Map<String, NoteMap> noteMaps) throws SymfonionException, CompatJsonException {
-      Map<String, Pattern> patterns = new HashMap<>();
-      JsonObject patternsJSON = CompatJsonUtils.asJsonObjectWithDefault(json, new JsonObject(), Keyword.$patterns);
-
-      try (CompatExceptionThrower.Context ignored = context($(JSON_ELEMENT_ROOT, json))) {
-        Iterator<String> i = CompatJsonUtils.keyIterator(patternsJSON);
-        while (i.hasNext()) {
-          String name = i.next();
-          Pattern cur = Pattern.createPattern(CompatJsonUtils.asJsonObject(patternsJSON, name), noteMaps);
-          patterns.put(name, cur);
-        }
-      }
-      return patterns;
-    }
-
-    private static Map<String, Part> initParts(JsonObject json) throws SymfonionException, CompatJsonException {
-      Map<String, Part> parts = new HashMap<>();
-      if (CompatJsonUtils.hasPath(json, Keyword.$parts)) {
-        JsonObject instrumentsJSON = CompatJsonUtils.asJsonObject(json, Keyword.$parts);
-        Iterator<String> i = CompatJsonUtils.keyIterator(instrumentsJSON);
-        while (i.hasNext()) {
-          String name = i.next();
-          Part cur = new Part(name, CompatJsonUtils.asJsonObject(instrumentsJSON, name));
-          parts.put(name, cur);
-        }
-      }
-      return parts;
-    }
-
-    private static Map<String, Groove> initGrooves(JsonObject json) throws SymfonionException, CompatJsonException {
-      Map<String, Groove> grooves = new HashMap<>();
-      if (CompatJsonUtils.hasPath(json, Keyword.$grooves)) {
-        JsonObject groovesJSON = CompatJsonUtils.asJsonObject(json, Keyword.$grooves);
-
-        Iterator<String> i = CompatJsonUtils.keyIterator(groovesJSON);
-        while (i.hasNext()) {
-          String name = i.next();
-          Groove cur = Groove.createGroove(CompatJsonUtils.asJsonArray(groovesJSON, name));
-          grooves.put(name, cur);
-        }
-      }
-      return grooves;
-    }
-  }
-
-  private final Context logiasContext;
-  private final Map<String, Part> parts;
-  private final Map<String, Pattern> patterns;
-  private final Map<String, NoteMap> noteMaps;
-  private final Map<String, Groove> grooves;
-  private final List<Bar> bars;
-
-
-  public Song(Context logiasContext,
-              Map<String, Part> parts,
-              Map<String, Pattern> patterns,
-              Map<String, NoteMap> noteMaps,
-              Map<String, Groove> grooves,
-              List<Bar> bars
-  ) {
-    this.logiasContext = logiasContext;
-    this.parts = Requires.requireNonNull(parts);
-    this.patterns = Requires.requireNonNull(patterns);
-    this.noteMaps = requireNonNull(noteMaps);
-    this.grooves = requireNonNull(grooves);
-    this.bars = requireNonNull(bars);
-  }
-
-
-  public Pattern pattern(String patternName) {
-    return this.patterns.get(patternName);
-  }
-
-  public NoteMap noteMap(String noteMapName) {
-    return this.noteMaps.get(noteMapName);
-  }
-
-  public List<Bar> bars() {
-    return Collections.unmodifiableList(this.bars);
-  }
-
-  public Set<String> partNames() {
-    return Collections.unmodifiableSet(this.parts.keySet());
-  }
-
-  public Part part(String name) {
-    return this.parts.get(name);
-  }
-
-  public Context getLogiasContext() {
-    return this.logiasContext;
-  }
-
-  public Groove groove(String grooveName) {
-    return this.grooves.get(grooveName);
   }
 }

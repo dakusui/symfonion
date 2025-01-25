@@ -735,7 +735,7 @@ In symfonion syntax, you can define grooves like below,
 ----
 
 In this example, there are 16 sixteenth notes each of which has independent "$ticks" and "$accent".
-If a pattern is played with this groove, the first sixteen note will be length of 28 MIDI ticks, while usually sixteenth notes have only 24 MIDI ticks (currently, a whole note is fixed to 384 MIDI ticks in symfonion). And 30 is added to the original velocity of the note.
+If a pattern is played with this groove, the first sixteen notes will be length of 28 MIDI ticks, while usually sixteenth notes have only 24 MIDI ticks (currently, a whole note is fixed to 384 MIDI ticks in symfonion). And 30 is added to the original velocity of the note.
 
 == Sequence
 

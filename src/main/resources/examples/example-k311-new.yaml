@@ -1,3 +1,22 @@
+// notes:([A-Zac-z])([#b]*)([><]*)([+\-]*)?
+// Short                               
+// - NoteOn (0x90; 144)                N,C,D,E,F,G,A,B,S,C,H
+// - NoteOff (0x80; 128)               - 
+// - ControlChange (0xB0; 176)         
+//   - BankSelectMSB  (; 0)            --
+//   - BankSelectLSB  (; 32)           --
+//   - Volume         (0x07; 7)        XV 
+//   - Pan            (0x0A; 10)       XP
+//   - Reverb         (0x; 91)         XR
+//   - Chorus         (0x;93)          XC        
+//   - Modulation     (0x01; 1)        XM
+// - ProgramChange(0xC0; 192)          XG
+// - PitchBend (0xE0; 224)             XB
+// - AfterTouch (0xD0; 208)            XA
+// - Tempo (0x51; )                    XT
+// SystemExclusive                     
+// - SysEx(0xF0;  240)                 XX
+// - SpecialSystemExclusive(0xF7; 247) XZ
 ---
 "$parts":
   pianor:
@@ -27,8 +46,6 @@
   "default-8":
     "$length": 8
     "$gate": 0.3
-
-
 "$song":
   - "$beats": 2/4
     "$parts":
@@ -37,12 +54,20 @@
         "$body": r4;B;A;G#;A
       piano-l:
         "$extends": default-16
-        "$body": r4;r;A;r;A
+        "$notes":
+          - r4;r;A;r;A
+        "$length": 16
+        "$gate": 0.8,
+        "$transpose": 0,
+        "$arpegio": 10,
+        "$velocityBase": 100,
+        "$valocityDelta": 10
 "$sequence":
   - "$parts":
       pianor:
         - "$body": r4;B;A;G#;A
           "$length": 16
+          "$gate": 0.8
     "$beats": 2/4
   - "$parts":
       pianor:

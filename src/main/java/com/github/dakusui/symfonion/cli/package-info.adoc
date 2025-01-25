@@ -1,0 +1,1 @@
+A package for CLI (Command Line Interface) of **SyMFONION**.

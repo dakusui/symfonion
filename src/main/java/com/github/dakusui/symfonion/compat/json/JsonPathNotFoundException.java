@@ -7,7 +7,7 @@ import java.io.Serial;
 public class JsonPathNotFoundException extends JsonInvalidPathException {
 
 	public JsonPathNotFoundException(JsonElement base, Object[] path, int from) {
-		super(base, path, from);
+		super(base, path);
 	}
 
 	/**

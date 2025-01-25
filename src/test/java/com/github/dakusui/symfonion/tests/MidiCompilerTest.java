@@ -21,7 +21,6 @@ import javax.sound.midi.Track;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.github.dakusui.symfonion.testutils.SymfonionTestCase.createNegativeTestCase;
@@ -60,9 +59,10 @@ public class MidiCompilerTest extends TestBase {
 
   @Parameters(name = "{index}: {0}")
   public static Collection<Object[]> parameters() {
-    return Stream.concat(
-        positiveTestCases().stream().map(c -> new Object[]{c}),
-        negativeTestCases().stream().map(c -> new Object[]{c})).collect(Collectors.toList());
+    return Stream.concat(positiveTestCases().stream()
+                                            .map(c -> new Object[]{c}),
+                         negativeTestCases().stream()
+                                            .map(c -> new Object[]{c})).toList();
   }
 
   public static List<SymfonionTestCase> positiveTestCases() {
@@ -81,7 +81,7 @@ public class MidiCompilerTest extends TestBase {
                         object(
                             $("$beats", json("8/4")),
                             $("$parts", object()))
-                    )))),
+                                        )))),
             Transform.$(FromSong.toKeySet()).check(isEmpty())),
 
         createPositiveTestCase(
@@ -93,7 +93,7 @@ public class MidiCompilerTest extends TestBase {
                     merge(
                         object($("$beats", json("8/4"))),
                         object($("$parts", object($("piano", array()))))
-                    ))))),
+                         ))))),
             AllOf.$(
                 FromMap.<String>toKeyList().allOf(
                     FromList.toSize().isEqualTo(1),
@@ -106,7 +106,7 @@ public class MidiCompilerTest extends TestBase {
                             Transform.$(midiEventAt(0)).isNotNull(),
                             Transform.$(ticks()).isEqualTo(0L))),
                     Transform.$(tickLength()).isEqualTo(0L)
-                ))),
+                                                               ))),
 
 
         createPositiveTestCase(
@@ -119,7 +119,7 @@ public class MidiCompilerTest extends TestBase {
                     merge(
                         object($("$beats", json("8/4"))),
                         object($("$parts", object($("piano", array("pg-change-to-piano"))))))
-                ))),
+                                    ))),
             allOf(
                 FromMap.<String>toKeyList().allOf(
                     FromList.toSize().isEqualTo(1),
@@ -132,7 +132,7 @@ public class MidiCompilerTest extends TestBase {
                             Transform.$(midiEventAt(0)).isNotNull(),
                             Transform.$(ticks()).isEqualTo(24L))),
                     Transform.$(tickLength()).isEqualTo(24L))
-            )),
+                 )),
 
         createPositiveTestCase(
             TestUtils.name("sixteen notes are given in a single string element", "compile", "number of events and tick length seem ok"),
@@ -146,7 +146,7 @@ public class MidiCompilerTest extends TestBase {
                         object($("$beats", json("8/4"))),
                         object($("$parts", object($("piano", array("C16x16"))))),
                         object($("$groove", json("16beats")))
-                    )))),
+                         )))),
             AllOf.$(
                 FromMap.<String>toKeyList().allOf(
                     FromList.toSize().isEqualTo(1),
@@ -159,7 +159,7 @@ public class MidiCompilerTest extends TestBase {
                             Transform.$(midiEventAt(0)).isNotNull(),
                             Transform.$(ticks()).isEqualTo(379L))),
                     Transform.$(tickLength()).isEqualTo(379L))
-            )),
+                   )),
 
         createPositiveTestCase(
             TestUtils.name("sixteen notes are given in a single string element", "compile", "number of events and tick length seem ok"),
@@ -230,7 +230,7 @@ public class MidiCompilerTest extends TestBase {
                 toStreamBy(midiMessageStream(isNoteOff())).anyMatch(note(isEqualTo(C3))),
                 toStreamBy(midiMessageStream(isProgramChange())).anyMatch(programNumber(isEqualTo((byte) 65))),
                 toStreamBy(midiMessageStream(isControlChange())).anyMatch(control(isEqualTo(VOLUME)))
-            )),
+                                                                                                      )),
 
         createPositiveTestCase(
             TestUtils.name("a note and an 'arrayable' control (volume)", "compile", "arrayable control expanded."),
@@ -241,7 +241,7 @@ public class MidiCompilerTest extends TestBase {
                 toStreamBy(midiMessageStream(isNoteOff())).anyMatch(note(isEqualTo(C3))),
                 toStreamBy(midiMessageStream(isControlChange().and(control(isEqualTo(VOLUME))))).allMatch(controlData(greaterThanOrEqualTo((byte) 10))),
                 toStreamBy(midiMessageStream(isControlChange().and(control(isEqualTo(VOLUME))))).checkCount(isEqualTo(10L))
-            )),
+                                                                                                      )),
 
         createPositiveTestCase(
             TestUtils.name("a note and an 'arrayable' control (volume) with nulls", "compile", "arrayable control expanded replacing nulls with intermediate values."),
@@ -253,7 +253,7 @@ public class MidiCompilerTest extends TestBase {
                 toStreamBy(midiMessageStream(isControlChange().and(control(isEqualTo(VOLUME))))).allMatch(controlData(greaterThanOrEqualTo((byte) 10))),
                 toStreamBy(midiMessageStream(isControlChange().and(control(isEqualTo(VOLUME))))).checkCount(isEqualTo(10L)),
                 toStreamBy(midiMessageStream(isControlChange().and(control(isEqualTo(VOLUME)).and(controlData(greaterThanOrEqualTo((byte) 50)))))).checkCount(greaterThan(4L))
-            )),
+                                                                                                      )),
 
         createPositiveTestCase(
             TestUtils.name("a note and an 'arrayable' control (volume) with nulls", "compile", "arrayable control expanded replacing dots with intermediate values."),
@@ -265,8 +265,8 @@ public class MidiCompilerTest extends TestBase {
                 toStreamBy(midiMessageStream(isControlChange().and(control(isEqualTo(VOLUME))))).allMatch(controlData(greaterThanOrEqualTo((byte) 10))),
                 toStreamBy(midiMessageStream(isControlChange().and(control(isEqualTo(VOLUME))))).checkCount(isEqualTo(10L)),
                 toStreamBy(midiMessageStream(isControlChange().and(control(isEqualTo(VOLUME)).and(controlData(greaterThanOrEqualTo((byte) 50)))))).checkCount(greaterThan(4L))
-            ))
-    );
+                                                                                                      ))
+                        );
 
   }
 

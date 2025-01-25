@@ -2,6 +2,7 @@ package com.github.dakusui.symfonion.tests.json;
 
 import com.github.dakusui.symfonion.compat.json.*;
 import com.github.dakusui.symfonion.testutils.TestBase;
+import com.github.dakusui.valid8j_cliche.core.Transform;
 import com.github.valid8j.pcond.forms.Printables;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonNull;
@@ -22,7 +23,7 @@ import static java.util.Arrays.asList;
 
 public class JsonUtilTest extends TestBase {
   private JsonObject obj;
-  private JsonArray arr;
+  private JsonArray  arr;
 
   /**
    * <code>
@@ -183,8 +184,8 @@ public class JsonUtilTest extends TestBase {
             new String[]{"key72"},
             defaultValue,
             "key7", 1
-        )
-    );
+                                                 )
+                       );
   }
 
   /*
@@ -202,8 +203,8 @@ public class JsonUtilTest extends TestBase {
             new String[]{"key72"},
             defaultValue,
             "key0", 1
-        )
-    );
+                                                 )
+                       );
   }
 
   /*
@@ -221,8 +222,8 @@ public class JsonUtilTest extends TestBase {
             new String[]{"key72"},
             defaultValue,
             "key7", 2
-        )
-    );
+                                                 )
+                       );
   }
 
   @Test
@@ -247,7 +248,6 @@ public class JsonUtilTest extends TestBase {
       e.printStackTrace();
       Assert.assertEquals(this.obj, e.getProblemCausingNode());
       Assert.assertArrayEquals(new Object[]{"_key2"}, e.getPath());
-      Assert.assertEquals(0, e.getIndex());
     }
   }
 
@@ -261,10 +261,12 @@ public class JsonUtilTest extends TestBase {
       assertThat(
           e,
           allOf(
-              transform(call("getPath").andThen(castTo((Object[]) value()))
-                  .andThen(call_Arrays_asList())).check(isEqualTo(asList("key7", "STRING", "key72"))),
-              transform(call("getIndex")).check(isEqualTo(1)),
-              transform(call("getProblemCausingNode")).check(isEqualTo(this.obj.get("key7")))));
+              Transform.$(call("getPath")
+                              .andThen(castTo((Object[]) value()))
+                              .andThen(call_Arrays_asList()))
+                       .check(isEqualTo(asList("key7", "STRING"))),
+              Transform.$(call("getProblemCausingNode"))
+                       .check(isEqualTo(this.obj.get("key7")))));
     }
   }
 

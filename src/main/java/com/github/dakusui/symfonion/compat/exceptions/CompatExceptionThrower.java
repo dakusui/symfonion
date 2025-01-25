@@ -1,5 +1,6 @@
 package com.github.dakusui.symfonion.compat.exceptions;
 
+import com.github.dakusui.symfonion.cli.CliUtils;
 import com.github.dakusui.symfonion.compat.json.CompatJsonUtils;
 import com.github.dakusui.symfonion.utils.midi.MidiDeviceRecord;
 import com.google.gson.JsonArray;
@@ -8,15 +9,11 @@ import com.google.gson.JsonObject;
 
 import javax.sound.midi.MidiDevice;
 import javax.sound.midi.MidiUnavailableException;
-import java.io.Closeable;
 import java.io.File;
-import java.util.HashMap;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 
-import static com.github.dakusui.symfonion.cli.CliUtils.composeErrMsg;
 import static com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower.ContextKey.*;
-import static com.github.valid8j.fluent.Expectations.*;
 import static java.lang.String.format;
 
 public class CompatExceptionThrower {
@@ -25,90 +22,25 @@ public class CompatExceptionThrower {
     MIDI_DEVICE_INFO_IO(String.class),
     JSON_ELEMENT_ROOT(JsonObject.class),
     SOURCE_FILE(File.class),
-    REFERENCING_JSON_NODE(JsonElement.class);
+    REFERENCING_JSON_NODE(JsonElement.class),
+    PART_MEASURE_JSON(JsonElement.class);
     private final Class<?> type;
 
     ContextKey(Class<?> type) {
       this.type = type;
     }
-  }
 
-  public record ContextEntry(ContextKey key, Object value) {
-  }
-
-  public static class Context implements Closeable {
-    private final Context parent;
-    private final HashMap<CompatExceptionThrower.ContextKey, Object> values = HashMap.newHashMap(100);
-
-    private Context(Context parent) {
-      this.parent = parent;
-    }
-
-    public Context() {
-      this.parent = null;
-    }
-
-    public Context set(CompatExceptionThrower.ContextKey key, Object value) {
-      assert preconditions(
-          value(key).then().notNull().$(),
-          value(value).then().notNull().instanceOf(key.type).$());
-      this.values.put(key, value);
-      return this;
-    }
-
-    public Context parent() {
-      return this.parent;
-    }
-
-    /**
-     *
-     */
-    @SuppressWarnings({"unchecked"})
-    <T> T get(ContextKey key) {
-      assert preconditions(value(key).then().notNull().$());
-      // In production, we do not want to produce a NullPointerException, even if the key is null.
-      // Just return null in such a situation.
-      if (key == null)
-        return null;
-      if (!this.values.containsKey(key)) {
-        assert invariant(value(this).invoke("parent").then().notNull());
-        // In production, we do not want to produce a NullPointerException, even if a value associated with the key doesn't exist.
-        // Just return null, in such a situation.
-        if (this.parent() == null)
-          return null;
-        return this.parent().get(key);
-      }
-      return (T) this.values.get(key);
-    }
-
-
-    @Override
-    public void close() {
-      CompatExceptionThrower.context.set(this.parent);
-    }
-
-    Context createChild() {
-      return new Context(this);
+    public Class<?> type() {
+      return type;
     }
   }
 
-  private static final ThreadLocal<Context> context = new ThreadLocal<>();
+  static final ThreadLocal<ExceptionContext> context = new ThreadLocal<>();
 
-  public static ContextEntry contextEntry(ContextKey key, Object value) {
-    assert preconditions(value(key).then().notNull().$(),
-        value(value).then().notNull().instanceOf(classOfValueFor(key)).$());
-    return new ContextEntry(key, value);
-  }
-
-
-  public static ContextEntry $(ContextKey key, Object value) {
-    return contextEntry(key, value);
-  }
-
-  public static Context context(ContextEntry... entries) {
-    Context ret = currentContext().createChild();
+  public static ExceptionContext exceptionContext(ExceptionContextEntry... entries) {
+    ExceptionContext ret = currentContext().createChild();
     context.set(ret);
-    for (ContextEntry each : entries)
+    for (ExceptionContextEntry each : entries)
       ret.set(each.key(), each.value());
     return ret;
   }
@@ -133,8 +65,8 @@ public class CompatExceptionThrower {
     throw new SymfonionReferenceException(missingReference, "notemap", problemCausingJsonNode, contextValueOf(JSON_ELEMENT_ROOT), contextValueOf(SOURCE_FILE), contextValueOf(JSON_ELEMENT_ROOT));
   }
 
-  public static SymfonionReferenceException noteNotDefinedException(JsonElement problemCausingJsonNode, String missingReference, String notemapName) throws SymfonionException {
-    throw new SymfonionReferenceException(missingReference, format("note in %s", notemapName), problemCausingJsonNode, contextValueOf(JSON_ELEMENT_ROOT), contextValueOf(SOURCE_FILE), contextValueOf(JSON_ELEMENT_ROOT));
+  public static SymfonionReferenceException noteNotDefinedException(String missingReference, String notemapName) throws SymfonionException {
+    throw new SymfonionReferenceException(missingReference, format("note in %s", notemapName), contextValueOf(PART_MEASURE_JSON), contextValueOf(JSON_ELEMENT_ROOT), contextValueOf(SOURCE_FILE), contextValueOf(JSON_ELEMENT_ROOT));
   }
 
   public static SymfonionException syntaxErrorInNotePattern(String s, int i, Matcher m) {
@@ -155,6 +87,14 @@ public class CompatExceptionThrower {
 
   public static SymfonionTypeMismatchException typeMismatchException(JsonElement actualJSON, String... expectedTypes) throws SymfonionSyntaxException {
     throw new SymfonionTypeMismatchException(expectedTypes, actualJSON, actualJSON, contextValueOf(JSON_ELEMENT_ROOT), contextValueOf(SOURCE_FILE));
+  }
+
+  public static SymfonionIllegalFormatException illegalNoteFormat(String stroke, int position) throws SymfonionException {
+    throw illegalFormatException(contextValueOf(PART_MEASURE_JSON), composeIllegalNoteFormatMessage(stroke, position));
+  }
+
+  private static String composeIllegalNoteFormatMessage(String partMeasureString, int position) {
+    return partMeasureString.substring(0, position) + "``" + partMeasureString.substring(position) + "'' isn't a valid note expression. Notes must be like 'C', 'CEG8.', and so on.";
   }
 
   public static SymfonionIllegalFormatException illegalFormatException(JsonElement actualJSON, String acceptableExample) throws SymfonionIllegalFormatException {
@@ -208,12 +148,12 @@ public class CompatExceptionThrower {
 
   public static CliException failedToOpenMidiDevice(MidiUnavailableException ee) {
     throw new CliException(format("(-) Failed to open MIDI-%s device (%s)",
-        CompatExceptionThrower.<MidiDevice.Info>contextValueOf(MIDI_DEVICE_INFO),
-        CompatExceptionThrower.<String>contextValueOf(MIDI_DEVICE_INFO_IO).toLowerCase()), ee);
+                                  CompatExceptionThrower.<MidiDevice.Info>contextValueOf(MIDI_DEVICE_INFO),
+                                  CompatExceptionThrower.<String>contextValueOf(MIDI_DEVICE_INFO_IO).toLowerCase()), ee);
   }
 
   public static CliException failedToAccessMidiDevice(String deviceType, MidiUnavailableException e, MidiDevice.Info[] matchedInfos) {
-    throw new CliException(composeErrMsg(format("Failed to access MIDI-%s device:'%s'.", deviceType, matchedInfos[0].getName()), "O"), e);
+    throw new CliException(CliUtils.composeErrMsgForShortOption(format("Failed to access MIDI-%s device:'%s'.", deviceType, matchedInfos[0].getName()), "O"), e);
   }
 
   public static RuntimeException multipleMidiDevices(MidiDeviceRecord e1, MidiDeviceRecord e2, Predicate<MidiDeviceRecord> cond) {
@@ -232,17 +172,18 @@ public class CompatExceptionThrower {
     throw new RuntimeException();
   }
 
+  @SuppressWarnings("resource")
   private static <T> T contextValueOf(ContextKey contextKey) {
     return currentContext().get(contextKey);
   }
 
-  private static Context currentContext() {
+  private static ExceptionContext currentContext() {
     if (context.get() == null)
-      context.set(new Context());
+      context.set(new ExceptionContext());
     return context.get();
   }
 
-  private static Class<?> classOfValueFor(ContextKey key) {
+  static Class<?> classOfValueFor(ContextKey key) {
     class GivenKeyIsNull {
     }
     return key != null ? key.type : GivenKeyIsNull.class;

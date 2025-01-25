@@ -1,7 +1,8 @@
 package com.github.dakusui.symfonion.compat.json;
 
-import com.github.dakusui.valid8j_cliche.core.Expectations;
 import com.github.dakusui.valid8j_cliche.core.Transform;
+import com.github.dakusui.valid8j_cliche.json.JsonObjectTo;
+import com.github.valid8j.fluent.Expectations;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -12,8 +13,7 @@ import java.util.Objects;
 import java.util.function.Predicate;
 
 import static com.github.valid8j.classic.Assertions.that;
-import static com.github.dakusui.valid8j_cliche.core.Expectations.statement;
-import static com.github.dakusui.valid8j_cliche.json.JsonObjectTo.keyList;
+import static com.github.valid8j.fluent.Expectations.statement;
 import static com.github.valid8j.pcond.forms.Predicates.*;
 import static com.github.valid8j.pcond.forms.Printables.predicate;
 
@@ -97,7 +97,7 @@ public class JsonSummarizer {
         statement(focusedChildKey, isNotNull()),
         statement(object, allOf(
             isNotNull(),
-            Transform.$(keyList()).check(contains(focusedChildKey)))));
+            Transform.$(JsonObjectTo.keyList()).check(contains(focusedChildKey)))));
     JsonObject ret = new JsonObject();
     object
         .keySet()

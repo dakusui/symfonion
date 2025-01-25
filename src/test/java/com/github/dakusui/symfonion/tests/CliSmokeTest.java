@@ -30,15 +30,15 @@ public class CliSmokeTest extends CliTestBase {
    * @throws FileNotFoundException This shouldn't be thrown.
    */
   @Test
-  public void givenThreeStrokes_whenPlaySubcommandIsInvoked_thenPlayed() throws FileNotFoundException {
+  public void givenFourStrokes_whenPlaySubcommandIsInvoked_thenPlayed() throws FileNotFoundException {
     assumeRequiredMidiDevicesPresent();
     assumeThat(isRunUnderPitest(), isFalse());
     JsonObject song = object(
         $("$settings", object()),
         $("$parts", object($("piano", object($("$channel", json(0)), $("$port", json("GERVILL_PORT")))))),
         $("$patterns", object(
-            $("R4", object($("$body", json("r4")))),
-            $("main", object($("$body", array(json("BGE8;r8;AFD8;r8;GEC8;r8"))))))),
+            $("R4", object($("$body", json("r4;r4;r4;r4")))),
+            $("main", object($("$body", array(json("BGE8|BGE8;r8;AFD8;r8;GEC8;r8"))))))),
         $("$grooves", object($("16beats", sixteenBeatsGroove()))),
         $("$sequence", array(
             object(
@@ -51,11 +51,15 @@ public class CliSmokeTest extends CliTestBase {
                 $("$parts", object($("piano", array("main")))),
                 $("$groove", json("16beats"))),
             object(
+                $("$labels", array(json("reference"))),
+                $("$beats", json("4/4")),
+                $("$parts", object($("piano", array("main")))),
+                $("$groove", json("16beats"))),
+            object(
                 $("$labels", array(json("inline"))),
                 $("$beats", json("4/4")),
-                $("$parts", object($("piano", array("$inline:" + object($("$body", array(json("BGE8;r8;AFD8;r8;GEC8;r8")))))))),
-                $("$groove", json("16beats"))
-            ))));
+                $("$parts", object($("piano", array("$inline:" + object($("$body", array(json("C8;D8;E8|GEC8;r8;AFD8;r8;BGE8;r8")))))))),
+                $("$groove", json("16beats"))))));
 
     Result result = invokeCliWithArguments("-p", writeContentToTempFile(Objects.toString(song)).getAbsolutePath(), "-OGERVILL_PORT=Gervill", "--bars=*", "--parts=p.*");
 
@@ -71,12 +75,63 @@ public class CliSmokeTest extends CliTestBase {
     System.err.println("----");
     System.err.println(result);
     System.err.println("----");
-
     assertThat(
         result,
         AllOf.$(
             ResultTo.exitCode().isEqualTo(0),
             ResultTo.out().findSubstrings("*", "Gervill", "Real Time Sequencer")));
+  }
+
+  /**
+   * Generates three strokes, each of which is a chord. Em, Dm, and C, respectively.
+   * This test plays a generated midi, and you will hear it from your speaker.
+   *
+   * @throws FileNotFoundException This shouldn't be thrown.
+   */
+  @Test
+  public void givenThreeStrokes_whenPlaySubcommandIsInvoked_thenPlayed() throws FileNotFoundException {
+    assumeRequiredMidiDevicesPresent();
+    assumeThat(isRunUnderPitest(), isFalse());
+    JsonObject song = object(
+        $("$settings", object()),
+        $("$parts", object($("piano", object($("$channel", json(0)), $("$port", json("GERVILL_PORT")))))),
+        $("$patterns", object(
+            $("R4", object($("$body", json("r4;r4;r4;r4")))),
+            $("main", object($("$body", array(json("BGE8|BGE8;r8;AFD8;r8;GEC8;r8"))))))),
+        $("$sequence", array(
+            object(
+                $("$labels", array(json("reference"))),
+                $("$beats", json("4/4")),
+                $("$parts", object($("piano", object($("$note", json("R4"))))))),
+            object(
+                $("$labels", array(json("reference"))),
+                $("$beats", json("4/4")),
+                $("$parts", object($("piano", object($("$notes", json("BGE8|BGE8;r8;AFD8;r8;GEC8;r8")))))),
+                $("$groove", sixteenBeatsGroove())),
+            object(
+                $("$labels", array(json("reference"))),
+                $("$beats", json("4/4")),
+                $("$parts", object($("piano", object($("$notes", json("BGE8|BGE8;r8;AFD8;r8;GEC8;r8")))))),
+                $("$groove", sixteenBeatsGroove())))));
+
+    Result result = invokeCliWithArguments("-q", writeContentToTempFile(Objects.toString(song)).getAbsolutePath(), "-OGERVILL_PORT=Gervill", "--bars=*", "--parts=p.*");
+
+    System.err.println("[source]");
+    System.err.println(".Song");
+    System.err.println("----");
+    System.err.println(new GsonBuilder().setPrettyPrinting().create().toJson(song));
+    System.err.println("----");
+    System.err.println();
+
+    System.err.println("[source]");
+    System.err.println(".Result");
+    System.err.println("----");
+    System.err.println(result);
+    System.err.println("----");
+    assertThat(
+        result,
+        AllOf.$(ResultTo.exitCode().isEqualTo(0),
+                ResultTo.out().findSubstrings("*", "Gervill", "Real Time Sequencer")));
   }
 
   @Ignore
@@ -101,7 +156,7 @@ public class CliSmokeTest extends CliTestBase {
             $("piano", object($("$channel", json(0)), $("$port", json("port1")))),
             $("guitar", object($("$channel", json(1)), $("$port", json("port1")))),
             $("drums", object($("$channel", json(9)), $("$port", json("port1"))))
-        )),
+                          )),
         $("$patterns", object(
             $("R4", object($("$body", json("r4")))),
             $("R8", object($("$body", json("r8")))),
@@ -128,7 +183,7 @@ public class CliSmokeTest extends CliTestBase {
             $("drum-1", object(
                 $("$notemap", json("$percussion")),
                 $("$body", array(json("BH16;H16;H16;H16;BSH32;H32;H16;H16;H16;BH16;H16;H16;H16;BSH32;H32;H16;H16;H16;")))))
-        )),
+                             )),
         $("$grooves", object($("16beats", sixteenBeatsGroove()))),
         $("$sequence", array(
             object(
@@ -142,17 +197,17 @@ public class CliSmokeTest extends CliTestBase {
                     $("piano", array("main")),
                     $("guitar", array("sub", "pan:left-to-right")),
                     $("drums", array("drum-1"))
-                )),
+                                     )),
                 $("$groove", json("16beats"))
-            ),
+                  ),
             object(
                 $("$beats", json("4/4")),
                 $("$patterns", object(
                     $("drums", array("drum-1"))
-                )),
+                                     )),
                 $("$groove", json("16beats"))
-            )
-        )));
+                  )
+                            )));
 
     System.err.println("[source, json]");
     System.err.println("----");
