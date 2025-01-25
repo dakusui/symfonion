@@ -1,0 +1,33 @@
+
+[source, yaml]
+.ports-myl-laptop.yaml
+----
+ports:
+  port1:
+    - piano
+    - guitar
+  port2:
+    - base
+    - drums
+----
+
+This file will be converted  `parts.json` as follows:
+
+[source,yaml]
+----
+---
+piano:
+  - "$channel": 0
+  - "$port": port1
+guitar:
+  - "$channel": 1
+  - "$port": port1
+base:
+  - "$channel": 0
+  - "$port": port2
+drums:
+  - "$channel": 1
+  - "$port": port2
+
+
+----

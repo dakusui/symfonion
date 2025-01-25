@@ -1,0 +1,23 @@
+A JSON file in this directory corresponding to one element in a `$sequence` array that appears in `song.json` file.
+
+Such as:
+
+[source, json]
+----
+{
+    "$beats": "16/16",
+    "$patterns": {
+        "vocal": [],
+        "piano": [],
+        "guitar": [
+            "melody1"
+        ],
+        "base": [
+            "base1"
+        ],
+        "drums": [
+            "rhythm1"
+        ]
+    }
+}
+----

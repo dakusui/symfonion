@@ -1,0 +1,8 @@
+Under this directory, user specific data will be stored (, if any)<<xdg>>.
+Currently not used because such stuffs can be stored in a project itself.
+
+[bibliography]
+== References
+
+- [[[xdg, 1]]] XDG Base Directory Specification
+https://specifications.freedesktop.org/basedir-spec/latest/[freedesktop.org]

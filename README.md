@@ -60,11 +60,11 @@ where "infile" is a ```symfonion``` file and it will look like this.
             }
         },
         "$sequence":[
-            { "$patterns":{"pianor":["01r"]},   "$beats":"2/4" },
-            { "$patterns":{"pianor":["02r"]},   "$beats":"4/4" },
-            { "$patterns":{"pianor":["04r"]},   "$beats":"4/4" },
-            { "$patterns":{"pianor":["06r"]},   "$beats":"4/4" },
-            { "$patterns":{"pianor":["08r"]},   "$beats":"4/4" }
+            { "$parts":{"pianor":["01r"]},   "$beats":"2/4" },
+            { "$parts":{"pianor":["02r"]},   "$beats":"4/4" },
+            { "$parts":{"pianor":["04r"]},   "$beats":"4/4" },
+            { "$parts":{"pianor":["06r"]},   "$beats":"4/4" },
+            { "$parts":{"pianor":["08r"]},   "$beats":"4/4" }
         ]
     }
 ```

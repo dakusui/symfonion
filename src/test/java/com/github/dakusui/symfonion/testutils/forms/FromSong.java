@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 
-import static com.github.dakusui.thincrest_pcond.forms.Printables.function;
+import static com.github.valid8j.pcond.forms.Printables.function;
 
 public enum FromSong {
   ;

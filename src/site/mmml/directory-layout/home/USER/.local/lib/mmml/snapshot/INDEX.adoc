@@ -1,0 +1,2 @@
+This is a directory to store development version binaries of `mmml`.
+For the detail of a structure of this directory, check link:../1.0.1/INDEX.adoc[an example directory].

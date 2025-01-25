@@ -1,0 +1,166 @@
+A package that hosts classes to model a "song".
+
+A song is structured as follows in **JSON**:
+
+[source,JSON]
+----
+{
+  "$include": [ "includedFile" ],
+  "$settings": { "<deviceProfileName>": "..." },
+  "$noteMaps": { "<noteMapName>": { "...": "..." }},
+  "$parts": { "<partName>": { "...": "..." } },
+  "$patterns": { "<patternName>": {"...": "..." }},
+  "$grooves": { "<grooveName>": ["..."] },
+  "$sequence": { "<partName>": { "...": "..." } }
+}
+----
+
+[mermaid]
+.CompatSong
+----
+classDiagram
+direction BT
+
+  Context "1" <--* "1" CompatSong: logiasContext
+  Part    "*" <--* "1" CompatSong: parts[partName]
+  Pattern "*" <--* "1" CompatSong: patterns[patternName]
+  Groove  "*" <--* "1" CompatSong: grooves[grooveName]
+  Bar     "*" <--* "1" CompatSong: bars
+----
+
+[mermaid]
+.Bar
+----
+classDiagram
+direction BT
+    StrokeSequence "1" <--* "1" PartMeasure: strokeSequence
+    PartMeasure "*" <--* "1" Pattern: body
+    PartMeasureParameters "1" <--* "1" PartMeasure: defaultValues
+    NoteMap "1" <--* "1" PartMeasureParameters
+    List~Pattern~ <|-- PatternSequence
+    Pattern "*" <--* "1" List~Pattern~
+    PatternSequence "*" <--* "1" PatternSequencePile
+    PatternSequencePile "*" <-- "1" Bar: patternSequencePiles[partName]
+    PatternSequencePile
+    Groove "1" <--* "1" Bar
+    Pattern "*" <--* "1" Bar: patterns[patternName]
+    NoteMap "*" <--* "1" Bar: noteMaps[noteMapName]
+    class List~Pattern~
+    class Pattern
+    class PatternSequence
+    class PatternSequencePile["List~PatternSequence~"] {
+    }
+    class Bar {
+        -List~String~ labels
+        +Fraction beats()
+    }
+    class PartMeasure {
+        +void   compile(MidiCompiler compiler, MidiCompilerContext context)
+    }
+    class NoteMap
+----
+
+[mermaid]
+.Song
+----
+classDiagram
+direction BT
+
+  Context "1" <--* "1" Song: logiasContext
+  Part    "*" <--* "1" Song: parts[partName]
+  Groove  "*" <--* "1" Song: grooves[grooveName]
+  NoteMap "*" <--* "1" Song: noteMaps[noteMapName]
+  Measure "*" <--* "1" Song: measures
+----
+
+[mermaid]
+.Measure
+----
+classDiagram
+direction BT
+    StrokeSequence "1" <--* "1" PartMeasure: strokeSequence
+    PartMeasure "*" <--* "1" Measure: partMeasures[partName]
+    PartMeasureParameters "1" <--* "1" PartMeasure: defaultValues
+    GrooveUnit <.. Groove
+    GrooveBeat "*" <--* "1" Groove: beats
+    NoteMap "*" <--* "1" Measure: noteMaps[noteMapName]
+    NoteMap "1" <--* "1" PartMeasureParameters
+    Groove "1" <--* "1" Measure
+    class Measure {
+        -Fraction beats
+        -List~String~ labels
+        +Fraction beats()
+    }
+    class PartMeasure {
+        +void   compile(MidiCompiler compiler, MidiCompilerContext context)
+    }
+    class NoteMap
+    class Groove {
+        -List~Beat~ beats
+        -int resolution
+        +int calculateGrooveAccent(...)
+        +long calculateAbsolutePositionInTicks(...)
+        +Unit resolve(Fraction offset)
+        +Fraction length()
+    }
+    class GrooveUnit["Groove.Unit"] {
+        long pos()
+        int accentDelta()
+    }
+    class GrooveBeat["Groove.Beat"] {
+        Fraction length()
+        long ticks()
+        int accent()
+    }
+----
+
+[mermaid]
+.Pattern and Measure
+----
+classDiagram
+direction TB
+    PartMeasure "*" <--* "1" Pattern: body
+    PartMeasure "*" <--* "1" Measure: partMeasures[partName]
+    PartMeasureParameters "1" <--* "1" PartMeasure: defaultValues
+    note for Note "Regular expression for notes: '([A-Zac-z])([#b]*)([><]*)([+\\-]*)?'\nRegular expression for note length: '([1-9][0-9]*)(\.*)([~^']?)'"
+    note for PartMeasureParameters "Parameters that modify how strokes\nin PartMeasure are played.\nThose are not directly converted inton\nMIDI events."
+    Note "*" <--* Stroke: notes
+    PartMeasure ..> Note: creates
+    NoteMap "1" <--* "1" PartMeasureParameters
+    StrokeSequence "1" <--* "1" PartMeasure: strokeSequence
+    Stroke "*" <--* "1" StrokeSequence: body
+    note for Stroke "A stroke is a set of notes played\nby a single action of a human\nsuch as a chord voicing."
+    class Stroke {
+        +Fraction   length()
+        +List~Note~ notes()
+    }
+    class StrokeSequence {
+        +Fraction pickUpLength()
+        +Fraction length()
+        +List~Stroke~ body()
+    }
+    class Note {
+        +int key()
+        +int accent()
+    }
+    class PartMeasure {
+        +PartMeasure(JsonObject obj PartMeasureParameters params, NoteMap noteMap)
+        +void   compile(MidiCompiler compiler, MidiCompilerContext context)
+        +Fraction length()
+        +List~Stroke~ strokes()
+        +double gate()
+    }
+    class PartMeasureParameters {
+        +double gate()
+        +Fraction length()
+        +int transpose()
+        +int velocityBase()
+        +int velocityDelta()
+        +int arpeggio()
+    }
+    class Pattern
+    class Measure
+    class NoteMap {
+        +int noteFor(String noteName)
+    }
+----

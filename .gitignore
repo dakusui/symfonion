@@ -6,6 +6,8 @@
 /.classpath
 /.project
 /.generated
+.attr.adoc
+**/package-info.java
 report.jcunit
 symfonion.iml
 a.port1.midi

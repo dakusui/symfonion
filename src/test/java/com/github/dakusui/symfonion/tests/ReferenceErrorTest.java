@@ -1,8 +1,8 @@
 package com.github.dakusui.symfonion.tests;
 
-import com.github.dakusui.symfonion.exceptions.SymfonionException;
+import com.github.dakusui.symfonion.compat.exceptions.SymfonionException;
 import com.github.dakusui.symfonion.testutils.CliTestBase;
-import com.github.dakusui.thincrest_pcond.forms.Predicates;
+import com.github.valid8j.pcond.forms.Predicates;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -40,7 +40,7 @@ public class ReferenceErrorTest extends CliTestBase {
   public void missingPart() throws IOException, SymfonionException {
     String resourceName = "missingReferences/04_partNotFound.json";
     assertActualObjectToStringValueContainsExpectedString(
-        fmt("symfonion: %s: jsonpath: .\"$sequence\"[1].\"$patterns\".vocal_notfound: error: 'vocal_notfound' undefined part symbol\n"),
+        fmt("symfonion: %s: jsonpath: .\"$sequence\"[1].\"$parts\".vocal_notfound: error: 'vocal_notfound' undefined part symbol\n"),
         compileResourceWithCli(resourceName)
     );
   }
@@ -49,7 +49,7 @@ public class ReferenceErrorTest extends CliTestBase {
   public void missingPattern() throws IOException, SymfonionException {
     String resourceName = "missingReferences/05_patternNotFound.json";
     assertActualObjectToStringValueContainsExpectedString(
-        fmt("symfonion: %s: jsonpath: .\"$sequence\"[1].\"$patterns\".vocal[0]: error: 'melody1notfound' undefined pattern symbol\n"),
+        fmt("symfonion: %s: jsonpath: .\"$sequence\"[1].\"$parts\".vocal[0]: error: 'melody1notfound' undefined pattern symbol\n"),
         compileResourceWithCli(resourceName)
     );
   }

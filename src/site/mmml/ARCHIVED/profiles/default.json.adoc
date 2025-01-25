@@ -1,0 +1,15 @@
+[[CONTENT]]
+[source, json]
+----
+{
+  "ports": {
+    "name": "my-dell-laptop"
+  },
+  "song": {
+    "name": "full",
+    "arguments": []
+  }
+}
+----
+
+include::.attr.adoc[]

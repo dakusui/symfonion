@@ -1,7 +1,7 @@
 package com.github.dakusui.symfonion.testutils;
 
-import com.github.dakusui.json.JsonException;
-import com.github.dakusui.symfonion.exceptions.SymfonionException;
+import com.github.dakusui.symfonion.compat.json.CompatJsonException;
+import com.github.dakusui.symfonion.compat.exceptions.SymfonionException;
 import com.google.gson.JsonObject;
 
 import javax.sound.midi.InvalidMidiDataException;
@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.function.Predicate;
 
 import static com.github.dakusui.testutils.midi.MidiTestUtils.formatMidiMessage;
-import static com.github.dakusui.thincrest.TestAssertions.assertThat;
+import static com.github.valid8j.classic.TestAssertions.assertThat;
 import static java.lang.String.format;
 
 public record SymfonionTestCase(String name, JsonObject input, Predicate<Map<String, Sequence>> testOracleForOutput,
@@ -61,7 +61,7 @@ public record SymfonionTestCase(String name, JsonObject input, Predicate<Map<Str
     return new SymfonionTestCase("NEGATIVE: " + name, input, null, testOracleForException);
   }
   
-  private static Map<String, Sequence> execute(JsonObject input) throws JsonException, InvalidMidiDataException, SymfonionException {
+  private static Map<String, Sequence> execute(JsonObject input) throws CompatJsonException, InvalidMidiDataException, SymfonionException {
     return SymfonionTestUtils.compileJsonObject(input);
   }
   

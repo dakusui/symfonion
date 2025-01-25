@@ -1,0 +1,3 @@
+In this directory, system-specific configurations are stored.
+For instance, which MIDI device is connected to which MIDI port is connected is a system specific configuration.
+Such a configuration is stored under `json++` directory, which is a child of this directory, so that it can be referenced from user song files (`song.json{plus}{plus}`).

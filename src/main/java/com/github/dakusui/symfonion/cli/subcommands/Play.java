@@ -2,9 +2,10 @@ package com.github.dakusui.symfonion.cli.subcommands;
 
 import com.github.dakusui.symfonion.cli.Cli;
 import com.github.dakusui.symfonion.cli.Subcommand;
+import com.github.dakusui.symfonion.compat.exceptions.ExceptionContext;
+import com.github.dakusui.symfonion.compat.exceptions.SymfonionException;
 import com.github.dakusui.symfonion.core.Symfonion;
-import com.github.dakusui.symfonion.exceptions.SymfonionException;
-import com.github.dakusui.symfonion.song.Song;
+import com.github.dakusui.symfonion.song.CompatSong;
 import com.github.dakusui.symfonion.utils.midi.MidiDeviceScanner;
 import com.github.dakusui.symfonion.utils.midi.MidiUtils;
 
@@ -16,18 +17,20 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 
-import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.*;
-import static com.github.dakusui.symfonion.exceptions.ExceptionThrower.ContextKey.SOURCE_FILE;
+import static com.github.dakusui.symfonion.cli.subcommands.LogiasUtils.createLogiasContext;
+import static com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower.ContextKey.SOURCE_FILE;
+import static com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower.*;
+import static com.github.dakusui.symfonion.compat.exceptions.ExceptionContext.entry;
 
 public class Play implements Subcommand {
 
   @Override
   public void invoke(Cli cli, PrintStream ps, InputStream inputStream) throws IOException {
-    try (Context ignored = context($(SOURCE_FILE, cli.source()))) {
+    try (ExceptionContext ignored = exceptionContext(entry(SOURCE_FILE, cli.source()))) {
       Symfonion symfonion = cli.symfonion();
 
-      Song song = symfonion.load(cli.source().getAbsolutePath());
-      Map<String, Sequence> sequences = symfonion.compile(song);
+      CompatSong            song      = symfonion.load(cli.source().getAbsolutePath(), cli.barFilter(), cli.partFilter());
+      Map<String, Sequence> sequences = symfonion.compile(song, createLogiasContext());
       ps.println();
       Map<String, MidiDevice> midiOutDevices = prepareMidiOutDevices(ps, cli.midiOutRegexPatterns());
       ps.println();
@@ -56,12 +59,12 @@ public class Play implements Subcommand {
   }
 
   private static Map<String, Sequencer> prepareSequencers(List<String> portNames, Map<String, MidiDevice> midiOutDevices, Map<String, Sequence> sequences) throws MidiUnavailableException, InvalidMidiDataException {
-    Map<String, Sequencer> ret = new HashMap<>();
-    final List<Sequencer> playingSequencers = new LinkedList<>();
+    Map<String, Sequencer> ret               = new HashMap<>();
+    final List<Sequencer>  playingSequencers = new LinkedList<>();
     for (String portName : portNames) {
-      MidiDevice midiOutDevice = midiOutDevices.get(portName);
-      Sequence sequence = sequences.get(portName);
-      final Sequencer sequencer = prepareSequencer(midiOutDevice, sequence, seq -> createMetaEventListener(playingSequencers, seq));
+      MidiDevice      midiOutDevice = midiOutDevices.get(portName);
+      Sequence        sequence      = sequences.get(portName);
+      final Sequencer sequencer     = prepareSequencer(midiOutDevice, sequence, seq -> createMetaEventListener(playingSequencers, seq));
       playingSequencers.add(sequencer);
       ret.put(portName, sequencer);
     }
@@ -136,8 +139,8 @@ public class Play implements Subcommand {
     }
   }
 
-  private static synchronized void play(Map<String, MidiDevice> midiOutDevices, Map<String, Sequence> sequences) throws SymfonionException {
-    List<String> portNames = new LinkedList<>(sequences.keySet());
+  static synchronized void play(Map<String, MidiDevice> midiOutDevices, Map<String, Sequence> sequences) throws SymfonionException {
+    List<String>           portNames = new LinkedList<>(sequences.keySet());
     Map<String, Sequencer> sequencers;
     try {
       sequencers = prepareSequencers(portNames, midiOutDevices, sequences);

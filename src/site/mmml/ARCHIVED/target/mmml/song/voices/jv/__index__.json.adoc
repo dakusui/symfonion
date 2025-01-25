@@ -1,0 +1,26 @@
+[source, json]
+----
+{
+  "piano": {
+    "$extends": [ "voice-base.json" ],
+    "wave": {
+      "$sysex": ["$jv-set-patchnum-pr-d", "$channel", 2]
+    }
+  },
+  "guitar": {
+    "$extends": [ "voice-base.json" ],
+    "wave": {
+      "$sysex": ["$jv-set-patchnum-pr-b", "$channel", 1]
+    }
+  }
+}
+----
+
+From the content of `guitar.json` and `piano.json`, this file is auto-generated.
+This file is then integrated in link:../voices.json.adoc[voices.json].
+
+The `$channel` (the first argument of the `$jv-set-patchnum-pr-d` function) is required to place here to specify the MIDI channel where the program is changed.
+This is because system exclusive message is not belonging to any channel, essentially.
+The value is automatically resolved at the compilation-time of `symfonion` to the channel where the `$sysex` expression eventually appears inside `$sequence` attribute array.
+
+NOTE:: By defining function inside which it references the `$channel` variable, we can remove this boilerplate, but it's a minor detail and possible future improvement.

@@ -1,0 +1,133 @@
+== JSON promotion mechanism
+
+=== JSON: Syntax 1
+
+[source, json]
+.reductionSyntax (1)
+----
+{
+  "parentKey": {
+    "$attributes": [
+      {
+        "$key": "primaryAttributeKey",
+        "$type": "$string"
+      },
+      {
+        "$key": "secondaryAttributeKey",
+        "$type": "$string"
+      }
+    ],
+    "$required": 0
+  }
+}
+----
+
+
+=== Example 1
+
+[source, json]
+.reducedForm (atom)
+----
+{
+  "parentKey": "value"
+}
+----
+
+[source, json]
+----
+{
+  "parentKey": {
+     "primaryAttributeKey": "value"
+  }
+}
+----
+
+=== Example 2
+
+[source, json]
+.reducedForm (array)
+----
+{
+  "parentKey": ["value1", "value2"]
+}
+----
+
+[source, json]
+.reducedForm (array)
+----
+{
+  "parentKey": ["value1", "value2"]
+}
+----
+
+=== Example 3
+
+[source, json]
+.reducedForm (array)
+----
+{
+  "parentKey": ["value1", "value2", "value3"]
+}
+----
+
+[source, json]
+.reducedForm (error)
+----
+ERROR!
+----
+
+
+=== JSON: Syntax 2
+
+[source, json]
+.reductionSyntax (1)
+----
+{
+  "parentKey": {
+    "primaryAttributeKey": {
+      "$sweetener": {
+        "attributes": [
+          {
+            "key": "primaryChildAttributeKey",
+            "type": "string"
+          }
+        ]
+      }
+    },
+    "$sweetener": {
+      "attributes": [
+        {
+          "key": "primaryAttributeKey",
+          "type": "object"
+        },
+        {
+          "key": "secondaryAttributeKey",
+          "type": "string"
+        }
+       ],
+       "required": 0
+    }
+  }
+}
+----
+
+
+=== Example 1
+
+[source, json]
+----
+{
+  "parentKey": "hello"
+}
+----
+
+[source, json]
+----
+{
+  "parentKey": {
+    "primaryAttributeKey": {
+      "primaryChildAttributeKey": "hello"
+    }
+  }
+}
+----

@@ -1,0 +1,26 @@
+---
+"$parts":
+  pianor:
+    "$channel": 0
+"$patterns":
+"$sequence":
+  - "$parts":
+      pianor:
+        - inline:r4;B16;A16;G#16;A16
+    "$beats": 2/4
+  - "$parts":
+      pianor:
+        - inline:C>8;r8;D>;C>;B;C>;E>8;r8;F>;E>;D#>;E>
+    "$beats": 4/4
+  - "$parts":
+      pianor:
+        - inline:B>;A>;G#>;A>;B>;A>;G#>;A>;C>>4;A>8;C>>8
+    "$beats": 4/4
+  - "$parts":
+      pianor:
+        - inline:B>8;F#A>8;EG>8;F#A>8;B>8;F#A>8;EG>8;F#A>8
+    "$beats": 4/4
+  - "$parts":
+      pianor:
+        - inline:B>8;F#A8;EG>8;D#F#>8;E4;r4
+    "$beats": 4/4

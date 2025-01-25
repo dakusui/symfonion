@@ -1,6 +1,6 @@
 package com.github.dakusui.symfonion.utils.midi;
 
-import com.github.dakusui.symfonion.exceptions.CliException;
+import com.github.dakusui.symfonion.compat.exceptions.CliException;
 
 import javax.sound.midi.MidiDevice;
 import javax.sound.midi.MidiSystem;

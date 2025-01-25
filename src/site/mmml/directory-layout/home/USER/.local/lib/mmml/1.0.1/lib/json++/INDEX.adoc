@@ -1,0 +1,2 @@
+This is a directory to store "preset" json++ files.
+Note that scrips that should be used through "SOURCE" feature of jq-front should be stored under `helpers` directory.

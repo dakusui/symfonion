@@ -11,9 +11,9 @@ import java.io.IOException;
 
 import static com.github.dakusui.testutils.TestUtils.immediatelyClosingInputStream;
 import static com.github.dakusui.testutils.midi.MidiTestUtils.assumeRequiredMidiDevicesPresent;
-import static com.github.dakusui.thincrest.TestAssertions.assertThat;
-import static com.github.dakusui.thincrest_pcond.experimentals.cursor.Cursors.findElements;
-import static com.github.dakusui.thincrest_pcond.forms.Predicates.containsString;
+import static com.github.valid8j.classic.TestAssertions.assertThat;
+import static com.github.valid8j.pcond.experimentals.cursor.Cursors.findElements;
+import static com.github.valid8j.pcond.forms.Predicates.containsString;
 
 public class PatchBayTest extends TestBase {
   @Test
@@ -23,7 +23,7 @@ public class PatchBayTest extends TestBase {
     TestUtils.OutputCapturingPrintStream out = TestUtils.outputCapturingPrintStream();
     new PatchBay().invoke(new Cli.Builder("-r", "in=out", "-I", "in=Real.*", "-O", "out=Gervill").build(), out, immediatelyClosingInputStream());
 
-    for (String s: out.toStringList())
+    for (String s : out.toStringList())
       System.err.println(s);
 
     assertThat(out.toStringList(), findElements(

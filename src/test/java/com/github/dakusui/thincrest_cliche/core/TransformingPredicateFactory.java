@@ -1,9 +1,9 @@
 package com.github.dakusui.thincrest_cliche.core;
 
 import com.github.dakusui.thincrest_cliche.java.util.stream.StreamTo;
-import com.github.dakusui.thincrest_pcond.core.printable.PrintablePredicateFactory;
-import com.github.dakusui.thincrest_pcond.experimentals.cursor.Cursors;
-import com.github.dakusui.thincrest_pcond.forms.Predicates;
+import com.github.valid8j.pcond.core.printable.PrintablePredicateFactory;
+import com.github.valid8j.pcond.experimentals.cursor.Cursors;
+import com.github.valid8j.pcond.forms.Predicates;
 
 import java.util.List;
 import java.util.Objects;

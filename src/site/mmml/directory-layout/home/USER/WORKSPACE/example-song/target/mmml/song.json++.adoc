@@ -1,0 +1,4 @@
+include::.attr.adoc[]
+
+This file is just copied from link:{project_root}/src/main/mmml/song.json++.adoc[`src/main/mmml/song.json{plus}{plus}`] in the "copyResources" stage in the link:{doc_base}/features/mmml-pipeline.adoc[pipeline].
+

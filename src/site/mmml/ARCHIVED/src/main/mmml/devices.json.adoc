@@ -1,0 +1,21 @@
+
+[[CONTENT]]
+[%nowrap, json]
+.devices.json
+----
+{
+  "my-jv-1010": {
+    "$extends": [ "deviceTypes/jv-10x0.json" ]
+  },
+  "my-jv-1080": {
+    "$extends": [ "deviceTypes/jv-10x0.json" ]
+  },
+  "my-surge-xt": {
+    "$extends": [ "deviceTypes/surge-xt.json" ]
+  },
+  "my-yoshimi": {
+    "$extends": [ "deviceTypes/yoshimi.json" ]
+  }
+}
+----
+

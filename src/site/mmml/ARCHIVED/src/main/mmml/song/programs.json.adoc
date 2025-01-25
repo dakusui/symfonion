@@ -1,0 +1,13 @@
+[source, json]
+----
+{
+  "$extends": [
+    "collect_directory_entries.sh;bash -eu;programs"
+  ],
+  "$configuration": {
+    "$inclusions": [ "*.json", "*.json++" ,"*.yaml" ],
+    "$exclusions": [ "-*" ]
+  }
+}
+----
+

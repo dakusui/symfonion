@@ -1,0 +1,510 @@
+:toc:
+
+= SYNTAX: `song.json++`
+
+
+include::.attr.adoc[]
+
+== Object Structure of `song.json++`
+
+[plantuml]
+----
+class "helpers/symfonion.rc" as symfonion_helper {
+}
+class song extends song_base {
+}
+class "std/song-base.json++" as song_base extends auto, symfonion_helper {
+}
+class "auto.json" as auto {
+}
+class "song.json++" as song {
+}
+auto *--> "0.." device: use
+class device {
+}
+----
+
+== `song.json++`
+
+It is a cliché to have a phrase `"$extends": ["std/song-base.json{plus}{plus}"]` at the top of this file.
+This is a syntax to "extend" (or inherit) the content of `std/song-base.json++` under elements in `JF_PATH` environment variable.
+By default, the one under `\{xdg_local_lib\}/mmml/1.0.1/lib/json{plus}{plus}` directory will be picked up.
+
+[source, json]
+[%nowrap]
+.song.json++
+----
+{
+  "$extends": [ "std/song-base.json++" ],
+  "$song": {
+    "$devices": {
+      "jv-1080": {
+        "$extends": [ "deviceTypes/jv-10x0.json" ],
+        "$voices": {
+          "default:keyboard": "eval:object:$(voice_alias_of piano)",
+          "default:guitar": "eval:object:$(voice_alias_of distortion)",
+          "default:bass": "eval:object:$(voice_alias_of electric-bass)",
+          "default:drums": "eval:object:$(voice_alias_of tekno-kit)",
+          "piano": { "$sysex": ["$jv-set-patchnum-pr-a", "$channel", 0]},
+          "distortion": { "$sysex": ["$jv-set-patchnum-pr-b", "$channel", 8] },
+          "string": { "$sysex": ["$jv-set-patchnum-pr-c", "$channel", 50] },
+          "ensemble": { "$sysex": ["$jv-set-patchnum-pr-c", "$channel", 78] },
+          "bass": { "$sysex": ["$jv-set-patchnum-user", "$channel", 54] },
+          "reed": { "$sysex": ["$jv-set-patchnum-pr-d", "$channel", 65] },
+          "pipe": { "$sysex": ["$jv-set-patchnum-pr-a", "$channel", 59] },
+          "synthLead": { "$sysex": ["$jv-set-patchnum-pr-b", "$channel", 92] },
+          "synthPad": { "$sysex": ["$jv-set-patchnum-pr-c", "$channel", 62] },
+          "electric-bass": { "$sysex": ["$jv-set-patchnum-pr-b", "$channel", 24] },
+          "tekno-kit": { "$sysex": ["$jv-set-patchnum-pr-b", "$channel", 1] }
+        }
+      },
+      "gervill": {
+        "$extends": [ "deviceTypes/gm.json" ],
+        "$voices": {
+          "default:keyboard": "eval:object:$(voice_alias_of piano)",
+          "default:guitar": "eval:object:$(voice_alias_of overdrive)",
+          "default:bass": "eval:object:$(voice_alias_of electric-bass)",
+          "default:drums": "eval:object:$(voice_alias_of disco-kit)"
+        }
+      }
+    },
+    "$parts": {
+      "part:keyboard": {
+        "$device": "gervill",
+        "$channel": 0
+      },
+      "part:guitar": {
+        "$device": "jv1080",
+        "$channel": 0
+       },
+      "part:bass": {
+        "$device": "gervill",
+        "$channel": 1
+      },
+      "part:drums": {
+        "$device": "jv1080",
+        "$channel": 9
+      }
+    },
+    "$patterns": {
+      "part:keyboard:program_change:piano": "eval:object:$(voice piano)",
+      "...": "..."
+    },
+    "$grooves": {
+      "...": "..."
+    },
+    "$bars": {
+      "intro-1": {
+        "$labels": ["intro", "1"],
+        "$patterns": {
+           "part:keyboard":[
+             "eval:string:$(inline $(voice piano))",
+             "eval:string:$(inline $(stroke 'C;D;E;R;C;D;E;R;C;D;E;R;C;D;E;R;'))"
+           ],
+           "part:guitar":[],
+           "part:bass":[],
+           "part:drums":[]
+         }
+      },
+      "...": "...",
+      "outro": {
+        "...": "..."
+      }
+    },
+    "$sequence": [
+      "eval:object:$(bar intro)",
+      "eval:object:$(bar verse-1)",
+      "eval:object:$(bar bridge-1)",
+      "eval:object:$(bar break-1)",
+      "eval:object:$(bar chorus-1)",
+      "eval:object:$(bar interlude-1)",
+      "eval:object:$(bar verse-2)",
+      "eval:object:$(bar bridge-2)",
+      "eval:object:$(bar break-2)",
+      "eval:object:$(bar chorus-2)",
+      "eval:object:$(bar interlude-2)",
+      "eval:object:$(bar chorus-3)",
+      "eval:object:$(bar outro)"
+    ]
+  }
+}
+----
+
+== `std/song-base.json++`
+
+`std/song-base.json++` is a file that defines basic structure of `song.json{plus}{plus}`.
+
+[source,json]
+[%nowrap]
+.std/song-base.json++
+----
+{
+  "$extends": [ "auto.json", "helpers/symfonion.rc" ],
+  "$settings": { "$mididevice": "jv" },
+  "$parts": "$eval:object:$(compose_parts_section '.$song.$parts' '.$song.$devices')",
+  "$notemaps": "eval:object:$(ref '.$song.$notemaps')",
+  "$grooves": "eval:object:$(ref '.$song.$grooves')",
+  "$patterns": "eval:object:$(object_merge '.$song.$patterns' '.$auto.patterns')",
+  "$sequence": "eval:array:$(array_append '.$auto.$sequence' '.$song.$sequence')"
+}
+----
+
+== device definition files
+
+=== `jv-10x0.json`
+
+[source, json]
+[%nowrap]
+.jv-10x0.json
+----
+{
+  "$extends": [ "gm.json" ],
+  "initialize": {
+    "device": {
+      "description": "This defines a procedure to initialize JV-10x0 devices.",
+      "procedure": [
+        {
+          "type": "cli",
+          "execution": {
+              "cmd": "check UM1",
+              "args": [
+              ]
+          }
+        },
+        {
+          "type": "midiMessages",
+          "execution": { "$sysex": [ "$set-syscommon-soundmode-perf" ] }
+        },
+        {
+          "type": "midiMessage",
+          "execution": { "$sysex": [ "$jv-set-currentperf", 12 ] }
+        }
+      ]
+    },
+    "channel": {
+      "description": "This defines a procedure to initialize a MIDI channel of a JV-10x0 device. You can reference a channel to be initialized by '$channel'",
+      "procedure": [
+        {
+          "type": "midiMessages",
+          "execution": { "$sysex": ["$jv-init-part", "$channel", "$channel"] }
+        }
+      ]
+    }
+  },
+  "voices": {
+    "piano": {
+      "$sysex": ["$jv-set-patchnum-pr-a", "$channel", 0]
+    },
+    "guitar": {
+      "$sysex": ["$jv-set-patchnum-pr-b", "$channel", 8]
+    },
+    "string": {
+      "$sysex": ["$jv-set-patchnum-pr-c", "$channel", 50]
+    },
+    "ensemble": {
+      "$sysex": ["$jv-set-patchnum-pr-c", "$channel", 78]
+    },
+    "bass": {
+      "$sysex": ["$jv-set-patchnum-user", "$channel", 54]
+    },
+    "reed": {
+      "$sysex": ["$jv-set-patchnum-pr-d", "$channel", 65]
+    },
+    "pipe": {
+      "$sysex": ["$jv-set-patchnum-pr-a", "$channel", 59]
+    },
+    "synthLead": {
+      "$sysex": ["$jv-set-patchnum-pr-b", "$channel", 92]
+    },
+    "synthPad": {
+      "$sysex": ["$jv-set-patchnum-pr-c", "$channel", 62]
+    },
+    "drums": {
+      "$sysex": ["$jv-set-patchnum-pr-b", "$channel", 1]
+    }
+  }
+}
+----
+
+=== `gm.json`
+
+[source, json]
+[%nowrap]
+.gm.json
+----
+{
+  "$extends" : [ "deviceType-helper.sh;SOURCE" ],
+  "__device_name__" : "eval:string:$(device_name)",
+  "import": [],
+  "initialize": {
+    "device": {
+      "description": "This defines a procedure to initialize a General MIDI-1 level device, which requires nothing.",
+      "procedure": []
+    },
+    "channel": {
+      "description": "This defines a procedure to initialize a MIDI channel of a General MIDI-1 level device, which requires nothing.",
+      "procedure": []
+    }
+  },
+  "$voices": {
+    "piano": { "$program": 0, "$bank": 0.0 },
+    "chromaticPercussion": { "$program": 8, "$bank": 0.0 },
+    "organ": { "$program": 16, "$bank": 0.0 },
+    "guitar": { "$program": 24, "$bank": 0.0 },
+    "bass": { "$program": 32, "$bank": 0.0 },
+    "string": { "$program": 40, "$bank": 0.0 },
+    "ensemble": { "$program": 48, "$bank": 0.0 },
+    "brass": { "$program": 56, "$bank": 0.0 },
+    "reed": { "$program": 64, "$bank": 0.0 },
+    "pipe": { "$program": 72, "$bank": 0.0 },
+    "synthLead": { "$program": 80, "$bank": 0.0 },
+    "synthPad": { "$program": 88, "$bank": 0.0 },
+    "synthEffectRain": { "$program": 96, "$bank": 0.0 },
+    "synthEffectSoundtrack": { "$program": 97, "$bank": 0.0 },
+    "synthEffectCrystal": { "$program": 98, "$bank": 0.0 },
+    "synthEffectAtmosphere": { "$program": 99, "$bank": 0.0 },
+    "synthEffectBrightness": { "$program": 100, "$bank": 0.0 },
+    "synthEffectGoblins": { "$program": 101, "$bank": 0.0 },
+    "synthEffectEchoes": { "$program": 102, "$bank": 0.0 },
+    "synthEffectSciFi": { "$program": 103, "$bank": 0.0 },
+    "ethnic": { "$program": 104, "$bank": 0.0 },
+    "percussive": { "$program": 112, "$bank": 0.0 },
+    "soundEffectGuitarFretNoise": { "$program": 120, "$bank": 0.0 },
+    "soundEffectBreathNoise": { "$program": 121, "$bank": 0.0 },
+    "soundEffectSeashore": { "$program": 122, "$bank": 0.0 },
+    "soundEffectBirdTweet": { "$program": 123, "$bank": 0.0 },
+    "soundEffectTelephoneRing": { "$program": 124, "$bank": 0.0 },
+    "soundEffectHelicopter": { "$program": 125, "$bank": 0.0 },
+    "soundEffectApplause": { "$program": 126, "$bank": 0.0 },
+    "soundEffectGunshot": { "$program": 127, "$bank": 0.0 }
+  },
+  "$availableVoices": "eval:object:$(merge_objects \"$(ref $(cur).$voices)\" \"$(ref $(cur).$defaultVoices)\")"
+}
+----
+
+A bank select is explicitly sent because if this definition is used for GM-2 level device, the bank won't be properly set and unintended wave will be played, otherwise.
+
+[%nowrap, script]
+.deviceType-helper.sh
+----
+function wave() {
+  local _device_name="${1}" _wave_name="${2}"
+  ref .system.devices."${_device_name}".waves."${_wave_name}"
+}
+
+function device_name() {
+  local _p
+  _p="$(cur)"
+  echo "${_p##*.}"
+}
+----
+
+
+== `auto.json`
+
+link:{target_dir}/mmml/auto.json.adoc[auto.json] is a file auto-generated in the stage of  link:{doc_base}/features/mmml-pipeline.adoc[mmml-pipeline].
+
+[source, json]
+[%nowrap]
+.auto.json
+----
+{
+  "$auto": {
+    "$devices": {
+      "$default": {
+        "jv-1080": {
+          "$extends": [ "deviceTypes/jv-10x0.json" ],
+          "$default_voices": "eval:object:$(render_default_parts)",
+          "$midiPorts": {
+            "out": "jv-1080"
+          }
+        },
+        "gervill": {
+          "$extends": [ "deviceTypes/gm.json" ],
+          "$default_voices": "eval:object:$(render_default_parts)",
+          "$midiPorts": {
+            "$out": "gervill"
+          }
+        }
+      },
+      "jv-1080": "eval:object:$(object_merge '.$song.$devices.jv-1080' '.$auto.$devices.$default.jv-1080')",
+      "gervill": "eval:object:$(object_merge '.$song.$devices.gervill' '.$auto.$devices.$default.gervill')"
+    },
+    "$bars": {
+      "__init__": {
+        "$labels": [ "__init__" ],
+        "$beats": "2/4",
+        "$patterns": {
+          "device:jv1080": [ "eval:$(inline $(device_init jv1080))" ],
+          "device:gervill": [ "eval:$(inline $(device_init gervill))" ],
+          "part:keyboard": [ "eval:$(inline $(stroke notes R8))", "eval:$(inline $(part_init keyboard))", "eval:$(inline $(voice default:keyboard))" ],
+          "part:guitar": [ "eval:$(inline $(stroke notes R8))", "eval:$(inline $(part_init guitar))", "eval:$(inline $(voice default:guitar))" ],
+          "part:bass": [ "eval:$(inline $(stroke notes R8))", "eval:$(inline $(part_init base))", "eval:$(inline $(voice default:bass))" ],
+          "part:drums": [ "eval:$(inline $(stroke notes R8))", "eval:$(inline $(part_init drums))", "eval:$(inline $(voice default:drums))" ]
+        }
+      }
+    },
+    "$parts": {
+      "part:keyboard": {
+      },
+      "part:guitar": {
+      },
+      "part:bass": {
+      },
+      "part:drums": {
+      }
+    },
+    "sequence": [ "eval:object:$(ref '.$bars.__init__')" ]
+  }
+}
+----
+
+.output of `render_default_parts`
+----
+{
+  "default:keyboard": {},
+  "default:guitar": {},
+  "default:bass": {},
+  "default:drums": {}
+}
+----
+
+== `helpers/symfonion.rc`
+
+A script library that defines functions useful for `symfonion` users.
+
+A reserved word is always prefixed with `$`.
+
+[source, shellscript]
+.`helpers/symfonion.rc`
+----
+#!/usr/bin/env bash -eu
+
+function inline() {
+  local _args="${@}"
+  echo "$inline:" "${_args[@]}"
+}
+
+# A function that prints the specified bar
+function bar() {
+  local _bar_name="${1}"
+  echo "$(ref ."${bars}"."${1}")"
+}
+
+# A function that prints the program change data.
+# This is supposed to be called from inside an element in "$sequence" array.
+function program_change() {
+  local _program_name="${1}"
+  local _device_name
+  _device_name="${2:-$(device_name)}"
+
+  # from the device name this function looks int `components/programs/{_device_name}.json,
+  # which should hold an entry for the specified `_program_name`.
+}
+
+# This function is supposed to be called inside "$sequence" list element.
+function device_name() {
+  # this figures out port name first, then it will figure out a device name assigned to the port.
+}
+
+####
+# Merges two JSON objects into one in the same manner as the inheritance of jq-front.
+function object_merge() {
+:
+}
+
+####
+# Creates a new JSON array from two JSON arrays by appending the second one to the first.
+function array_append() {
+:
+}
+
+function voice_alias_of() {
+  local _voice_name="${1}"
+  ref $(cur) ."${_voice_name}"
+}
+
+####
+# This function constructs a stroke object for changing a voice in a polymorphic manner.
+# This function is intended to be used in '.{$user,$auto}.bars.{barName}.$patterns.{partName}.[*]'
+# Output is string type and should look like, :
+#   '$inline:{"$sysex":["$jv-set-patchnum-pr-c","$channel",78]}'
+# if it is used for a JV-10x0 series synthesizer.
+function voice() {
+  local _voice_name="${1}"
+  _voice "$(_device_name)" "${_voice_name}"
+}
+
+# This function is intended to be used by voice function.
+function _voice() {
+  local _device_name="${1}" _voice_name="${2}"
+  local _p
+  _p="$(printf '.$song.$devices.%s.$voices.%s' "${_device_name}" "${_voice_name}")"
+  ref "${_p}"
+}
+
+# This function prints a device name of the current part.
+# This function is intended to be used by 'voice' function.
+function _device_name() {
+  :
+}
+
+# is this really necessary?
+function inline_stroke() {
+  printf '$inline:%s' "$(stroke "${@}")"
+}
+
+# To be re-written
+function stroke() {
+  local _type="${1}"
+  shift
+  local _values="${@}"
+  printf '%s' "$(jq -ncr                              \
+                    --arg key '$'"${_type}"           \
+                    --argjson value "${_value}"       \
+                      '{"$body": {"$notes": $value}}' )"
+}
+
+function init_device() {
+  :
+}
+function init_part() {
+  :
+}
+
+function voice() {
+  :
+}
+
+# Composes an element in "bar"
+function bar() {
+  l0cal _bar_name="${1}"
+  ref '.$bar'."${_bar_name}"
+}
+----
+
+=== Used in `song.json++`
+voice_alias_of:: (t.b.d.) .$song.$devices.+{device}+.$voices
+voice:: .$song.$bars, $song.$patterns
+bar:: .$song.$sequence
+stroke:: .$song.$bars
+inline:: .$bars
+bar:: .$sequence
+
+=== Used in `song-base.json++`
+
+compose_parts_section:: .$parts
+object_merge:: .$patterns
+array_append:: .$sequence
+
+=== Used in `auto.json`
+
+object_merge:: .$auto.$devices.+{device}+
+device_init:: .$auto.$bars.$patterns
+part_init:: .$auto.$bars.$patterns
+inline:: .$auto.$bars.$patterns, etc.
+voice:: .$auto.$bars.$patterns
+
+
+
+render_parts:: (t.b.d.)

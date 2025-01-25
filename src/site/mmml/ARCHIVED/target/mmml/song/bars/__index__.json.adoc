@@ -1,0 +1,16 @@
+This file is auto-generated in `prepareResources` stage of `buildWeaver` module.
+
+[[CONTENT]]
+[source,json]
+----
+{
+  "break-1": { "...": "..." },
+  "bridge-1": { "...": "..." },
+  "bridge-2": { "...": "..." },
+  "chorus-1": { "...": "..." },
+  "...": { "...": "..." },
+  "prepare": { "...": "..." },
+  "verse-1": { "...": "..." },
+  "verse-2": { "...": "..." }
+}
+----

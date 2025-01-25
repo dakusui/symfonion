@@ -2,8 +2,8 @@ package com.github.dakusui.symfonion.tests;
 
 import com.github.dakusui.symfonion.cli.Cli;
 import com.github.dakusui.symfonion.cli.subcommands.PresetSubcommand;
-import com.github.dakusui.symfonion.exceptions.CliException;
-import com.github.dakusui.symfonion.exceptions.SymfonionException;
+import com.github.dakusui.symfonion.compat.exceptions.CliException;
+import com.github.dakusui.symfonion.compat.exceptions.SymfonionException;
 import com.github.dakusui.symfonion.testutils.TestBase;
 import org.apache.commons.cli.ParseException;
 import org.junit.Test;
@@ -31,15 +31,23 @@ public class CliTest extends TestBase {
 		Cli r = createCli("--help");
 		assertEquals(PresetSubcommand.HELP, r.subcommand());
 	}
-	
+
 	@Test
-	public void compile_01() throws ParseException, CliException {
+	public void compile_01compat() throws ParseException, CliException {
 		String srcFileName = "test.json";
 		Cli r = createCli("-c", srcFileName);
 		assertEquals(PresetSubcommand.COMPILE, r.subcommand());
 		assertEquals(new File(srcFileName), r.source());
 	}
-	
+
+	@Test
+	public void compile_01() throws ParseException, CliException {
+		String srcFileName = "test.json";
+		Cli r = createCli("-x", srcFileName);
+		assertEquals(PresetSubcommand.COMPILE_SONG, r.subcommand());
+		assertEquals(new File(srcFileName), r.source());
+	}
+
 	@Test
 	public void outportOption_01() throws ParseException, CliException {
 		Cli r = createCli("-O", "out1=test1");

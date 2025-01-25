@@ -1,0 +1,2 @@
+This file is a symbolic link that points a file under `$+{XDG_LOCAL_LIB}+/mmml/+{version}+/bin` of the same name.
+The file is an executable of `buildweaver` utility.

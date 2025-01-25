@@ -1,0 +1,8 @@
+[source, yaml]
+.ports-myl-laptop.yaml
+----
+port1:
+- "$pattern": hw:1,0,0\]
+port2:
+- "$pattern": hw:1,0,1\]
+----

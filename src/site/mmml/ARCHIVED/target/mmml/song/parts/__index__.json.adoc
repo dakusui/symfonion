@@ -1,0 +1,27 @@
+[[CONTENT]]
+[source, json]
+.\\__index__.json
+----
+{
+  "piano": {
+    "device": "jv-10x0-performance-012",
+    "channel": -1
+  },
+  "guitar": {
+    "device": "surge-xt-1",
+    "channel": -1
+  },
+  "chord": {
+    "device": "gervill-1",
+    "channel": -1
+  },
+  "base": {
+    "device": "gervill-1",
+    "channel": -1
+  },
+  "drums": {
+    "device": "yoshimi-1",
+    "channel": 10
+  }
+}
+----

@@ -5,7 +5,8 @@ import com.google.gson.JsonObject;
 import java.util.List;
 import java.util.function.Function;
 
-import static com.github.dakusui.valid8j_pcond.forms.Printables.function;
+import static com.github.valid8j.pcond.forms.Printables.function;
+
 
 public class JsonObjectTo {
 

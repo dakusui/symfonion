@@ -1,0 +1,48 @@
+= MMML: Modern Music Macro Language
+
+include::directory-layout/.attr.adoc[]
+
+"MMML" stands for "More modern Music Macro Language".
+What is Music Macro Language?
+It's a small language to compose a music piece back in 80's<<mml>>.
+
+How to pronounce it?
+Please choose one from the followings:
+
+- M-three-L,
+- Thirty-fifty,
+- Or just M-M-M-L.
+
+// suppress inspection "GrazieInspection"
+Which one do you like? ;)
+
+== The Processing Pipeline of MMML
+
+To render the documents under this directory properly, run `src/build_tools/init_asciidoc_attr.sh`, first.
+
+Check: link:features/mmml-pipeline.adoc[MMML].
+
+
+== Directory Layout
+
+Check: link:directory-layout/INDEX.adoc[directory layout design].
+
+
+== Attribute Name Convention of MMML
+
+`$attribute_name`:: A reserved word of MMML is prefixed with `$`.
+
+== "BuildWeaver"
+
+Check: link:{xdg_local_lib}/mmml/1.0.1/bin/buildweaver.adoc[buildweaver]
+
+== Future Works
+
+Check: link:https://github.com/dakusui/symfonion/labels/mmml-futureworks[MMML:futureWorks]
+[bibliography]
+== References
+
+- [[[Yoshimi, 1]]] Yoshimi Software synthesizer for Linux https://yoshimi.sourceforge.io/
+- [[[jq-front, 2]]] jq-front https://dakusui.github.io/jq-front/
+- [[[symfonion, 3]]] SyMFONION https://dakusui.github.io/symfonion/
+- [[mml, 4]]] Music Macro Language https://en.wikipedia.org/wiki/Music_Macro_Language
