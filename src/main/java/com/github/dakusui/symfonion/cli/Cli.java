@@ -23,7 +23,6 @@ import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-import static com.github.dakusui.symfonion.cli.CliUtils.composeErrMsg;
 import static java.lang.String.format;
 
 public record Cli(
@@ -141,8 +140,8 @@ public record Cli(
         Pattern portpattern = Pattern.compile(p);
         ret.put(portName, portpattern);
       } catch (PatternSyntaxException e) {
-        throw new CliException(composeErrMsg(format("Regular expression '%s' for '%s' isn't valid.", portName, p),
-                                             optionName, null), e);
+        throw new CliException(CliUtils.composeErrMsgForOption(format("Regular expression '%s' for '%s' isn't valid.", portName, p),
+                                                               optionName, null), e);
       }
     }
     return ret;
@@ -268,7 +267,7 @@ public record Cli(
       if (cmd.hasOption('o')) {
         String sinkFilename = CliUtils.getSingleOptionValueFromCommandLine(cmd, "o");
         if (sinkFilename == null) {
-          throw new CliException(composeErrMsg("Output filename is required by this option.", "o"));
+          throw new CliException(CliUtils.composeErrMsgForShortOption("Output filename is required by this option.", "o"));
         }
         this.sink = new File(sinkFilename);
       }
@@ -283,35 +282,35 @@ public record Cli(
         subcommand = PresetSubcommand.PLAY;
         String sourceFilename = CliUtils.getSingleOptionValueFromCommandLine(cmd, "p");
         if (sourceFilename == null) {
-          throw new CliException(composeErrMsg("Input filename is required by this option.", "p"));
+          throw new CliException(CliUtils.composeErrMsgForShortOption("Input filename is required by this option.", "p"));
         }
         this.source = new File(sourceFilename);
       } else if (cmd.hasOption("q") || cmd.hasOption("play-song")) {
         subcommand = PresetSubcommand.PLAY_SONG;
         String sourceFilename = CliUtils.getSingleOptionValueFromCommandLine(cmd, "q");
         if (sourceFilename == null) {
-          throw new CliException(composeErrMsg("Input filename is required by this option.", "q"));
+          throw new CliException(CliUtils.composeErrMsgForShortOption("Input filename is required by this option.", "q"));
         }
         this.source = new File(sourceFilename);
       } else if (cmd.hasOption("c") || cmd.hasOption("compile")) {
         subcommand = PresetSubcommand.COMPILE;
         String sourceFilename = CliUtils.getSingleOptionValueFromCommandLine(cmd, "c");
         if (sourceFilename == null) {
-          throw new CliException(composeErrMsg("Input filename is required by this option.", "c"));
+          throw new CliException(CliUtils.composeErrMsgForShortOption("Input filename is required by this option.", "c"));
         }
         this.source = new File(sourceFilename);
       } else if (cmd.hasOption("x") || cmd.hasOption("compile-song")) {
         subcommand = PresetSubcommand.COMPILE_SONG;
         String sourceFilename = CliUtils.getSingleOptionValueFromCommandLine(cmd, "x");
         if (sourceFilename == null) {
-          throw new CliException(composeErrMsg("Input filename is required by this option.", "c"));
+          throw new CliException(CliUtils.composeErrMsgForShortOption("Input filename is required by this option.", "c"));
         }
         this.source = new File(sourceFilename);
       } else if (cmd.hasOption("r") || cmd.hasOption("route")) {
         subcommand = PresetSubcommand.ROUTE;
         Properties props = cmd.getOptionProperties("r");
         if (props.size() != 1) {
-          throw new CliException(composeErrMsg("Route information is not given or specified multiple times.", "r", "route"));
+          throw new CliException(CliUtils.composeErrMsgForOption("Route information is not given or specified multiple times.", "r", "route"));
         }
         this.routeRequest = new MidiRouteRequest(cmd.getOptionValues('r')[0], cmd.getOptionValues('r')[1]);
       } else {
@@ -323,7 +322,7 @@ public record Cli(
           subcommand  = PresetSubcommand.PLAY;
           this.source = new File(leftovers.getFirst());
         } else {
-          throw new CliException(composeErrMsg(format("Unrecognized arguments:%s", leftovers.subList(2, leftovers.size())), "-"));
+          throw new CliException(CliUtils.composeErrMsgForShortOption(format("Unrecognized arguments:%s", leftovers.subList(2, leftovers.size())), "-"));
         }
       }
       Predicate<Bar> barFilter = Predicates.alwaysTrue();

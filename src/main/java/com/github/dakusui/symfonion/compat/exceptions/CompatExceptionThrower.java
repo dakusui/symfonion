@@ -1,5 +1,6 @@
 package com.github.dakusui.symfonion.compat.exceptions;
 
+import com.github.dakusui.symfonion.cli.CliUtils;
 import com.github.dakusui.symfonion.compat.json.CompatJsonUtils;
 import com.github.dakusui.symfonion.utils.midi.MidiDeviceRecord;
 import com.google.gson.JsonArray;
@@ -12,7 +13,6 @@ import java.io.File;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 
-import static com.github.dakusui.symfonion.cli.CliUtils.composeErrMsg;
 import static com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower.ContextKey.*;
 import static java.lang.String.format;
 
@@ -153,7 +153,7 @@ public class CompatExceptionThrower {
   }
 
   public static CliException failedToAccessMidiDevice(String deviceType, MidiUnavailableException e, MidiDevice.Info[] matchedInfos) {
-    throw new CliException(composeErrMsg(format("Failed to access MIDI-%s device:'%s'.", deviceType, matchedInfos[0].getName()), "O"), e);
+    throw new CliException(CliUtils.composeErrMsgForShortOption(format("Failed to access MIDI-%s device:'%s'.", deviceType, matchedInfos[0].getName()), "O"), e);
   }
 
   public static RuntimeException multipleMidiDevices(MidiDeviceRecord e1, MidiDeviceRecord e2, Predicate<MidiDeviceRecord> cond) {

@@ -54,7 +54,7 @@ public enum SymfonionExceptionThrower implements ExceptionThrower<SymfonionExcep
   }
 
   public static ExceptionContext.Entry<Key> entry(Key key, Object value) {
-    return ExceptionContext.entry(key, value);
+    return ExceptionContext.$(key, value);
   }
 
   public static ExceptionContext.Entry<Key> $(Key key, Object value) {

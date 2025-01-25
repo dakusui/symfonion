@@ -1,6 +1,7 @@
 package com.github.dakusui.symfonion.cli.subcommands;
 
 import com.github.dakusui.symfonion.cli.Cli;
+import com.github.dakusui.symfonion.cli.CliUtils;
 import com.github.dakusui.symfonion.cli.MidiRouteRequest;
 import com.github.dakusui.symfonion.cli.Subcommand;
 import com.github.dakusui.symfonion.compat.exceptions.CliException;
@@ -20,7 +21,6 @@ import java.util.Map;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
-import static com.github.dakusui.symfonion.cli.CliUtils.composeErrMsg;
 import static com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower.failedToRetrieveTransmitterFromMidiIn;
 import static com.github.dakusui.symfonion.utils.midi.MidiDeviceManager.isMidiDeviceForInput;
 import static com.github.dakusui.symfonion.utils.midi.MidiDeviceManager.matchesPortNameInDefinitions;
@@ -80,14 +80,14 @@ public class PatchBay implements Subcommand {
 
   private static Map<String, Pattern> requireMidiInDefinitionsContainsInputPortName(Map<String, Pattern> midiOutDefinitions, String inPortName) {
     if (!midiOutDefinitions.containsKey(inPortName)) {
-      throw new CliException(composeErrMsg(format("MIDI-in port '%s' is specified, but it is not defined by '-I' option.", inPortName), "r", "--route"));
+      throw new CliException(CliUtils.composeErrMsgForOption(format("MIDI-in port '%s' is specified, but it is not defined by '-I' option.", inPortName), "r", "--route"));
     }
     return midiOutDefinitions;
   }
 
   private static Map<String, Pattern> requireMidiOutDefinitionsContainsOutputPortName(Map<String, Pattern> midiOutDefinitions, String outPortName) {
     if (!midiOutDefinitions.containsKey(outPortName)) {
-      throw new CliException(composeErrMsg(format("MIDI-out port '%s' is specified, but it is not defined by '-O' option.", outPortName), "r", "route"));
+      throw new CliException(CliUtils.composeErrMsgForOption(format("MIDI-out port '%s' is specified, but it is not defined by '-O' option.", outPortName), "r", "route"));
     }
     return midiOutDefinitions;
   }
