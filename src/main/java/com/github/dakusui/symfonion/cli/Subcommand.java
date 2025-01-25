@@ -13,7 +13,7 @@ public interface Subcommand {
    *
    * @param cli         {@link Cli} object.
    * @param ps          A print stream to which this sub-command should write. Usually {@code System.err}.
-   * @param inputStream An input stream from which this sub-command should read. Usually {@code System.oin}.
+   * @param inputStream An input stream from which this sub-command should read. Usually {@code System.in}.
    * @throws IOException An IO problem (file-read, write, etc.) happened during execution.
    */
   void invoke(Cli cli, PrintStream ps, InputStream inputStream) throws IOException;

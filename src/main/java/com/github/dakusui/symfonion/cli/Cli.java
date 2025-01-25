@@ -9,20 +9,15 @@ import com.github.dakusui.symfonion.song.Measure;
 import com.github.valid8j.pcond.forms.Predicates;
 import org.apache.commons.cli.*;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintStream;
+import java.io.*;
 import java.util.List;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import static com.github.dakusui.symfonion.cli.CliUtils.composeErrMsgForOption;
+import static com.github.dakusui.symfonion.cli.CliUtils.getSingleOptionValueFromCommandLine;
 import static java.lang.String.format;
 
 public record Cli(
@@ -49,6 +44,10 @@ public record Cli(
     Predicate<String> partFilter,
     Options options,
     Symfonion symfonion) {
+
+  public void invoke(PrintStream stdout, InputStream in) throws IOException {
+    this.subcommand().invoke(this, stdout, in);
+  }
 
   /**
    * Returns an {@code Options} object which represents the specification of this CLI command.
@@ -130,18 +129,16 @@ public record Cli(
     return parser.parse(options, args);
   }
 
-  static Map<String, Pattern> parseSpecifiedOptionsInCommandLineAsPortNamePatterns(CommandLine cmd, String optionName) throws CliException {
+  static Map<String, Pattern> parseSpecifiedOptionAsPortNamePatterns(CommandLine cmd, String optionName) throws CliException {
     Properties           props = cmd.getOptionProperties(optionName);
     Map<String, Pattern> ret   = new HashMap<>();
     for (Object key : props.keySet()) {
       String portName = key.toString();
       String p        = props.getProperty(portName);
       try {
-        Pattern portpattern = Pattern.compile(p);
-        ret.put(portName, portpattern);
+        ret.put(portName, Pattern.compile(p));
       } catch (PatternSyntaxException e) {
-        throw new CliException(CliUtils.composeErrMsgForOption(format("Regular expression '%s' for '%s' isn't valid.", portName, p),
-                                                               optionName, null), e);
+        throw new CliException(composeErrMsgForOption(format("Regular expression '%s' for '%s' isn't valid.", portName, p), optionName, null), e);
       }
     }
     return ret;
@@ -150,8 +147,7 @@ public record Cli(
   public static int invoke(PrintStream stdout, PrintStream stderr, String... args) {
     int ret;
     try {
-      Cli cli = new Builder(args).build();
-      cli.subcommand().invoke(cli, stdout, System.in);
+      Cli.cli(args).$().invoke(stdout, System.in);
       ret = 0;
     } catch (ParseException e) {
       printError(stderr, e);
@@ -177,72 +173,41 @@ public record Cli(
   }
 
   public static void main(String... args) {
-    if (args.length == 0 && !GraphicsEnvironment.isHeadless()) {
-      fallbackToSimpleGUI();
-    } else {
-      int exitCode = invoke(System.out, System.err, args);
-      System.exit(exitCode);
-    }
+    System.exit(invoke(System.out, System.err, args));
   }
 
-  static void fallbackToSimpleGUI() {
-    String selectedFile = filenameFromFileChooser();
-    if (selectedFile != null) {
-      String[]        args     = new String[]{selectedFile};
-      final JTextArea textArea = new JTextArea();
-      JFrame          frame    = new JFrame("symfonion output");
-      frame.addWindowListener(new WindowAdapter() {
-        public void windowClosing(WindowEvent e) {
-          System.exit(0);
-        }
-      });
-      frame.add(textArea);
-      frame.pack();
-      frame.setSize(800, 600);
-      frame.setVisible(true);
-      PrintStream ps = new PrintStream(new OutputStream() {
-        private final StringBuilder sb = new StringBuilder();
-
-        @Override
-        public void flush() {
-        }
-
-        @Override
-        public void close() {
-        }
-
-        @Override
-        public void write(int b) {
-          if (b == '\r')
-            return;
-
-          if (b == '\n') {
-            final String text = sb + "\n";
-            SwingUtilities.invokeLater(() -> textArea.append(text));
-            sb.setLength(0);
-            return;
-          }
-
-          sb.append((char) b);
-        }
-
-      });
-      System.setOut(ps);
-      System.setErr(ps);
-      invoke(System.out, System.err, args);
-    }
+  /**
+   * A synonym for `new Builder(String... args)`.
+   * Prefer this over directly calling `new Builder(String... args)` for readability's sake.
+   *
+   * @param args Commandline arguments
+   * @return A new `Cli.Builder` object
+   */
+  public static Builder cli(String... args) {
+    return new Builder(args);
   }
 
-  static String filenameFromFileChooser() {
-    JFileChooser chooser = new JFileChooser();
-    chooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
-    int result = chooser.showOpenDialog(new JFrame());
-    if (result == JFileChooser.APPROVE_OPTION) {
-      return chooser.getSelectedFile().getAbsolutePath();
-    }
-    return null;
-  }
-
+  /**
+   * A builder of `Cli` class.
+   * It is encouraged to use {@link Cli#cli(String...)} and {@link Builder#$()} method to create an instance of this `Builder`
+   * class and the product class `Cli`.
+   *
+   * That is,
+   *
+   * //@formatter:off
+   * ```java
+   * class Example {
+   *   void example() {
+   *     Cli cli = cli("-x", "song.json").chain()
+   *                                     .some()
+   *                                     .methods()
+   *                                     .$()
+   *     cli.invoke();
+   *   }
+   * }
+   * ```
+   * //@formatter:on
+   */
   public static class Builder {
     private final String[]             args;
     private       File                 source;
@@ -255,21 +220,30 @@ public record Cli(
       this.args = args;
     }
 
+    /**
+     * A synonym for {@link Builder#build()}.
+     * Prefer this method over `build` for readability's sake.
+     *
+     * @return A new `Cli` object.
+     * @throws ParseException Failed to parse commandline arguments based on the specification of this application.
+     * @see Builder#build()
+     * @see Builder#Builder(String... args)
+     */
+    public Cli $() throws ParseException {
+      return build();
+    }
+
     public Cli build() throws ParseException {
-      Options     options1 = buildOptions();
-      CommandLine cmd      = parseArgs(options1, args);
+      Options     options = buildOptions();
+      CommandLine cmd     = parseArgs(options, args);
       if (cmd.hasOption('O')) {
-        this.midiOutRegexPatterns = parseSpecifiedOptionsInCommandLineAsPortNamePatterns(cmd, "O");
+        this.midiOutRegexPatterns = parseSpecifiedOptionAsPortNamePatterns(cmd, "O");
       }
       if (cmd.hasOption('I')) {
-        this.midiInRegexPatterns = parseSpecifiedOptionsInCommandLineAsPortNamePatterns(cmd, "I");
+        this.midiInRegexPatterns = parseSpecifiedOptionAsPortNamePatterns(cmd, "I");
       }
       if (cmd.hasOption('o')) {
-        String sinkFilename = CliUtils.getSingleOptionValueFromCommandLine(cmd, "o");
-        if (sinkFilename == null) {
-          throw new CliException(CliUtils.composeErrMsgForShortOption("Output filename is required by this option.", "o"));
-        }
-        this.sink = new File(sinkFilename);
+        this.sink = new File(getSingleOptionValueFromCommandLine(cmd, "o"));
       }
       Subcommand subcommand;
       if (cmd.hasOption("V") || cmd.hasOption("version")) {
@@ -279,38 +253,22 @@ public record Cli(
       } else if (cmd.hasOption("l") || cmd.hasOption("list")) {
         subcommand = PresetSubcommand.LIST;
       } else if (cmd.hasOption("p") || cmd.hasOption("play")) {
-        subcommand = PresetSubcommand.PLAY;
-        String sourceFilename = CliUtils.getSingleOptionValueFromCommandLine(cmd, "p");
-        if (sourceFilename == null) {
-          throw new CliException(CliUtils.composeErrMsgForShortOption("Input filename is required by this option.", "p"));
-        }
-        this.source = new File(sourceFilename);
+        subcommand  = PresetSubcommand.PLAY;
+        this.source = new File(getSingleOptionValueFromCommandLine(cmd, "p"));
       } else if (cmd.hasOption("q") || cmd.hasOption("play-song")) {
-        subcommand = PresetSubcommand.PLAY_SONG;
-        String sourceFilename = CliUtils.getSingleOptionValueFromCommandLine(cmd, "q");
-        if (sourceFilename == null) {
-          throw new CliException(CliUtils.composeErrMsgForShortOption("Input filename is required by this option.", "q"));
-        }
-        this.source = new File(sourceFilename);
+        subcommand  = PresetSubcommand.PLAY_SONG;
+        this.source = new File(getSingleOptionValueFromCommandLine(cmd, "q"));
       } else if (cmd.hasOption("c") || cmd.hasOption("compile")) {
-        subcommand = PresetSubcommand.COMPILE;
-        String sourceFilename = CliUtils.getSingleOptionValueFromCommandLine(cmd, "c");
-        if (sourceFilename == null) {
-          throw new CliException(CliUtils.composeErrMsgForShortOption("Input filename is required by this option.", "c"));
-        }
-        this.source = new File(sourceFilename);
+        subcommand  = PresetSubcommand.COMPILE;
+        this.source = new File(getSingleOptionValueFromCommandLine(cmd, "c"));
       } else if (cmd.hasOption("x") || cmd.hasOption("compile-song")) {
-        subcommand = PresetSubcommand.COMPILE_SONG;
-        String sourceFilename = CliUtils.getSingleOptionValueFromCommandLine(cmd, "x");
-        if (sourceFilename == null) {
-          throw new CliException(CliUtils.composeErrMsgForShortOption("Input filename is required by this option.", "c"));
-        }
-        this.source = new File(sourceFilename);
+        subcommand  = PresetSubcommand.COMPILE_SONG;
+        this.source = new File(getSingleOptionValueFromCommandLine(cmd, "x"));
       } else if (cmd.hasOption("r") || cmd.hasOption("route")) {
         subcommand = PresetSubcommand.ROUTE;
         Properties props = cmd.getOptionProperties("r");
         if (props.size() != 1) {
-          throw new CliException(CliUtils.composeErrMsgForOption("Route information is not given or specified multiple times.", "r", "route"));
+          throw new CliException(composeErrMsgForOption("Route information is not given or specified multiple times.", "r", "route"));
         }
         this.routeRequest = new MidiRouteRequest(cmd.getOptionValues('r')[0], cmd.getOptionValues('r')[1]);
       } else {
@@ -334,7 +292,7 @@ public record Cli(
       Predicate<String> partFilter = Predicates.alwaysTrue();
       if (cmd.hasOption("parts") && !Objects.equals("*", cmd.getOptionValue("parts")))
         partFilter = partName -> partName != null && partName.matches(cmd.getOptionValue("parts"));
-      return new Cli(subcommand, source, sink, routeRequest, midiInRegexPatterns, midiOutRegexPatterns, barFilter, measureFilter, partFilter, options1, createSymfonion());
+      return new Cli(subcommand, source, sink, routeRequest, midiInRegexPatterns, midiOutRegexPatterns, barFilter, measureFilter, partFilter, options, createSymfonion());
     }
   }
 }

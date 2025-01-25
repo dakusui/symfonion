@@ -42,6 +42,8 @@ public enum CliUtils {
 
   /**
    * Returns a value of a specified option.
+   * This method does not return `null`.
+   * In case the specified option doesn't have a value, it will throw a `CliException`.
    *
    * @param cmd        A command line object created by `Cli#parseArgs(...)` method.
    * @param optionName An option whose value should be returned.

@@ -1,14 +1,10 @@
 package com.github.dakusui.symfonion.cli;
 
 import com.github.dakusui.symfonion.compat.exceptions.CliException;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
 import org.junit.Test;
 
 import java.io.File;
 
-import static com.github.dakusui.symfonion.cli.Cli.parseArgs;
 import static com.github.valid8j.fluent.Expectations.assertStatement;
 import static com.github.valid8j.fluent.Expectations.value;
 
@@ -32,30 +28,29 @@ public class CliUtilsTest {
   public void givenOption_whenComposeErrorMessage_thenMessageComposed() {
     String message = CliUtils.composeErrMsgForOption("Error found", "o", "output");
 
-    assertStatement(value(message)
-                        .toBe()
-                        .containing("Error found")
-                        .containing("-o")
-                        .containing("--output"));
+    assertStatement(value(message).toBe()
+                                  .containing("Error found")
+                                  .containing("-o")
+                                  .containing("--output"));
   }
 
   @Test
   public void givenCommandLine_whenGetSingleOptionValueFromCommandLine_thenValueReturned() {
-    String optionValue = CliUtils.getSingleOptionValueFromCommandLine(createCommandLine("-q", "song.json"), "q");
+    String optionValue = CliUtils.getSingleOptionValueFromCommandLine(CliTestUtils.createCommandLine("-q", "song.json"), "q");
 
     assertStatement(value(optionValue).toBe().equalTo("song.json"));
   }
 
   @Test
   public void givenCommandLineWithLongOptionName_whenGetSingleOptionValueFromCommandLine_thenValueReturned() {
-    String optionValue = CliUtils.getSingleOptionValueFromCommandLine(createCommandLine("--play-song", "song.json"), "q");
+    String optionValue = CliUtils.getSingleOptionValueFromCommandLine(CliTestUtils.createCommandLine("--play-song", "song.json"), "q");
 
     assertStatement(value(optionValue).toBe().equalTo("song.json"));
   }
 
   @Test
   public void givenCommandLine_whenGetSingleOptionValueFromCommandLineWithLongOptionName_thenValueReturned() {
-    String optionValue = CliUtils.getSingleOptionValueFromCommandLine(createCommandLine("-q", "song.json"), "play-song");
+    String optionValue = CliUtils.getSingleOptionValueFromCommandLine(CliTestUtils.createCommandLine("-q", "song.json"), "play-song");
 
     assertStatement(value(optionValue).toBe().equalTo("song.json"));
   }
@@ -63,7 +58,7 @@ public class CliUtilsTest {
   @Test(expected = CliException.class)
   public void givenCommandLineGivingOutputOptionTwice_whenGetSingleOptionValueFromCommandLine_thenExceptionThrown() {
     try {
-      CliUtils.getSingleOptionValueFromCommandLine(createCommandLine("-q", "play.json", "--play-song", "extra.txt"), "q");
+      CliUtils.getSingleOptionValueFromCommandLine(CliTestUtils.createCommandLine("-q", "play.json", "--play-song", "extra.txt"), "q");
     } catch (CliException e) {
       assertStatement(value(e.getMessage()).toBe()
                                            .containing("-q")
@@ -111,15 +106,5 @@ public class CliUtilsTest {
                             .toBe()
                             .endingWith("outfile.port1.midi"));
   }
-  static CommandLine createCommandLine(String... args) {
-    try {
-      return parseArgs(createOptions(), args);
-    } catch (ParseException e) {
-      throw new RuntimeException(e);
-    }
-  }
 
-  static Options createOptions() {
-    return Cli.buildOptions();
-  }
 }
