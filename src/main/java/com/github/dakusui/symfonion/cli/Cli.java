@@ -9,8 +9,10 @@ import com.github.dakusui.symfonion.song.Measure;
 import com.github.valid8j.pcond.forms.Predicates;
 import org.apache.commons.cli.*;
 
-import java.io.*;
-import java.util.List;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintStream;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
@@ -20,6 +22,23 @@ import static com.github.dakusui.symfonion.cli.CliUtils.composeErrMsgForOption;
 import static com.github.dakusui.symfonion.cli.CliUtils.getSingleOptionValueFromCommandLine;
 import static java.lang.String.format;
 
+/**
+ * A class that models a single CLI invocation.
+ *
+ * @param subcommand           A sub command to be executed by this object.
+ * @param source               A source file to be processed.
+ * @param sink                 A sink (output) file to which processed result should be written.
+ * @param routeRequest         An object to specify routing of MIDI signals.
+ * @param midiInRegexPatterns  An object that maps logical midi input port name to a device name.
+ * @param midiOutRegexPatterns An object that maps logical midi output port name to a device name.
+ * @param barFilter            A predicate that filters musical bars.
+ *                             Used with `-c` and `-p` options.
+ * @param measureFilter        A predicate that filters musical measures.
+ *                             Used with `-x` and `-q` options.
+ * @param partFilter           A predicate that filters parts.
+ * @param options              An object that models command line options.
+ * @param symfonion            This application's facade object.
+ */
 public record Cli(
     Subcommand subcommand,
     File source,
@@ -45,8 +64,67 @@ public record Cli(
     Options options,
     Symfonion symfonion) {
 
+  /**
+   * Invokes this object.
+   *
+   * @param stdout A print stream to which the output of the execution goes.
+   * @param in An input stream from which the executed subcommand reads data.
+   * @throws IOException A failure detected during execution.
+   */
   public void invoke(PrintStream stdout, InputStream in) throws IOException {
     this.subcommand().invoke(this, stdout, in);
+  }
+
+  /**
+   * Invokes the **SyMFONION** application with given command line arguments.
+   *
+   * @param stdout A print stream to which stdout data are printed.
+   * @param stderr A print stream to which stderr data are printed.
+   * @param args Command line arguments.
+   * @return An exit code.
+   */
+  public static int invoke(PrintStream stdout, PrintStream stderr, String... args) {
+    int ret;
+    try {
+      Cli.cli(args).$().invoke(stdout, System.in);
+      ret = 0;
+    } catch (ParseException e) {
+      printError(stderr, e);
+      ret = 1;
+    } catch (CliException e) {
+      printError(stderr, e);
+      ret = 2;
+    } catch (SymfonionException e) {
+      printError(stderr, e);
+      ret = 3;
+    } catch (IOException e) {
+      e.printStackTrace(stderr);
+      ret = 4;
+    } catch (Exception e) {
+      e.printStackTrace(stderr);
+      ret = 5;
+    }
+    return ret;
+  }
+
+  /**
+   * A synonym for `new Builder(String... args)`.
+   * Prefer this over directly calling `new Builder(String... args)` for readability's sake.
+   *
+   * @param args Commandline arguments
+   * @return A new `Cli.Builder` object
+   */
+  public static Builder cli(String... args) {
+    return new Builder(args);
+  }
+
+  /**
+   * The application's entry point.
+   *
+   * @param args Given command line arguments.
+   */
+  public static void main(String... args) {
+    System.exit(invoke(System.out, System.err, args));
   }
 
   /**
@@ -144,58 +222,21 @@ public record Cli(
     return ret;
   }
 
-  public static int invoke(PrintStream stdout, PrintStream stderr, String... args) {
-    int ret;
-    try {
-      Cli.cli(args).$().invoke(stdout, System.in);
-      ret = 0;
-    } catch (ParseException e) {
-      printError(stderr, e);
-      ret = 1;
-    } catch (CliException e) {
-      printError(stderr, e);
-      ret = 2;
-    } catch (SymfonionException e) {
-      printError(stderr, e);
-      ret = 3;
-    } catch (IOException e) {
-      e.printStackTrace(stderr);
-      ret = 4;
-    } catch (Exception e) {
-      e.printStackTrace(stderr);
-      ret = 5;
-    }
-    return ret;
-  }
-
   private static void printError(PrintStream ps, Throwable t) {
     ps.printf("symfonion: %s%n", t.getMessage());
   }
 
-  public static void main(String... args) {
-    System.exit(invoke(System.out, System.err, args));
-  }
-
-  /**
-   * A synonym for `new Builder(String... args)`.
-   * Prefer this over directly calling `new Builder(String... args)` for readability's sake.
+  /*
+   * A builder of {@code Cli} class.
    *
-   * @param args Commandline arguments
-   * @return A new `Cli.Builder` object
-   */
-  public static Builder cli(String... args) {
-    return new Builder(args);
-  }
-
-  /**
-   * A builder of `Cli` class.
    * It is encouraged to use {@link Cli#cli(String...)} and {@link Builder#$()} method to create an instance of this `Builder`
    * class and the product class `Cli`.
    *
    * That is,
    *
    * //@formatter:off
-   * ```java
+   * [source, java]
+   * ----
    * class Example {
    *   void example() {
    *     Cli cli = cli("-x", "song.json").chain()
@@ -205,7 +246,7 @@ public record Cli(
    *     cli.invoke();
    *   }
    * }
-   * ```
+   * ----
    * //@formatter:on
    */
   public static class Builder {
@@ -216,12 +257,17 @@ public record Cli(
     private       Map<String, Pattern> midiInRegexPatterns  = new HashMap<>();
     private       Map<String, Pattern> midiOutRegexPatterns = new HashMap<>();
 
+    /**
+     * Creates an object of this class.
+     * @param args Command line arguments.
+     */
     public Builder(String... args) {
       this.args = args;
     }
 
-    /**
+    /*
      * A synonym for {@link Builder#build()}.
+     *
      * Prefer this method over `build` for readability's sake.
      *
      * @return A new `Cli` object.
@@ -233,6 +279,14 @@ public record Cli(
       return build();
     }
 
+    /**
+     * Builds a `Cli` object.
+     *
+     * @return A new `Cli` object built from values given to this builder.
+     * @throws ParseException Failed to parse the given arguments.
+     *
+     * @see Cli
+     */
     public Cli build() throws ParseException {
       Options     options = buildOptions();
       CommandLine cmd     = parseArgs(options, args);

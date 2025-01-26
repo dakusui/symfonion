@@ -9,7 +9,8 @@ import static com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThro
 import static com.github.dakusui.symfonion.compat.exceptions.SymfonionTypeMismatchException.OBJECT;
 import static java.util.Objects.requireNonNull;
 
-public class CompatJsonUtils {
+public enum CompatJsonUtils {
+  ;
   public static String summarizeJsonElement(JsonElement jsonElement) {
     if (jsonElement == null || jsonElement.isJsonNull()) {
       return "null";
@@ -33,7 +34,7 @@ public class CompatJsonUtils {
    *
    * @param target A JSON element whose path in {@code root} is searched for.
    * @param root   A root JSON object node where {@code target}'s path is searched.
-   * @return A string representation of path to {@code target} in {@code root}.
+   * @return A string representation of a path to {@code target} in {@code root}.
    */
   public static String findPathStringOf(JsonElement target, JsonObject root) {
     return jsonpathToString(findPathOf(target, root));
@@ -292,7 +293,7 @@ public class CompatJsonUtils {
   public static JsonArray asJsonArrayWithDefault(JsonElement base,
                                                  JsonArray defaultValue,
                                                  Object... path) throws JsonTypeMismatchException,
-                                                                                                JsonInvalidPathException {
+                                                                        JsonInvalidPathException {
     return (JsonArray) JsonTypes.ARRAY.validate(asJsonElementWithDefault(base,
                                                                          defaultValue,
                                                                          path));
@@ -419,11 +420,37 @@ public class CompatJsonUtils {
     }
   }
 
-  public static Map<JsonElement, List<Object>> buildPathInfo(JsonObject root) {
+  /**
+   * Returns a map that stores path information of a given `JsonObject`.
+   * Path information is modeled as a list of objects, each of whose elements is a path component.
+   *
+   * Given,
+   * // @formatter:off
+   * [source, JSON]
+   * ```
+   * {
+   *   "a": {
+   *      "b": "Z"
+   *   }
+   * }
+   * ```
+   * // @formatter:on
+   *
+   * The path information to `"Z"` will be `["a", "b"]`.
+   *
+   * LIMITATION::
+   * If we have the same node value at different places in `jsonObject`,
+   * still the returned map will contain only one entry.
+   * It will not be specified which one will be contained.
+   *
+   * @param jsonObject A JSON object for which path info map is created.
+   * @return A map which maps from `JsonElement` s in `jsonObject` to a path information object.
+   */
+  public static Map<JsonElement, List<Object>> buildPathInfo(JsonObject jsonObject) {
     Map<JsonElement, List<Object>> ret = new HashMap<>();
-    ret.put(root, List.of());
+    ret.put(jsonObject, List.of());
     List<Object> path = new LinkedList<>();
-    buildPathInfo(ret, path, root);
+    buildPathInfo(ret, path, jsonObject);
     return ret;
   }
 

@@ -33,10 +33,10 @@ public class PartMeasureParameters {
   final NoteMap  noteMap;
 
   /**
-   * @param json
+   * Creates an object of this class.
+   *
+   * @param json A JSON object that stores a part measure parameters.
    * @param noteMap An object that defines mappings from a character to a MIDI note number.
-   * @throws SymfonionException
-   * @throws CompatJsonException
    */
   public PartMeasureParameters(JsonObject json, NoteMap noteMap) throws SymfonionException, CompatJsonException {
     if (json == null) {

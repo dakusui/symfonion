@@ -55,10 +55,9 @@ public class Symfonion {
     try (var ignored = exceptionContext(entry(ContextKey.SOURCE_FILE, new File(fileName)))) {
       try {
         this.json = loadSymfonionFile(fileName, new HashMap<>());
-        ret       = new CompatSong.Builder(json)
-            .barFilter(barFilter)
-            .partFilter(partFilter)
-            .build();
+        ret       = new CompatSong.Builder(json).barFilter(barFilter)
+                                                .partFilter(partFilter)
+                                                .build();
       } catch (JsonSyntaxException e) {
         throw loadFileException(e.getCause());
       } catch (IllegalStateException e) {
