@@ -6,6 +6,7 @@
 /.classpath
 /.project
 /.generated
+/.dependencies
 .attr.adoc
 **/package-info.java
 report.jcunit

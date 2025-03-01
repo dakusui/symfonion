@@ -567,7 +567,7 @@
                     </execution>
                     <execution><!-- Run our version calculation script -->
                         <id>asciidoctor-diagram-installation</id>
-                        <phase>package</phase>
+                        <phase>prepare-package</phase>
                         <goals>
                             <goal>exec</goal>
                         </goals>
