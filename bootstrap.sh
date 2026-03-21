@@ -249,6 +249,12 @@ function main() {
   # install sdkman
   curl -s "https://get.sdkman.io"    | /bin/bash 2>&1 | progress "sdkman"
 
+  # Verify sdk command is available after sdkman installation
+  if [[ ! -f "${SDKMAN_DIR}/bin/sdkman-init.sh" ]]; then
+    message "ERROR: sdkman installation failed - ${SDKMAN_DIR}/bin/sdkman-init.sh not found"
+    exit 1
+  fi
+
   sdk_install java "$(jdk_version)"  | progress "sdkman:java"
   sdk_install maven "$(maven_version)" | progress "sdkman:maven"
 
