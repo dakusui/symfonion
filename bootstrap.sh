@@ -93,6 +93,14 @@ function __bootstrap__perform_checks() {
 function __bootstrap__checkenv() {
   local _installation_reportdir="${1}"
   local _checks=()
+  function is_bash_modern_enough() {
+    local _min_version=4
+    [[ "${BASH_VERSINFO[0]}" -ge "${_min_version}" ]] || {
+      echo "bash ${_min_version}.x or later is required (current: ${BASH_VERSION})" >&2
+      return 1
+    }
+  }
+  _checks+=("is_bash_modern_enough")
   function is_curl_installed() {
     which curl
   }
