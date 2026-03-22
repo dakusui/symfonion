@@ -5,72 +5,93 @@ description: Step-by-step guide for releasing SyMFONION to Sonatype Central. Use
 
 # SyMFONION Release Skill
 
-This skill walks through a full SyMFONION release: pre-flight → prepare → perform → verify, with rollback guidance if anything goes wrong.
+This skill walks through a full SyMFONION release: pre-flight → prepare → perform → verify, with rollback guidance if anything goes wrong. Run each step yourself using the Bash tool — minimise prompts to the user and only stop if a pre-flight check fails or an error occurs.
 
 ---
 
 ## Pre-flight Checklist
 
-Run through all of these before touching Maven.
+Run all checks before touching Maven. If any check fails, report the problem and stop — do not proceed to the release steps.
 
-### 1. Environment
-Verify `env.rc` has been sourced:
+### 1. Source env.rc
+Always source `env.rc` at the start of every Bash command that needs Java or Maven, since each shell invocation is fresh:
 ```bash
-java -version   # must show JDK 21
-mvn -version    # must show the SDKMAN-managed Maven
+source env.rc && java -version 2>&1 | head -1
+source env.rc && mvn -version 2>&1 | head -1
 ```
-If either fails, ask the user to run `. env.rc` from the project root first.
+`java -version` must show JDK 21. If it doesn't, `env.rc` is broken — stop and report.
 
 ### 2. Branch
 Must be on `main`:
 ```bash
 git branch --show-current
 ```
-If not on `main`, stop and ask the user to switch before continuing.
+If not on `main`, stop and tell the user to switch.
 
 ### 3. Clean working tree
-No uncommitted changes or untracked files that should be committed:
 ```bash
-git status
+git status --short
 ```
-Stash or commit anything pending before proceeding.
+IDE-generated files (e.g. `.idea/`) that are tracked may have local drifts — restore them automatically with `git restore <file>` rather than asking the user. Only stop if there are meaningful uncommitted changes (source code, config files).
 
 ### 4. Up to date with remote
 ```bash
-git fetch origin
-git status   # should say "Your branch is up to date with 'origin/main'"
+git fetch origin && git status
 ```
-Pull if behind.
+If behind, pull automatically: `git pull`.
 
 ### 5. No stale release state
 ```bash
-ls release.properties 2>/dev/null && echo "STALE — see Rollback section" || echo "Clean"
-ls target/checkout    2>/dev/null && echo "STALE checkout present" || echo "Clean"
+ls release.properties 2>/dev/null && echo "STALE" || echo "clean"
+ls target/checkout    2>/dev/null && echo "STALE" || echo "clean"
 ```
-If `release.properties` exists, a previous release attempt was not cleaned up. See the **Rollback** section before proceeding.
+If `release.properties` exists, a previous release attempt was not cleaned up. See the **Rollback** section, clean up, then restart from pre-flight.
 
-### 6. GPG passphrase
-Remind the user: **have your GPG passphrase ready** — it will be passed to Maven as `-Dgpg.passphrase=<passphrase>` in both the prepare and perform steps.
+### 6. GPG and Central credentials in settings.xml
+Verify both the GPG passphrase and the Central server token are present in `~/.m2/settings.xml` — no passphrase will be passed on the command line:
+```bash
+grep -c 'gpg.passphrase\|gpgPassphrase' ~/.m2/settings.xml
+grep -c '<id>central</id>' ~/.m2/settings.xml
+```
+Both counts must be ≥ 1. If either is missing, stop and tell the user what to add:
+
+- **GPG passphrase** — add to `~/.m2/settings.xml` under `<profiles>`:
+  ```xml
+  <profile>
+    <id>gpg</id>
+    <properties>
+      <gpg.passphrase>YOUR_PASSPHRASE</gpg.passphrase>
+    </properties>
+  </profile>
+  ```
+  And activate it: `<activeProfiles><activeProfile>gpg</activeProfile></activeProfiles>`
+
+- **Central token** — add to `~/.m2/settings.xml` under `<servers>`:
+  ```xml
+  <server>
+    <id>central</id>
+    <username>YOUR_TOKEN_USERNAME</username>
+    <password>YOUR_TOKEN_PASSWORD</password>
+  </server>
+  ```
+  Generate the token at [central.sonatype.com](https://central.sonatype.com) → Account → Generate User Token.
 
 ---
 
 ## Step 1 — `mvn release:prepare`
 
-This step sets the release version in `pom.xml`, commits it, tags it, then bumps to the next development SNAPSHOT and commits that too. Both commits are pushed to `origin/main`.
+Sets the release version in `pom.xml`, commits and tags it, then bumps to the next SNAPSHOT and commits that too. Both commits are pushed to `origin/main`.
+
+Maven will interactively prompt for release version, tag name, and next development version — accept the defaults.
 
 ```bash
-mvn release:prepare -Dgpg.passphrase=<passphrase>
+source env.rc && mvn release:prepare
 ```
 
-Maven will interactively ask for:
-- **Release version** (e.g. `3.0.3`) — accept the default unless you need a different version
-- **SCM release tag** (e.g. `symfonion-3.0.3`) — accept the default
-- **Next development version** (e.g. `3.0.4-SNAPSHOT`) — accept the default
-
-**What to check after:**
+**Verify after:**
 ```bash
-git log --oneline -3   # should show: prepare release + prepare for next dev iteration
-git tag | grep 3.0     # new tag should appear
+git log --oneline -3   # prepare release + prepare for next dev iteration
+git tag | tail -5      # new tag should appear
 ```
 
 If prepare fails partway through, see **Rollback** before retrying.
@@ -79,70 +100,54 @@ If prepare fails partway through, see **Rollback** before retrying.
 
 ## Step 2 — `mvn release:perform`
 
-This checks out the tagged commit into `target/checkout`, builds it, signs the artifacts with GPG, and publishes to Sonatype Central via `central-publishing-maven-plugin`.
+Checks out the tagged commit into `target/checkout`, builds, signs with GPG, and publishes to Sonatype Central via `central-publishing-maven-plugin` (configured with `autoPublish=true`).
 
 ```bash
-mvn release:perform -Dgpg.passphrase=<passphrase>
+source env.rc && mvn release:perform
 ```
 
-This takes a few minutes. The plugin is configured with `autoPublish=true`, so the artifacts go straight through without manual promotion.
+This takes a few minutes. Watch for `BUILD SUCCESS` and a line like:
+```
+Uploaded bundle successfully, deploymentId: <id>. Deployment will publish automatically
+```
 
 **Common failures and fixes:**
 
 | Error | Cause | Fix |
 |---|---|---|
-| `402 Payment Required` from `oss.sonatype.org` | Old Sonatype URL still in pom | The pom should now use `central-publishing-maven-plugin` — check `distributionManagement` and the plugin section |
-| `403 Forbidden` from `central.sonatype.com/repository/maven-snapshots/` | Missing `central` server credentials | Add token to `~/.m2/settings.xml` — see below |
+| `402 Payment Required` from `oss.sonatype.org` | Old Sonatype URL still in pom | Check `distributionManagement` and that `central-publishing-maven-plugin` is present |
+| `403 Forbidden` from snapshot repo | Missing `central` server entry in settings.xml | Add server entry — see pre-flight check 6 |
 | `403 Forbidden` on release publish | Namespace not verified on Central Portal | Log in at central.sonatype.com and verify `com.github.dakusui` namespace |
-| Duplicate artifacts error | `maven-source-plugin` `jar` goal still present | Goal must be `jar-no-fork` in `pluginManagement` |
+| Duplicate artifacts error | `maven-source-plugin` using `jar` goal | Goal must be `jar-no-fork` in `pluginManagement` |
+| GPG signing failure | Passphrase missing or wrong | Verify `gpg.passphrase` property in settings.xml |
 
-**`~/.m2/settings.xml` — required `central` server entry:**
-```xml
-<server>
-  <id>central</id>
-  <username>YOUR_TOKEN_USERNAME</username>
-  <password>YOUR_TOKEN_PASSWORD</password>
-</server>
-```
-Generate the token at [central.sonatype.com](https://central.sonatype.com) → Account → Generate User Token.
-
-**Important:** The `target/checkout` is a git checkout of the release tag. That tag must have been created (in the prepare step) from a commit that already contains `central-publishing-maven-plugin` in `pom.xml`. If the tag predates the plugin being added, perform will fail. See Rollback.
+**Important:** The `target/checkout` is a git checkout of the release tag. That tag must have been created from a commit that already contains `central-publishing-maven-plugin` in `pom.xml`. If the tag predates the plugin, perform will fail — rollback and redo prepare.
 
 ---
 
 ## Step 3 — Post-release Verification
 
-### Tag on GitHub
 ```bash
-git tag | grep <version>
-git ls-remote --tags origin | grep <version>
+git ls-remote --tags origin | tail -5   # new tag visible on remote
 ```
 
-### Artifact on Central
-Search for `com.github.dakusui:symfonion:<version>` at [central.sonatype.com/search](https://central.sonatype.com/search). Note: propagation to Central can take 10–30 minutes.
+Report the release version and note that artifact propagation to Central can take 10–30 minutes. The user can verify at [central.sonatype.com/search](https://central.sonatype.com/search) by searching `com.github.dakusui:symfonion`.
 
 ---
 
 ## Rollback
 
-If something went wrong after `release:prepare` (but before or during `release:perform`):
+If something went wrong after `release:prepare`:
 
-### 1. Rollback the pom changes
 ```bash
-mvn release:rollback
-```
-This reverts the two prepare commits (release version + next dev version) by creating a new revert commit and pushing it.
+# 1. Revert the pom changes and push the revert
+source env.rc && mvn release:rollback
 
-### 2. Delete the remote tag
-`release:rollback` removes the local tag but NOT the remote one:
-```bash
+# 2. Delete the remote tag (rollback removes local tag only)
 git push origin :refs/tags/symfonion-<version>
-```
 
-### 3. Clean up
-```bash
-rm -f release.properties
-rm -rf target/checkout
+# 3. Clean up
+rm -f release.properties && rm -rf target/checkout
 ```
 
 After rollback, fix the root cause, then restart from **Pre-flight**.
@@ -152,14 +157,18 @@ After rollback, fix the root cause, then restart from **Pre-flight**.
 ## Quick Reference
 
 ```bash
-# Full happy path
-. env.rc
-git checkout main && git pull
-mvn release:prepare -Dgpg.passphrase=<passphrase>
-mvn release:perform -Dgpg.passphrase=<passphrase>
+# Pre-flight
+source env.rc
+git fetch origin && git status
+grep -c 'gpg.passphrase\|gpgPassphrase' ~/.m2/settings.xml
+grep -c '<id>central</id>' ~/.m2/settings.xml
+
+# Release
+source env.rc && mvn release:prepare
+source env.rc && mvn release:perform
 
 # Rollback
-mvn release:rollback
+source env.rc && mvn release:rollback
 git push origin :refs/tags/symfonion-<version>
 rm -f release.properties && rm -rf target/checkout
 ```
