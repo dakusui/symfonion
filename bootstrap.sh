@@ -192,6 +192,8 @@ function compose_sdk_rc() {
   export SDK_JDK_NAME=${_jdk_name}
   export SDKMAN_DIR=$(pwd)/.dependencies/sdkman
   export JAVA_HOME=$(pwd)/.dependencies/sdkman/candidates/java/current
+  export MAVEN_HOME=$(pwd)/.dependencies/sdkman/candidates/maven/current
+  export PATH=$(pwd)/.dependencies/sdkman/candidates/java/current/bin:$(pwd)/.dependencies/sdkman/candidates/maven/current/bin:\${PATH}
   "
 }
 
