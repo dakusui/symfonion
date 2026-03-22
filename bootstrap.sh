@@ -5,7 +5,7 @@ set -eu -o pipefail -o errtrace
 
 # Component versions to install
 COMPONENT_VERSIONS="$(cat <<'EOF'
-JDK:         21.0.6-oracle
+JDK:         21.0.10-oracle
 MAVEN:       3.9.6
 GOLANG:      1.24.5
 EOF
