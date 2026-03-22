@@ -30,7 +30,7 @@ public class InvalidDataErrorTest extends CliTestBase {
   public void illegalNoteLength_02() throws IOException, SymfonionException {
     String resourceName = "illegalValues/03_illegalNoteLength_pattern.json";
     assertActualObjectToStringValueContainsExpectedString(
-        fmt("symfonion: %s: jsonpath: .\"$patterns\".melody1.\"$length\": error: \"1/7\" (primitive) is invalid. (This value must be a note length. e.g. '4', '8.', '16')"),
+        fmt("symfonion: %s: jsonpath: .\"$sequence\"[0].\"$parts\".vocal[0].\"$length\": error: \"1/7\" (primitive) is invalid. (This value must be a note length. e.g. '4', '8.', '16')"),
         compileResourceWithCli(resourceName)
     );
   }
@@ -39,7 +39,7 @@ public class InvalidDataErrorTest extends CliTestBase {
   public void illegalNoteLength_03() throws IOException, SymfonionException {
     String resourceName = "illegalValues/04_illegalNoteLength_stroke.json";
     assertActualObjectToStringValueContainsExpectedString(
-        fmt("symfonion: %s: jsonpath: .\"$patterns\".melody1.\"$body\"[15].\"$length\": error: \"1/2\" (primitive) is invalid. (This value must be a note length. e.g. '4', '8.', '16')"),
+        fmt("symfonion: %s: jsonpath: .\"$sequence\"[0].\"$parts\".vocal[0].\"$body\"[15].\"$length\": error: \"1/2\" (primitive) is invalid. (This value must be a note length. e.g. '4', '8.', '16')"),
         compileResourceWithCli(resourceName)
     );
   }

@@ -30,7 +30,6 @@ class SimpleSongBuilder extends JsonBuilder<SimpleSongBuilder> {
   
   @Override
   public JsonObject build() {
-    String patternName = "pattern1";
     String grooveName = "16beats";
     String partName = "part1";
     String beats = "16/4";
@@ -38,12 +37,11 @@ class SimpleSongBuilder extends JsonBuilder<SimpleSongBuilder> {
     return object(
         $("$settings", object()),
         $("$parts", object($(partName, object($("$channel", json(0)), $("$port", json(portName)))))),
-        $("$patterns", object($(patternName, object($("$body", array(noteSequence)))))),
         $("$grooves", Optional.ofNullable(this.groove).map(g -> object($(grooveName, g))).orElseGet(JsonTestUtils::object)),
         $("$sequence", array(
             merge(
                 object($("$beats", json(beats))),
-                object($("$patterns", object($(partName, array(patternName))))),
+                object($("$parts", object($(partName, array(object($("$body", array(noteSequence)))))))),
                 object($("$groove", json(this.groove)))
             ))));
   }

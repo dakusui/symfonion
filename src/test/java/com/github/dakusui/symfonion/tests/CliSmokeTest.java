@@ -36,29 +36,26 @@ public class CliSmokeTest extends CliTestBase {
     JsonObject song = object(
         $("$settings", object()),
         $("$parts", object($("piano", object($("$channel", json(0)), $("$port", json("GERVILL_PORT")))))),
-        $("$patterns", object(
-            $("R4", object($("$body", json("r4;r4;r4;r4")))),
-            $("main", object($("$body", array(json("BGE8|BGE8;r8;AFD8;r8;GEC8;r8"))))))),
         $("$grooves", object($("16beats", sixteenBeatsGroove()))),
         $("$sequence", array(
             object(
                 $("$labels", array(json("reference"))),
                 $("$beats", json("4/4")),
-                $("$parts", object($("piano", array("R4"))))),
+                $("$parts", object($("piano", array(object($("$body", json("r4;r4;r4;r4")))))))),
             object(
                 $("$labels", array(json("reference"))),
                 $("$beats", json("4/4")),
-                $("$parts", object($("piano", array("main")))),
+                $("$parts", object($("piano", array(object($("$body", array(json("BGE8|BGE8;r8;AFD8;r8;GEC8;r8")))))))),
                 $("$groove", json("16beats"))),
             object(
                 $("$labels", array(json("reference"))),
                 $("$beats", json("4/4")),
-                $("$parts", object($("piano", array("main")))),
+                $("$parts", object($("piano", array(object($("$body", array(json("BGE8|BGE8;r8;AFD8;r8;GEC8;r8")))))))),
                 $("$groove", json("16beats"))),
             object(
                 $("$labels", array(json("inline"))),
                 $("$beats", json("4/4")),
-                $("$parts", object($("piano", array("$inline:" + object($("$body", array(json("C8;D8;E8|GEC8;r8;AFD8;r8;BGE8;r8")))))))),
+                $("$parts", object($("piano", array(object($("$body", array(json("C8;D8;E8|GEC8;r8;AFD8;r8;BGE8;r8")))))))),
                 $("$groove", json("16beats"))))));
 
     Result result = invokeCliWithArguments("-p", writeContentToTempFile(Objects.toString(song)).getAbsolutePath(), "-OGERVILL_PORT=Gervill", "--bars=*", "--parts=p.*");
@@ -258,7 +255,7 @@ public class CliSmokeTest extends CliTestBase {
             ResultTo.err().findSubstrings(
                 "symfonion:",
                 "jsonpath:",
-                ".\"$patterns\".C16x16.\"$body\"[0].\"$volume\"",
+                ".\"$sequence\"[0].\"$parts\".piano[0].\"$body\"[0].\"$volume\"",
                 "In this array, a string can contain only dots. E.g. ",
                 "[10,\".X.\",100]")));
   }
@@ -284,7 +281,7 @@ public class CliSmokeTest extends CliTestBase {
             ResultTo.err().findSubstrings(
                 "symfonion:",
                 "jsonpath:",
-                ".\"$patterns\".C16x16.\"$body\"[0].\"$volume\"",
+                ".\"$sequence\"[0].\"$parts\".piano[0].\"$body\"[0].\"$volume\"",
                 "This array, only integers, nulls, and strings containing only dots (...) are allowed.",
                 "[10,{},100]")));
   }

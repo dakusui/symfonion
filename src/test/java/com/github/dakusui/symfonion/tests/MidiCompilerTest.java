@@ -115,11 +115,10 @@ public class MidiCompilerTest extends TestBase {
             object(
                 $("$settings", object()),
                 $("$parts", object($("piano", object($("$channel", json(0)), $("$port", json("port1")))))),
-                $("$patterns", object($("pg-change-to-piano", object($("$body", array(json("C"), SymfonionJsonTestUtils.programChange(101, 83.3))))))),
                 $("$sequence", array(
                     merge(
                         object($("$beats", json("8/4"))),
-                        object($("$parts", object($("piano", array("pg-change-to-piano"))))))
+                        object($("$parts", object($("piano", array(object($("$body", array(json("C"), SymfonionJsonTestUtils.programChange(101, 83.3))))))))))
                                     ))),
             allOf(
                 FromMap.<String>toKeyList().allOf(
@@ -140,12 +139,11 @@ public class MidiCompilerTest extends TestBase {
             object(
                 $("$settings", object()),
                 $("$parts", object($("piano", object($("$channel", json(0)), $("$port", json("port1")))))),
-                $("$patterns", object($("C16x16", object($("$body", array(json("C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;"))))))),
                 $("$grooves", object($("16beats", sixteenBeatsGrooveFlat()))),
                 $("$sequence", array(
                     merge(
                         object($("$beats", json("8/4"))),
-                        object($("$parts", object($("piano", array("C16x16"))))),
+                        object($("$parts", object($("piano", array(object($("$body", array(json("C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;"))))))))),
                         object($("$groove", json("16beats")))
                          )))),
             AllOf.$(
@@ -165,21 +163,6 @@ public class MidiCompilerTest extends TestBase {
         createPositiveTestCase(
             TestUtils.name("sixteen notes are given in a single string element", "compile", "number of events and tick length seem ok"),
             SymfonionJsonTestUtils.composeSymfonionSongJsonObject(
-                "port1", json("C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;"), SymfonionJsonTestUtils.sixteenBeatsGroove()),
-            AllOf.$(
-                FromMap.<String>toKeyList().allOf(
-                    FromList.toSize().isEqualTo(1),
-                    FromList.<String>toElementAt(0).isEqualTo("port1")),
-                Transform.$(FromSong.toSequence("port1").andThen(trackList())).allOf(
-                    FromList.toSize().isEqualTo(1),
-                    FromList.<Track>toElementAt(0).allOf(
-                        Transform.$(size()).isEqualTo(33),
-                        Transform.$(midiEventAt(0)).isNotNull(),
-                        Transform.$(ticks()).isEqualTo(379L))))),
-
-        createPositiveTestCase(
-            TestUtils.name("sixteen notes are given in a single string element", "compile", "number of events and tick length seem ok"),
-            SymfonionJsonTestUtils.composeSymfonionSongJsonObjectUsingInline(
                 "port1", json("C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;"), SymfonionJsonTestUtils.sixteenBeatsGroove()),
             AllOf.$(
                 FromMap.<String>toKeyList().allOf(

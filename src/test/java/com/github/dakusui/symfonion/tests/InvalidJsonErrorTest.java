@@ -30,16 +30,7 @@ public class InvalidJsonErrorTest extends CliTestBase {
     String resourceName = "invalidJson/05_missingSection_parts.json";
     assertActualObjectToStringValueContainsExpectedString(
         /* Actually, this error message is not good. This should be complained by symfonion, not by JsonUtils.*/
-        fmt("This element ({\"$notemaps\":{},\"$patterns\":{\"...\":\"...\"},\"$grooves\":{\"...\":\"...\"},\"$sequence\":[\"...\"]}) doesn't have path: [$parts]\n"),
-        compileResourceWithCli(resourceName)
-    );
-  }
-
-  @Test
-  public void missingSection_pattern() throws IOException, SymfonionException {
-    String resourceName = "invalidJson/06_missingSection_patterns.json";
-    assertActualObjectToStringValueContainsExpectedString(
-        fmt("symfonion: %s: jsonpath: .: error: {\"$parts\":{\"...\":\"...\"},\"$notemaps\":{},\"$grooves\":{\"...\":\"...\"},\"$sequence\":[\"...\"]} (object: 4 entries) at this path requires child element $patterns\n"),
+        fmt("This element ({\"$notemaps\":{},\"$grooves\":{\"...\":\"...\"},\"$sequence\":[\"...\"]}) doesn't have path: [$parts]\n"),
         compileResourceWithCli(resourceName)
     );
   }
@@ -48,7 +39,7 @@ public class InvalidJsonErrorTest extends CliTestBase {
   public void missingSection_groove() throws IOException, SymfonionException {
     String resourceName = "invalidJson/07_missingSection_grooves.json";
     assertActualObjectToStringValueContainsExpectedString(
-        fmt("symfonion: %s: jsonpath: .: error: {\"$parts\":{\"...\":\"...\"},\"$notemaps\":{},\"$patterns\":{\"...\":\"...\"},\"$sequence\":[\"...\"]} (object: 4 entries) at this path requires child element $grooves"),
+        fmt("symfonion: %s: jsonpath: .: error: {\"$parts\":{\"...\":\"...\"},\"$notemaps\":{},\"$sequence\":[\"...\"]} (object: 3 entries) at this path requires child element $grooves"),
         compileResourceWithCli(resourceName)
     );
   }
@@ -59,8 +50,8 @@ public class InvalidJsonErrorTest extends CliTestBase {
 
     assertActualObjectToStringValueContainsExpectedString(
         fmt("symfonion: %s: jsonpath: .: error: " +
-            "{\"$parts\":{\"...\":\"...\"},\"$notemaps\":{},\"$patterns\":{\"...\":\"...\"},\"$grooves\":{\"...\":\"...\"}}" +
-            " (object: 4 entries)" +
+            "{\"$parts\":{\"...\":\"...\"},\"$notemaps\":{},\"$grooves\":{\"...\":\"...\"}}" +
+            " (object: 3 entries)" +
             " at this path requires child element $sequence\n"),
         compileResourceWithCli(resourceName)
     );

@@ -37,7 +37,6 @@ import static java.util.Collections.unmodifiableSet;
  * {
  *   "$noteMaps": { "<noteMapName>": "<NoteMap>"},
  *   "$parts": { "<partName>": "<Part>" },
- *   "$patterns": { "<patternName>": "<Pattern>"},
  *   "$grooves": { "<grooveName>": ["<Groove>", "<Groove>", "..."] },
  *   "$sequence": [ "<Bar>", "<Bar>", "..." ]
  * }
@@ -49,9 +48,8 @@ import static java.util.Collections.unmodifiableSet;
  * //@formatter:on
  */
 public class CompatSong {
-  private final Map<String, Part>    parts;
-  private final Map<String, Pattern> patterns;
-  private final Map<String, Groove>  grooves;
+  private final Map<String, Part>   parts;
+  private final Map<String, Groove> grooves;
   private final List<Bar>            bars;
   private final JsonObject           rootJsonObject;
 
@@ -59,31 +57,18 @@ public class CompatSong {
    * Creates an object of this class.
    *
    * @param parts          Parts of a musical work.
-   * @param patterns       Patterns referenced from `bars`.
    * @param grooves        Grooves referenced from `bars`.
    * @param bars           Bars of a musical work.
    * @param rootJsonObject A root JSON object that `barJsonObject` belongs to.
    */
   public CompatSong(Map<String, Part> parts,
-                    Map<String, Pattern> patterns,
                     Map<String, Groove> grooves,
                     List<Bar> bars,
                     JsonObject rootJsonObject) {
     this.parts          = Requires.requireNonNull(parts);
-    this.patterns       = Requires.requireNonNull(patterns);
     this.grooves        = requireNonNull(grooves);
     this.bars           = requireNonNull(bars);
     this.rootJsonObject = requireNonNull(rootJsonObject);
-  }
-
-  /**
-   * Returns a pattern for `patternName`.
-   *
-   * @param patternName A name of a pattern to be looked up.
-   * @return A pattern for `patternName`.
-   */
-  public Pattern pattern(String patternName) {
-    return this.patterns.get(patternName);
   }
 
   /**
@@ -145,14 +130,11 @@ public class CompatSong {
       try (ExceptionContext ignored = exceptionContext(entry(JSON_ELEMENT_ROOT, json))) {
         Map<String, NoteMap> noteMaps = initNoteMaps(json);
         Map<String, Groove>  grooves  = initGrooves(json);
-        Map<String, Pattern> patterns = initPatterns(json, noteMaps);
         return new CompatSong(initParts(this.json),
-                              patterns,
                               grooves,
                               initBars(json,
                                        grooves,
                                        noteMaps,
-                                       patterns,
                                        this.barFilter,
                                        this.partFilter),
                               json);
@@ -182,7 +164,6 @@ public class CompatSong {
         JsonObject json,
         Map<String, Groove> grooves,
         Map<String, NoteMap> noteMaps,
-        Map<String, Pattern> patterns,
         Predicate<Bar> barFilter,
         Predicate<String> partFilter) throws SymfonionException, CompatJsonException {
       List<Bar> bars = new LinkedList<>();
@@ -201,7 +182,6 @@ public class CompatSong {
           Bar bar = new Bar(barJson.getAsJsonObject(),
                             grooves,
                             noteMaps,
-                            patterns,
                             partFilter);
           if (barFilter.test(bar))
             bars.add(bar);
@@ -231,21 +211,6 @@ public class CompatSong {
         noteMaps.put(noteMapName, cur);
       }
       return noteMaps;
-    }
-
-    private static Map<String, Pattern> initPatterns(JsonObject json, Map<String, NoteMap> noteMaps) throws SymfonionException, CompatJsonException {
-      Map<String, Pattern> patterns     = new HashMap<>();
-      JsonObject           patternsJSON = CompatJsonUtils.asJsonObjectWithDefault(json, new JsonObject(), Keyword.$patterns);
-
-      try (ExceptionContext ignored = exceptionContext(entry(JSON_ELEMENT_ROOT, json))) {
-        Iterator<String> i = CompatJsonUtils.keyIterator(patternsJSON);
-        while (i.hasNext()) {
-          String  name = i.next();
-          Pattern cur  = Pattern.createPattern(CompatJsonUtils.asJsonObject(patternsJSON, name), noteMaps);
-          patterns.put(name, cur);
-        }
-      }
-      return patterns;
     }
 
     static Map<String, Part> initParts(JsonObject json) throws SymfonionException, CompatJsonException {
