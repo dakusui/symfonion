@@ -1,0 +1,54 @@
+{
+  "$settings": {},
+  "$parts": {
+    "melody": { "$channel": 0, "$port": "port1" }
+  },
+  "$grooves": {
+    "swing8": [
+      { "$length": "8", "$ticks": 64, "$accent": 20  },
+      { "$length": "8", "$ticks": 32, "$accent": -10 },
+      { "$length": "8", "$ticks": 64, "$accent": 15  },
+      { "$length": "8", "$ticks": 32, "$accent": -8  },
+      { "$length": "8", "$ticks": 64, "$accent": 15  },
+      { "$length": "8", "$ticks": 32, "$accent": -8  },
+      { "$length": "8", "$ticks": 64, "$accent": 10  },
+      { "$length": "8", "$ticks": 32, "$accent": -10 }
+    ]
+  },
+  "$sequence": [
+    {
+      "$beats": "1/1",
+      "$parts": [
+        { "$name": "melody", "$body": [{ "$tempo": 120, "$reverb": 40, "$chorus": 0 }] }
+      ]
+    },
+    {
+      "$beats": "8/8",
+      "$parts": [
+        { "$name": "melody", "$body": "C;E;G;A;C>;E>;G>;A>", "$length": 8, "$gate": 0.85 }
+      ],
+      "$groove": "swing8"
+    },
+    {
+      "$beats": "8/8",
+      "$parts": [
+        { "$name": "melody", "$body": "A>;G>;E>;C>;A;G;E;C", "$length": 8, "$gate": 0.85 }
+      ],
+      "$groove": "swing8"
+    },
+    {
+      "$beats": "8/8",
+      "$parts": [
+        { "$name": "melody", "$body": "C;E;G;A;C>;E>;G>;A>", "$length": 8, "$gate": 0.85 }
+      ],
+      "$groove": "swing8"
+    },
+    {
+      "$beats": "8/8",
+      "$parts": [
+        { "$name": "melody", "$body": "A>;G>;E>;C>;A;G;E;C", "$length": 8, "$gate": 0.85 }
+      ],
+      "$groove": "swing8"
+    }
+  ]
+}
