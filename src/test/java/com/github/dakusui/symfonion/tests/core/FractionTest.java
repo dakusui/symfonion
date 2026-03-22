@@ -1,10 +1,9 @@
 package com.github.dakusui.symfonion.tests.core;
 
 import com.github.dakusui.symfonion.utils.Fraction;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class FractionTest {
   public static void main(String[] args) {
@@ -26,7 +25,7 @@ public class FractionTest {
 
   @Test
   public void test_compare01() {
-    Assert.assertEquals(0, Fraction.compare(Fraction.ONE, Fraction.ONE));
+    assertEquals(0, Fraction.compare(Fraction.ONE, Fraction.ONE));
   }
 
   @Test

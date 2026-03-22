@@ -6,7 +6,7 @@ import com.github.dakusui.symfonion.compat.exceptions.CliException;
 import com.github.dakusui.symfonion.compat.exceptions.SymfonionException;
 import com.github.dakusui.symfonion.testutils.TestBase;
 import org.apache.commons.cli.ParseException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CliTest extends TestBase {
 	static Cli createCli(String... args) throws ParseException {

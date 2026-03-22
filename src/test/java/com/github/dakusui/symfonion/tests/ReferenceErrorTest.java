@@ -3,7 +3,7 @@ package com.github.dakusui.symfonion.tests;
 import com.github.dakusui.symfonion.compat.exceptions.SymfonionException;
 import com.github.dakusui.symfonion.testutils.CliTestBase;
 import com.github.valid8j.pcond.forms.Predicates;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 

@@ -4,7 +4,7 @@ import com.github.dakusui.symfonion.utils.Utils;
 import com.github.dakusui.thincrest_cliche.core.Transform;
 import com.github.valid8j.classic.TestAssertions;
 import com.github.valid8j.pcond.forms.Functions;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static com.github.valid8j.pcond.forms.Predicates.isEqualTo;
 

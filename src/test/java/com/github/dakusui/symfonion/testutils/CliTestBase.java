@@ -5,7 +5,7 @@ import com.github.dakusui.symfonion.compat.exceptions.SymfonionException;
 import com.github.dakusui.symfonion.utils.Utils;
 import com.github.dakusui.thincrest_cliche.core.AllOf;
 import com.github.dakusui.thincrest_cliche.core.Transform;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 
 import java.io.*;
 import java.util.Objects;
@@ -53,7 +53,7 @@ public class CliTestBase extends TestBase {
     return ret;
   }
 
-  @Before
+  @BeforeEach
   public void createWorkFile() throws IOException {
     this.workFile = File.createTempFile("symfonion-test", ".json");
   }

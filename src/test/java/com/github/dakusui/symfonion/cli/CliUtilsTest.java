@@ -1,7 +1,9 @@
 package com.github.dakusui.symfonion.cli;
 
 import com.github.dakusui.symfonion.compat.exceptions.CliException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.File;
 
@@ -55,16 +57,18 @@ public class CliUtilsTest {
     assertStatement(value(optionValue).toBe().equalTo("song.json"));
   }
 
-  @Test(expected = CliException.class)
+  @Test
   public void givenCommandLineGivingOutputOptionTwice_whenGetSingleOptionValueFromCommandLine_thenExceptionThrown() {
-    try {
-      CliUtils.getSingleOptionValueFromCommandLine(CliTestUtils.createCommandLine("-q", "play.json", "--play-song", "extra.txt"), "q");
-    } catch (CliException e) {
-      assertStatement(value(e.getMessage()).toBe()
-                                           .containing("-q")
-                                           .containing("one and only one"));
-      throw e;
-    }
+    assertThrows(CliException.class, () -> {
+      try {
+        CliUtils.getSingleOptionValueFromCommandLine(CliTestUtils.createCommandLine("-q", "play.json", "--play-song", "extra.txt"), "q");
+      } catch (CliException e) {
+        assertStatement(value(e.getMessage()).toBe()
+                                             .containing("-q")
+                                             .containing("one and only one"));
+        throw e;
+      }
+    });
   }
 
   @Test
