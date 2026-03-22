@@ -5,6 +5,7 @@ import com.github.dakusui.symfonion.compat.exceptions.SymfonionException;
 import com.github.dakusui.symfonion.compat.json.CompatJsonException;
 import com.github.dakusui.symfonion.compat.json.CompatJsonUtils;
 import com.github.dakusui.symfonion.utils.Fraction;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
@@ -16,7 +17,7 @@ import static com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThro
 import static com.github.dakusui.symfonion.compat.exceptions.SymfonionIllegalFormatException.FRACTION_EXAMPLE;
 import static com.github.dakusui.symfonion.compat.exceptions.SymfonionTypeMismatchException.OBJECT;
 import static com.github.dakusui.symfonion.compat.json.CompatJsonUtils.asJsonElement;
-import static com.github.dakusui.symfonion.compat.json.JsonUtils.findJsonObject;
+import static com.github.dakusui.symfonion.compat.json.JsonUtils.findJsonArray;
 import static com.github.dakusui.symfonion.compat.json.JsonUtils.path;
 import static com.github.dakusui.symfonion.utils.Fraction.parseFraction;
 import static com.github.valid8j.classic.Requires.requireNonNull;
@@ -29,12 +30,13 @@ import static java.util.Collections.*;
  * // @formatter:on
  */
 public class Bar {
-  private final Map<String, NoteMap> noteMaps;
-  private final Fraction             beats;
-  private final Map<String, Pattern> patterns;
-  private final Groove               groove;
-  private final List<String>         labels;
-  private final JsonObject           barJsonObject;
+  private final Map<String, NoteMap>    noteMaps;
+  private final Fraction                beats;
+  private final Map<String, List<Pattern>> patterns;
+  private final Groove                  groove;
+  private final List<String>            labels;
+  private final JsonObject              barJsonObject;
+  private final JsonArray               partsJsonArray;
 
 
   /**
@@ -48,9 +50,10 @@ public class Bar {
    * ----
    * {
    *   "$beats": "<beatsDefiningString>",
-   *   "$parts": {
-   *     "<partName>": { "<inline pattern definition>" },
-   *   },
+   *   "$parts": [
+   *     { "$name": "<partName>", "<inline pattern definition>" },
+   *     ...
+   *   ],
    *   "$groove": "<grooveName>",
    *   "$noteMap": "<noteMapName>",
    *   "$labels": ["<label1>", "<label2>", "..."]
@@ -77,12 +80,8 @@ public class Bar {
     this.beats         = extractBeatsFractionFrom(barJsonObject);
     this.groove        = resolveGrooveForBar(barJsonObject, this.beats, grooves);
     this.labels        = resolveLabelsForBar(barJsonObject);
-      /*
-        partName -> [ patternName ]
-       */
-    this.patterns = composePatternsMap(this,
-                                       partFilter,
-                                       getPartsInBarAsJsonObject(barJsonObject));
+    this.partsJsonArray = getPartsInBarAsJsonArray(barJsonObject);
+    this.patterns = composePatternsMap(this, partFilter, this.partsJsonArray);
   }
 
   /**
@@ -104,12 +103,13 @@ public class Bar {
   }
 
   /**
-   * Returns the `Pattern` for the given `partName`.
+   * Returns the list of stacked `Pattern` objects for the given `partName`.
+   * Multiple entries with the same `$name` in `$parts` are played simultaneously.
    *
-   * @param partName A part name for which the pattern should be returned.
-   * @return A `Pattern` object.
+   * @param partName A part name for which the patterns should be returned.
+   * @return A list of `Pattern` objects (stacked).
    */
-  public Pattern patternForPart(String partName) {
+  public List<Pattern> patternsForPart(String partName) {
     return this.patterns.get(partName);
   }
 
@@ -133,46 +133,57 @@ public class Bar {
   }
 
   /**
-   * Find up a `JsonElement`, which matches `partName` under `barJsonObject`.
+   * Find up a `JsonElement` in `$parts` array that has `$name` matching `partName`.
+   * Returns the first matching element, or the `$parts` array itself if not found.
    *
-   * @param partName partName used for searching for `JsonElement`.
-   * @return A matching JSON element. If not found, `null` will be returned.
-   * @see Bar#Bar(JsonObject, Map, Map, Map, Predicate)
+   * @param partName partName used for searching.
+   * @return A matching JSON element, or the array if not found.
    */
   public JsonElement lookUpJsonNode(String partName) {
-    return asJsonElement(this.barJsonObject, Keyword.$parts, partName);
+    for (JsonElement elem : this.partsJsonArray) {
+      if (elem.isJsonObject()) {
+        JsonObject obj = elem.getAsJsonObject();
+        if (obj.has(Keyword.$name.name()) && partName.equals(CompatJsonUtils.asString(obj, Keyword.$name))) {
+          return elem;
+        }
+      }
+    }
+    return this.partsJsonArray;
   }
 
   /**
    * // @formatter:off
-   * Composes a map from part name to pattern.
+   * Composes a map from part name to list of stacked patterns.
    *
    * [source, JSON]
-   * .partsJsonObjectInBar
+   * .partsJsonArrayInBar
    * ----
-   * {
-   *   "<partName>": { "<inline pattern definition>" }
-   * }
+   * [
+   *   { "$name": "<partName>", "<inline pattern definition>" },
+   *   { "$name": "<partName>", "<inline pattern definition>" }
+   * ]
    * ----
    * // @formatter:on
    *
-   * @param bar                  A bar object from which the pattern map is created.
-   * @param partFilter           A predicate that filters a part to be rendered.
-   * @param partsJsonObjectInBar A JSON object associated with `$parts` key in the JSON object from which `bar` was created.
-   * @return A map from part name to a pattern.
+   * @param bar                 A bar object from which the pattern map is created.
+   * @param partFilter          A predicate that filters a part to be rendered.
+   * @param partsJsonArrayInBar A JSON array associated with `$parts` key in the bar JSON object.
+   * @return A map from part name to a list of patterns (stacked).
    */
-  private static Map<String, Pattern> composePatternsMap(Bar bar,
-                                                         Predicate<String> partFilter,
-                                                         JsonObject partsJsonObjectInBar) {
-    Map<String, Pattern> ret = new HashMap<>();
-    for (String eachPartName : partsJsonObjectInBar.keySet()) {
-      if (!partFilter.test(eachPartName))
-        continue;
-      JsonElement element = asJsonElement(partsJsonObjectInBar, eachPartName);
-      if (!element.isJsonObject()) {
-        throw typeMismatchException(element, OBJECT);
+  private static Map<String, List<Pattern>> composePatternsMap(Bar bar,
+                                                               Predicate<String> partFilter,
+                                                               JsonArray partsJsonArrayInBar) {
+    Map<String, List<Pattern>> ret = new LinkedHashMap<>();
+    for (JsonElement elem : partsJsonArrayInBar) {
+      if (!elem.isJsonObject()) {
+        throw typeMismatchException(elem, OBJECT);
       }
-      ret.put(eachPartName, Pattern.createPattern(element.getAsJsonObject(), bar.noteMaps));
+      JsonObject partObj  = elem.getAsJsonObject();
+      String     partName = CompatJsonUtils.asString(partObj, Keyword.$name);
+      if (!partFilter.test(partName))
+        continue;
+      ret.computeIfAbsent(partName, k -> new ArrayList<>())
+         .add(Pattern.createPattern(partObj, bar.noteMaps));
     }
     return ret;
   }
@@ -211,12 +222,11 @@ public class Bar {
 
   /**
    * @param barJsonObject A JSON object that models a bar in a musical score.
-   * @return JSON object under `$parts` element
+   * @return JSON array under `$parts` element
    */
-  private static JsonObject getPartsInBarAsJsonObject(JsonObject barJsonObject) {
-    return findJsonObject(barJsonObject, path(Keyword.$parts)).orElseThrow(() -> requiredElementMissingException(barJsonObject,
-                                                                                                                 Keyword.$parts));
+  private static JsonArray getPartsInBarAsJsonArray(JsonObject barJsonObject) {
+    return findJsonArray(barJsonObject, path(Keyword.$parts)).orElseThrow(() -> requiredElementMissingException(barJsonObject,
+                                                                                                               Keyword.$parts));
   }
 
 }
-

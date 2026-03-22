@@ -2,14 +2,18 @@ package com.github.dakusui.symfonion.song;
 
 import com.github.dakusui.symfonion.compat.json.CompatJsonUtils;
 import com.github.dakusui.symfonion.utils.Fraction;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
 
+import static com.github.dakusui.symfonion.compat.json.CompatJsonUtils.asJsonArray;
 import static com.github.dakusui.symfonion.compat.json.CompatJsonUtils.asJsonObject;
 import static com.github.dakusui.symfonion.song.Bar.extractBeatsFractionFrom;
 import static com.github.dakusui.symfonion.song.Bar.resolveLabelsForBar;
@@ -31,22 +35,18 @@ public class Measure {
    * ----
    * {
    *   "$beats": "<beatsDefiningString>",
-   *   "$parts": {
-   *     "<partName1>": {
+   *   "$parts": [
+   *     {
+   *         "$name": "<partName1>",
    *         "$notes": "<strokeSequence1>",
    *         "$reverb": ["<number>", "...", "<number>"],
-   *         "<otherArrayableControls>": ["..."],
-   *         "$params": {
-   *           "$velocityBase": "<number>",
-   *           "$noteMap": "<noteMapName1>",
-   *           "...": "..."
-   *         },
+   *         "<otherArrayableControls>": ["..."]
    *     },
-   *     "<partName2>": {
+   *     {
+   *         "$name": "<partName2>",
    *         "...": "..."
-   *     },
-   *     "<partName3>": "..."
-   *   },
+   *     }
+   *   ],
    *   "$groove": "<groove:array@[object:grooveUnit]>",
    *   "$labels": ["<label1>", "<label2>", "..."]
    * }
@@ -87,15 +87,29 @@ public class Measure {
 
   private static List<String> resolvePartNames(JsonObject measureJsonObject) {
     assert precondition(value(measureJsonObject).toBe().notNull());
-    return List.copyOf(asJsonObject(measureJsonObject, $parts).keySet());
+    JsonArray partsArray = asJsonArray(measureJsonObject, $parts);
+    List<String> names = new ArrayList<>();
+    for (JsonElement elem : partsArray) {
+      if (elem.isJsonObject()) {
+        String name = CompatJsonUtils.asString(elem.getAsJsonObject(), Keyword.$name);
+        if (!names.contains(name)) names.add(name);
+      }
+    }
+    return List.copyOf(names);
   }
 
   private static Map<String, PartMeasure> composePartMeasures(JsonObject measureJsonObject, List<String> partNames, Map<String, NoteMap> noteMaps, Predicate<String> partFilter) {
+    JsonArray partsArray = asJsonArray(measureJsonObject, $parts);
     Map<String, PartMeasure> partMeasures = new HashMap<>();
-    partNames.stream()
-             .filter(partFilter)
-             .forEach(n -> partMeasures.put(n, composePartMeasure(asJsonObject(measureJsonObject, $parts, n),
-                                                                  noteMaps.getOrDefault(n, NoteMap.defaultNoteMap))));
+    for (JsonElement elem : partsArray) {
+      if (!elem.isJsonObject()) continue;
+      JsonObject partObj  = elem.getAsJsonObject();
+      String     partName = CompatJsonUtils.asString(partObj, Keyword.$name);
+      if (!partFilter.test(partName)) continue;
+      if (!partMeasures.containsKey(partName)) {
+        partMeasures.put(partName, composePartMeasure(partObj, noteMaps.getOrDefault(partName, NoteMap.defaultNoteMap)));
+      }
+    }
     return partMeasures;
   }
 

@@ -93,8 +93,9 @@
 	"$sequence": [
 		{
 			"$beats": "16/16",
-			"$parts": {
-				"vocal": {
+			"$parts": [
+				{
+					"$name": "vocal",
 					"$notemap": "$normal_notfound",
 					"$body": [
 						"C",
@@ -120,7 +121,7 @@
 					"$length": "16",
 					"$transpose": 0
 				}
-			},
+			],
 			"$groove": "16beats"
 		}
 	]

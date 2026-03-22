@@ -41,21 +41,21 @@ public class CliSmokeTest extends CliTestBase {
             object(
                 $("$labels", array(json("reference"))),
                 $("$beats", json("4/4")),
-                $("$parts", object($("piano", object($("$body", json("r4;r4;r4;r4"))))))),
+                $("$parts", array(merge(object($("$name", json("piano"))), object($("$body", json("r4;r4;r4;r4"))))))),
             object(
                 $("$labels", array(json("reference"))),
                 $("$beats", json("4/4")),
-                $("$parts", object($("piano", object($("$body", array(json("BGE8|BGE8;r8;AFD8;r8;GEC8;r8"))))))),
+                $("$parts", array(merge(object($("$name", json("piano"))), object($("$body", array(json("BGE8|BGE8;r8;AFD8;r8;GEC8;r8"))))))),
                 $("$groove", json("16beats"))),
             object(
                 $("$labels", array(json("reference"))),
                 $("$beats", json("4/4")),
-                $("$parts", object($("piano", object($("$body", array(json("BGE8|BGE8;r8;AFD8;r8;GEC8;r8"))))))),
+                $("$parts", array(merge(object($("$name", json("piano"))), object($("$body", array(json("BGE8|BGE8;r8;AFD8;r8;GEC8;r8"))))))),
                 $("$groove", json("16beats"))),
             object(
                 $("$labels", array(json("inline"))),
                 $("$beats", json("4/4")),
-                $("$parts", object($("piano", object($("$body", array(json("C8;D8;E8|GEC8;r8;AFD8;r8;BGE8;r8"))))))),
+                $("$parts", array(merge(object($("$name", json("piano"))), object($("$body", array(json("C8;D8;E8|GEC8;r8;AFD8;r8;BGE8;r8"))))))),
                 $("$groove", json("16beats"))))));
 
     Result result = invokeCliWithArguments("-p", writeContentToTempFile(Objects.toString(song)).getAbsolutePath(), "-OGERVILL_PORT=Gervill", "--bars=*", "--parts=p.*");
@@ -99,16 +99,16 @@ public class CliSmokeTest extends CliTestBase {
             object(
                 $("$labels", array(json("reference"))),
                 $("$beats", json("4/4")),
-                $("$parts", object($("piano", object($("$note", json("R4"))))))),
+                $("$parts", array(merge(object($("$name", json("piano"))), object($("$note", json("R4"))))))),
             object(
                 $("$labels", array(json("reference"))),
                 $("$beats", json("4/4")),
-                $("$parts", object($("piano", object($("$notes", json("BGE8|BGE8;r8;AFD8;r8;GEC8;r8")))))),
+                $("$parts", array(merge(object($("$name", json("piano"))), object($("$notes", json("BGE8|BGE8;r8;AFD8;r8;GEC8;r8")))))),
                 $("$groove", sixteenBeatsGroove())),
             object(
                 $("$labels", array(json("reference"))),
                 $("$beats", json("4/4")),
-                $("$parts", object($("piano", object($("$notes", json("BGE8|BGE8;r8;AFD8;r8;GEC8;r8")))))),
+                $("$parts", array(merge(object($("$name", json("piano"))), object($("$notes", json("BGE8|BGE8;r8;AFD8;r8;GEC8;r8")))))),
                 $("$groove", sixteenBeatsGroove())))));
 
     Result result = invokeCliWithArguments("-q", writeContentToTempFile(Objects.toString(song)).getAbsolutePath(), "-OGERVILL_PORT=Gervill", "--bars=*", "--parts=p.*");
@@ -255,7 +255,7 @@ public class CliSmokeTest extends CliTestBase {
             ResultTo.err().findSubstrings(
                 "symfonion:",
                 "jsonpath:",
-                ".\"$sequence\"[0].\"$parts\".piano.\"$body\"[0].\"$volume\"",
+                ".\"$sequence\"[0].\"$parts\"[0].\"$body\"[0].\"$volume\"",
                 "In this array, a string can contain only dots. E.g. ",
                 "[10,\".X.\",100]")));
   }
@@ -281,7 +281,7 @@ public class CliSmokeTest extends CliTestBase {
             ResultTo.err().findSubstrings(
                 "symfonion:",
                 "jsonpath:",
-                ".\"$sequence\"[0].\"$parts\".piano.\"$body\"[0].\"$volume\"",
+                ".\"$sequence\"[0].\"$parts\"[0].\"$body\"[0].\"$volume\"",
                 "This array, only integers, nulls, and strings containing only dots (...) are allowed.",
                 "[10,{},100]")));
   }
