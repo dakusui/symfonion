@@ -1,4 +1,0 @@
-include::.attr.adoc[]
-
-Under this directory, library files for `mmml` are stored.
-They are used by executables stored under `../bin` directory.

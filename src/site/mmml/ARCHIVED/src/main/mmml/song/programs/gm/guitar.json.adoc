@@ -1,8 +1,0 @@
-[[CONTENT]]
-[source, json]
-----
-{
-  "$program": 27,
-  "$bank": 0.0
-}
-----

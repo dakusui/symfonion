@@ -1,6 +1,0 @@
-[source, json]
-----
-{
-  "$extends": [ "grooves/__init__.json" ]
-}
-----
