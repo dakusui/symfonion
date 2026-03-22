@@ -4,8 +4,8 @@
 # wt - worktree dispatcher
 #
 # Usage:
-#   wt add <branch-name>    Create worktree at worktrees/<branch-name>
-#   wt remove <branch-name> Remove worktree at worktrees/<branch-name>
+#   wt add <branch-name>    Create worktree at .worktrees/<branch-name>
+#   wt remove <branch-name> Remove worktree at .worktrees/<branch-name>
 #   wt list [options...]    List all worktrees
 #   wt help                 Show this help
 #
@@ -16,8 +16,8 @@ function _usage() {
   echo "Usage: wt <subcommand> [options...]" >&2
   echo "" >&2
   echo "Subcommands:" >&2
-  echo "  add <branch-name>    Create worktree at worktrees/<branch-name>" >&2
-  echo "  remove <branch-name> Remove worktree at worktrees/<branch-name>" >&2
+  echo "  add <branch-name>    Create worktree at .worktrees/<branch-name>" >&2
+  echo "  remove <branch-name> Remove worktree at .worktrees/<branch-name>" >&2
   echo "  list [options...]    List all worktrees" >&2
   echo "  help                 Show this help" >&2
 }

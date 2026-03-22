@@ -5,7 +5,7 @@
 #
 # 1. Checks if the given branch exists locally (can be checked out).
 # 2. If it doesn't exist, creates it from the current HEAD.
-# 3. Creates a worktree for the branch under {project_root}/worktrees/{branch-name}.
+# 3. Creates a worktree for the branch under {project_root}/.worktrees/{branch-name}.
 #
 # Usage:
 #   worktree-add feature/my-branch
@@ -20,7 +20,7 @@ function _message() {
 function main() {
   if [[ $# -lt 1 ]]; then
     _message "Usage: $0 <branch-name>"
-    _message "  Ensures the branch exists locally and creates a worktree under worktrees/<branch-name>."
+    _message "  Ensures the branch exists locally and creates a worktree under .worktrees/<branch-name>."
     exit 1
   fi
 
@@ -29,7 +29,7 @@ function main() {
   # Use the repo root (directory containing .git), not the current worktree root,
   # so this script works from any subdirectory and from inside any linked worktree.
   _project_root="$(cd "$(dirname "$(git rev-parse --git-common-dir)")" && pwd)"
-  local _worktree_path="${_project_root}/worktrees/${_branch_name}"
+  local _worktree_path="${_project_root}/.worktrees/${_branch_name}"
 
   # Check if branch exists locally; create from current HEAD if not
   if ! git -C "${_project_root}" rev-parse --verify --quiet "${_branch_name}" >/dev/null; then
