@@ -80,7 +80,7 @@ public enum SymfonionJsonTestUtils {
         $("$sequence", array(
             merge(
                 object($("$beats", json(beats))),
-                object($("$parts", object($(partName, object($("$body", strokes)))))),
+                object($("$parts", array(merge(object($("$name", json(partName))), object($("$body", strokes)))))),
                 object($("$groove", json(grooveName)))
             ))));
   }
