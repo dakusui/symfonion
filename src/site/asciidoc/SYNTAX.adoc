@@ -11,7 +11,6 @@ Here is an example of a piece of music written in symfonion.
 [source, json]
 ----
 {
-  "$include":[],
   "$parts":{
     "testviolin":{"$channel":0}
   },
@@ -34,53 +33,9 @@ Here is an example of a piece of music written in symfonion.
 
 Basically, a symfonion program is a JSON object and its two most important elements are `$parts` and `$sequence`.
 
+NOTE: Features that are no longer recommended are documented in link:DEPRECATED.adoc[Deprecated Features].
+
 A value for `$parts` is a dictionary which describes 'parts' in music score (like 'piano part', 'guitar part', and so on). `$sequence` organises what each part plays in each bar. For instance, "testviolin" plays a two-note phrase twice in the example above.
-
-== Include
-
-NOTE: This feature will be deprecated soon because it is planned to integrate `jq-front` into the symfonion's use case as described in https://github.com/dakusui/symfonion/issues/15[Issue-15]
-
-Inside the `$include` attribute, you can specify file names to be included before this file is processed.
-The files specified here are read and merged with this document.
-
-If you have two files like below in the same directory,
-
-[source, json]
-.example.js
-----
-{
-    "$include":[ "included.json" ],
-    "$sequence":[
-      "..."
-    ]
-}
-----
-
-[source, json]
-.included.json
-----
-{
-    "$patterns": {
-        "...": "..."
-    }
-}
-----
-
-and if example.js is given to symfonion, they will be merged into single JSON object.
-
-[source, json]
-----
-{
-    "$patterns":{
-      "...": "..."
-    },
-    "$sequence":[
-      "..."
-    ]
-}
-----
-
-And then this merged JSON object will be processed.
 
 
 == Parts
@@ -115,30 +70,9 @@ Part names must be defined through system properties. For more detail, please re
 (t.b.d.)
 
 
-== Patterns
+== Notes and Strokes
 
-NOTE: The top-level `$patterns` section is a **legacy (compat-only) feature** supported for backward compatibility. New files should define patterns inline inside each bar's `$parts` array in `$sequence` (see <<_sequence>>).
-
-In the legacy approach, the `$patterns` section is a dictionary at the top level of the symfonion file that defines named patterns which are referred to from inside the `$sequence` section.
-
-[source, json]
-----
-{
-    "$patterns":{
-      "test1":{
-        "$body":[
-          {"$notes":"C", "$length":"2", "$pan":127, "$program":2},
-          {"$notes":"C", "$length":"2", "$pan":0}
-        ],
-        "$length":"8"
-      }
-    }
-}
-----
-
-Each key of this dictionary is a name of a pattern. And the key is associated with a dictionary which describes the pattern. Generally speaking a pattern is a sequence of notes, which defines something like melodies, short rhythms, and so on.
-
-A pattern dictionary can have some keys, which are "$notemap", "$body", and base parameters like "$length", "$velocitybase", "$velocitydelta", "$length", and so on.
+Each part entry in a `$sequence` bar has a `$body` that defines the notes to play, plus optional default parameters (`$length`, `$gate`, `$velocitybase`, etc.) that apply to all notes in that entry.
 
 === Notemap
 
@@ -183,7 +117,7 @@ Default note map ($normal) definition follows
 
 |===
 
-And percussion ($percussion) is like below
+And percussion (`$percussion`) is like below
 
 [cols="1,2,2,5", aligns="rcrl", width="50%"]
 |===
@@ -222,7 +156,17 @@ And percussion ($percussion) is like below
 
 
 === Body
-A "$body" of a pattern is a list of 'strokes' and each stroke is a dictionary like this.
+
+`$body` defines the notes to play in a part entry. The preferred form is a **semicolon-separated string** of note tokens:
+
+[source, json]
+----
+{"$name":"piano", "$body":"C;E;G;C>", "$length":"8"}
+----
+
+Each token is a note (see <<_notes>>) and the semicolons separate successive strokes. This is the most concise way to write melodies and is the recommended style.
+
+Alternatively, `$body` can be a **JSON array of stroke objects**, which is useful when individual strokes need different parameters (different lengths, MIDI control messages, etc.):
 
 [source, json]
 ----
@@ -638,15 +582,15 @@ Users can transpose the notes by using this feature.
 The example above will be played as note 61 (=C3 +1 = C3#)
 Negative values are also allowed.
 
-This parameter is not very useful when you use this with notes. This parameter should be typically used directly under a pattern definition dictionary which is discussed later.
+This parameter is most useful when set directly on a bar part entry (alongside `$name` and `$body`) to transpose all notes in that entry uniformly.
 
 the default value is 0.
 
-=== Defining default values within a pattern
+=== Defining default values in a bar part entry
 
-Since it is painful to write $gate or $velocitybase every time for each note, users can define the default values in a pattern. Of course these default values can be overridden by each note.
+Since it is painful to write `$gate` or `$velocitybase` for every note, users can define default values directly on the bar part entry. These defaults apply to all notes in `$body` and can be overridden per-stroke.
 
-As discussed so far, users can write a bar's part entry like below.
+Users can write a bar's part entry like below.
 
 [source, json]
 ----
@@ -683,7 +627,8 @@ By using this feature, the pattern above can be rewritten like this,
 Users can write note parameters directly under a part-pattern object in `$parts`, and they are in effect for all the notes in the `$body` attribute of that same entry.
 
 == Groove
-In real musical works, all the sixteenth notes have neither the same length nor the same strength. One comes at the beginning of a bar usually longer and stronger than the others usually. And if there are 4 forth notes in a bar, second and forth ones are shorter and weaker than the others. These fluctuations are called 'grooves' in DTM world.
+In real musical works, all the sixteenth notes have neither the same length nor the same strength. One comes at the beginning of a bar usually longer and stronger than the others.
+And if there are 4 forth notes in a bar, second and forth ones are shorter and weaker than the others. These fluctuations are called 'grooves' in the DTM world.
 
 In symfonion syntax, you can define grooves like below,
 

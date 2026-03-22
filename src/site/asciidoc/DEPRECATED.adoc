@@ -1,0 +1,51 @@
+:toc:
+
+= Deprecated Features
+
+This document describes features that are deprecated and should not be used in new files.
+
+== Include (`$include`)
+
+NOTE: This feature is deprecated. The plan is to integrate `jq-front` into the symfonion use case instead. See https://github.com/dakusui/symfonion/issues/15[Issue-15] for details.
+
+Inside the `$include` attribute, you can specify file names to be included before this file is processed.
+The files specified here are read and merged with this document.
+
+If you have two files like below in the same directory,
+
+[source, json]
+.example.js
+----
+{
+    "$include":[ "included.json" ],
+    "$sequence":[
+      "..."
+    ]
+}
+----
+
+[source, json]
+.included.json
+----
+{
+    "$grooves": {
+        "...": "..."
+    }
+}
+----
+
+and if example.js is given to symfonion, they will be merged into single JSON object.
+
+[source, json]
+----
+{
+    "$grooves":{
+      "...": "..."
+    },
+    "$sequence":[
+      "..."
+    ]
+}
+----
+
+And then this merged JSON object will be processed.
