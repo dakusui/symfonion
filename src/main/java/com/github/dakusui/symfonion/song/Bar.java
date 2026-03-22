@@ -1,6 +1,5 @@
 package com.github.dakusui.symfonion.song;
 
-import com.github.dakusui.symfonion.compat.exceptions.ExceptionContext;
 import com.github.dakusui.symfonion.compat.exceptions.FractionFormatException;
 import com.github.dakusui.symfonion.compat.exceptions.SymfonionException;
 import com.github.dakusui.symfonion.compat.json.CompatJsonException;
@@ -14,11 +13,10 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.StreamSupport;
 
-import static com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower.ContextKey.REFERENCING_JSON_NODE;
 import static com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower.*;
-import static com.github.dakusui.symfonion.compat.exceptions.ExceptionContext.entry;
 import static com.github.dakusui.symfonion.compat.exceptions.SymfonionIllegalFormatException.FRACTION_EXAMPLE;
 import static com.github.dakusui.symfonion.compat.exceptions.SymfonionTypeMismatchException.ARRAY;
+import static com.github.dakusui.symfonion.compat.exceptions.SymfonionTypeMismatchException.OBJECT;
 import static com.github.dakusui.symfonion.compat.json.CompatJsonUtils.asJsonElement;
 import static com.github.dakusui.symfonion.compat.json.JsonUtils.findJsonObject;
 import static com.github.dakusui.symfonion.compat.json.JsonUtils.path;
@@ -33,7 +31,6 @@ import static java.util.Collections.*;
  * // @formatter:on
  */
 public class Bar {
-  private final Map<String, Pattern>               patterns;
   private final Map<String, NoteMap>               noteMaps;
   private final Fraction                           beats;
   private final Map<String, List<PatternSequence>> patternSequencePiles;
@@ -54,10 +51,7 @@ public class Bar {
    * {
    *   "$beats": "<beatsDefiningString>",
    *   "$parts": {
-   *     "<partName>": ["<patternName>;<patternName>",
-   *                    "<patternName>",
-   *                    "$inline:<inlined pattern>",
-   *                    "..."],
+   *     "<partName>": [{ "<inline pattern definition>" }, "..."],
    *   },
    *   "$groove": "<grooveName>",
    *   "$noteMap": "<noteMapName>",
@@ -71,7 +65,6 @@ public class Bar {
    * @param barJsonObject A JSON object from which a bar is created.
    * @param grooves       A map that defines a groove on which this bar should be played.
    * @param noteMaps      A note map with which this bar should be played.
-   * @param patterns      A map that holds that defines patterns this bar references.
    * @param partFilter    A predicate that filters parts to be played in this bar.
    * @throws SymfonionException  Data processing was failed.
    * @throws CompatJsonException Invalid JSON is given.
@@ -79,10 +72,8 @@ public class Bar {
   public Bar(JsonObject barJsonObject,
              Map<String, Groove> grooves,
              Map<String, NoteMap> noteMaps,
-             Map<String, Pattern> patterns,
              Predicate<String> partFilter) throws SymfonionException,
                                                   CompatJsonException {
-    this.patterns      = requireNonNull(patterns);
     this.noteMaps      = requireNonNull(noteMaps);
     this.barJsonObject = requireNonNull(barJsonObject);
     this.beats         = extractBeatsFractionFrom(barJsonObject);
@@ -173,8 +164,7 @@ public class Bar {
    * ----
    * {
    *   "<partName>": [
-   *     "patternName;patternName",
-   *     "$inline:patternDefinition",
+   *     { "<inline pattern definition>" },
    *     "..."
    *    ]
    * }
@@ -210,15 +200,15 @@ public class Bar {
   }
 
   private static List<PatternSequence> composePatternSequencePile(Bar bar,
-                                                                  JsonArray patternSequenceSequenceJsonArray) {
-    final List<PatternSequence> patternSequenceSequence = new LinkedList<>();
-    for (JsonElement patternSequenceJsonElement : patternSequenceSequenceJsonArray) {
-      String sequencedPatternNames = patternSequenceJsonElement.getAsString();
-      try (ExceptionContext ignored = exceptionContext(entry(REFERENCING_JSON_NODE, patternSequenceJsonElement))) {
-        patternSequenceSequence.add(Bar.createPatternPile(sequencedPatternNames, bar.patterns, bar.noteMaps));
+                                                                  JsonArray patternSequenceJsonArray) {
+    final List<PatternSequence> result = new LinkedList<>();
+    for (JsonElement element : patternSequenceJsonArray) {
+      if (!element.isJsonObject()) {
+        throw typeMismatchException(element, OBJECT);
       }
+      result.add(PatternSequence.create(singletonList(Pattern.createPattern(element.getAsJsonObject(), bar.noteMaps))));
     }
-    return patternSequenceSequence;
+    return result;
   }
 
   static List<String> resolveLabelsForBar(JsonObject barJsonObject) {
@@ -262,34 +252,5 @@ public class Bar {
                                                                                                                  Keyword.$parts));
   }
 
-  /**
-   * Creates a list of patterns from a string that holds pattern names.
-   * In the `patternNames` variable name pattern names are joined by `;`.
-   *
-   * @param patternNames A string that holds pattern names.
-   * @param patterns     A map from a pattern name to a pattern.
-   * @param noteMaps     A map from a note map name to a note map.
-   * @return A pattern sequence created for pattern names.
-   */
-  private static PatternSequence createPatternPile(String patternNames, Map<String, Pattern> patterns, Map<String, NoteMap> noteMaps) {
-    List<Pattern> patternList;
-    if (patternNames.startsWith("$inline:")) {
-      patternList = singletonList(Pattern.createPattern(CompatJsonUtils.toJson(patternNames.substring("$inline:".length())).getAsJsonObject(), noteMaps));
-    } else {
-      patternList = new LinkedList<>();
-      for (String eachPatternName : patternNames.split(";")) {
-        patternList.add(patternNameToPattern(patternNames, patterns, eachPatternName));
-      }
-    }
-    return PatternSequence.create(patternList);
-  }
-
-  private static Pattern patternNameToPattern(String patternNames, Map<String, Pattern> patterns, String eachPatternName) {
-    Pattern cur;
-    cur = patterns.get(eachPatternName);
-    if (cur == null) {
-      throw patternNotFound(patternNames);
-    }
-    return cur;
-  }
 }
+

@@ -22,7 +22,6 @@ public class CompatExceptionThrower {
     MIDI_DEVICE_INFO_IO(String.class),
     JSON_ELEMENT_ROOT(JsonObject.class),
     SOURCE_FILE(File.class),
-    REFERENCING_JSON_NODE(JsonElement.class),
     PART_MEASURE_JSON(JsonElement.class);
     private final Class<?> type;
 
@@ -62,11 +61,11 @@ public class CompatExceptionThrower {
   }
 
   public static SymfonionReferenceException noteMapNotFoundException(JsonElement problemCausingJsonNode, String missingReference) throws SymfonionException {
-    throw new SymfonionReferenceException(missingReference, "notemap", problemCausingJsonNode, contextValueOf(JSON_ELEMENT_ROOT), contextValueOf(SOURCE_FILE), contextValueOf(JSON_ELEMENT_ROOT));
+    throw new SymfonionReferenceException(missingReference, "notemap", problemCausingJsonNode, contextValueOf(JSON_ELEMENT_ROOT), contextValueOf(SOURCE_FILE), CompatJsonUtils.asJsonElement(contextValueOf(JSON_ELEMENT_ROOT), "$notemaps"));
   }
 
   public static SymfonionReferenceException noteNotDefinedException(String missingReference, String notemapName) throws SymfonionException {
-    throw new SymfonionReferenceException(missingReference, format("note in %s", notemapName), contextValueOf(PART_MEASURE_JSON), contextValueOf(JSON_ELEMENT_ROOT), contextValueOf(SOURCE_FILE), contextValueOf(JSON_ELEMENT_ROOT));
+    throw new SymfonionReferenceException(missingReference, format("note in %s", notemapName), contextValueOf(PART_MEASURE_JSON), contextValueOf(JSON_ELEMENT_ROOT), contextValueOf(SOURCE_FILE), CompatJsonUtils.asJsonElement(contextValueOf(JSON_ELEMENT_ROOT), "$notemaps"));
   }
 
   public static SymfonionException syntaxErrorInNotePattern(String s, int i, Matcher m) {
@@ -79,10 +78,6 @@ public class CompatExceptionThrower {
 
   public static SymfonionReferenceException partNotFound(JsonElement problemCausingJsonNode, String missingReference) throws SymfonionException {
     throw new SymfonionReferenceException(missingReference, "part", problemCausingJsonNode, contextValueOf(JSON_ELEMENT_ROOT), contextValueOf(SOURCE_FILE), CompatJsonUtils.asJsonElement(contextValueOf(JSON_ELEMENT_ROOT), "$parts"));
-  }
-
-  public static SymfonionReferenceException patternNotFound(String missingReference) throws SymfonionException {
-    throw new SymfonionReferenceException(missingReference, "pattern", contextValueOf(REFERENCING_JSON_NODE), contextValueOf(JSON_ELEMENT_ROOT), contextValueOf(SOURCE_FILE), CompatJsonUtils.asJsonElement(contextValueOf(JSON_ELEMENT_ROOT), "$patterns"));
   }
 
   public static SymfonionTypeMismatchException typeMismatchException(JsonElement actualJSON, String... expectedTypes) throws SymfonionSyntaxException {

@@ -4,25 +4,6 @@
 	},
 	"$notemaps":{
 	},
-	"$patterns":{
-		"melody1":{
-		    "$notemap":"$normal",
-		    "$body":[
-		             "C", "D", "E", "F", "C", "D", "E","F",
-		             "C", "D", "E", "F", "C", "D", "E","F"
-		    ],
-	        "$velocitybase":106,
-	        "$velocitydelta":10,
-	        "$gate":0.8,
-	        "$length":"16",
-	        "$transpose":0
-		},
-		"setting":{
-			"$body":[
-			     {"$tempo":120, "$reverb":127, "$chorus":127},
-			]
-		}
-	},
 	"$grooves":{
 		"16beats":[
 		    { "$length":"16", "$ticks":28, "$accent":30 },
@@ -47,14 +28,36 @@
 	    {
 			"$beats":"16/16",
 			"$parts":{
-				"vocal":["melody1"]
+				"vocal":[{
+				    "$notemap":"$normal",
+				    "$body":[
+				             "C", "D", "E", "F", "C", "D", "E","F",
+				             "C", "D", "E", "F", "C", "D", "E","F"
+				    ],
+			        "$velocitybase":106,
+			        "$velocitydelta":10,
+			        "$gate":0.8,
+			        "$length":"16",
+			        "$transpose":0
+				}]
 			},
 			"$groove":"16beats"
 		},
 	    {
 			"$beats":"16/16",
 			"$parts":{
-				"vocal_notfound":["melody1"]
+				"vocal_notfound":[{
+				    "$notemap":"$normal",
+				    "$body":[
+				             "C", "D", "E", "F", "C", "D", "E","F",
+				             "C", "D", "E", "F", "C", "D", "E","F"
+				    ],
+			        "$velocitybase":106,
+			        "$velocitydelta":10,
+			        "$gate":0.8,
+			        "$length":"16",
+			        "$transpose":0
+				}]
 			},
 			"$groove":"16beats"
 		}

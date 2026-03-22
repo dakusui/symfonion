@@ -22,7 +22,7 @@ public class ReferenceErrorTest extends CliTestBase {
   public void missingNoteMap() throws IOException, SymfonionException {
     String resourceName = "missingReferences/02_notemapNotFound.json";
     assertActualObjectToStringValueContainsExpectedString(
-        fmt("symfonion: %s: jsonpath: .\"$patterns\".melody1.\"$notemap\": error: '$normal_notfound' undefined notemap symbol\n"),
+        fmt("symfonion: %s: jsonpath: .\"$sequence\"[0].\"$parts\".vocal[0].\"$notemap\": error: '$normal_notfound' undefined notemap symbol\n"),
         compileResourceWithCli(resourceName)
     );
   }
@@ -31,7 +31,7 @@ public class ReferenceErrorTest extends CliTestBase {
   public void missingNote() throws IOException, SymfonionException {
     String resourceName = "missingReferences/03_noteNotFound.json";
     assertActualObjectToStringValueContainsExpectedString(
-        fmt("symfonion: %s: jsonpath: .\"$patterns\".melody1.\"$body\"[15]: error: 'Z' undefined note in $normal symbol\n"),
+        fmt("symfonion: %s: jsonpath: .\"$sequence\"[0].\"$parts\".vocal[0].\"$body\"[15]: error: 'Z' undefined note in $normal symbol\n"),
         compileResourceWithCli(resourceName)
     );
   }
@@ -45,13 +45,5 @@ public class ReferenceErrorTest extends CliTestBase {
     );
   }
 
-  @Test
-  public void missingPattern() throws IOException, SymfonionException {
-    String resourceName = "missingReferences/05_patternNotFound.json";
-    assertActualObjectToStringValueContainsExpectedString(
-        fmt("symfonion: %s: jsonpath: .\"$sequence\"[1].\"$parts\".vocal[0]: error: 'melody1notfound' undefined pattern symbol\n"),
-        compileResourceWithCli(resourceName)
-    );
-  }
-
 }
+
