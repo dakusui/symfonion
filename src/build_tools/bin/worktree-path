@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+#
+# worktree-path <branch-name>
+#
+# Prints the full path to the worktree directory for the given branch.
+#
+# Usage:
+#   worktree-path <branch-name>
+#
+
+set -eu -o pipefail -o errtrace
+
+function main() {
+  if [[ $# -lt 1 ]]; then
+    echo "Usage: worktree-path <branch-name>" >&2
+    exit 1
+  fi
+
+  local _branch_name="${1}"
+  local _project_root
+  # Use the repo root (directory containing .git), not the current worktree root,
+  # so this script works from any subdirectory and from inside any linked worktree.
+  _project_root="$(cd "$(dirname "$(git rev-parse --git-common-dir)")" && pwd)"
+  local _worktree_path="${_project_root}/.worktrees/${_branch_name}"
+
+  if [[ ! -d "${_worktree_path}" ]]; then
+    echo "worktree-path: no worktree found for '${_branch_name}' at ${_worktree_path}" >&2
+    exit 1
+  fi
+
+  echo "${_worktree_path}"
+}
+
+main "${@}"
