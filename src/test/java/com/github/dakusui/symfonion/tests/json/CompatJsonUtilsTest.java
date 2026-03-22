@@ -5,7 +5,9 @@ import com.github.dakusui.symfonion.compat.json.CompatJsonUtils;
 import com.github.dakusui.symfonion.testutils.TestBase;
 import com.github.dakusui.thincrest_cliche.core.Transform;
 import com.github.valid8j.pcond.forms.Printables;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import static com.github.dakusui.testutils.json.JsonTestUtils.*;
 import static com.github.valid8j.classic.TestAssertions.assertThat;
@@ -62,10 +64,10 @@ public class CompatJsonUtilsTest extends TestBase {
         )));
   }
 
-  @Test(expected = JsonInvalidPathException.class)
-  public void givenConflictingTwoSingleEntryObjects_whenMerge_thenExceptionThrown() throws JsonInvalidPathException {
-    CompatJsonUtils.merge(
+  @Test
+  public void givenConflictingTwoSingleEntryObjects_whenMerge_thenExceptionThrown() {
+    assertThrows(JsonInvalidPathException.class, () -> CompatJsonUtils.merge(
         object($("key", json("value1"))),
-        object($("key", json("value2"))));
+        object($("key", json("value2")))));
   }
 }

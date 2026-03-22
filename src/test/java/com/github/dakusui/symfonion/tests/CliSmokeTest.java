@@ -7,8 +7,8 @@ import com.github.dakusui.thincrest_cliche.core.AllOf;
 import com.github.dakusui.thincrest_cliche.sut.symfonion.ResultTo;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -131,7 +131,7 @@ public class CliSmokeTest extends CliTestBase {
                 ResultTo.out().findSubstrings("*", "Gervill", "Real Time Sequencer")));
   }
 
-  @Ignore
+  @Disabled
   @Test
   public void givenK311_whenPlaySubcommandIsInvoked_thenPlayed() throws IOException {
     assumeRequiredMidiDevicesPresent();
@@ -142,7 +142,7 @@ public class CliSmokeTest extends CliTestBase {
     System.out.println(result);
   }
 
-  @Ignore
+  @Disabled
   @Test
   public void givenThreeStrokes_whenPlaySubcommandIsInvoked_thenPlayed2() throws FileNotFoundException {
     assumeRequiredMidiDevicesPresent();

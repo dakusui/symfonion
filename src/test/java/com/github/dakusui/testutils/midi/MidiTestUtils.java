@@ -1,7 +1,7 @@
 package com.github.dakusui.testutils.midi;
 
 import com.github.dakusui.symfonion.utils.midi.MidiUtils;
-import org.junit.AssumptionViolatedException;
+import org.opentest4j.TestAbortedException;
 
 import javax.sound.midi.MidiDevice;
 import javax.sound.midi.MidiMessage;
@@ -27,6 +27,6 @@ public class MidiTestUtils {
       if (Arrays.stream(infos).noneMatch(i -> Objects.equals(requiredDeviceName, i.getName()) && MidiUtils.isMidiDeviceForOutput(i)))
         missingDevices.add(requiredDeviceName);
     if (!missingDevices.isEmpty())
-      throw new AssumptionViolatedException("MIDI-devices: " + missingDevices + " were not found in this system. Known devices are: " + Arrays.toString(infos));
+      throw new TestAbortedException("MIDI-devices: " + missingDevices + " were not found in this system. Known devices are: " + Arrays.toString(infos));
   }
 }

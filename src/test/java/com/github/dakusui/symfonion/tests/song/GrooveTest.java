@@ -5,10 +5,10 @@ import com.github.dakusui.symfonion.song.Groove;
 import com.github.dakusui.symfonion.song.PartMeasure;
 import com.github.dakusui.symfonion.testutils.TestBase;
 import com.github.dakusui.symfonion.utils.Fraction;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static com.github.dakusui.symfonion.song.PartMeasure.parseNoteLength;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class GrooveTest extends TestBase {
 

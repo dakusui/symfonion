@@ -11,15 +11,12 @@ import com.github.dakusui.thincrest_cliche.core.Transform;
 import com.github.dakusui.thincrest_cliche.java.util.FromList;
 import com.github.dakusui.thincrest_cliche.java.util.FromMap;
 import com.github.valid8j.pcond.validator.Validator;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import javax.sound.midi.Track;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -38,31 +35,21 @@ import static com.github.dakusui.thincrest_cliche.javax.sound.midi.SequenceTo.tr
 import static com.github.dakusui.thincrest_cliche.javax.sound.midi.TrackTo.*;
 import static com.github.valid8j.pcond.forms.Predicates.*;
 
-@RunWith(Parameterized.class)
 public class MidiCompilerTest extends TestBase {
 
-  @BeforeClass
+  @BeforeAll
   public static void beforeAll() {
     Validator.reconfigure(c -> c.summarizedStringLength(120));
   }
 
-  private final SymfonionTestCase testCase;
-
-  public MidiCompilerTest(SymfonionTestCase testCase) {
-    this.testCase = testCase;
+  @ParameterizedTest(name = "{index}: {0}")
+  @MethodSource("parameters")
+  public void exercise(SymfonionTestCase testCase) {
+    testCase.executeAndVerify();
   }
 
-  @Test
-  public void exercise() {
-    this.testCase.executeAndVerify();
-  }
-
-  @Parameters(name = "{index}: {0}")
-  public static Collection<Object[]> parameters() {
-    return Stream.concat(positiveTestCases().stream()
-                                            .map(c -> new Object[]{c}),
-                         negativeTestCases().stream()
-                                            .map(c -> new Object[]{c})).toList();
+  public static Stream<SymfonionTestCase> parameters() {
+    return Stream.concat(positiveTestCases().stream(), negativeTestCases().stream());
   }
 
   public static List<SymfonionTestCase> positiveTestCases() {

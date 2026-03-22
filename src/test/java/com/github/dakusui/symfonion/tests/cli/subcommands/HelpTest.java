@@ -4,9 +4,9 @@ import com.github.dakusui.symfonion.cli.Cli;
 import com.github.dakusui.symfonion.cli.subcommands.Help;
 import com.github.dakusui.testutils.TestUtils;
 import org.apache.commons.cli.ParseException;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.PrintStream;
 
@@ -20,7 +20,7 @@ import static com.github.valid8j.pcond.forms.Predicates.containsString;
 public class HelpTest {
   private PrintStream systemOut;
 
-  @Before
+  @BeforeEach
   public void keepSystem_out() {
     this.systemOut = System.out;
   }
@@ -39,7 +39,7 @@ public class HelpTest {
     ));
   }
 
-  @After
+  @AfterEach
   public void restoreSystem_out() {
     System.setOut(this.systemOut);
   }

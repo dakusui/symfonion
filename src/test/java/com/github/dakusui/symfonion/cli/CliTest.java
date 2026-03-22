@@ -3,7 +3,9 @@ package com.github.dakusui.symfonion.cli;
 import com.github.dakusui.symfonion.compat.exceptions.CliException;
 import com.github.dakusui.symfonion.testutils.TestBase;
 import org.apache.commons.cli.CommandLine;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -50,20 +52,21 @@ public class CliTest extends TestBase {
     System.out.println(Cli.parseSpecifiedOptionAsPortNamePatterns(commandLine, "I"));
   }
 
-  @Test(expected = CliException.class)
+  @Test
   public void givenInvalidDevicePatterns_whenParseSpecifiedOptions_thenErrorThrown() {
     CommandLine commandLine = CliTestUtils.createCommandLine("-I", "k1", "\\");
-    try {
-      System.out.println(Cli.parseSpecifiedOptionAsPortNamePatterns(commandLine, "I"));
-    } catch (CliException e) {
-      assertStatement(value(e.getMessage()).toBe()
-                                           .containing("-I")
-                                           .containing("Regular expression")
-                                           .containing("'k1'")
-                                           .containing("'\\'")
-                                           .containing("isn't valid"));
-
-      throw e;
-    }
+    assertThrows(CliException.class, () -> {
+      try {
+        System.out.println(Cli.parseSpecifiedOptionAsPortNamePatterns(commandLine, "I"));
+      } catch (CliException e) {
+        assertStatement(value(e.getMessage()).toBe()
+                                             .containing("-I")
+                                             .containing("Regular expression")
+                                             .containing("'k1'")
+                                             .containing("'\\'")
+                                             .containing("isn't valid"));
+        throw e;
+      }
+    });
   }
 }

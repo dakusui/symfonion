@@ -5,7 +5,7 @@ import com.github.dakusui.symfonion.cli.subcommands.PatchBay;
 import com.github.dakusui.symfonion.testutils.TestBase;
 import com.github.dakusui.testutils.TestUtils;
 import org.apache.commons.cli.ParseException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
