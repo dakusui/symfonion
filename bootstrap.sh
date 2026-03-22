@@ -1,4 +1,7 @@
-#!/bin/bash -eu
+#!/usr/bin/env bash
+
+set -eu -o pipefail -o errtrace
+
 
 # Component versions to install
 COMPONENT_VERSIONS="$(cat <<'EOF'
@@ -148,7 +151,7 @@ function install_brew_package() {
 
 function sdk_install() {
   local _lang="${1}" _ver="${2}"
-  bash -c 'source '"${SDKMAN_DIR}"'/bin/sdkman-init.sh
+  "${BASH}" -c 'source '"${SDKMAN_DIR}"'/bin/sdkman-init.sh
            yes | sdk install '"${_lang}"' '"${_ver}"
 }
 
@@ -255,7 +258,7 @@ function main() {
   export HOME="${_project_rcdir}" # To avoid .bashrc / .bash_profile / .zsh_profile being updated
   export SDKMAN_DIR="${_project_sdkman_dir}"
   # install sdkman
-  curl -s "https://get.sdkman.io"    | /bin/bash 2>&1 | progress "sdkman"
+  curl -s "https://get.sdkman.io"    | "${BASH}" 2>&1 | progress "sdkman"
 
   # Verify sdk command is available after sdkman installation
   if [[ ! -f "${SDKMAN_DIR}/bin/sdkman-init.sh" ]]; then
