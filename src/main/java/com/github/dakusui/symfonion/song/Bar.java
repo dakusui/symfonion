@@ -5,7 +5,6 @@ import com.github.dakusui.symfonion.compat.exceptions.SymfonionException;
 import com.github.dakusui.symfonion.compat.json.CompatJsonException;
 import com.github.dakusui.symfonion.compat.json.CompatJsonUtils;
 import com.github.dakusui.symfonion.utils.Fraction;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
@@ -15,7 +14,6 @@ import java.util.stream.StreamSupport;
 
 import static com.github.dakusui.symfonion.compat.exceptions.CompatExceptionThrower.*;
 import static com.github.dakusui.symfonion.compat.exceptions.SymfonionIllegalFormatException.FRACTION_EXAMPLE;
-import static com.github.dakusui.symfonion.compat.exceptions.SymfonionTypeMismatchException.ARRAY;
 import static com.github.dakusui.symfonion.compat.exceptions.SymfonionTypeMismatchException.OBJECT;
 import static com.github.dakusui.symfonion.compat.json.CompatJsonUtils.asJsonElement;
 import static com.github.dakusui.symfonion.compat.json.JsonUtils.findJsonObject;
@@ -31,12 +29,12 @@ import static java.util.Collections.*;
  * // @formatter:on
  */
 public class Bar {
-  private final Map<String, NoteMap>               noteMaps;
-  private final Fraction                           beats;
-  private final Map<String, List<PatternSequence>> patternSequencePiles;
-  private final Groove                             groove;
-  private final List<String>                       labels;
-  private final JsonObject                         barJsonObject;
+  private final Map<String, NoteMap> noteMaps;
+  private final Fraction             beats;
+  private final Map<String, Pattern> patterns;
+  private final Groove               groove;
+  private final List<String>         labels;
+  private final JsonObject           barJsonObject;
 
 
   /**
@@ -51,7 +49,7 @@ public class Bar {
    * {
    *   "$beats": "<beatsDefiningString>",
    *   "$parts": {
-   *     "<partName>": [{ "<inline pattern definition>" }, "..."],
+   *     "<partName>": { "<inline pattern definition>" },
    *   },
    *   "$groove": "<grooveName>",
    *   "$noteMap": "<noteMapName>",
@@ -82,9 +80,9 @@ public class Bar {
       /*
         partName -> [ patternName ]
        */
-    this.patternSequencePiles = composePatternSequencePilesMap(this,
-                                                               partFilter,
-                                                               getPartsInBarAsJsonObject(barJsonObject));
+    this.patterns = composePatternsMap(this,
+                                       partFilter,
+                                       getPartsInBarAsJsonObject(barJsonObject));
   }
 
   /**
@@ -102,20 +100,17 @@ public class Bar {
    * @return A set of part names.
    */
   public Set<String> partNames() {
-    return unmodifiableSet(this.patternSequencePiles.keySet());
+    return unmodifiableSet(this.patterns.keySet());
   }
 
   /**
-   * Returns a list of pattern sequences (`PatternSequence`) for the `partName`.
+   * Returns the `Pattern` for the given `partName`.
    *
-   * @param partName A part name for which patterns should be returned.
-   * @return A list of pattern sequences.
+   * @param partName A part name for which the pattern should be returned.
+   * @return A `Pattern` object.
    */
-  public List<PatternSequence> patternSequencePileForPart(String partName) {
-    return this.patternSequencePiles.get(partName)
-                                    .stream()
-                                    .map(PatternSequence::create)
-                                    .toList();
+  public Pattern patternForPart(String partName) {
+    return this.patterns.get(partName);
   }
 
   /**
@@ -150,65 +145,36 @@ public class Bar {
 
   /**
    * // @formatter:off
-   * Composes a map of pattern sequences.
-   *
-   * ----
-   * Map<String, List<List<Pattern>>>
-   * ^^^^^^       ^^^^^^^^^^^^^   Layered Patterns
-   * |  ^^^^^^^^^^^^^^^^^^^  A sequence of layered patterns
-   * +---------------------  A part name
-   * ----
+   * Composes a map from part name to pattern.
    *
    * [source, JSON]
    * .partsJsonObjectInBar
    * ----
    * {
-   *   "<partName>": [
-   *     { "<inline pattern definition>" },
-   *     "..."
-   *    ]
+   *   "<partName>": { "<inline pattern definition>" }
    * }
    * ----
    * // @formatter:on
    *
-   * @param bar                  A bar object from which pattern sequence map is created.
+   * @param bar                  A bar object from which the pattern map is created.
    * @param partFilter           A predicate that filters a part to be rendered.
    * @param partsJsonObjectInBar A JSON object associated with `$parts` key in the JSON object from which `bar` was created.
-   * @return A map from part name to a list of pattern sequences.
+   * @return A map from part name to a pattern.
    */
-  private static Map<String, List<PatternSequence>> composePatternSequencePilesMap(Bar bar,
-                                                                                   Predicate<String> partFilter,
-                                                                                   JsonObject partsJsonObjectInBar) {
-    Map<String, List<PatternSequence>> ret = new HashMap<>();
+  private static Map<String, Pattern> composePatternsMap(Bar bar,
+                                                         Predicate<String> partFilter,
+                                                         JsonObject partsJsonObjectInBar) {
+    Map<String, Pattern> ret = new HashMap<>();
     for (String eachPartName : partsJsonObjectInBar.keySet()) {
       if (!partFilter.test(eachPartName))
         continue;
-      ret.put(eachPartName,
-              composePatternSequencePile(bar, patternSequenceJsonArrayForPart(eachPartName,
-                                                                              partsJsonObjectInBar)));
-    }
-    return ret;
-  }
-
-  private static JsonArray patternSequenceJsonArrayForPart(String partName,
-                                                           JsonObject patternsJsonObjectInBar) {
-    JsonArray partPatternsJsonArray = CompatJsonUtils.asJsonArray(patternsJsonObjectInBar, partName);
-    if (!partPatternsJsonArray.isJsonArray()) {
-      throw typeMismatchException(partPatternsJsonArray, ARRAY);
-    }
-    return partPatternsJsonArray;
-  }
-
-  private static List<PatternSequence> composePatternSequencePile(Bar bar,
-                                                                  JsonArray patternSequenceJsonArray) {
-    final List<PatternSequence> result = new LinkedList<>();
-    for (JsonElement element : patternSequenceJsonArray) {
+      JsonElement element = asJsonElement(partsJsonObjectInBar, eachPartName);
       if (!element.isJsonObject()) {
         throw typeMismatchException(element, OBJECT);
       }
-      result.add(PatternSequence.create(singletonList(Pattern.createPattern(element.getAsJsonObject(), bar.noteMaps))));
+      ret.put(eachPartName, Pattern.createPattern(element.getAsJsonObject(), bar.noteMaps));
     }
-    return result;
+    return ret;
   }
 
   static List<String> resolveLabelsForBar(JsonObject barJsonObject) {

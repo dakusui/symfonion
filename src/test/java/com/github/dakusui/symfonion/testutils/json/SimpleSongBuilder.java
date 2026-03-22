@@ -41,7 +41,7 @@ class SimpleSongBuilder extends JsonBuilder<SimpleSongBuilder> {
         $("$sequence", array(
             merge(
                 object($("$beats", json(beats))),
-                object($("$parts", object($(partName, array(object($("$body", array(noteSequence)))))))),
+                object($("$parts", object($(partName, object($("$body", array(noteSequence))))))),
                 object($("$groove", json(this.groove)))
             ))));
   }

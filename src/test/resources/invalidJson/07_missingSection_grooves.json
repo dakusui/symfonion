@@ -6,18 +6,15 @@
 	},
 	"$sequence":[
 	    {
-			"$beats":"16/16",
-			"$patterns":{
-				"vocal":["melody1"]
-			},
-			"$groove":"16beats"
+		"$beats":"16/16",
+		"$parts":{
+			"vocal":{
+			    "$notemap":"$normal",
+			    "$body":["C","D","E","F","C","D","E","F","C","D","E","F","C","D","E","F"],
+			    "$length":"16"
+			}
 		},
-	    {
-			"$beats":"16/16",
-			"$patterns":{
-				"vocal":["melody1"]
-			},
-			"$groove":"16beats"
-		}
+		"$groove":"16beats"
+	}
 	]
 }
