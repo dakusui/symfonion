@@ -1,6 +1,0 @@
-{
-  "$extends": [ "voice-base.json" ],
-  "wave": {
-    "$program": 30
-  }
-}

@@ -1,5 +1,0 @@
-include::.attr.adoc[]
-
-This is a "project root directory" of an example project `example-song`.
-In this example, it is configured to process link:src/main/mmml/song.json{plus}{plus}.adoc[song.json++].
-

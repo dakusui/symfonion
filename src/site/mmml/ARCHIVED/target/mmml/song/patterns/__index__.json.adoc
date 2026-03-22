@@ -1,6 +1,0 @@
-[[CONTENT]]
-[source, json]
-----
-{
-}
-----
