@@ -249,7 +249,27 @@ public class MidiCompilerTest extends TestBase {
                 toStreamBy(midiMessageStream(isControlChange().and(control(isEqualTo(VOLUME))))).allMatch(controlData(greaterThanOrEqualTo((byte) 10))),
                 toStreamBy(midiMessageStream(isControlChange().and(control(isEqualTo(VOLUME))))).checkCount(isEqualTo(10L)),
                 toStreamBy(midiMessageStream(isControlChange().and(control(isEqualTo(VOLUME)).and(controlData(greaterThanOrEqualTo((byte) 50)))))).checkCount(greaterThan(4L))
-                                                                                                      ))
+                                                                                                      )),
+
+        createPositiveTestCase(
+            TestUtils.name("two stacked patterns on same part", "compile", "both patterns' notes appear in track"),
+            object(
+                $("$settings", object()),
+                $("$parts", object($("piano", object($("$channel", json(0)), $("$port", json("port1")))))),
+                $("$sequence", array(
+                    merge(
+                        object($("$beats", json("4/4"))),
+                        object($("$parts", array(
+                            merge(object($("$name", json("piano"))), object($("$body", json("C4")))),
+                            merge(object($("$name", json("piano"))), object($("$body", json("E4"))))
+                        )))
+                    )
+                ))),
+            Transform.$(FromSong.toSequence("port1").andThen(trackList()).andThen(elementAt(0))).allOf(
+                toStreamBy(midiMessageStream(isNoteOn())).checkCount(isEqualTo(2L)),
+                toStreamBy(midiMessageStream(isNoteOn())).anyMatch(note(isEqualTo(C3))),
+                toStreamBy(midiMessageStream(isNoteOn())).anyMatch(note(isEqualTo((byte) 64))), // E3
+                toStreamBy(midiMessageStream(isNoteOff())).checkCount(isEqualTo(2L))))
                         );
 
   }
