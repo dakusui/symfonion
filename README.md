@@ -3,7 +3,7 @@ Symfonion is a modern music macro language processor.
 
 # Installing Symfonion
 ## Prerequisites
-1. Your system has JRE 1.7 or later
+1. Your system has JRE 21 or later
 2. Your system can play a midi file through Java's API
 
 ## Linux and Mac users
@@ -28,45 +28,37 @@ You will be able to run ```symfonion``` by double clicking ```symfonion.jar```.
 By typing a command line below, ```symfonion``` will compile the given JSON file and play it.
 
 ```
-$ symfonion infile
+$ symfonion -p infile
 ```
 
 where "infile" is a ```symfonion``` file and it will look like this.
 
 ```json
-
-    {
-        "$parts":{ "pianor": {"$channel":0} },
-        "$patterns":{
-            "01r":{
-                "$body":["r4","B","A","G#","A"],
-                "$length":16
-            },
-            "02r":{
-                "$body":["C>8","r8","D>","C>","B","C>", "E>8","r8","F>","E>","D#>","E>"],
-                "$length":16
-            },
-            "04r":{
-                "$body":["B>","A>","G#>","A>","B>","A>","G#>","A>", "C>>4","A>8","C>>8"],
-                "$length":16
-            },
-            "06r":{
-                "$body":[ "B>",  "F#A>", "EG>", "F#A>", "B>",  "F#A>", "EG>", "F#A>" ],
-                "$length":8, "$gate":0.3
-            },
-            "08r":{
-                "$body":["B>","F#A>","EG>","D#F#>", "E4", "r4" ],
-                "$length":8, "$gate":0.3
-            }
+{
+    "$parts":{ "pianor": {"$channel":0} },
+    "$sequence":[
+        {
+            "$parts":{"pianor":[{"$body":["r4","B","A","G#","A"], "$length":16}]},
+            "$beats":"2/4"
         },
-        "$sequence":[
-            { "$parts":{"pianor":["01r"]},   "$beats":"2/4" },
-            { "$parts":{"pianor":["02r"]},   "$beats":"4/4" },
-            { "$parts":{"pianor":["04r"]},   "$beats":"4/4" },
-            { "$parts":{"pianor":["06r"]},   "$beats":"4/4" },
-            { "$parts":{"pianor":["08r"]},   "$beats":"4/4" }
-        ]
-    }
+        {
+            "$parts":{"pianor":[{"$body":["C>8","r8","D>","C>","B","C>", "E>8","r8","F>","E>","D#>","E>"], "$length":16}]},
+            "$beats":"4/4"
+        },
+        {
+            "$parts":{"pianor":[{"$body":["B>","A>","G#>","A>","B>","A>","G#>","A>", "C>>4","A>8","C>>8"], "$length":16}]},
+            "$beats":"4/4"
+        },
+        {
+            "$parts":{"pianor":[{"$body":["B>","F#A>","EG>","F#A>","B>","F#A>","EG>","F#A>"], "$length":8, "$gate":0.3}]},
+            "$beats":"4/4"
+        },
+        {
+            "$parts":{"pianor":[{"$body":["B>","F#A>","EG>","D#F#>", "E4", "r4"], "$length":8, "$gate":0.3}]},
+            "$beats":"4/4"
+        }
+    ]
+}
 ```
 (W.A. Mozart, K.311)
 
