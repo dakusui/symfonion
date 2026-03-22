@@ -1,4 +1,7 @@
-#!/bin/bash -eu
+#!/usr/bin/env bash
+
+set -eu -o pipefail -o errtrace
+
 
 # Component versions to install
 COMPONENT_VERSIONS="$(cat <<'EOF'
@@ -93,6 +96,14 @@ function __bootstrap__perform_checks() {
 function __bootstrap__checkenv() {
   local _installation_reportdir="${1}"
   local _checks=()
+  function is_bash_modern_enough() {
+    local _min_version=4
+    [[ "${BASH_VERSINFO[0]}" -ge "${_min_version}" ]] || {
+      echo "bash ${_min_version}.x or later is required (current: ${BASH_VERSION})" >&2
+      return 1
+    }
+  }
+  _checks+=("is_bash_modern_enough")
   function is_curl_installed() {
     which curl
   }
@@ -140,7 +151,7 @@ function install_brew_package() {
 
 function sdk_install() {
   local _lang="${1}" _ver="${2}"
-  bash -c 'source '"${SDKMAN_DIR}"'/bin/sdkman-init.sh
+  "${BASH}" -c 'source '"${SDKMAN_DIR}"'/bin/sdkman-init.sh
            yes | sdk install '"${_lang}"' '"${_ver}"
 }
 
@@ -247,7 +258,13 @@ function main() {
   export HOME="${_project_rcdir}" # To avoid .bashrc / .bash_profile / .zsh_profile being updated
   export SDKMAN_DIR="${_project_sdkman_dir}"
   # install sdkman
-  curl -s "https://get.sdkman.io"    | /bin/bash 2>&1 | progress "sdkman"
+  curl -s "https://get.sdkman.io"    | "${BASH}" 2>&1 | progress "sdkman"
+
+  # Verify sdk command is available after sdkman installation
+  if [[ ! -f "${SDKMAN_DIR}/bin/sdkman-init.sh" ]]; then
+    message "ERROR: sdkman installation failed - ${SDKMAN_DIR}/bin/sdkman-init.sh not found"
+    exit 1
+  fi
 
   sdk_install java "$(jdk_version)"  | progress "sdkman:java"
   sdk_install maven "$(maven_version)" | progress "sdkman:maven"
