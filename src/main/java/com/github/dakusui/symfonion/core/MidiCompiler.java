@@ -157,37 +157,33 @@ public class MidiCompiler {
             throw partNotFound(bar.lookUpJsonNode(partName), partName);
           }
           int channel = song.part(partName).channel();
-          for (PatternSequence patternSequence : bar.patternSequencePileForPart(partName)) {
-            ////
-            // relativePosition is a relative position from the beginning
-            // of the bar the pattern belongs to.
-            Fraction relPosInBar = Fraction.ZERO;
-            for (Pattern eachPattern : patternSequence) {
-              patternStarted();
-              for (PartMeasure partMeasure : eachPattern.partMeasures()) {
-                try {
-                  Fraction endingPos = Fraction.add(relPosInBar, partMeasure.length());
+          ////
+          // relativePosition is a relative position from the beginning
+          // of the bar the pattern belongs to.
+          Fraction relPosInBar = Fraction.ZERO;
+          patternStarted();
+          for (PartMeasure partMeasure : bar.patternForPart(partName).partMeasures()) {
+            try {
+              Fraction endingPos = Fraction.add(relPosInBar, partMeasure.length());
 
-                  partMeasure.compile(this,
-                                      new MidiCompilerContext(track,
-                                                              channel,
-                                                              groove,
-                                                              barPositionInTicks,
-                                                              relPosInBar));
+              partMeasure.compile(this,
+                                  new MidiCompilerContext(track,
+                                                          channel,
+                                                          groove,
+                                                          barPositionInTicks,
+                                                          relPosInBar));
 
-                  relPosInBar = endingPos;
-                  ////
-                  // Breaks if relative position goes over the length of the bar.
-                  if (Fraction.compare(relPosInBar, bar.beats()) >= 0) {
-                    break;
-                  }
-                } finally {
-                  partMeasureEnded();
-                }
+              relPosInBar = endingPos;
+              ////
+              // Breaks if relative position goes over the length of the bar.
+              if (Fraction.compare(relPosInBar, bar.beats()) >= 0) {
+                break;
               }
-              patternEnded();
+            } finally {
+              partMeasureEnded();
             }
           }
+          patternEnded();
           partEnded();
         }
         barEnded();

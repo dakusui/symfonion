@@ -93,7 +93,7 @@ public class MidiCompilerTest extends TestBase {
                 object($("$sequence", array(
                     merge(
                         object($("$beats", json("8/4"))),
-                        object($("$parts", object($("piano", array()))))
+                        object($("$parts", object()))
                          ))))),
             AllOf.$(
                 FromMap.<String>toKeyList().allOf(
@@ -118,7 +118,7 @@ public class MidiCompilerTest extends TestBase {
                 $("$sequence", array(
                     merge(
                         object($("$beats", json("8/4"))),
-                        object($("$parts", object($("piano", array(object($("$body", array(json("C"), SymfonionJsonTestUtils.programChange(101, 83.3))))))))))
+                        object($("$parts", object($("piano", object($("$body", array(json("C"), SymfonionJsonTestUtils.programChange(101, 83.3)))))))))
                                     ))),
             allOf(
                 FromMap.<String>toKeyList().allOf(
@@ -143,7 +143,7 @@ public class MidiCompilerTest extends TestBase {
                 $("$sequence", array(
                     merge(
                         object($("$beats", json("8/4"))),
-                        object($("$parts", object($("piano", array(object($("$body", array(json("C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;"))))))))),
+                        object($("$parts", object($("piano", object($("$body", array(json("C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;")))))))),
                         object($("$groove", json("16beats")))
                          )))),
             AllOf.$(
