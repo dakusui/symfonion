@@ -4,9 +4,9 @@
 = symfonion Modern Music Macro Language
 
 
-"symfonion" is a JSON-based music macro language which enables you to describe a piece of music as easily as 8-bit days' MML but in much more structured way.
+"symfonion" is a JSON-based music macro language, which enables you to describe a piece of music as easily as 8-bit days' MML but in a much more structured way.
 
-Here is an example of a piece of music written in symfonion.
+Here is an example piece of music written in symfonion.
 
 [source, json]
 ----
@@ -203,6 +203,8 @@ Relationships between patterns, strokes, and notes are described in the figure b
 ----
 
 A stroke is a set of Midi messages which are transmitted to a single midi channel of a midi device during a note (or notes belongs to one chord in a score) is being played.
+A pattern is a sequence of strokes with associated default parameters; its relationships with strokes and notes are described in the
+figure above.
 
 Midi messages in symfonion can be divided into two groups. One is 'note' messages (or simply "notes") and the other is 'non-note' messages.
 There are several types of non-note messages, which are 'volume, 'pan', 'reverb', 'chorus', 'pitch', and so on.
@@ -661,6 +663,17 @@ In symfonion syntax, you can define grooves like below,
 In this example, there are 16 sixteenth notes each of which has independent "$ticks" and "$accent".
 If a pattern is played with this groove, the first sixteen notes will be length of 28 MIDI ticks, while usually sixteenth notes have only 24 MIDI ticks (currently, a whole note is fixed to 384 MIDI ticks in symfonion). And 30 is added to the original velocity of the note.
 
+=== Example: swing feel with eighth notes
+
+The following is a complete example using a swing groove (`link:../../main/resources/examples/example-groove-swing.json[example-groove-swing.json]`).
+The `swing8` groove defines 8 eighth-note beats in a 2:1 long-short pattern (64 ticks / 32 ticks, summing to 96 ticks = one quarter note), giving a jazz-swing feel.
+Downbeats are accented, upbeats de-emphasised.
+
+[source, json]
+----
+include::../../main/resources/examples/example-groove-swing.json[]
+----
+
 == Sequence
 
 In the sequence section, users organize music bar by bar.
@@ -697,6 +710,26 @@ If a part's content is longer than `$beats`, notes beyond the bar boundary are n
 
 The default value is `"4/4"`.
 
+==== Repeating bars
+
+To repeat the same bar, simply list it more than once in `$sequence`:
+
+[source, json]
+----
+[
+  {
+    "$beats":"16/16",
+    "$parts":[{"$name":"vocal", "$body":"C;D;E;F;G;A;B;C>", "$length":"8"}],
+    "$groove":"16beats"
+  },
+  {
+    "$beats":"16/16",
+    "$parts":[{"$name":"vocal", "$body":"C;D;E;F;G;A;B;C>", "$length":"8"}],
+    "$groove":"16beats"
+  }
+]
+----
+
 === Parts in a bar
 
 `$parts` in a `$sequence` bar is a JSON **array** of part-pattern objects.
@@ -725,31 +758,21 @@ To play multiple patterns simultaneously on the same part (e.g., a melody over a
   "$beats":"4/4",
   "$parts":[
     {"$name":"piano", "$body":"C4;E4;G4;C>4", "$length":"4"},
-    {"$name":"piano", "$volume":[0,"............",127]}
+    {"$name":"piano", "$body":"r1", "$volume":[0,"............",127]}
   ]
 }
 ----
 
 Both entries start at the beginning of the bar and play simultaneously.
 
-==== Repeating bars
+=== Example: crescendo and decrescendo
 
-To repeat the same bar, simply list it more than once in `$sequence`:
+The following complete example (`link:../../main/resources/examples/example-stacking-crescendo.json[example-stacking-crescendo.json]`) plays a C major arpeggio ascending with a crescendo (volume 20→110), then descending with a decrescendo (volume 110→20).
+The melody and the volume sweep are two stacked entries on the same `piano` part.
 
 [source, json]
 ----
-[
-  {
-    "$beats":"16/16",
-    "$parts":[{"$name":"vocal", "$body":"C;D;E;F;G;A;B;C>", "$length":"8"}],
-    "$groove":"16beats"
-  },
-  {
-    "$beats":"16/16",
-    "$parts":[{"$name":"vocal", "$body":"C;D;E;F;G;A;B;C>", "$length":"8"}],
-    "$groove":"16beats"
-  }
-]
+include::../../main/resources/examples/example-stacking-crescendo.json[]
 ----
 
 Enjoy music!

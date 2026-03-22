@@ -6,7 +6,7 @@ This document describes features that are deprecated and should not be used in n
 
 == Include (`$include`)
 
-NOTE: This feature is deprecated. The plan is to integrate `jq-front` into the symfonion use case instead. See https://github.com/dakusui/symfonion/issues/15[Issue-15] for details.
+NOTE: This feature is deprecated. The plan is to integrate `jq++` (https://github.com/dakusui/jqplusplus[jqplusplus]) into the symfonion use case instead. See https://github.com/dakusui/symfonion/issues/15[Issue-15] for details.
 
 Inside the `$include` attribute, you can specify file names to be included before this file is processed.
 The files specified here are read and merged with this document.
