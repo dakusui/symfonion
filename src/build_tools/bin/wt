@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+
+#
+# wt - worktree dispatcher
+#
+# Usage:
+#   wt add <branch-name>    Create worktree at .worktrees/<branch-name>
+#   wt remove <branch-name> Remove worktree at .worktrees/<branch-name>
+#   wt list [options...]    List all worktrees
+#   wt help                 Show this help
+#
+
+set -eu -o pipefail -o errtrace
+
+function _usage() {
+  echo "Usage: wt <subcommand> [options...]" >&2
+  echo "" >&2
+  echo "Subcommands:" >&2
+  echo "  add <branch-name>    Create worktree at .worktrees/<branch-name>" >&2
+  echo "  remove <branch-name> Remove worktree at .worktrees/<branch-name>" >&2
+  echo "  list [options...]    List all worktrees" >&2
+  echo "  help                 Show this help" >&2
+}
+
+function main() {
+  local _script_dir
+  _script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+  if [[ $# -lt 1 ]]; then
+    _usage
+    exit 1
+  fi
+
+  local _subcmd="${1}"
+  shift
+
+  case "${_subcmd}" in
+    add)
+      exec "${_script_dir}/worktree-add" "${@}"
+      ;;
+    remove)
+      exec "${_script_dir}/worktree-remove" "${@}"
+      ;;
+    list)
+      exec "${_script_dir}/worktree-list" "${@}"
+      ;;
+    help|--help|-h)
+      _usage
+      exit 0
+      ;;
+    *)
+      echo "wt: unknown subcommand '${_subcmd}'" >&2
+      _usage
+      exit 1
+      ;;
+  esac
+}
+
+main "${@}"

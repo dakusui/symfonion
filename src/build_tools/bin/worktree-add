@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+
+#
+# worktree-add <branch-name>
+#
+# 1. Checks if the given branch exists locally (can be checked out).
+# 2. If it doesn't exist, creates it from the current HEAD.
+# 3. Creates a worktree for the branch under {project_root}/.worktrees/{branch-name}.
+#
+# Usage:
+#   worktree-add feature/my-branch
+#
+
+set -eu -o pipefail -o errtrace
+
+function _message() {
+  echo "${@}" >&2
+}
+
+function main() {
+  if [[ $# -lt 1 ]]; then
+    _message "Usage: $0 <branch-name>"
+    _message "  Ensures the branch exists locally and creates a worktree under .worktrees/<branch-name>."
+    exit 1
+  fi
+
+  local _branch_name="${1}"
+  local _project_root
+  # Use the repo root (directory containing .git), not the current worktree root,
+  # so this script works from any subdirectory and from inside any linked worktree.
+  _project_root="$(cd "$(dirname "$(git rev-parse --git-common-dir)")" && pwd)"
+  local _worktree_path="${_project_root}/.worktrees/${_branch_name}"
+
+  # Check if branch exists locally; create from current HEAD if not
+  if ! git -C "${_project_root}" rev-parse --verify --quiet "${_branch_name}" >/dev/null; then
+    _message "Branch '${_branch_name}' does not exist. Creating from current HEAD."
+    git -C "${_project_root}" branch "${_branch_name}"
+  fi
+
+  # Create worktree if it doesn't already exist
+  if [[ -d "${_worktree_path}" ]]; then
+    if [[ -f "${_worktree_path}/.git" ]]; then
+      _message "Worktree already exists at ${_worktree_path}"
+      exit 0
+    fi
+  fi
+
+  _message "Creating worktree at ${_worktree_path}"
+  git -C "${_project_root}" worktree add "${_worktree_path}" "${_branch_name}"
+  _message "Done. Worktree at ${_worktree_path}"
+}
+
+main "${@}"
