@@ -59,6 +59,7 @@
         <asciidoctor.maven.plugin.version>2.0.0-RC.1</asciidoctor.maven.plugin.version>
         <asciidoctorj.version>2.5.11</asciidoctorj.version>
         <asciidoctorj.diagram.version>2.0.1</asciidoctorj.diagram.version>
+        <asciidoctorj.diagram.ditaamini.version>1.0.3</asciidoctorj.diagram.ditaamini.version>
         <jruby.version>9.2.12.0</jruby.version>
         <jacoco-maven-plugin.version>0.8.11</jacoco-maven-plugin.version>
         <pitest-maven.version>1.15.3</pitest-maven.version>
@@ -214,6 +215,13 @@
                     <groupId>org.pitest</groupId>
                     <artifactId>pitest-maven</artifactId>
                     <version>${pitest-maven.version}</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.pitest</groupId>
+                            <artifactId>pitest-junit5-plugin</artifactId>
+                            <version>${pitest-junit5-plugin.version}</version>
+                        </dependency>
+                    </dependencies>
                     <executions>
                         <execution>
                             <phase>pre-site</phase>
@@ -234,6 +242,9 @@
                         <targetTests>
                             <param>*Test</param>
                         </targetTests>
+                        <excludedTestClasses>
+                            <param>com.github.dakusui.symfonion.tests.CliSmokeTest</param>
+                        </excludedTestClasses>
                     </configuration>
                 </plugin>
                 <plugin>
@@ -362,6 +373,11 @@
                             <groupId>org.asciidoctor</groupId>
                             <artifactId>asciidoctorj-diagram</artifactId>
                             <version>${asciidoctorj.diagram.version}</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>org.asciidoctor</groupId>
+                            <artifactId>asciidoctorj-diagram-ditaamini</artifactId>
+                            <version>${asciidoctorj.diagram.ditaamini.version}</version>
                         </dependency>
                     </dependencies>
                     <configuration>
@@ -516,7 +532,6 @@
                         </goals>
                         <configuration>
                             <outputFile>${project.build.directory}/symfonion-${project.version}-shaded.jar</outputFile>
-                            <classifier>shaded</classifier>
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <mainClass>com.github.dakusui.symfonion.cli.Cli</mainClass>
