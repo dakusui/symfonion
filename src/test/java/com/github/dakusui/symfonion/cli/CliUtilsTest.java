@@ -83,7 +83,7 @@ public class CliUtilsTest {
 
   @Test
   public void givenDefaultPortName_whenComposeOutputFile_thenFileComposedFromGivenName() {
-    File f = CliUtils.composeOutputFile("outfile.txt", "$default");
+    File f = CliUtils.composeOutputFile("outfile.txt", "default");
 
     assertStatement(value(f).asObject()
                             .stringify()

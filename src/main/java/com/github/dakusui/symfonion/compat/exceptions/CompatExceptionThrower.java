@@ -61,11 +61,11 @@ public class CompatExceptionThrower {
   }
 
   public static SymfonionReferenceException noteMapNotFoundException(JsonElement problemCausingJsonNode, String missingReference) throws SymfonionException {
-    throw new SymfonionReferenceException(missingReference, "notemap", problemCausingJsonNode, contextValueOf(JSON_ELEMENT_ROOT), contextValueOf(SOURCE_FILE), CompatJsonUtils.asJsonElement(contextValueOf(JSON_ELEMENT_ROOT), "$notemaps"));
+    throw new SymfonionReferenceException(missingReference, "notemap", problemCausingJsonNode, contextValueOf(JSON_ELEMENT_ROOT), contextValueOf(SOURCE_FILE), CompatJsonUtils.asJsonElement(contextValueOf(JSON_ELEMENT_ROOT), "notemaps"));
   }
 
   public static SymfonionReferenceException noteNotDefinedException(String missingReference, String notemapName) throws SymfonionException {
-    throw new SymfonionReferenceException(missingReference, format("note in %s", notemapName), contextValueOf(PART_MEASURE_JSON), contextValueOf(JSON_ELEMENT_ROOT), contextValueOf(SOURCE_FILE), CompatJsonUtils.asJsonElement(contextValueOf(JSON_ELEMENT_ROOT), "$notemaps"));
+    throw new SymfonionReferenceException(missingReference, format("note in %s", notemapName), contextValueOf(PART_MEASURE_JSON), contextValueOf(JSON_ELEMENT_ROOT), contextValueOf(SOURCE_FILE), CompatJsonUtils.asJsonElement(contextValueOf(JSON_ELEMENT_ROOT), "notemaps"));
   }
 
   public static SymfonionException syntaxErrorInNotePattern(String s, int i, Matcher m) {
@@ -73,11 +73,11 @@ public class CompatExceptionThrower {
   }
 
   public static SymfonionReferenceException grooveNotDefinedException(JsonElement problemCausingJsonNode, String missingReference) throws SymfonionException {
-    throw new SymfonionReferenceException(missingReference, "groove", problemCausingJsonNode, contextValueOf(JSON_ELEMENT_ROOT), contextValueOf(SOURCE_FILE), CompatJsonUtils.asJsonElement(contextValueOf(JSON_ELEMENT_ROOT), "$grooves"));
+    throw new SymfonionReferenceException(missingReference, "groove", problemCausingJsonNode, contextValueOf(JSON_ELEMENT_ROOT), contextValueOf(SOURCE_FILE), CompatJsonUtils.asJsonElement(contextValueOf(JSON_ELEMENT_ROOT), "grooves"));
   }
 
   public static SymfonionReferenceException partNotFound(JsonElement problemCausingJsonNode, String missingReference) throws SymfonionException {
-    throw new SymfonionReferenceException(missingReference, "part", problemCausingJsonNode, contextValueOf(JSON_ELEMENT_ROOT), contextValueOf(SOURCE_FILE), CompatJsonUtils.asJsonElement(contextValueOf(JSON_ELEMENT_ROOT), "$parts"));
+    throw new SymfonionReferenceException(missingReference, "part", problemCausingJsonNode, contextValueOf(JSON_ELEMENT_ROOT), contextValueOf(SOURCE_FILE), CompatJsonUtils.asJsonElement(contextValueOf(JSON_ELEMENT_ROOT), "parts"));
   }
 
   public static SymfonionTypeMismatchException typeMismatchException(JsonElement actualJSON, String... expectedTypes) throws SymfonionSyntaxException {

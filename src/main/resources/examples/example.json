@@ -1,51 +1,51 @@
 {
-	"$parts": {
+	"parts": {
 		"vocal": {
-			"$channel": 0,
-			"$port": "port1"
+			"channel": 0,
+			"port": "port1"
 		},
 		"piano": {
-			"$channel": 1,
-			"$port": "port1"
+			"channel": 1,
+			"port": "port1"
 		},
 		"guitar": {
-			"$channel": 2,
-			"$port": "port1"
+			"channel": 2,
+			"port": "port1"
 		},
 		"base": {
-			"$channel": 3,
-			"$port": "port2"
+			"channel": 3,
+			"port": "port2"
 		},
 		"drums": {
-			"$channel": 9,
-			"$port": "port2"
+			"channel": 9,
+			"port": "port2"
 		}
 	},
-	"$notemaps": {
+	"notemaps": {
 	},
-	"$patterns": {
+	"patterns": {
 		"melody1": {
-			"$notemap": "$normal",
-			"$body": [
+			"notemap": "normal",
+			"body": [
 				"F#>C#>A#",
 				"E>BG#",
 				{},
 				{
-					"$length": "8"
+					"length": "8"
 				},
 				{
-					"$notes": "G#>D#>B",
-					"$length": "8"
+					"notes": "G#>D#>B",
+					"length": "8"
 				}
 			],
-			"$velocitybase": 106,
-			"$velocitydelta": 10,
-			"$gate": 0.8,
-			"$length": "4",
-			"$transpose": 0
+			"velocitybase": 106,
+			"velocitydelta": 10,
+			"gate": 0.8,
+			"length": "4",
+			"transpose": 0
 		},
 		"melody2": {
-			"$body": [
+			"body": [
 				"B>>>",
 				"B>>>",
 				"B>>>",
@@ -63,23 +63,23 @@
 				"B>>>",
 				"B>>>"
 			],
-			"$length": "16"
+			"length": "16"
 		},
 		"setting": {
-			"$body": [
+			"body": [
 				{
-					"$tempo": 120,
-					"$reverb": 127,
-					"$chorus": 127
+					"tempo": 120,
+					"reverb": 127,
+					"chorus": 127
 				}
 			]
 		},
 		"effect1": {
-			"$notemap": "$normal",
+			"notemap": "normal",
 			// "$melody", "$pattern", and "$sequence"
-			"$body": [
+			"body": [
 				{
-					"$pitch": [
+					"pitch": [
 						0,
 						64,
 						,,,,,
@@ -89,75 +89,75 @@
 			]
 		},
 		"effect2": {
-			"$body": [
+			"body": [
 				{
-					"$volume": [
+					"volume": [
 						106,
 						,,,,,,,
 						127
 					]
 				}
 			],
-			"$length": "1"
+			"length": "1"
 		},
 		"base-setting": {
-			"$body": [
+			"body": [
 				{
-					"$program": 13,
-					"$bank": 83.2,
-					"$tempo": 120
+					"program": 13,
+					"bank": 83.2,
+					"tempo": 120
 				}
 			]
 		},
 		"base1": {
-			"$body": [
+			"body": [
 				{
-					"$notes": "B<<"
+					"notes": "B<<"
 				},
 				{
-					"$notes": "B<",
-					"$length": "16"
+					"notes": "B<",
+					"length": "16"
 				},
 				{
-					"$notes": "B<",
-					"$length": "16"
+					"notes": "B<",
+					"length": "16"
 				},
 				{
-					"$notes": "B<<"
+					"notes": "B<<"
 				},
 				{
-					"$notes": "B<",
-					"$length": 16
+					"notes": "B<",
+					"length": 16
 				},
 				{
-					"$notes": "B<",
-					"$length": "16"
+					"notes": "B<",
+					"length": "16"
 				},
 				{
-					"$notes": "B<<",
-					"$chorus": 10
+					"notes": "B<<",
+					"chorus": 10
 				},
 				{
-					"$notes": "B<"
+					"notes": "B<"
 				},
 				{
-					"$notes": "B<<"
+					"notes": "B<<"
 				},
 				{
-					"$notes": "B<",
-					"$length": 16
+					"notes": "B<",
+					"length": 16
 				},
 				{
-					"$notes": "B<",
-					"$length": "16"
+					"notes": "B<",
+					"length": "16"
 				}
 			],
-			"$length": "8",
-			"$velocitybase": 106
+			"length": "8",
+			"velocitybase": 106
 		},
 		"rhythm1": {
-			"$notemap": "$percussion",
-			"$body": [
+			"notemap": "percussion",
+			"body": [
 				"B++HC",
 				"H-",
 				"O",
@@ -175,103 +175,103 @@
 				"O",
 				""
 			],
-			"$velocitybase": 106,
-			"$velocitydelta": 10,
-			"$gate": 0.8,
-			"$length": "16",
-			"$transpose": 0,
+			"velocitybase": 106,
+			"velocitydelta": 10,
+			"gate": 0.8,
+			"length": "16",
+			"transpose": 0,
 			// does not make sense for rhythm patterns
-			"$percussionkit": null
+			"percussionkit": null
 		}
 	},
-	"$grooves": {
+	"grooves": {
 		"16beats": [
 			{
-				"$length": "16",
-				"$ticks": 24,
-				"$accent": 0
+				"length": "16",
+				"ticks": 24,
+				"accent": 0
 			},
 			{
-				"$length": "16",
-				"$ticks": 24,
-				"$accent": 0
+				"length": "16",
+				"ticks": 24,
+				"accent": 0
 			},
 			{
-				"$length": "16",
-				"$ticks": 24,
-				"$accent": 0
+				"length": "16",
+				"ticks": 24,
+				"accent": 0
 			},
 			{
-				"$length": "16",
-				"$ticks": 24,
-				"$accent": 0
+				"length": "16",
+				"ticks": 24,
+				"accent": 0
 			},
 			{
-				"$length": "16",
-				"$ticks": 24,
-				"$accent": 0
+				"length": "16",
+				"ticks": 24,
+				"accent": 0
 			},
 			{
-				"$length": "16",
-				"$ticks": 24,
-				"$accent": 0
+				"length": "16",
+				"ticks": 24,
+				"accent": 0
 			},
 			{
-				"$length": "16",
-				"$ticks": 24,
-				"$accent": 0
+				"length": "16",
+				"ticks": 24,
+				"accent": 0
 			},
 			{
-				"$length": "16",
-				"$ticks": 24,
-				"$accent": 0
+				"length": "16",
+				"ticks": 24,
+				"accent": 0
 			},
 			{
-				"$length": "16",
-				"$ticks": 24,
-				"$accent": 0
+				"length": "16",
+				"ticks": 24,
+				"accent": 0
 			},
 			{
-				"$length": "16",
-				"$ticks": 24,
-				"$accent": 0
+				"length": "16",
+				"ticks": 24,
+				"accent": 0
 			},
 			{
-				"$length": "16",
-				"$ticks": 24,
-				"$accent": 0
+				"length": "16",
+				"ticks": 24,
+				"accent": 0
 			},
 			{
-				"$length": "16",
-				"$ticks": 24,
-				"$accent": 0
+				"length": "16",
+				"ticks": 24,
+				"accent": 0
 			},
 			{
-				"$length": "16",
-				"$ticks": 24,
-				"$accent": 0
+				"length": "16",
+				"ticks": 24,
+				"accent": 0
 			},
 			{
-				"$length": "16",
-				"$ticks": 24,
-				"$accent": 0
+				"length": "16",
+				"ticks": 24,
+				"accent": 0
 			},
 			{
-				"$length": "16",
-				"$ticks": 24,
-				"$accent": 0
+				"length": "16",
+				"ticks": 24,
+				"accent": 0
 			},
 			{
-				"$length": "16",
-				"$ticks": 24,
-				"$accent": 0
+				"length": "16",
+				"ticks": 24,
+				"accent": 0
 			}
 		]
 	},
-	"$sequence": [
+	"sequence": [
 		{
-			"$beats": "1/4",
-			"$parts": {
+			"beats": "1/4",
+			"parts": {
 				"vocal": [
 					"setting"
 				],
@@ -287,8 +287,8 @@
 			}
 		},
 		{
-			"$beats": "16/16",
-			"$parts": {
+			"beats": "16/16",
+			"parts": {
 				"vocal": [],
 				"piano": [],
 				"guitar": [
@@ -303,8 +303,8 @@
 			}
 		},
 		{
-			"$beats": "16/16",
-			"$parts": {
+			"beats": "16/16",
+			"parts": {
 				"vocal": [
 					"melody1"
 				],
@@ -322,11 +322,11 @@
 					"rhythm1"
 				]
 			},
-			"$groove": "16beats"
+			"groove": "16beats"
 		},
 		{
-			"$beats": "16/16",
-			"$parts": {
+			"beats": "16/16",
+			"parts": {
 				"vocal": [
 					"melody1",
 					"effect1"
@@ -343,11 +343,11 @@
 					"rhythm1"
 				]
 			},
-			"$groove": "16beats"
+			"groove": "16beats"
 		},
 		{
-			"$beats": "16/16",
-			"$parts": {
+			"beats": "16/16",
+			"parts": {
 				"vocal": [
 					"melody1",
 					"effect1"
@@ -364,7 +364,7 @@
 					"rhythm1"
 				]
 			},
-			"$groove": "16beats"
+			"groove": "16beats"
 		}
 	]
 }

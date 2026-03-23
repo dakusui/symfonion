@@ -62,11 +62,11 @@ public enum SymfonionJsonTestUtils {
   }
 
   public static JsonObject grooveElement(String noteLength, int ticks, int accent) {
-    return object($("$length", json(noteLength)), $("$ticks", json(ticks)), $("$accent", json(accent)));
+    return object($("length", json(noteLength)), $("ticks", json(ticks)), $("accent", json(accent)));
   }
 
   public static JsonObject programChange(int program, double bank) {
-    return object($("$program", json(program)), $("$bank", json(bank)));
+    return object($("program", json(program)), $("bank", json(bank)));
   }
 
   public static JsonObject composeSymfonionSongJsonObject(String portName, JsonElement strokes, JsonArray groove) {
@@ -74,21 +74,21 @@ public enum SymfonionJsonTestUtils {
     String partName = "piano";
     String beats = "16/4";
     return object(
-        $("$settings", object()),
-        $("$parts", object($(partName, object($("$channel", json(0)), $("$port", json(portName)))))),
-        $("$grooves", object($(grooveName, groove))),
-        $("$sequence", array(
+        $("settings", object()),
+        $("parts", object($(partName, object($("channel", json(0)), $("port", json(portName)))))),
+        $("grooves", object($(grooveName, groove))),
+        $("sequence", array(
             merge(
-                object($("$beats", json(beats))),
-                object($("$parts", array(merge(object($("$name", json(partName))), object($("$body", strokes)))))),
-                object($("$groove", json(grooveName)))
+                object($("beats", json(beats))),
+                object($("parts", array(merge(object($("name", json(partName))), object($("body", strokes)))))),
+                object($("groove", json(grooveName)))
             ))));
   }
 
   public static JsonObject rootJsonObjectBase() {
     return object(
-        $("$settings", object()),
-        $("$parts", object()),
-        $("$sequence", array()));
+        $("settings", object()),
+        $("parts", object()),
+        $("sequence", array()));
   }
 }

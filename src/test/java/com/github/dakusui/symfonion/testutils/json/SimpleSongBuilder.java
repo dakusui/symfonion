@@ -35,14 +35,14 @@ class SimpleSongBuilder extends JsonBuilder<SimpleSongBuilder> {
     String beats = "16/4";
     JsonElement[] noteSequence = null;
     return object(
-        $("$settings", object()),
-        $("$parts", object($(partName, object($("$channel", json(0)), $("$port", json(portName)))))),
-        $("$grooves", Optional.ofNullable(this.groove).map(g -> object($(grooveName, g))).orElseGet(JsonTestUtils::object)),
-        $("$sequence", array(
+        $("settings", object()),
+        $("parts", object($(partName, object($("channel", json(0)), $("port", json(portName)))))),
+        $("grooves", Optional.ofNullable(this.groove).map(g -> object($(grooveName, g))).orElseGet(JsonTestUtils::object)),
+        $("sequence", array(
             merge(
-                object($("$beats", json(beats))),
-                object($("$parts", array(merge(object($("$name", json(partName))), object($("$body", array(noteSequence))))))),
-                object($("$groove", json(this.groove)))
+                object($("beats", json(beats))),
+                object($("parts", array(merge(object($("name", json(partName))), object($("body", array(noteSequence))))))),
+                object($("groove", json(this.groove)))
             ))));
   }
 }
