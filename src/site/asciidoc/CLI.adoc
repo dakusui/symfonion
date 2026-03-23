@@ -65,14 +65,14 @@ This command will behave like a MIDI patch bay when it is invoked with this opti
 MIDI devices associated with midioutport and midiinport must be defined by -O and -I options.
 
 === -o {output filename}
-Unless port names are not defined in the '$parts' section of the input file, compiled midi file is output to the file specified this options.
+Unless port names are not defined in the 'parts' section of the input file, compiled midi file is output to the file specified this options.
 If defined,  a '.' followed by a port name will be inserted before the last '.' in the output file name. And if there are more than one ports are used, each port generates its corresponding output file in the same manner.
 
 If this option is not given, this command behave as if a filename 'a.midi' is given.
 
 === -O {midioutport}={regex}
 This option is used with -p (play) and -r (route) option and assigns the MIDI device to the MIDI-out port name. 
-Port name is defined by "$port" attribute in "$parts" section or by -r option. 
+Port name is defined by "port" attribute in "parts" section or by -r option. 
 
 === -I {midiinport}={regex}
 This option is used with -r (route) option and assigns the MIDI device to the MIDI-in port name. MIDI-in port name is defined by -r option.

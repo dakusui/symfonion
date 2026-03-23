@@ -57,16 +57,16 @@ public class PartMeasure {
    * .partMeasureJson
    * ----
    * {
-   *   "$notes": "<strokeSequence:array>",
-   *   "$length": "<length:string@{Fraction}>",
-   *   "$gate": "<gate:number@{double}>",
-   *   "$volume": "<volume:array@{int}>",
-   *   "$pan": "<pan:array@{int}>",
-   *   "$reverb": "<reverb:array@{int}>",
-   *   "$chorus": "<chorus:array@{int}>",
-   *   "$modulation": "<modulation:array@{int}>",
-   *   "$aftertouch": "<aftertouch:array@{int}>",
-   *   "$sysex": "<sysex:array@{int}>"
+   *   "notes": "<strokeSequence:array>",
+   *   "length": "<length:string@{Fraction}>",
+   *   "gate": "<gate:number@{double}>",
+   *   "volume": "<volume:array@{int}>",
+   *   "pan": "<pan:array@{int}>",
+   *   "reverb": "<reverb:array@{int}>",
+   *   "chorus": "<chorus:array@{int}>",
+   *   "modulation": "<modulation:array@{int}>",
+   *   "aftertouch": "<aftertouch:array@{int}>",
+   *   "sysex": "<sysex:array@{int}>"
    * }
    * ----
    *
@@ -90,23 +90,23 @@ public class PartMeasure {
    *
    */
   public PartMeasure(JsonElement partMeasureJson, PartMeasureParameters params) throws SymfonionException, CompatJsonException {
-    this(CompatJsonUtils.asJsonObjectWithPromotion(partMeasureJson, new String[]{Keyword.$notes.name(), Keyword.$length.name()}), params);
+    this(CompatJsonUtils.asJsonObjectWithPromotion(partMeasureJson, new String[]{Keyword.notes.name(), Keyword.length.name()}), params);
   }
 
   public PartMeasure(JsonObject obj, PartMeasureParameters defaultValues) throws SymfonionException, CompatJsonException {
-    this.tempo          = CompatJsonUtils.hasPath(obj, Keyword.$tempo) ? CompatJsonUtils.asInt(obj, Keyword.$tempo) : UNDEFINED_NUM;
-    this.pgno           = CompatJsonUtils.hasPath(obj, Keyword.$program) ? CompatJsonUtils.asInt(obj, Keyword.$program) : UNDEFINED_NUM;
+    this.tempo          = CompatJsonUtils.hasPath(obj, Keyword.tempo) ? CompatJsonUtils.asInt(obj, Keyword.tempo) : UNDEFINED_NUM;
+    this.pgno           = CompatJsonUtils.hasPath(obj, Keyword.program) ? CompatJsonUtils.asInt(obj, Keyword.program) : UNDEFINED_NUM;
     this.bkno           = resolveBankNumber(obj);
-    this.volume         = getIntArray(obj, Keyword.$volume);
-    this.pan            = getIntArray(obj, Keyword.$pan);
-    this.reverb         = getIntArray(obj, Keyword.$reverb);
-    this.chorus         = getIntArray(obj, Keyword.$chorus);
-    this.pitch          = getIntArray(obj, Keyword.$pitch);
-    this.modulation     = getIntArray(obj, Keyword.$modulation);
-    this.aftertouch     = getIntArray(obj, Keyword.$aftertouch);
-    this.sysex          = asJsonArrayWithDefault(obj, null, Keyword.$sysex);
+    this.volume         = getIntArray(obj, Keyword.volume);
+    this.pan            = getIntArray(obj, Keyword.pan);
+    this.reverb         = getIntArray(obj, Keyword.reverb);
+    this.chorus         = getIntArray(obj, Keyword.chorus);
+    this.pitch          = getIntArray(obj, Keyword.pitch);
+    this.modulation     = getIntArray(obj, Keyword.modulation);
+    this.aftertouch     = getIntArray(obj, Keyword.aftertouch);
+    this.sysex          = asJsonArrayWithDefault(obj, null, Keyword.sysex);
     this.gate           = resolveGate(obj, defaultValues);
-    this.strokeSequence = parseStrokeSequence(asStringWithDefault(obj, null, Keyword.$notes),
+    this.strokeSequence = parseStrokeSequence(asStringWithDefault(obj, null, Keyword.notes),
                                               resolveDefaultStrokeLength(obj, defaultValues),
                                               defaultValues.noteMap);
     this.defaultValues  = defaultValues;
@@ -235,24 +235,24 @@ public class PartMeasure {
 
   private static Fraction resolveDefaultStrokeLength(JsonObject obj, PartMeasureParameters params) {
     Fraction len = params.length();
-    if (CompatJsonUtils.hasPath(obj, Keyword.$length)) {
-      len = validateLength(CompatJsonUtils.asJsonElement(obj, Keyword.$length));
+    if (CompatJsonUtils.hasPath(obj, Keyword.length)) {
+      len = validateLength(CompatJsonUtils.asJsonElement(obj, Keyword.length));
     }
     return len;
   }
 
   private static double resolveGate(JsonObject obj, PartMeasureParameters params) {
     double gate = params.gate();
-    if (CompatJsonUtils.hasPath(obj, Keyword.$gate)) {
-      gate = CompatJsonUtils.asDouble(obj, Keyword.$gate);
+    if (CompatJsonUtils.hasPath(obj, Keyword.gate)) {
+      gate = CompatJsonUtils.asDouble(obj, Keyword.gate);
     }
     return gate;
   }
 
   private static String resolveBankNumber(JsonObject obj) {
     final String bkno;
-    if (CompatJsonUtils.hasPath(obj, Keyword.$bank)) {
-      bkno = CompatJsonUtils.asString(obj, Keyword.$bank);
+    if (CompatJsonUtils.hasPath(obj, Keyword.bank)) {
+      bkno = CompatJsonUtils.asString(obj, Keyword.bank);
       // Checks if this.bkno can be parsed as a double value.
       assert bkno != null;
       //noinspection ResultOfMethodCallIgnored

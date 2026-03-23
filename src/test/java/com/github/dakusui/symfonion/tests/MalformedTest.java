@@ -20,7 +20,7 @@ public class MalformedTest extends CliTestBase {
   public void givenMalformed_brokenObject() throws IOException, SymfonionException {
     String resourceName = "invalidJson/03_nonwellformed_02.json";
     assertActualObjectToStringValueContainsExpectedString(
-        String.format("symfonion: %s: Unterminated object at line 13 column 8 path $.$patterns.melody1.$body[15].$length\n", getWorkFile()),
+        String.format("symfonion: %s: Unterminated object at line 13 column 8 path $.patterns.melody1.body[15].length\n", getWorkFile()),
         compileResourceWithCli(resourceName)
     );
   }

@@ -34,29 +34,29 @@ public class CliSmokeTest extends CliTestBase {
     assumeRequiredMidiDevicesPresent();
     assumeThat(isRunUnderPitest(), isFalse());
     JsonObject song = object(
-        $("$settings", object()),
-        $("$parts", object($("piano", object($("$channel", json(0)), $("$port", json("GERVILL_PORT")))))),
-        $("$grooves", object($("16beats", sixteenBeatsGroove()))),
-        $("$sequence", array(
+        $("settings", object()),
+        $("parts", object($("piano", object($("channel", json(0)), $("port", json("GERVILL_PORT")))))),
+        $("grooves", object($("16beats", sixteenBeatsGroove()))),
+        $("sequence", array(
             object(
-                $("$labels", array(json("reference"))),
-                $("$beats", json("4/4")),
-                $("$parts", array(merge(object($("$name", json("piano"))), object($("$body", json("r4;r4;r4;r4"))))))),
+                $("labels", array(json("reference"))),
+                $("beats", json("4/4")),
+                $("parts", array(merge(object($("name", json("piano"))), object($("body", json("r4;r4;r4;r4"))))))),
             object(
-                $("$labels", array(json("reference"))),
-                $("$beats", json("4/4")),
-                $("$parts", array(merge(object($("$name", json("piano"))), object($("$body", array(json("BGE8|BGE8;r8;AFD8;r8;GEC8;r8"))))))),
-                $("$groove", json("16beats"))),
+                $("labels", array(json("reference"))),
+                $("beats", json("4/4")),
+                $("parts", array(merge(object($("name", json("piano"))), object($("body", array(json("BGE8|BGE8;r8;AFD8;r8;GEC8;r8"))))))),
+                $("groove", json("16beats"))),
             object(
-                $("$labels", array(json("reference"))),
-                $("$beats", json("4/4")),
-                $("$parts", array(merge(object($("$name", json("piano"))), object($("$body", array(json("BGE8|BGE8;r8;AFD8;r8;GEC8;r8"))))))),
-                $("$groove", json("16beats"))),
+                $("labels", array(json("reference"))),
+                $("beats", json("4/4")),
+                $("parts", array(merge(object($("name", json("piano"))), object($("body", array(json("BGE8|BGE8;r8;AFD8;r8;GEC8;r8"))))))),
+                $("groove", json("16beats"))),
             object(
-                $("$labels", array(json("inline"))),
-                $("$beats", json("4/4")),
-                $("$parts", array(merge(object($("$name", json("piano"))), object($("$body", array(json("C8;D8;E8|GEC8;r8;AFD8;r8;BGE8;r8"))))))),
-                $("$groove", json("16beats"))))));
+                $("labels", array(json("inline"))),
+                $("beats", json("4/4")),
+                $("parts", array(merge(object($("name", json("piano"))), object($("body", array(json("C8;D8;E8|GEC8;r8;AFD8;r8;BGE8;r8"))))))),
+                $("groove", json("16beats"))))));
 
     Result result = invokeCliWithArguments("-p", writeContentToTempFile(Objects.toString(song)).getAbsolutePath(), "-OGERVILL_PORT=Gervill", "--bars=*", "--parts=p.*");
 
@@ -90,26 +90,26 @@ public class CliSmokeTest extends CliTestBase {
     assumeRequiredMidiDevicesPresent();
     assumeThat(isRunUnderPitest(), isFalse());
     JsonObject song = object(
-        $("$settings", object()),
-        $("$parts", object($("piano", object($("$channel", json(0)), $("$port", json("GERVILL_PORT")))))),
-        $("$patterns", object(
-            $("R4", object($("$body", json("r4;r4;r4;r4")))),
-            $("main", object($("$body", array(json("BGE8|BGE8;r8;AFD8;r8;GEC8;r8"))))))),
-        $("$sequence", array(
+        $("settings", object()),
+        $("parts", object($("piano", object($("channel", json(0)), $("port", json("GERVILL_PORT")))))),
+        $("patterns", object(
+            $("R4", object($("body", json("r4;r4;r4;r4")))),
+            $("main", object($("body", array(json("BGE8|BGE8;r8;AFD8;r8;GEC8;r8"))))))),
+        $("sequence", array(
             object(
-                $("$labels", array(json("reference"))),
-                $("$beats", json("4/4")),
-                $("$parts", array(merge(object($("$name", json("piano"))), object($("$note", json("R4"))))))),
+                $("labels", array(json("reference"))),
+                $("beats", json("4/4")),
+                $("parts", array(merge(object($("name", json("piano"))), object($("$note", json("R4"))))))),
             object(
-                $("$labels", array(json("reference"))),
-                $("$beats", json("4/4")),
-                $("$parts", array(merge(object($("$name", json("piano"))), object($("$notes", json("BGE8|BGE8;r8;AFD8;r8;GEC8;r8")))))),
-                $("$groove", sixteenBeatsGroove())),
+                $("labels", array(json("reference"))),
+                $("beats", json("4/4")),
+                $("parts", array(merge(object($("name", json("piano"))), object($("notes", json("BGE8|BGE8;r8;AFD8;r8;GEC8;r8")))))),
+                $("groove", sixteenBeatsGroove())),
             object(
-                $("$labels", array(json("reference"))),
-                $("$beats", json("4/4")),
-                $("$parts", array(merge(object($("$name", json("piano"))), object($("$notes", json("BGE8|BGE8;r8;AFD8;r8;GEC8;r8")))))),
-                $("$groove", sixteenBeatsGroove())))));
+                $("labels", array(json("reference"))),
+                $("beats", json("4/4")),
+                $("parts", array(merge(object($("name", json("piano"))), object($("notes", json("BGE8|BGE8;r8;AFD8;r8;GEC8;r8")))))),
+                $("groove", sixteenBeatsGroove())))));
 
     Result result = invokeCliWithArguments("-q", writeContentToTempFile(Objects.toString(song)).getAbsolutePath(), "-OGERVILL_PORT=Gervill", "--bars=*", "--parts=p.*");
 
@@ -148,61 +148,61 @@ public class CliSmokeTest extends CliTestBase {
     assumeRequiredMidiDevicesPresent();
     assumeThat(isRunUnderPitest(), isFalse());
     JsonObject song = object(
-        $("$settings", object()),
-        $("$parts", object(
-            $("piano", object($("$channel", json(0)), $("$port", json("port1")))),
-            $("guitar", object($("$channel", json(1)), $("$port", json("port1")))),
-            $("drums", object($("$channel", json(9)), $("$port", json("port1"))))
+        $("settings", object()),
+        $("parts", object(
+            $("piano", object($("channel", json(0)), $("port", json("port1")))),
+            $("guitar", object($("channel", json(1)), $("port", json("port1")))),
+            $("drums", object($("channel", json(9)), $("port", json("port1"))))
                           )),
-        $("$patterns", object(
-            $("R4", object($("$body", json("r4")))),
-            $("R8", object($("$body", json("r8")))),
-            $("pgchg-piano", object($("$body", array(object(
-                $("$notes", json("r16")),
-                $("$volume", json(120)),
-                $("$pan", json(0)),
-                $("$reverb", json(120)),
-                $("$bank", json(5.15)),
-                $("$program", json(33))))))),
-            $("pgchg-guitar", object($("$body", array(object(
-                $("$notes", json("r16")),
-                $("$volume", json(120)),
-                $("$pan", json(60)),
-                $("$bank", json(5.45)),
-                $("$program", json(1))))))),
-            $("pan:left-to-right", object($("$body", array(object(
-                $("$notes", json("r2")), $("$pan", array(0, "..............", 127))))))),
-            $("pan:right-to-left", object($("$body", array(object(
-                $("$notes", json("r2")), $("$pan", array(1, "..............", 0))))))),
-            $("main", object($("$body", array(json("BGE4;AFD4;GEC2"))))),
+        $("patterns", object(
+            $("R4", object($("body", json("r4")))),
+            $("R8", object($("body", json("r8")))),
+            $("pgchg-piano", object($("body", array(object(
+                $("notes", json("r16")),
+                $("volume", json(120)),
+                $("pan", json(0)),
+                $("reverb", json(120)),
+                $("bank", json(5.15)),
+                $("program", json(33))))))),
+            $("pgchg-guitar", object($("body", array(object(
+                $("notes", json("r16")),
+                $("volume", json(120)),
+                $("pan", json(60)),
+                $("bank", json(5.45)),
+                $("program", json(1))))))),
+            $("pan:left-to-right", object($("body", array(object(
+                $("notes", json("r2")), $("pan", array(0, "..............", 127))))))),
+            $("pan:right-to-left", object($("body", array(object(
+                $("notes", json("r2")), $("pan", array(1, "..............", 0))))))),
+            $("main", object($("body", array(json("BGE4;AFD4;GEC2"))))),
             $("sub", object(
-                $("$body", array(json("BGE8;BGE8;AFD8;AFD8;GEC8;GEC8"))))),
+                $("body", array(json("BGE8;BGE8;AFD8;AFD8;GEC8;GEC8"))))),
             $("drum-1", object(
-                $("$notemap", json("$percussion")),
-                $("$body", array(json("BH16;H16;H16;H16;BSH32;H32;H16;H16;H16;BH16;H16;H16;H16;BSH32;H32;H16;H16;H16;")))))
+                $("notemap", json("percussion")),
+                $("body", array(json("BH16;H16;H16;H16;BSH32;H32;H16;H16;H16;BH16;H16;H16;H16;BSH32;H32;H16;H16;H16;")))))
                              )),
-        $("$grooves", object($("16beats", sixteenBeatsGroove()))),
-        $("$sequence", array(
+        $("grooves", object($("16beats", sixteenBeatsGroove()))),
+        $("sequence", array(
             object(
-                $("$beats", json("1/8")),
-                $("$patterns", object(
+                $("beats", json("1/8")),
+                $("patterns", object(
                     $("piano", array("R8", "pgchg-piano")),
                     $("guitar", array("R8", "pgchg-guitar"))))),
             object(
-                $("$beats", json("4/4")),
-                $("$patterns", object(
+                $("beats", json("4/4")),
+                $("patterns", object(
                     $("piano", array("main")),
                     $("guitar", array("sub", "pan:left-to-right")),
                     $("drums", array("drum-1"))
                                      )),
-                $("$groove", json("16beats"))
+                $("groove", json("16beats"))
                   ),
             object(
-                $("$beats", json("4/4")),
-                $("$patterns", object(
+                $("beats", json("4/4")),
+                $("patterns", object(
                     $("drums", array("drum-1"))
                                      )),
-                $("$groove", json("16beats"))
+                $("groove", json("16beats"))
                   )
                             )));
 
@@ -255,7 +255,7 @@ public class CliSmokeTest extends CliTestBase {
             ResultTo.err().findSubstrings(
                 "symfonion:",
                 "jsonpath:",
-                ".\"$sequence\"[0].\"$parts\"[0].\"$body\"[0].\"$volume\"",
+                ".sequence[0].parts[0].body[0].volume",
                 "In this array, a string can contain only dots. E.g. ",
                 "[10,\".X.\",100]")));
   }
@@ -281,7 +281,7 @@ public class CliSmokeTest extends CliTestBase {
             ResultTo.err().findSubstrings(
                 "symfonion:",
                 "jsonpath:",
-                ".\"$sequence\"[0].\"$parts\"[0].\"$body\"[0].\"$volume\"",
+                ".sequence[0].parts[0].body[0].volume",
                 "This array, only integers, nulls, and strings containing only dots (...) are allowed.",
                 "[10,{},100]")));
   }

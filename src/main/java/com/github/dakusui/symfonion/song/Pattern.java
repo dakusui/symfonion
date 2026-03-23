@@ -33,11 +33,11 @@ public class Pattern {
     this.body   = new LinkedList<>();
     PartMeasureParameters params = new PartMeasureParameters(jsonObject, noteMap);
     JsonArray bodyJSON;
-    if (asJsonElement(jsonObject, Keyword.$body).isJsonPrimitive()) {
+    if (asJsonElement(jsonObject, Keyword.body).isJsonPrimitive()) {
       bodyJSON = new JsonArray();
-      bodyJSON.add(asJsonElement(jsonObject, Keyword.$body));
+      bodyJSON.add(asJsonElement(jsonObject, Keyword.body));
     } else {
-      bodyJSON = asJsonArray(jsonObject, Keyword.$body);
+      bodyJSON = asJsonArray(jsonObject, Keyword.body);
     }
     int len = bodyJSON.size();
     for (int i = 0; i < len; i++) {
@@ -65,7 +65,7 @@ public class Pattern {
    * [source, JSON]
    * ----
    * {
-   *   "$body": "{part measure string}",
+   *   "body": "{part measure string}",
    * }
    * ----
    *
@@ -73,12 +73,12 @@ public class Pattern {
    * [source, JSON]
    * ----
    * {
-   *   "$body": [
+   *   "body": [
    *     "{stroke 1}",
    *     "{stroke 2}"
    *   ],
-   *   "$length": "<bodyValue>",
-   *   "$gate": "<gateValue>",
+   *   "length": "<bodyValue>",
+   *   "gate": "<gateValue>",
    *   "$otherParameter": "<otherParameterValue>",
    * }
    * ----
@@ -97,11 +97,11 @@ public class Pattern {
    */
   public static Pattern createPattern(JsonObject jsonObject, Map<String, NoteMap> noteMaps) throws SymfonionException, CompatJsonException {
     NoteMap noteMap = NoteMap.defaultNoteMap;
-    if (CompatJsonUtils.hasPath(jsonObject, Keyword.$notemap)) {
-      String noteMapName = CompatJsonUtils.asString(jsonObject, Keyword.$notemap);
+    if (CompatJsonUtils.hasPath(jsonObject, Keyword.notemap)) {
+      String noteMapName = CompatJsonUtils.asString(jsonObject, Keyword.notemap);
       noteMap = noteMaps.get(noteMapName);
       if (noteMap == null) {
-        throw noteMapNotFoundException(asJsonElement(jsonObject, Keyword.$notemap), noteMapName);
+        throw noteMapNotFoundException(asJsonElement(jsonObject, Keyword.notemap), noteMapName);
       }
     }
     return new Pattern(jsonObject, noteMap);

@@ -1,20 +1,20 @@
 {
-	"$parts":{
-		"vocal":{ "$channel":0, "$port":"port1" }
+	"parts":{
+		"vocal":{ "channel":0, "port":"port1" }
 	},
-	"$notemaps":{
+	"notemaps":{
 	},
-	"$sequence":[
+	"sequence":[
 	    {
-		"$beats":"16/16",
-		"$parts":{
+		"beats":"16/16",
+		"parts":{
 			"vocal":{
-			    "$notemap":"$normal",
-			    "$body":["C","D","E","F","C","D","E","F","C","D","E","F","C","D","E","F"],
-			    "$length":"16"
+			    "notemap":"normal",
+			    "body":["C","D","E","F","C","D","E","F","C","D","E","F","C","D","E","F"],
+			    "length":"16"
 			}
 		},
-		"$groove":"16beats"
+		"groove":"16beats"
 	}
 	]
 }

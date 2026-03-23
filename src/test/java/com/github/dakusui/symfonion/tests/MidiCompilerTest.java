@@ -65,10 +65,10 @@ public class MidiCompilerTest extends TestBase {
             merge(
                 SymfonionJsonTestUtils.rootJsonObjectBase(),
                 object(
-                    $("$sequence", array(
+                    $("sequence", array(
                         object(
-                            $("$beats", json("8/4")),
-                            $("$parts", array()))
+                            $("beats", json("8/4")),
+                            $("parts", array()))
                                         )))),
             Transform.$(FromSong.toKeySet()).check(isEmpty())),
 
@@ -76,11 +76,11 @@ public class MidiCompilerTest extends TestBase {
             TestUtils.name("pattern contains no explicit event", "compile", "one message (end of sequence) is found"),
             merge(
                 SymfonionJsonTestUtils.rootJsonObjectBase(),
-                object($("$parts", object($("piano", object($("$channel", json(0)), $("$port", json("port1"))))))),
-                object($("$sequence", array(
+                object($("parts", object($("piano", object($("channel", json(0)), $("port", json("port1"))))))),
+                object($("sequence", array(
                     merge(
-                        object($("$beats", json("8/4"))),
-                        object($("$parts", array()))
+                        object($("beats", json("8/4"))),
+                        object($("parts", array()))
                          ))))),
             AllOf.$(
                 FromMap.<String>toKeyList().allOf(
@@ -100,12 +100,12 @@ public class MidiCompilerTest extends TestBase {
         createPositiveTestCase(
             TestUtils.name("pattern contains note on, note off, program change, and bank change (LSB and MSB)", "compile", "number of events and tick length seem ok"),
             object(
-                $("$settings", object()),
-                $("$parts", object($("piano", object($("$channel", json(0)), $("$port", json("port1")))))),
-                $("$sequence", array(
+                $("settings", object()),
+                $("parts", object($("piano", object($("channel", json(0)), $("port", json("port1")))))),
+                $("sequence", array(
                     merge(
-                        object($("$beats", json("8/4"))),
-                        object($("$parts", array(merge(object($("$name", json("piano"))), object($("$body", array(json("C"), SymfonionJsonTestUtils.programChange(101, 83.3)))))))))
+                        object($("beats", json("8/4"))),
+                        object($("parts", array(merge(object($("name", json("piano"))), object($("body", array(json("C"), SymfonionJsonTestUtils.programChange(101, 83.3)))))))))
                                     ))),
             allOf(
                 FromMap.<String>toKeyList().allOf(
@@ -124,14 +124,14 @@ public class MidiCompilerTest extends TestBase {
         createPositiveTestCase(
             TestUtils.name("sixteen notes are given in a single string element", "compile", "number of events and tick length seem ok"),
             object(
-                $("$settings", object()),
-                $("$parts", object($("piano", object($("$channel", json(0)), $("$port", json("port1")))))),
-                $("$grooves", object($("16beats", sixteenBeatsGrooveFlat()))),
-                $("$sequence", array(
+                $("settings", object()),
+                $("parts", object($("piano", object($("channel", json(0)), $("port", json("port1")))))),
+                $("grooves", object($("16beats", sixteenBeatsGrooveFlat()))),
+                $("sequence", array(
                     merge(
-                        object($("$beats", json("8/4"))),
-                        object($("$parts", array(merge(object($("$name", json("piano"))), object($("$body", array(json("C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;")))))))),
-                        object($("$groove", json("16beats")))
+                        object($("beats", json("8/4"))),
+                        object($("parts", array(merge(object($("name", json("piano"))), object($("body", array(json("C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;C16;")))))))),
+                        object($("groove", json("16beats")))
                          )))),
             AllOf.$(
                 FromMap.<String>toKeyList().allOf(
@@ -241,14 +241,14 @@ public class MidiCompilerTest extends TestBase {
         createPositiveTestCase(
             TestUtils.name("two stacked patterns on same part", "compile", "both patterns' notes appear in track"),
             object(
-                $("$settings", object()),
-                $("$parts", object($("piano", object($("$channel", json(0)), $("$port", json("port1")))))),
-                $("$sequence", array(
+                $("settings", object()),
+                $("parts", object($("piano", object($("channel", json(0)), $("port", json("port1")))))),
+                $("sequence", array(
                     merge(
-                        object($("$beats", json("4/4"))),
-                        object($("$parts", array(
-                            merge(object($("$name", json("piano"))), object($("$body", json("C4")))),
-                            merge(object($("$name", json("piano"))), object($("$body", json("E4"))))
+                        object($("beats", json("4/4"))),
+                        object($("parts", array(
+                            merge(object($("name", json("piano"))), object($("body", json("C4")))),
+                            merge(object($("name", json("piano"))), object($("body", json("E4"))))
                         )))
                     )
                 ))),

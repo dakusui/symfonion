@@ -1,16 +1,16 @@
 {
-  "$sequence": [
+  "sequence": [
     {
-      "$beats": "8/8",
-      "$parts": {
+      "beats": "8/8",
+      "parts": {
         "test": [
           "test1"
         ]
       }
     },
     {
-      "$beats": "8/8",
-      "$parts": {
+      "beats": "8/8",
+      "parts": {
         "test": [
           "test1"
         ]

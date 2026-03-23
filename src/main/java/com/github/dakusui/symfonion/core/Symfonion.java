@@ -74,14 +74,14 @@ public class Symfonion {
   private static JsonObject loadSymfonionFile(String fileName, Map<String, JsonObject> alreadyReadFiles) {
     if (alreadyReadFiles.containsKey(fileName)) return alreadyReadFiles.get(fileName);
     JsonObject ret = CompatJsonUtils.toJson(Utils.loadFile(fileName)).getAsJsonObject();
-    if (ret.has(Keyword.$include.name())) {
+    if (ret.has(Keyword.include.name())) {
       File      dir           = new File(fileName).getParentFile();
-      JsonArray includedFiles = CompatJsonUtils.asJsonArray(ret, Keyword.$include.name());
+      JsonArray includedFiles = CompatJsonUtils.asJsonArray(ret, Keyword.include.name());
       int       i             = 0;
       for (JsonElement each : includedFiles) {
         String eachFileName = CompatJsonUtils.asString(each);
         if (eachFileName == null) {
-          throw new JsonInvalidPathException(ret, new Object[]{Keyword.$include, i});
+          throw new JsonInvalidPathException(ret, new Object[]{Keyword.include, i});
         }
         String     eachAbsFileName = new File(dir, eachFileName).getAbsolutePath();
         JsonObject included        = CompatJsonUtils.toJson(Utils.loadFile(eachAbsFileName)).getAsJsonObject();

@@ -12,7 +12,7 @@ public class ReferenceErrorTest extends CliTestBase {
   public void missingGroove() throws IOException, SymfonionException {
     String resourceName = "missingReferences/01_grooveNotFound.json";
     assertActualObjectToStringValueContainsExpectedString(
-        fmt("symfonion: %s: jsonpath: .\"$sequence\"[1].\"$groove\": error: '17beats' undefined groove symbol\n"),
+        fmt("symfonion: %s: jsonpath: .sequence[1].groove: error: '17beats' undefined groove symbol\n"),
         compileResourceWithCli(resourceName)
     );
     System.out.println(Predicates.isInstanceOf());
@@ -22,7 +22,7 @@ public class ReferenceErrorTest extends CliTestBase {
   public void missingNoteMap() throws IOException, SymfonionException {
     String resourceName = "missingReferences/02_notemapNotFound.json";
     assertActualObjectToStringValueContainsExpectedString(
-        fmt("symfonion: %s: jsonpath: .\"$sequence\"[0].\"$parts\"[0].\"$notemap\": error: '$normal_notfound' undefined notemap symbol\n"),
+        fmt("symfonion: %s: jsonpath: .sequence[0].parts[0].notemap: error: '$normal_notfound' undefined notemap symbol\n"),
         compileResourceWithCli(resourceName)
     );
   }
@@ -31,7 +31,7 @@ public class ReferenceErrorTest extends CliTestBase {
   public void missingNote() throws IOException, SymfonionException {
     String resourceName = "missingReferences/03_noteNotFound.json";
     assertActualObjectToStringValueContainsExpectedString(
-        fmt("symfonion: %s: jsonpath: .\"$sequence\"[0].\"$parts\"[0].\"$body\"[15]: error: 'Z' undefined note in $normal symbol\n"),
+        fmt("symfonion: %s: jsonpath: .sequence[0].parts[0].body[15]: error: 'Z' undefined note in normal symbol\n"),
         compileResourceWithCli(resourceName)
     );
   }
@@ -40,7 +40,7 @@ public class ReferenceErrorTest extends CliTestBase {
   public void missingPart() throws IOException, SymfonionException {
     String resourceName = "missingReferences/04_partNotFound.json";
     assertActualObjectToStringValueContainsExpectedString(
-        fmt("symfonion: %s: jsonpath: .\"$sequence\"[1].\"$parts\"[0]: error: 'vocal_notfound' undefined part symbol\n"),
+        fmt("symfonion: %s: jsonpath: .sequence[1].parts[0]: error: 'vocal_notfound' undefined part symbol\n"),
         compileResourceWithCli(resourceName)
     );
   }

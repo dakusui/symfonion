@@ -11,47 +11,47 @@ import static java.util.Objects.requireNonNull;
 
 /*
 
-        "$patterns":{
+        "patterns":{
             "01r":{
-                "$body":["r4;B;A;G#;A"],
-                "$length":16
+                "body":["r4;B;A;G#;A"],
+                "length":16
             },
             "...": "..."
         }
 
-        "$patterns":{
+        "patterns":{
             "01r":[ ["r4;B;A;G#;A"], 16 ],
             "...": "..."
         }
 
-        "$patterns":{
+        "patterns":{
             "01r":[ ["r4;B;A;G#;A"], 16 ],
             "...": "..."
         }
 
         ////////// INPUT //////////
 
-        "$patterns":{
+        "patterns":{
             "01r": "r4;B;A;G#;A"
             "...": "..."
         }
 
-        //// ."$patterns".* requires Object("$body", "$length":16, ...)
+        //// ."patterns".* requires Object("body", "length":16, ...)
 
-        "$patterns":{
+        "patterns":{
             "01r":{
-                "$body":"r4;B;A;G#;A",
-                "$length":16
+                "body":"r4;B;A;G#;A",
+                "length":16
             },
             "...": "..."
         }
 
-        //// ."$patterns".*."$body" requires Array("$body", "$length":16, ...)
+        //// ."patterns".*."body" requires Array("body", "length":16, ...)
 
-        "$patterns":{
+        "patterns":{
             "01r": {
-                "$body": ["r4;B;A;G#;A"],
-                "$length":16
+                "body": ["r4;B;A;G#;A"],
+                "length":16
             },
             "...": "..."
         }

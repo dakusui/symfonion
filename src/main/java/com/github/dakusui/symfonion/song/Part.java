@@ -15,8 +15,8 @@ public class Part {
 
   public Part(String name, JsonObject json) throws SymfonionException, JsonTypeMismatchException, JsonFormatException, JsonInvalidPathException {
     this.name = name;
-    this.channel = CompatJsonUtils.asInt(json, Keyword.$channel);
-    this.portName = CompatJsonUtils.asStringWithDefault(json, null, Keyword.$port);
+    this.channel = CompatJsonUtils.asInt(json, Keyword.channel);
+    this.portName = CompatJsonUtils.asStringWithDefault(json, null, Keyword.port);
   }
 
   public String name() {

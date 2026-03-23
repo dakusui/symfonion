@@ -1,41 +1,41 @@
 {
-  "$settings": {
+  "settings": {
   },
-  "$parts": {
+  "parts": {
     "test": {
-      "$channel": 0
+      "channel": 0
     }
   },
-  "$patterns": {
+  "patterns": {
     "test1": {
-      "$body": [
+      "body": [
         {
-          "$notes": "C",
-          "$length": "2",
-          "$pan": 127,
-          "$program": 2
+          "notes": "C",
+          "length": "2",
+          "pan": 127,
+          "program": 2
         },
         {
-          "$notes": "C",
-          "$length": "2",
-          "$pan": 0
+          "notes": "C",
+          "length": "2",
+          "pan": 0
         }
       ],
-      "$length": "8"
+      "length": "8"
     }
   },
-  "$sequence": [
+  "sequence": [
     {
-      "$beats": "8/8",
-      "$parts": {
+      "beats": "8/8",
+      "parts": {
         "test": [
           "test1"
         ]
       }
     },
     {
-      "$beats": "8/8",
-      "$parts": {
+      "beats": "8/8",
+      "parts": {
         "test": [
           "test1"
         ]
