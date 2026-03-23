@@ -49,14 +49,14 @@ public class Bar {
    * .barJsonObject
    * ----
    * {
-   *   "$beats": "<beatsDefiningString>",
-   *   "$parts": [
-   *     { "$name": "<partName>", "<inline pattern definition>" },
+   *   "beats": "<beatsDefiningString>",
+   *   "parts": [
+   *     { "name": "<partName>", "<inline pattern definition>" },
    *     ...
    *   ],
-   *   "$groove": "<grooveName>",
+   *   "groove": "<grooveName>",
    *   "$noteMap": "<noteMapName>",
-   *   "$labels": ["<label1>", "<label2>", "..."]
+   *   "labels": ["<label1>", "<label2>", "..."]
    * }
    * ----
    *
@@ -143,7 +143,7 @@ public class Bar {
     for (JsonElement elem : this.partsJsonArray) {
       if (elem.isJsonObject()) {
         JsonObject obj = elem.getAsJsonObject();
-        if (obj.has(Keyword.$name.name()) && partName.equals(CompatJsonUtils.asString(obj, Keyword.$name))) {
+        if (obj.has(Keyword.name.name()) && partName.equals(CompatJsonUtils.asString(obj, Keyword.name))) {
           return elem;
         }
       }
@@ -159,8 +159,8 @@ public class Bar {
    * .partsJsonArrayInBar
    * ----
    * [
-   *   { "$name": "<partName>", "<inline pattern definition>" },
-   *   { "$name": "<partName>", "<inline pattern definition>" }
+   *   { "name": "<partName>", "<inline pattern definition>" },
+   *   { "name": "<partName>", "<inline pattern definition>" }
    * ]
    * ----
    * // @formatter:on
@@ -179,7 +179,7 @@ public class Bar {
         throw typeMismatchException(elem, OBJECT);
       }
       JsonObject partObj  = elem.getAsJsonObject();
-      String     partName = CompatJsonUtils.asString(partObj, Keyword.$name);
+      String     partName = CompatJsonUtils.asString(partObj, Keyword.name);
       if (!partFilter.test(partName))
         continue;
       ret.computeIfAbsent(partName, k -> new ArrayList<>())
@@ -189,8 +189,8 @@ public class Bar {
   }
 
   static List<String> resolveLabelsForBar(JsonObject barJsonObject) {
-    if (CompatJsonUtils.hasPath(barJsonObject, Keyword.$labels)) {
-      return StreamSupport.stream(CompatJsonUtils.asJsonArray(barJsonObject, Keyword.$labels).spliterator(), false)
+    if (CompatJsonUtils.hasPath(barJsonObject, Keyword.labels)) {
+      return StreamSupport.stream(CompatJsonUtils.asJsonArray(barJsonObject, Keyword.labels).spliterator(), false)
                           .map(CompatJsonUtils::asString)
                           .toList();
     }
@@ -199,11 +199,11 @@ public class Bar {
 
   private static Groove resolveGrooveForBar(JsonObject barJsonObject, Fraction barLength, Map<String, Groove> grooves) {
     Groove g = Groove.defaultGrooveOf(barLength);
-    if (CompatJsonUtils.hasPath(barJsonObject, Keyword.$groove)) {
-      String grooveName = CompatJsonUtils.asString(barJsonObject, Keyword.$groove.name());
+    if (CompatJsonUtils.hasPath(barJsonObject, Keyword.groove)) {
+      String grooveName = CompatJsonUtils.asString(barJsonObject, Keyword.groove.name());
       g = grooves.get(grooveName);
       if (g == null) {
-        throw grooveNotDefinedException(asJsonElement(barJsonObject, Keyword.$groove), grooveName);
+        throw grooveNotDefinedException(asJsonElement(barJsonObject, Keyword.groove), grooveName);
       }
     }
     return g;
@@ -212,9 +212,9 @@ public class Bar {
   static Fraction extractBeatsFractionFrom(JsonObject barJsonObject) {
     Fraction beats;
     try {
-      beats = parseFraction(CompatJsonUtils.asString(barJsonObject, Keyword.$beats));
+      beats = parseFraction(CompatJsonUtils.asString(barJsonObject, Keyword.beats));
     } catch (FractionFormatException e) {
-      throw illegalFormatException(asJsonElement(barJsonObject, Keyword.$beats), FRACTION_EXAMPLE);
+      throw illegalFormatException(asJsonElement(barJsonObject, Keyword.beats), FRACTION_EXAMPLE);
     }
     beats = beats == null ? Fraction.ONE : beats;
     return beats;
@@ -225,8 +225,8 @@ public class Bar {
    * @return JSON array under `$parts` element
    */
   private static JsonArray getPartsInBarAsJsonArray(JsonObject barJsonObject) {
-    return findJsonArray(barJsonObject, path(Keyword.$parts)).orElseThrow(() -> requiredElementMissingException(barJsonObject,
-                                                                                                               Keyword.$parts));
+    return findJsonArray(barJsonObject, path(Keyword.parts)).orElseThrow(() -> requiredElementMissingException(barJsonObject,
+                                                                                                               Keyword.parts));
   }
 
 }

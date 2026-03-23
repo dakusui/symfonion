@@ -1,52 +1,52 @@
 {
-  "$settings": {
+  "settings": {
   },
-  "$parts": {
+  "parts": {
     "testport1": {
-      "$channel": 0,
-      "$port": "port1"
+      "channel": 0,
+      "port": "port1"
     },
     "testport2": {
-      "$channel": 0,
-      "$port": "port2"
+      "channel": 0,
+      "port": "port2"
     }
   },
-  "$patterns": {
+  "patterns": {
     "test1": {
-      "$body": [
+      "body": [
         {
-          "$notes": "C",
-          "$length": "2",
-          "$pan": 0
+          "notes": "C",
+          "length": "2",
+          "pan": 0
         },
         {
-          "$notes": "C",
-          "$length": "2",
-          "$pan": 0
+          "notes": "C",
+          "length": "2",
+          "pan": 0
         }
       ],
-      "$length": "8"
+      "length": "8"
     },
     "test2": {
-      "$body": [
+      "body": [
         {
-          "$notes": "C",
-          "$length": "2",
-          "$pan": 127
+          "notes": "C",
+          "length": "2",
+          "pan": 127
         },
         {
-          "$notes": "C",
-          "$length": "2",
-          "$pan": 127
+          "notes": "C",
+          "length": "2",
+          "pan": 127
         }
       ],
-      "$length": "8"
+      "length": "8"
     }
   },
-  "$sequence": [
+  "sequence": [
     {
-      "$beats": "8/8",
-      "$patterns": {
+      "beats": "8/8",
+      "patterns": {
         "testport1": [
           "test1"
         ],
@@ -56,8 +56,8 @@
       }
     },
     {
-      "$beats": "8/8",
-      "$patterns": {
+      "beats": "8/8",
+      "patterns": {
         "testport1": [
           "test1"
         ],

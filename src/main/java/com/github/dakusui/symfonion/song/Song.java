@@ -32,13 +32,13 @@ import static java.util.Collections.unmodifiableSet;
  * .The **Song** file format
  * ----
  * {
- *   "$parts": { "<partName1>": "<object:PartDefinition1>"
+ *   "parts": { "<partName1>": "<object:PartDefinition1>"
  *             },
  *   "$noteMaps": {
  *                  "<noteMapName1>": "<object:NoteMap>",
  *                  "<noteMapName2>": "<object:NoteMap>"
  *                },
- *   "$sequence": [
+ *   "sequence": [
  *                  "<object:Measure1>",
  *                  "<object:Measure2>",
  *                  "...",
@@ -50,15 +50,15 @@ import static java.util.Collections.unmodifiableSet;
  * The each "<Measure>" should be a JSON object and look like as follows:
  * ----
  * {
-*    "$beats": "16/16",
- *   "$parts": {
+*    "beats": "16/16",
+ *   "parts": {
  *     "piano": {
  *     },
  *     "guitar": {
  *     }
  *   },
- *   "$groove": [ {}, {}, "...", {}],
- *   "$labels": [ "label1" ]
+ *   "groove": [ {}, {}, "...", {}],
+ *   "labels": [ "label1" ]
  * }
  * ----
  *
@@ -151,7 +151,7 @@ public class Song {
                                        Predicate<Measure> measureFilter,
                                        Predicate<String> partFilter) {
       List<Measure> ret      = new LinkedList<>();
-      var           sequence = JsonUtils.findJsonArray(json, path(Keyword.$sequence)).orElse(new JsonArray());
+      var           sequence = JsonUtils.findJsonArray(json, path(Keyword.sequence)).orElse(new JsonArray());
       for (var entry : sequence) {
         var measure = new Measure(entry.getAsJsonObject(), noteMaps, partFilter);
         if (measureFilter.test(measure))

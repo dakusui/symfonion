@@ -4,11 +4,11 @@
 
 This document describes features that are deprecated and should not be used in new files.
 
-== Include (`$include`)
+== Include (`include`)
 
 NOTE: This feature is deprecated. The plan is to integrate `jq++` (https://github.com/dakusui/jqplusplus[jqplusplus]) into the symfonion use case instead. See https://github.com/dakusui/symfonion/issues/15[Issue-15] for details.
 
-Inside the `$include` attribute, you can specify file names to be included before this file is processed.
+Inside the `include` attribute, you can specify file names to be included before this file is processed.
 The files specified here are read and merged with this document.
 
 If you have two files like below in the same directory,
@@ -17,8 +17,8 @@ If you have two files like below in the same directory,
 .example.js
 ----
 {
-    "$include":[ "included.json" ],
-    "$sequence":[
+    "include":[ "included.json" ],
+    "sequence":[
       "..."
     ]
 }
@@ -28,7 +28,7 @@ If you have two files like below in the same directory,
 .included.json
 ----
 {
-    "$grooves": {
+    "grooves": {
         "...": "..."
     }
 }
@@ -39,10 +39,10 @@ and if example.js is given to symfonion, they will be merged into single JSON ob
 [source, json]
 ----
 {
-    "$grooves":{
+    "grooves":{
       "...": "..."
     },
-    "$sequence":[
+    "sequence":[
       "..."
     ]
 }

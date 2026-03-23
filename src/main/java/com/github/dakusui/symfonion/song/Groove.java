@@ -118,9 +118,9 @@ public class Groove {
    * ----
    * [
    *   {
-   *     "$length": "1/16",
-   *     "$ticks": 24,
-   *     "$accent": 10
+   *     "length": "1/16",
+   *     "ticks": 24,
+   *     "accent": 10
    *   },
    *   "..."
    * ]
@@ -134,13 +134,13 @@ public class Groove {
     Groove.Builder b = new Groove.Builder();
     for (JsonElement elem : grooveDef) {
       JsonObject cur    = CompatJsonUtils.requireJsonObject(elem);
-      String     len    = CompatJsonUtils.asString(cur, Keyword.$length);
-      long       ticks  = CompatJsonUtils.asLong(cur, Keyword.$ticks);
-      int        accent = CompatJsonUtils.asInt(cur, Keyword.$accent);
+      String     len    = CompatJsonUtils.asString(cur, Keyword.length);
+      long       ticks  = CompatJsonUtils.asLong(cur, Keyword.ticks);
+      int        accent = CompatJsonUtils.asInt(cur, Keyword.accent);
 
       Fraction f = PartMeasure.parseNoteLength(len);
       if (f == null) {
-        throw illegalFormatException(CompatJsonUtils.asJsonElement(cur, Keyword.$length), NOTE_LENGTH_EXAMPLE);
+        throw illegalFormatException(CompatJsonUtils.asJsonElement(cur, Keyword.length), NOTE_LENGTH_EXAMPLE);
       }
       b.add(f, ticks, accent);
     }

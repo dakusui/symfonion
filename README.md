@@ -35,27 +35,27 @@ where "infile" is a ```symfonion``` file and it will look like this.
 
 ```json
 {
-    "$parts":{ "pianor": {"$channel":0} },
-    "$sequence":[
+    "parts":{ "pianor": {"channel":0} },
+    "sequence":[
         {
-            "$parts":[{"$name":"pianor", "$body":"r4;B;A;G#;A", "$length":16}],
-            "$beats":"2/4"
+            "parts":[{"name":"pianor", "body":"r4;B;A;G#;A", "length":16}],
+            "beats":"2/4"
         },
         {
-            "$parts":[{"$name":"pianor", "$body":"C>8;r8;D>;C>;B;C>;E>8;r8;F>;E>;D#>;E>", "$length":16}],
-            "$beats":"4/4"
+            "parts":[{"name":"pianor", "body":"C>8;r8;D>;C>;B;C>;E>8;r8;F>;E>;D#>;E>", "length":16}],
+            "beats":"4/4"
         },
         {
-            "$parts":[{"$name":"pianor", "$body":"B>;A>;G#>;A>;B>;A>;G#>;A>;C>>4;A>8;C>>8", "$length":16}],
-            "$beats":"4/4"
+            "parts":[{"name":"pianor", "body":"B>;A>;G#>;A>;B>;A>;G#>;A>;C>>4;A>8;C>>8", "length":16}],
+            "beats":"4/4"
         },
         {
-            "$parts":[{"$name":"pianor", "$body":"B>;F#A>;EG>;F#A>;B>;F#A>;EG>;F#A>", "$length":8, "$gate":0.3}],
-            "$beats":"4/4"
+            "parts":[{"name":"pianor", "body":"B>;F#A>;EG>;F#A>;B>;F#A>;EG>;F#A>", "length":8, "gate":0.3}],
+            "beats":"4/4"
         },
         {
-            "$parts":[{"$name":"pianor", "$body":"B>;F#A;EG>;D#F#>;E4;r4", "$length":8, "$gate":0.3}],
-            "$beats":"4/4"
+            "parts":[{"name":"pianor", "body":"B>;F#A;EG>;D#F#>;E4;r4", "length":8, "gate":0.3}],
+            "beats":"4/4"
         }
     ]
 }

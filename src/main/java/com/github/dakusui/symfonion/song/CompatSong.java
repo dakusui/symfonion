@@ -36,9 +36,9 @@ import static java.util.Collections.unmodifiableSet;
  * ----
  * {
  *   "$noteMaps": { "<noteMapName>": "<NoteMap>"},
- *   "$parts": { "<partName>": "<Part>" },
- *   "$grooves": { "<grooveName>": ["<Groove>", "<Groove>", "..."] },
- *   "$sequence": [ "<Bar>", "<Bar>", "..." ]
+ *   "parts": { "<partName>": "<Part>" },
+ *   "grooves": { "<grooveName>": ["<Groove>", "<Groove>", "..."] },
+ *   "sequence": [ "<Bar>", "<Bar>", "..." ]
  * }
  * ----
  *
@@ -142,11 +142,11 @@ public class CompatSong {
     }
 
     public static Context loadMidiDeviceProfile(JsonObject json, Context logiasContext) throws SymfonionException, CompatJsonException {
-      JsonElement tmp = CompatJsonUtils.asJsonObjectWithDefault(json, new JsonObject(), Keyword.$settings);
+      JsonElement tmp = CompatJsonUtils.asJsonObjectWithDefault(json, new JsonObject(), Keyword.settings);
       if (!tmp.isJsonObject()) {
         throw typeMismatchException(tmp, OBJECT);
       }
-      String profileName = CompatJsonUtils.asStringWithDefault(tmp.getAsJsonObject(), "", Keyword.$mididevice);
+      String profileName = CompatJsonUtils.asStringWithDefault(tmp.getAsJsonObject(), "", Keyword.mididevice);
       Logias logias      = new Logias(logiasContext);
       if (!"".equals(profileName)) {
         JsonObject       deviceDef = CompatJsonUtils.toJson(Utils.loadResource(profileName + ".json")).getAsJsonObject();
@@ -168,7 +168,7 @@ public class CompatSong {
         Predicate<String> partFilter) throws SymfonionException, CompatJsonException {
       List<Bar> bars = new LinkedList<>();
       try (ExceptionContext ignored = exceptionContext(entry(JSON_ELEMENT_ROOT, json))) {
-        JsonElement tmp = CompatJsonUtils.asJsonElement(json, Keyword.$sequence);
+        JsonElement tmp = CompatJsonUtils.asJsonElement(json, Keyword.sequence);
         if (!tmp.isJsonArray()) {
           throw typeMismatchException(tmp, ARRAY);
         }
@@ -200,11 +200,11 @@ public class CompatSong {
      */
     static Map<String, NoteMap> initNoteMaps(JsonObject json) throws SymfonionException, CompatJsonException {
       Map<String, NoteMap> noteMaps     = new HashMap<>();
-      final JsonObject     noteMapsJSON = CompatJsonUtils.asJsonObjectWithDefault(json, new JsonObject(), Keyword.$notemaps);
+      final JsonObject     noteMapsJSON = CompatJsonUtils.asJsonObjectWithDefault(json, new JsonObject(), Keyword.notemaps);
 
       Iterator<String> i = CompatJsonUtils.keyIterator(noteMapsJSON);
-      noteMaps.put(Keyword.$normal.toString(), NoteMap.defaultNoteMap);
-      noteMaps.put(Keyword.$percussion.toString(), NoteMap.defaultPercussionMap);
+      noteMaps.put(Keyword.normal.toString(), NoteMap.defaultNoteMap);
+      noteMaps.put(Keyword.percussion.toString(), NoteMap.defaultPercussionMap);
       while (i.hasNext()) {
         String  noteMapName = i.next();
         NoteMap cur         = new NoteMap(CompatJsonUtils.asJsonObject(noteMapsJSON, noteMapName));
@@ -215,8 +215,8 @@ public class CompatSong {
 
     static Map<String, Part> initParts(JsonObject json) throws SymfonionException, CompatJsonException {
       Map<String, Part> parts = new HashMap<>();
-      if (CompatJsonUtils.hasPath(json, Keyword.$parts)) {
-        JsonObject       instrumentsJSON = CompatJsonUtils.asJsonObject(json, Keyword.$parts);
+      if (CompatJsonUtils.hasPath(json, Keyword.parts)) {
+        JsonObject       instrumentsJSON = CompatJsonUtils.asJsonObject(json, Keyword.parts);
         Iterator<String> i               = CompatJsonUtils.keyIterator(instrumentsJSON);
         while (i.hasNext()) {
           String name = i.next();
@@ -229,8 +229,8 @@ public class CompatSong {
 
     static Map<String, Groove> initGrooves(JsonObject json) throws SymfonionException, CompatJsonException {
       Map<String, Groove> grooves = new HashMap<>();
-      if (CompatJsonUtils.hasPath(json, Keyword.$grooves)) {
-        JsonObject groovesJSON = CompatJsonUtils.asJsonObject(json, Keyword.$grooves);
+      if (CompatJsonUtils.hasPath(json, Keyword.grooves)) {
+        JsonObject groovesJSON = CompatJsonUtils.asJsonObject(json, Keyword.grooves);
 
         Iterator<String> i = CompatJsonUtils.keyIterator(groovesJSON);
         while (i.hasNext()) {

@@ -11,31 +11,31 @@ Here is an example piece of music written in symfonion.
 [source, json]
 ----
 {
-  "$parts":{
-    "testviolin":{"$channel":0}
+  "parts":{
+    "testviolin":{"channel":0}
   },
-  "$sequence":[
+  "sequence":[
     {
-      "$beats":"8/8",
-      "$parts":[
-        {"$name":"testviolin", "$body":"C2;C2", "$length":"8"}
+      "beats":"8/8",
+      "parts":[
+        {"name":"testviolin", "body":"C2;C2", "length":"8"}
       ]
     },
     {
-      "$beats":"8/8",
-      "$parts":[
-        {"$name":"testviolin", "$body":"C2;C2", "$length":"8"}
+      "beats":"8/8",
+      "parts":[
+        {"name":"testviolin", "body":"C2;C2", "length":"8"}
       ]
     }
   ]
 }
 ----
 
-Basically, a symfonion program is a JSON object and its two most important elements are `$parts` and `$sequence`.
+Basically, a symfonion program is a JSON object and its two most important elements are `parts` and `sequence`.
 
 NOTE: Features that are no longer recommended are documented in link:DEPRECATED.adoc[Deprecated Features].
 
-A value for `$parts` is a dictionary which describes 'parts' in music score (like 'piano part', 'guitar part', and so on). `$sequence` organises what each part plays in each bar. For instance, "testviolin" plays a two-note phrase twice in the example above.
+A value for `parts` is a dictionary which describes 'parts' in music score (like 'piano part', 'guitar part', and so on). `sequence` organises what each part plays in each bar. For instance, "testviolin" plays a two-note phrase twice in the example above.
 
 
 == Parts
@@ -45,19 +45,19 @@ By using 'parts' element you can specify which part uses which midi channel. In 
 [source, json]
 ----
 {
-      "$parts":{
-        "test":{"$channel":0}
+      "parts":{
+        "test":{"channel":0}
       }
 }
 ----
 
-If you want to use external MIDI devices, you need to specify "$port" attribute for each part,
+If you want to use external MIDI devices, you need to specify "port" attribute for each part,
 
 [source, json]
 ----
 {
-    "$parts":{
-       "test":{ "$channel":0, "$port":"part1" }
+    "parts":{
+       "test":{ "channel":0, "port":"part1" }
     }
 }
 ----
@@ -72,15 +72,15 @@ Part names must be defined through system properties. For more detail, please re
 
 == Notes and Strokes
 
-Each part entry in a `$sequence` bar has a `$body` that defines the notes to play, plus optional default parameters (`$length`, `$gate`, `$velocitybase`, etc.) that apply to all notes in that entry.
+Each part entry in a `sequence` bar has a `body` that defines the notes to play, plus optional default parameters (`length`, `gate`, `velocitybase`, etc.) that apply to all notes in that entry.
 
 === Notemap
 
-A user can set this attribute to a name defined in the section "$notemaps" or predefined note map name.
+A user can set this attribute to a name defined in the section "notemaps" or predefined note map name.
 
-There are two pre-defined note maps, which are "$normal" and "$percussion". "$normal" is a normal note map where "C" is mapped to 60 and "D" to 62. "$percussion" is configured for drum kits defined in General MIDI standard.
+There are two pre-defined note maps, which are "normal" and "percussion". "normal" is a normal note map where "C" is mapped to 60 and "D" to 62. "percussion" is configured for drum kits defined in General MIDI standard.
 
-Default note map ($normal) definition follows
+Default note map (normal) definition follows
 
 
 [cols="1,9,9", width="50%"]
@@ -117,7 +117,7 @@ Default note map ($normal) definition follows
 
 |===
 
-And percussion (`$percussion`) is like below
+And percussion (`percussion`) is like below
 
 [cols="1,2,2,5", aligns="rcrl", width="50%"]
 |===
@@ -157,23 +157,23 @@ And percussion (`$percussion`) is like below
 
 === Body
 
-`$body` defines the notes to play in a part entry. The preferred form is a **semicolon-separated string** of note tokens:
+`body` defines the notes to play in a part entry. The preferred form is a **semicolon-separated string** of note tokens:
 
 [source, json]
 ----
-{"$name":"piano", "$body":"C;E;G;C>", "$length":"8"}
+{"name":"piano", "body":"C;E;G;C>", "length":"8"}
 ----
 
 Each token is a note (see <<_notes>>) and the semicolons separate successive strokes. This is the most concise way to write melodies and is the recommended style.
 
-Alternatively, `$body` can be a **JSON array of stroke objects**, which is useful when individual strokes need different parameters (different lengths, MIDI control messages, etc.):
+Alternatively, `body` can be a **JSON array of stroke objects**, which is useful when individual strokes need different parameters (different lengths, MIDI control messages, etc.):
 
 [source, json]
 ----
 {
-    "$body":[
-      {"$notes":"C", "$length":"2", "$pan":127, "$program":2},
-      {"$notes":"C", "$length":"2", "$pan":0},
+    "body":[
+      {"notes":"C", "length":"2", "pan":127, "program":2},
+      {"notes":"C", "length":"2", "pan":0},
       {"...": "..."}
     ]
 }
@@ -211,14 +211,14 @@ There are several types of non-note messages, which are 'volume, 'pan', 'reverb'
 These are played as independent messages on a midi device.
 
 On the other hand, there are some parameters which directly belong to note messages such as velocity and length. And these parameters modify the note messages directly.
-In the example below, "$velocitybase" is a parameter which modifies a note and "$volume" is a non note message which is translated into a control change message (#7).
+In the example below, "velocitybase" is a parameter which modifies a note and "volume" is a non note message which is translated into a control change message (#7).
 
 [source, json]
 ----
     {
-      "$notes":"C",
+      "notes":"C",
       "$velocitybasse":100,
-      "$volume":88,
+      "volume":88,
       "...": ""
     }
 ----
@@ -260,13 +260,13 @@ For example, strings below are valid for this attribute.
     
 ==== Non-note messages
 
-Some of non-note messages, for example '$volume', can have arrays as their values.
+Some of non-note messages, for example 'volume', can have arrays as their values.
 
 [source, json]
 ----
     {
-        "$notes":"C",
-        "$volume":[0,10,20,40]
+        "notes":"C",
+        "volume":[0,10,20,40]
     }
 ----
 
@@ -279,12 +279,12 @@ You can omit values in between concrete values like this,
 ----
 [
     {
-        "$notes":"C",
-        "$volume":[0,",..",40]
+        "notes":"C",
+        "volume":[0,",..",40]
     },
     {
-        "$notes":"C",
-        "$volume":[0,"..",80,"..",100]
+        "notes":"C",
+        "volume":[0,"..",80,"..",100]
     }
 ]
 ----
@@ -300,32 +300,32 @@ You can use a string contains only dots (`...`) instead.
 [source, json]
 ----
 {
-    "$notes":"C",
-    "$volume":[0,"..",80,"...",100]
+    "notes":"C",
+    "volume":[0,"..",80,"...",100]
 }
 ----
 
 One `.` will be interpreted as one `null`, which will be interpolated by symfonion.
 
 
-If you give an integer to "$volume" attribute, its considered as an array which has only one value.
+If you give an integer to "volume" attribute, its considered as an array which has only one value.
 In other words, strokes in the example below are equivalent to each other.
 
 [source, json]
 ----
 [
     {
-        "$notes":"C",
-        "$volume":80
+        "notes":"C",
+        "volume":80
     },
     {
-        "$notes":"C",
-        "$volume":[80]
+        "notes":"C",
+        "volume":[80]
     }
 ]
 ----
 
-This feature is called "arrayable" and users can use this features for "$volume", "$pan", "$reverb", and so on.
+This feature is called "arrayable" and users can use this features for "volume", "pan", "reverb", and so on.
 
 ===== Volume
 
@@ -334,8 +334,8 @@ This feature is 'arrayable'.
 [source, json]
 ----
     {
-        "$notes":"C",
-        "$volume":[0,"..",70,"..",80],
+        "notes":"C",
+        "volume":[0,"..",70,"..",80],
         "...": ""
     }
 ----
@@ -351,8 +351,8 @@ This feature is 'arrayable'.
 [source, json]
 ----
     {
-        "$notes":"C",
-        "$pan":[0,".....",127],
+        "notes":"C",
+        "pan":[0,".....",127],
         "...": ""
     }
 ----
@@ -366,8 +366,8 @@ This feature is 'arrayable'.
 [source, json]
 ----
     {
-        "$notes":"C",
-        "$reverb":[0,".....",127],
+        "notes":"C",
+        "reverb":[0,".....",127],
         "...": "..."
     }
 ----
@@ -381,8 +381,8 @@ This feature is 'arrayable'.
 [source, json]
 ----
     {
-        "$notes":"C",
-        "$chorus":[0,".....",127],
+        "notes":"C",
+        "chorus":[0,".....",127],
     }
 ----
 
@@ -394,8 +394,8 @@ This feature is 'arrayable'.
 [source, json]
 ----
     {
-        "$notes":"C",
-        "$pitch":[0,".....",127],
+        "notes":"C",
+        "pitch":[0,".....",127],
         "...": ""
     }
 ----
@@ -412,8 +412,8 @@ This feature is 'arrayable'.
 ----
 
     {
-        "$notes":"C",
-        "$modulation":[0,".....",127],
+        "notes":"C",
+        "modulation":[0,".....",127],
         "...": "..."
     }
 ----
@@ -427,8 +427,8 @@ This feature is NOT 'arrayable'.
 [source, json]
 ----
     {
-        "$notes":"C",
-        "$program":0,
+        "notes":"C",
+        "program":0,
         "...": "..."
     }
 ----
@@ -437,12 +437,12 @@ A program change message is sent with a given value to the channel with which th
 
 ===== Bank
 
-To select a bank, you can use `$bank` attribute in a stroke.
+To select a bank, you can use `bank` attribute in a stroke.
 
 [source, json]
 ----
     {
-        "$notes": "C",
+        "notes": "C",
         "bank": 12.3,
         "...": "..."
     }
@@ -458,8 +458,8 @@ This feature is NOT 'arrayable'.
 [source, json]
 ----
     {
-        "$notes":"C",
-        "$tempo":180,
+        "notes":"C",
+        "tempo":180,
         "...":"..."
     }
 ----
@@ -469,7 +469,7 @@ A tempo change meta message is sent with a given value to the channel with which
 Note that this affects all the tracks in the sequence being played.
 
 ===== Sysex
-By using $sysex attribute users can send 'System exclusive' messages to a midi device.
+By using sysex attribute users can send 'System exclusive' messages to a midi device.
 The value is a JSON array which comply with 'LogiasLisp' syntax.
 For more details, refer to [Midi System Exclusive messages] (t.b.d).
 
@@ -502,25 +502,25 @@ Each note-on message has 'velocity' value. Velocity of a note message represents
 
 ===== Length
 
-`$length` is a string/int value which defines the note length.
+`length` is a string/int value which defines the note length.
 Both of below are the same meanin
 g.
 
 [source, json]
 ----
 [
-    {"$notes":"C", "$length":"8"},
-    {"$notes":"C", "$length":8},
+    {"notes":"C", "length":"8"},
+    {"notes":"C", "length":8},
     {}
 ]
 ----
 
-But to create a dotted note, you can only use a string for `$length`:
+But to create a dotted note, you can only use a string for `length`:
 
 [source, json]
 ----
 [
-    {"$notes":"C", "$length":"8."},   // <1>
+    {"notes":"C", "length":"8."},   // <1>
     {}
 ]
 ----
@@ -531,7 +531,7 @@ Also, you can write double dotted/triple dotted notes by using a string.
 [source, json]
 ----
 [
-    {"$notes":"C", "$length":"8.."},  // <1>
+    {"notes":"C", "length":"8.."},  // <1>
     {}
 ]
 ----
@@ -540,7 +540,7 @@ Also, you can write double dotted/triple dotted notes by using a string.
 [source, json]
 ----
 [
-    {"$notes":"C", "$length":"8..."}, // <1>
+    {"notes":"C", "length":"8..."}, // <1>
     {}
 ]
 ----
@@ -550,22 +550,22 @@ The default value is "4", which means a quarter note.
 
 ===== Velocity base, velocity delta
 
-"$velocitybase" is an integer which specifies the velocity value of notes if they have no accent sign ("+" and "-").
+"velocitybase" is an integer which specifies the velocity value of notes if they have no accent sign ("+" and "-").
 
-And "$velocitydelta" is also an integer which specifies the value one accent sign ("+" and "-") is equal to.
+And "velocitydelta" is also an integer which specifies the value one accent sign ("+" and "-") is equal to.
 
 So, the velocity value set to midi messages can be calculated by the formula below,
 
 ----
-    velocity value = $velocitybase + (  (number of "+" in notes)
-                                      - (number of "-" in notes) ) * $velocitydelta
+    velocity value = velocitybase + (  (number of "+" in notes)
+                                      - (number of "-" in notes) ) * velocitydelta
 ----
 
-The default value of $velocitybase is 64 and $velocitydelta is 10
+The default value of velocitybase is 64 and velocitydelta is 10
 
 ===== Gate
 
-In symfonion, The note parameter "$gate" is a float value which signifies the ratio of the gate time to the note length.
+In symfonion, The note parameter "gate" is a float value which signifies the ratio of the gate time to the note length.
 
 The default value is 0.8.
 
@@ -576,7 +576,7 @@ Users can transpose the notes by using this feature.
 [source, json]
 ----
 [
-    {"$notes":"C", "$transpose":1},
+    {"notes":"C", "transpose":1},
     {}
 ]
 ----
@@ -584,26 +584,26 @@ Users can transpose the notes by using this feature.
 The example above will be played as note 61 (=C3 +1 = C3#)
 Negative values are also allowed.
 
-This parameter is most useful when set directly on a bar part entry (alongside `$name` and `$body`) to transpose all notes in that entry uniformly.
+This parameter is most useful when set directly on a bar part entry (alongside `name` and `body`) to transpose all notes in that entry uniformly.
 
 the default value is 0.
 
 === Defining default values in a bar part entry
 
-Since it is painful to write `$gate` or `$velocitybase` for every note, users can define default values directly on the bar part entry. These defaults apply to all notes in `$body` and can be overridden per-stroke.
+Since it is painful to write `gate` or `velocitybase` for every note, users can define default values directly on the bar part entry. These defaults apply to all notes in `body` and can be overridden per-stroke.
 
 Users can write a bar's part entry like below.
 
 [source, json]
 ----
 {
-  "$name":"piano",
-  "$body":[
-    { "$notes":"CEG", "$length":"8", "$gate":"0.5" },
-    { "$notes":"CEG", "$length":"8", "$gate":"0.5" },
+  "name":"piano",
+  "body":[
+    { "notes":"CEG", "length":"8", "gate":"0.5" },
+    { "notes":"CEG", "length":"8", "gate":"0.5" },
     ":",
     ":",
-    { "$notes":"CEG", "$length":"8", "$gate":"0.5" }
+    { "notes":"CEG", "length":"8", "gate":"0.5" }
   ]
 }
 ----
@@ -613,20 +613,20 @@ By using this feature, the pattern above can be rewritten like this,
 [source, json]
 ----
 {
-  "$name":"piano",
-  "$body":[
-    { "$notes":"CEG" },
-    { "$notes":"CEG" },
+  "name":"piano",
+  "body":[
+    { "notes":"CEG" },
+    { "notes":"CEG" },
     ":",
     ":",
-    { "$notes":"CEG" }
+    { "notes":"CEG" }
   ],
-  "$length":"8",
-  "$gate":"0.5"
+  "length":"8",
+  "gate":"0.5"
 }
 ----
 
-Users can write note parameters directly under a part-pattern object in `$parts`, and they are in effect for all the notes in the `$body` attribute of that same entry.
+Users can write note parameters directly under a part-pattern object in `parts`, and they are in effect for all the notes in the `body` attribute of that same entry.
 
 == Groove
 In real musical works, all the sixteenth notes have neither the same length nor the same strength. One comes at the beginning of a bar usually longer and stronger than the others.
@@ -637,30 +637,30 @@ In symfonion syntax, you can define grooves like below,
 [source, json]
 ----
 {
-    "$grooves":{
+    "grooves":{
         "16beats":[
-            { "$length":"16", "$ticks":28, "$accent":30 },
-            { "$length":"16", "$ticks":20, "$accent":-10 },
-            { "$length":"16", "$ticks":26, "$accent":10 },
-            { "$length":"16", "$ticks":22, "$accent":-5},
-            { "$length":"16", "$ticks":28, "$accent":20 },
-            { "$length":"16", "$ticks":20, "$accent":-8 },
-            { "$length":"16", "$ticks":26, "$accent":10 },
-            { "$length":"16", "$ticks":22, "$accent":-4 },
-            { "$length":"16", "$ticks":28, "$accent":25 },
-            { "$length":"16", "$ticks":20, "$accent":-8 },
-            { "$length":"16", "$ticks":26, "$accent":10 },
-            { "$length":"16", "$ticks":22, "$accent":-5 },
-            { "$length":"16", "$ticks":28, "$accent":15 },
-            { "$length":"16", "$ticks":20, "$accent":-8 },
-            { "$length":"16", "$ticks":26, "$accent":10 },
-            { "$length":"16", "$ticks":22, "$accent":-10 }
+            { "length":"16", "ticks":28, "accent":30 },
+            { "length":"16", "ticks":20, "accent":-10 },
+            { "length":"16", "ticks":26, "accent":10 },
+            { "length":"16", "ticks":22, "accent":-5},
+            { "length":"16", "ticks":28, "accent":20 },
+            { "length":"16", "ticks":20, "accent":-8 },
+            { "length":"16", "ticks":26, "accent":10 },
+            { "length":"16", "ticks":22, "accent":-4 },
+            { "length":"16", "ticks":28, "accent":25 },
+            { "length":"16", "ticks":20, "accent":-8 },
+            { "length":"16", "ticks":26, "accent":10 },
+            { "length":"16", "ticks":22, "accent":-5 },
+            { "length":"16", "ticks":28, "accent":15 },
+            { "length":"16", "ticks":20, "accent":-8 },
+            { "length":"16", "ticks":26, "accent":10 },
+            { "length":"16", "ticks":22, "accent":-10 }
         ]
     }
 }
 ----
 
-In this example, there are 16 sixteenth notes each of which has independent "$ticks" and "$accent".
+In this example, there are 16 sixteenth notes each of which has independent "ticks" and "accent".
 If a pattern is played with this groove, the first sixteen notes will be length of 28 MIDI ticks, while usually sixteenth notes have only 24 MIDI ticks (currently, a whole note is fixed to 384 MIDI ticks in symfonion). And 30 is added to the original velocity of the note.
 
 === Example: swing feel with eighth notes
@@ -677,23 +677,23 @@ include::../../main/resources/examples/example-groove-swing.json[]
 == Sequence
 
 In the sequence section, users organize music bar by bar.
-The value of the `$sequence` attribute is a list of bar objects.
-Each bar object has `$beats`, `$parts`, and optionally `$groove` and `$labels`.
+The value of the `sequence` attribute is a list of bar objects.
+Each bar object has `beats`, `parts`, and optionally `groove` and `labels`.
 
 [source, json]
 ----
 {
-  "$sequence":[
+  "sequence":[
     {
-      "$beats":"8/8",
-      "$parts":[
-        {"$name":"test", "$body":"C2;D2", "$length":"8"}
+      "beats":"8/8",
+      "parts":[
+        {"name":"test", "body":"C2;D2", "length":"8"}
       ]
     },
     {
-      "$beats":"8/8",
-      "$parts":[
-        {"$name":"test", "$body":"E2;F2", "$length":"8"}
+      "beats":"8/8",
+      "parts":[
+        {"name":"test", "body":"E2;F2", "length":"8"}
       ]
     }
   ]
@@ -702,63 +702,63 @@ Each bar object has `$beats`, `$parts`, and optionally `$groove` and `$labels`.
 
 === Beats
 
-`$beats` specifies the length of the bar as a fraction string, like `"4/4"`, `"3/4"`, `"16/16"`, and so on.
+`beats` specifies the length of the bar as a fraction string, like `"4/4"`, `"3/4"`, `"16/16"`, and so on.
 
 `"8/8"`, `"4/4"`, and `"16/16"` are all equivalent.
 
-If a part's content is longer than `$beats`, notes beyond the bar boundary are not played.
+If a part's content is longer than `beats`, notes beyond the bar boundary are not played.
 
 The default value is `"4/4"`.
 
 ==== Repeating bars
 
-To repeat the same bar, simply list it more than once in `$sequence`:
+To repeat the same bar, simply list it more than once in `sequence`:
 
 [source, json]
 ----
 [
   {
-    "$beats":"16/16",
-    "$parts":[{"$name":"vocal", "$body":"C;D;E;F;G;A;B;C>", "$length":"8"}],
-    "$groove":"16beats"
+    "beats":"16/16",
+    "parts":[{"name":"vocal", "body":"C;D;E;F;G;A;B;C>", "length":"8"}],
+    "groove":"16beats"
   },
   {
-    "$beats":"16/16",
-    "$parts":[{"$name":"vocal", "$body":"C;D;E;F;G;A;B;C>", "$length":"8"}],
-    "$groove":"16beats"
+    "beats":"16/16",
+    "parts":[{"name":"vocal", "body":"C;D;E;F;G;A;B;C>", "length":"8"}],
+    "groove":"16beats"
   }
 ]
 ----
 
 === Parts in a bar
 
-`$parts` in a `$sequence` bar is a JSON **array** of part-pattern objects.
-Each element must have a `$name` field identifying which part it belongs to (as defined in the top-level `$parts` section), plus inline pattern content like `$body`, `$length`, `$gate`, etc.
+`parts` in a `sequence` bar is a JSON **array** of part-pattern objects.
+Each element must have a `name` field identifying which part it belongs to (as defined in the top-level `parts` section), plus inline pattern content like `body`, `length`, `gate`, etc.
 
 [source, json]
 ----
 {
-  "$beats":"16/16",
-  "$parts":[
-    {"$name":"vocal", "$body":"C;D;E;F;G;A;B;C>", "$length":"8"}
+  "beats":"16/16",
+  "parts":[
+    {"name":"vocal", "body":"C;D;E;F;G;A;B;C>", "length":"8"}
   ],
-  "$groove":"16beats"
+  "groove":"16beats"
 }
 ----
 
-If the groove `16beats` is not defined in the `$grooves` section, an error will be reported.
+If the groove `16beats` is not defined in the `grooves` section, an error will be reported.
 
 ==== Stacking (layering) parts
 
-To play multiple patterns simultaneously on the same part (e.g., a melody over a fade-in volume sweep), add multiple entries with the same `$name`:
+To play multiple patterns simultaneously on the same part (e.g., a melody over a fade-in volume sweep), add multiple entries with the same `name`:
 
 [source, json]
 ----
 {
-  "$beats":"4/4",
-  "$parts":[
-    {"$name":"piano", "$body":"C4;E4;G4;C>4", "$length":"4"},
-    {"$name":"piano", "$body":"r1", "$volume":[0,"............",127]}
+  "beats":"4/4",
+  "parts":[
+    {"name":"piano", "body":"C4;E4;G4;C>4", "length":"4"},
+    {"name":"piano", "body":"r1", "volume":[0,"............",127]}
   ]
 }
 ----

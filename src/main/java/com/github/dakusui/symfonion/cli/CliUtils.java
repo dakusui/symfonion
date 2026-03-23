@@ -64,7 +64,7 @@ public enum CliUtils {
   }
 
   public static File composeOutputFile(String outfile, String portName) {
-    if (portName == null || Keyword.$default.name().equals(portName)) {
+    if (portName == null || Keyword.DEFAULT.toString().equals(portName)) {
       return new File(outfile);
     }
     File ret;

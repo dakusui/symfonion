@@ -1,173 +1,173 @@
 {
-  "$settings": {
-    "$mididevice": "jv"
+  "settings": {
+    "mididevice": "jv"
   },
-  "$parts": {
+  "parts": {
     "test": {
-      "$channel": 0,
-      "$port": "jv1010"
+      "channel": 0,
+      "port": "jv1010"
     },
     "test2": {
-      "$channel": 9,
-      "$port": "jv1010"
+      "channel": 9,
+      "port": "jv1010"
     }
   },
-  "$patterns": {
+  "patterns": {
     "sysextest1": {
-      "$body": [
+      "body": [
         {
-          "$sysex": [
+          "sysex": [
             "$set-syscommon-soundmode-perf"
           ]
         },
         {
-          "$sysex": [
+          "sysex": [
             "$jv-set-currentperf",
             12
           ]
         },
         {
-          "$sysex": [
+          "sysex": [
             "$jv-init-part",
             0,
             0
           ]
         },
         {
-          "$sysex": [
+          "sysex": [
             "$jv-init-part",
             1,
             1
           ]
         },
         {
-          "$sysex": [
+          "sysex": [
             "$jv-init-part",
             2,
             2
           ]
         },
         {
-          "$sysex": [
+          "sysex": [
             "$jv-init-part",
             3,
             3
           ]
         },
         {
-          "$sysex": [
+          "sysex": [
             "$jv-init-part",
             4,
             4
           ]
         },
         {
-          "$sysex": [
+          "sysex": [
             "$jv-init-part",
             5,
             5
           ]
         },
         {
-          "$sysex": [
+          "sysex": [
             "$jv-init-part",
             6,
             6
           ]
         },
         {
-          "$sysex": [
+          "sysex": [
             "$jv-init-part",
             7,
             7
           ]
         },
         {
-          "$sysex": [
+          "sysex": [
             "$jv-init-part",
             8,
             8
           ]
         },
         {
-          "$sysex": [
+          "sysex": [
             "$jv-init-part",
             9,
             9
           ]
         },
         {
-          "$sysex": [
+          "sysex": [
             "$jv-init-part",
             10,
             10
           ]
         },
         {
-          "$sysex": [
+          "sysex": [
             "$jv-init-part",
             11,
             11
           ]
         },
         {
-          "$sysex": [
+          "sysex": [
             "$jv-init-part",
             12,
             12
           ]
         },
         {
-          "$sysex": [
+          "sysex": [
             "$jv-init-part",
             13,
             13
           ]
         },
         {
-          "$sysex": [
+          "sysex": [
             "$jv-init-part",
             14,
             14
           ]
         },
         {
-          "$sysex": [
+          "sysex": [
             "$jv-init-part",
             15,
             15
           ]
         },
         {
-          "$sysex": [
+          "sysex": [
             "$jv-set-patchnum-pr-a",
             "$channel",
             122
           ]
         },
         {
-          "$sysex": [
+          "sysex": [
             "$jv-set-mixefx-send-level",
             "$channel",
             127
           ]
         },
         {
-          "$sysex": [
+          "sysex": [
             "$jv-set-output-level",
             "$channel",
             127
           ]
         },
         {
-          "$sysex": [
+          "sysex": [
             "$jv-set-output-assign",
             "$channel",
             "$output-EFX"
           ]
         },
         {
-          "$sysex": [
+          "sysex": [
             "$set-perfcommon-efx-distortion",
             "$currentperf",
             127,
@@ -179,7 +179,7 @@
           ]
         },
         {
-          "$sysex": [
+          "sysex": [
             "$set-perfcommon-efx",
             "$currentperf",
             "$output-MIX",
@@ -193,7 +193,7 @@
           ]
         },
         {
-          "$sysex": [
+          "sysex": [
             "$set-perfcommon-chorus",
             "$currentperf",
             0,
@@ -205,7 +205,7 @@
           ]
         },
         {
-          "$sysex": [
+          "sysex": [
             "$set-perfcommon-reverb",
             "$currentperf",
             "$reverb-type-STAGE1",
@@ -216,70 +216,70 @@
           ]
         },
         {
-          "$sysex": [
+          "sysex": [
             "$set-perfcommon-tempo",
             "$currentperf",
             100
           ]
         },
         {
-          "$sysex": [
+          "sysex": [
             "$jv-refresh-currentperf"
           ]
         }
       ],
-      "$length": 0
+      "length": 0
     },
     "sysextest2": {
-      "$body": [
+      "body": [
         {
-          "$sysex": [
+          "sysex": [
             "$set-syscommon-soundmode-perf"
           ]
         },
         {
-          "$sysex": [
+          "sysex": [
             "$jv-set-currentperf",
             12
           ]
         },
         {
-          "$sysex": [
+          "sysex": [
             "$jv-set-patchnum-pr-b",
             "$channel",
             1
           ]
         },
         {
-          "$sysex": [
+          "sysex": [
             "$jv-set-efx-level",
             "$channel",
             64
           ]
         },
         {
-          "$sysex": [
+          "sysex": [
             "$jv-set-output-level",
             "$channel",
             100
           ]
         },
         {
-          "$sysex": [
+          "sysex": [
             "$jv-set-output-assign",
             "$channel",
             "$output-EFX"
           ]
         },
         {
-          "$sysex": [
+          "sysex": [
             "$set-perfcommon-efx-source",
             "$currentperf",
             "$channel"
           ]
         },
         {
-          "$sysex": [
+          "sysex": [
             "$set-perfcommon-chorus",
             "$currentperf",
             0,
@@ -291,7 +291,7 @@
           ]
         },
         {
-          "$sysex": [
+          "sysex": [
             "$set-perfcommon-reverb",
             "$currentperf",
             "$reverb-type-STAGE1",
@@ -302,92 +302,92 @@
           ]
         },
         {
-          "$sysex": [
+          "sysex": [
             "$set-perfcommon-tempo",
             "$currentperf",
             32
           ]
         },
         {
-          "$sysex": [
+          "sysex": [
             "$jv-refresh-currentperf"
           ]
         }
       ],
-      "$length": 0
+      "length": 0
     },
     "sysextest3": {
-      "$body": [
+      "body": [
         {
-          "$sysex": [
+          "sysex": [
             "$jv-set-patchnum-xp-techno",
             0
           ]
         }
       ],
-      "$length": 0
+      "length": 0
     },
     "test1": {
-      "$body": [
+      "body": [
         {
-          "$sysex": [
+          "sysex": [
             "$set-perfcommon-efx-param",
             "$currentperf",
             2,
             127
           ],
-          "$length": 0
+          "length": 0
         },
         {
-          "$sysex": [
+          "sysex": [
             "$jv-refresh-currentperf"
           ],
-          "$length": 0
+          "length": 0
         },
         {
-          "$notes": "C",
-          "$length": "2",
-          "$pan": 127,
-          "$chorus": 32
+          "notes": "C",
+          "length": "2",
+          "pan": 127,
+          "chorus": 32
         },
         {
-          "$sysex": [
+          "sysex": [
             "$set-perfcommon-efx-param",
             "$currentperf",
             2,
             0
           ],
-          "$length": 0
+          "length": 0
         },
         {
-          "$sysex": [
+          "sysex": [
             "$jv-refresh-currentperf"
           ],
-          "$length": 0
+          "length": 0
         },
         {
-          "$notes": "C",
-          "$length": "2",
-          "$pan": 0
+          "notes": "C",
+          "length": "2",
+          "pan": 0
         }
       ],
-      "$parameters": {
-        "$length": "8"
+      "parameters": {
+        "length": "8"
       }
     }
   },
-  "$sequence": [
+  "sequence": [
     {
-      "$beats": "1/8",
-      "$parts": {
+      "beats": "1/8",
+      "parts": {
         "test": [
           "sysextest1"
         ]
       }
     },
     {
-      "$beats": "8/8",
-      "$parts": {
+      "beats": "8/8",
+      "parts": {
         "test": [
           "test1"
         ]

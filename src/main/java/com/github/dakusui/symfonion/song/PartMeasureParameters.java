@@ -42,15 +42,15 @@ public class PartMeasureParameters {
     if (json == null) {
       json = CompatJsonUtils.toJson("{}").getAsJsonObject();
     }
-    this.velocityBase  = CompatJsonUtils.asIntWithDefault(json, 64, Keyword.$velocitybase);
-    this.velocityDelta = CompatJsonUtils.asIntWithDefault(json, 5, Keyword.$velocitydelta);
-    this.gate          = CompatJsonUtils.asDoubleWithDefault(json, 0.8, Keyword.$gate);
-    this.length        = PartMeasure.parseNoteLength(CompatJsonUtils.asStringWithDefault(json, "16", Keyword.$length));
+    this.velocityBase  = CompatJsonUtils.asIntWithDefault(json, 64, Keyword.velocitybase);
+    this.velocityDelta = CompatJsonUtils.asIntWithDefault(json, 5, Keyword.velocitydelta);
+    this.gate          = CompatJsonUtils.asDoubleWithDefault(json, 0.8, Keyword.gate);
+    this.length        = PartMeasure.parseNoteLength(CompatJsonUtils.asStringWithDefault(json, "16", Keyword.length));
     if (this.length == null) {
-      throw illegalFormatException(asJsonElement(json, Keyword.$length), NOTE_LENGTH_EXAMPLE);
+      throw illegalFormatException(asJsonElement(json, Keyword.length), NOTE_LENGTH_EXAMPLE);
     }
-    this.transpose = CompatJsonUtils.asIntWithDefault(json, 0, Keyword.$transpose);
-    this.arpeggio  = CompatJsonUtils.asIntWithDefault(json, 0, Keyword.$arpeggio);
+    this.transpose = CompatJsonUtils.asIntWithDefault(json, 0, Keyword.transpose);
+    this.arpeggio  = CompatJsonUtils.asIntWithDefault(json, 0, Keyword.arpeggio);
     this.noteMap   = requireNonNull(noteMap);
   }
 

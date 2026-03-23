@@ -1,27 +1,27 @@
 {
-  "$settings": {},
-  "$parts": {
-    "piano": { "$channel": 0, "$port": "port1" }
+  "settings": {},
+  "parts": {
+    "piano": { "channel": 0, "port": "port1" }
   },
-  "$sequence": [
+  "sequence": [
     {
-      "$beats": "1/1",
-      "$parts": [
-        { "$name": "piano", "$body": [{ "$tempo": 92 }] }
+      "beats": "1/1",
+      "parts": [
+        { "name": "piano", "body": [{ "tempo": 92 }] }
       ]
     },
     {
-      "$beats": "4/4",
-      "$parts": [
-        { "$name": "piano", "$body": "C;E;G;C>", "$length": "4", "$velocitybase": 80 },
-        { "$name": "piano", "$body": [{"$notes": "r1", "$volume": [20, "............", 110]}] }
+      "beats": "4/4",
+      "parts": [
+        { "name": "piano", "body": "C;E;G;C>", "length": "4", "velocitybase": 80 },
+        { "name": "piano", "body": [{"notes": "r1", "volume": [20, "............", 110]}] }
       ]
     },
     {
-      "$beats": "4/4",
-      "$parts": [
-        { "$name": "piano", "$body": "C>;G;E;C", "$length": "4", "$velocitybase": 80 },
-        { "$name": "piano", "$body": [{"$notes": "r1", "$volume": [110, "............", 20]}] }
+      "beats": "4/4",
+      "parts": [
+        { "name": "piano", "body": "C>;G;E;C", "length": "4", "velocitybase": 80 },
+        { "name": "piano", "body": [{"notes": "r1", "volume": [110, "............", 20]}] }
       ]
     }
   ]
