@@ -5,9 +5,9 @@ set -eu -o pipefail -o errtrace
 
 # Component versions to install
 COMPONENT_VERSIONS="$(cat <<'EOF'
-JDK:         21.0.6-oracle
+JDK:         21.0.10-oracle
 MAVEN:       3.9.6
-GOLANG:      1.21.6
+GOLANG:      1.24.5
 EOF
 )"
 
@@ -81,6 +81,7 @@ function __bootstrap__perform_checks() {
       echo "${_stdout}" > "${_session_dir}/${_i}/stdout"
       echo "${_stderr}" > "${_session_dir}/${_i}/stderr"
       echo "FAIL: <${_i}>" >&2
+      [[ -z "${_stderr}" ]] || echo "  FIX:  ${_stderr}" >&2
       _failed=$((_failed + 1))
       continue
     }
@@ -120,6 +121,13 @@ function __bootstrap__checkenv() {
     which gem
   }
   _checks+=("is_gem_installed")
+  function is_xmllint_installed() {
+    which xmllint || {
+      echo "xmllint is required by jq++. Install it with: sudo apt install libxml2-utils (Linux) or brew install libxml2 (macOS)" >&2
+      return 1
+    }
+  }
+  _checks+=("is_xmllint_installed")
   __bootstrap__perform_checks \
     "${_installation_reportdir}" \
     "pre-check" \
@@ -251,10 +259,14 @@ function main() {
   mkdir -p "${_project_godir}/env"
   install_brew_package "${_project_brewdir}" goenv   > /dev/null
   compose_goenv_rc "${_project_godir}" "$(golang_version)" > "${_goenv_file}"
+  projectbrew update && projectbrew upgrade goenv
   # shellcheck disable=SC1090
   source "${_goenv_file}"
+
   "${_project_brewdir}/bin/goenv" install -q "$(golang_version)" 2>&1 | progress "goenv:$(golang_version)"
   "${_project_godir}/env/versions/$(golang_version)/bin/go" install github.com/Songmu/make2help/cmd/make2help@latest 2>&1 | progress "go:make2help"
+  "${_project_godir}/env/versions/$(golang_version)/bin/go" install github.com/dakusui/jqplusplus/cmd/jqplusplus@latest 2>&1 | progress "go:jqplusplus"
+  "${GOPATH}/bin/jqplusplus" 2>&1 | progress "go:jqplusplus:symlink"
 
   # sdkman & Java
   export HOME="${_project_rcdir}" # To avoid .bashrc / .bash_profile / .zsh_profile being updated
