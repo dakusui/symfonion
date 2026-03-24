@@ -8,8 +8,13 @@ Symfonion is a modern music macro language processor.
 
 ## Linux and Mac users
 1. Download a .zip file symfonion-VERSION-release.zip from [here](https://github.com/dakusui/symfonion/releases/)
-2. Unzip the contents. And place ```symfonion.jar``` and ```symfonion``` somewhere on your path.
-3. Done
+2. Unzip the archive. It unpacks to a directory with this layout:
+   ```
+   bin/symfonion       ← launcher script
+   lib/symfonion.jar   ← executable jar
+   ```
+3. Add the `bin/` directory to your `PATH`, or copy `bin/symfonion` and `lib/symfonion.jar` together to a directory already on your path (keep them side-by-side under `bin/` and `lib/`).
+4. Done.
 
 You will be able to run ```symfonion``` by typing
 
@@ -19,10 +24,15 @@ $ symfonion
 
 ## Windows users
 1. Download a .zip file symfonion-VERSION-release.zip from [here](https://github.com/dakusui/symfonion/releases/)
-2. Unzip the contents and place ```symfonion.jar``` somewhere visible to you.
-3. Done.
+2. Unzip the archive. It unpacks to a directory with this layout:
+   ```
+   bin\symfonion.bat   ← launcher script
+   lib\symfonion.jar   ← executable jar
+   ```
+3. Add the `bin\` directory to your `PATH`.
+4. Done.
 
-You will be able to run ```symfonion``` by double clicking ```symfonion.jar```.
+You will be able to run ```symfonion``` from any Command Prompt or PowerShell window.
 
 # How to run Symfonion #
 By typing a command line below, ```symfonion``` will compile the given JSON file and play it.

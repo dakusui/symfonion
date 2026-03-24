@@ -1,6 +1,6 @@
-<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2" 
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2 http://maven.apache.org/xsd/assembly-1.1.2.xsd">
+<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2 http://maven.apache.org/xsd/assembly-1.1.2.xsd">
   <id>release</id>
   <formats>
     <format>zip</format>
@@ -18,18 +18,11 @@
       <fileMode>0644</fileMode>
     </fileSet>
     <fileSet>
-      <directory>${project.build.directory}</directory>
-      <outputDirectory>/</outputDirectory>
-      <includes>
-        <include>symfonion.jar</include>
-      </includes>
-      <fileMode>0755</fileMode>
-    </fileSet>
-    <fileSet>
       <directory>src/main/resources/utils</directory>
-      <outputDirectory>/</outputDirectory>
+      <outputDirectory>bin</outputDirectory>
       <includes>
         <include>symfonion</include>
+        <include>symfonion.bat</include>
       </includes>
       <fileMode>0755</fileMode>
     </fileSet>
@@ -38,4 +31,11 @@
       <outputDirectory>docs</outputDirectory>
     </fileSet>
   </fileSets>
+  <files>
+    <file>
+      <source>${project.build.directory}/symfonion-${project.version}-shaded.jar</source>
+      <outputDirectory>lib</outputDirectory>
+      <destName>symfonion.jar</destName>
+    </file>
+  </files>
 </assembly>
