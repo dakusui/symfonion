@@ -420,11 +420,6 @@
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-assembly-plugin</artifactId>
-                    <version>${maven-assembly-plugin.version}</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-gpg-plugin</artifactId>
                     <version>${maven-gpg-plugin.version}</version>
                 </plugin>
@@ -555,6 +550,29 @@
                         <configuration>
                             <descriptors>
                                 <descriptor>src/assembly/releasedarchive.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>make-bin-archive</id>
+                        <phase>package</phase>
+                        <goals>
+                            <!--
+                              'single' attaches the zip as a secondary artifact
+                              (attach=true by default), so release:perform picks
+                              it up during deploy without extra configuration.
+                            -->
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>src/assembly/bin.xml</descriptor>
                             </descriptors>
                         </configuration>
                     </execution>
@@ -764,7 +782,7 @@
                                     </releaseName>
                                     <tag>v${project.version}</tag>
                                     <artifact>
-                                        ${project.build.directory}/${project.artifactId}-${project.version}-release.zip
+                                        ${project.build.directory}/${project.artifactId}-${project.version}-bin.zip
                                     </artifact>
                                 </configuration>
                             </execution>
