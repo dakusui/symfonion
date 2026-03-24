@@ -7,13 +7,14 @@ Symfonion is a modern music macro language processor.
 2. Your system can play a midi file through Java's API
 
 ## Linux and Mac users
-1. Download a .zip file symfonion-VERSION-release.zip from [here](https://github.com/dakusui/symfonion/releases/)
-2. Unzip the archive. It unpacks to a directory with this layout:
+1. Download `symfonion-VERSION-bin.zip` from [here](https://github.com/dakusui/symfonion/releases/)
+2. Unzip the archive. It unpacks to a self-contained directory:
    ```
-   bin/symfonion       ← launcher script
-   lib/symfonion.jar   ← executable jar
+   symfonion-VERSION/
+     bin/symfonion            ← launcher script
+     lib/symfonion-VERSION.jar ← executable jar
    ```
-3. Add the `bin/` directory to your `PATH`, or copy `bin/symfonion` and `lib/symfonion.jar` together to a directory already on your path (keep them side-by-side under `bin/` and `lib/`).
+3. Add `symfonion-VERSION/bin/` to your `PATH`.
 4. Done.
 
 You will be able to run ```symfonion``` by typing
@@ -23,13 +24,14 @@ $ symfonion
 ```
 
 ## Windows users
-1. Download a .zip file symfonion-VERSION-release.zip from [here](https://github.com/dakusui/symfonion/releases/)
-2. Unzip the archive. It unpacks to a directory with this layout:
+1. Download `symfonion-VERSION-bin.zip` from [here](https://github.com/dakusui/symfonion/releases/)
+2. Unzip the archive. It unpacks to a self-contained directory:
    ```
-   bin\symfonion.bat   ← launcher script
-   lib\symfonion.jar   ← executable jar
+   symfonion-VERSION\
+     bin\symfonion.bat         ← launcher script
+     lib\symfonion-VERSION.jar ← executable jar
    ```
-3. Add the `bin\` directory to your `PATH`.
+3. Add `symfonion-VERSION\bin\` to your `PATH`.
 4. Done.
 
 You will be able to run ```symfonion``` from any Command Prompt or PowerShell window.
