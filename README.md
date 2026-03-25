@@ -24,17 +24,9 @@ $ symfonion
 ```
 
 ## Windows users
-1. Download `symfonion-VERSION-bin.zip` from [here](https://github.com/dakusui/symfonion/releases/)
-2. Unzip the archive. It unpacks to a self-contained directory:
-   ```
-   symfonion-VERSION\
-     bin\symfonion.bat         ← launcher script
-     lib\symfonion-VERSION.jar ← executable jar
-   ```
-3. Add `symfonion-VERSION\bin\` to your `PATH`.
-4. Done.
 
-You will be able to run ```symfonion``` from any Command Prompt or PowerShell window.
+Windows is not supported at this time. The distribution does not include a `.bat` launcher.
+Windows users may run Symfonion under WSL (Windows Subsystem for Linux) by following the Linux instructions above.
 
 # How to run Symfonion #
 By typing a command line below, ```symfonion``` will compile the given JSON file and play it.
