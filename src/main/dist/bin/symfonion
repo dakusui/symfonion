@@ -1,2 +1,60 @@
-#!/bin/sh
-exec java -jar "$(dirname "$0")/../lib/symfonion-${project.version}.jar" "$@"
+#!/usr/bin/env bash
+# symfonion — CLI launcher for SyMFONION
+#
+# Responsibilities:
+#   1. Locate SYMFONION_HOME relative to this script.
+#   2. Build JF_PATH so that jq++ can resolve built-in YAML++ files shipped
+#      with SyMFONION (the "prelude" standard-library layer), while still
+#      honouring user- and project-supplied overrides.
+#   3. Launch the SyMFONION Java core with all arguments forwarded.
+#
+# JF_PATH precedence (highest → lowest):
+#   1. User-specified paths  — $SYMFONION_PATH set before invoking symfonion
+#   2. Project-local paths   — .symfonion/prelude in the current working directory
+#   3. Built-in prelude      — $SYMFONION_HOME/share/symfonion/prelude
+
+set -eu -o pipefail -o errtrace
+
+# --- definitions ---
+
+function _build_jf_path() {
+  local _symfonion_home="${1}"
+  local _builtin_prelude="${_symfonion_home}/share/symfonion/prelude"
+  local _project_local=".symfonion/prelude"
+  local _path=""
+
+  # 1. User-specified paths (highest priority — can override built-ins)
+  if [[ -n "${SYMFONION_PATH:-}" ]]; then
+    _path="${SYMFONION_PATH}"
+  fi
+
+  # 2. Project-local library paths
+  if [[ -d "${_project_local}" ]]; then
+    _path="${_path:+${_path}:}${_project_local}"
+  fi
+
+  # 3. Built-in Symfonion prelude (lowest priority)
+  if [[ -d "${_builtin_prelude}" ]]; then
+    _path="${_path:+${_path}:}${_builtin_prelude}"
+  fi
+
+  printf '%s' "${_path}"
+}
+
+function main() {
+  local _scriptdir
+  _scriptdir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+  local _symfonion_home
+  _symfonion_home="$(realpath "${_scriptdir}/..")"
+
+  export JF_PATH
+  JF_PATH="$(_build_jf_path "${_symfonion_home}")"
+
+  # ${project.version} is substituted by Maven resource filtering at assembly time
+  # (see <filtered>true</filtered> in src/assembly/bin.xml).
+  exec java -jar "${_symfonion_home}/lib/symfonion-${project.version}.jar" "${@}"
+}
+
+# --- entry point ---
+
+main "${@}"

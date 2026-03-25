@@ -33,17 +33,15 @@
     </fileSet>
 
     <!--
-      Windows launcher: CRLF line endings, also filtered for ${project.version}.
+      Built-in YAML++ prelude: the standard-library / syntax-sugar layer for
+      the Symfonion language.  The launcher sets JF_PATH so that jq++ resolves
+      these files automatically; users and projects can prepend their own paths
+      to override individual definitions.
     -->
     <fileSet>
-      <directory>src/main/dist/bin</directory>
-      <outputDirectory>bin</outputDirectory>
-      <fileMode>0755</fileMode>
-      <filtered>true</filtered>
-      <lineEnding>crlf</lineEnding>
-      <includes>
-        <include>symfonion.bat</include>
-      </includes>
+      <directory>src/main/dist/share/symfonion/prelude</directory>
+      <outputDirectory>share/symfonion/prelude</outputDirectory>
+      <fileMode>0644</fileMode>
     </fileSet>
   </fileSets>
 
