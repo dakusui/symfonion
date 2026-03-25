@@ -78,6 +78,7 @@
         <maven-deploy-plugin.version>3.1.4</maven-deploy-plugin.version>
         <maven-release-plugin.version>3.3.1</maven-release-plugin.version>
         <maven-shade-plugin.version>3.6.2</maven-shade-plugin.version>
+        <maven-assembly-plugin.version>3.7.1</maven-assembly-plugin.version>
         <maven-gpg-plugin.version>3.2.8</maven-gpg-plugin.version>
         <central-publishing-maven-plugin.version>0.10.0</central-publishing-maven-plugin.version>
         <!-- END: build dependencies -->
@@ -538,6 +539,47 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>make-release-archive</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>src/assembly/releasedarchive.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>make-bin-archive</id>
+                        <phase>package</phase>
+                        <goals>
+                            <!--
+                              'single' attaches the zip as a secondary artifact
+                              (attach=true by default), so release:perform picks
+                              it up during deploy without extra configuration.
+                            -->
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>src/assembly/bin.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>
             </plugin>
             <plugin>
@@ -740,7 +782,7 @@
                                     </releaseName>
                                     <tag>v${project.version}</tag>
                                     <artifact>
-                                        ${project.build.directory}/${project.artifactId}-${project.version}-release.zip
+                                        ${project.build.directory}/${project.artifactId}-${project.version}-bin.zip
                                     </artifact>
                                 </configuration>
                             </execution>

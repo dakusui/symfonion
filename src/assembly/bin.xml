@@ -1,0 +1,61 @@
+<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2
+                              http://maven.apache.org/xsd/assembly-1.1.2.xsd">
+  <id>bin</id>
+  <formats>
+    <format>zip</format>
+  </formats>
+
+  <!--
+    Wrap everything inside a top-level directory so that unzipping is clean:
+      symfonion-<version>/bin/symfonion
+      symfonion-<version>/lib/symfonion-<version>.jar
+  -->
+  <includeBaseDirectory>true</includeBaseDirectory>
+  <baseDirectory>${project.artifactId}-${project.version}</baseDirectory>
+
+  <fileSets>
+    <!--
+      Unix launcher: force LF line endings and mark executable.
+      <filtered>true</filtered> lets Maven substitute ${project.version}
+      inside the script source so it references the exact versioned jar.
+    -->
+    <fileSet>
+      <directory>src/main/dist/bin</directory>
+      <outputDirectory>bin</outputDirectory>
+      <fileMode>0755</fileMode>
+      <filtered>true</filtered>
+      <lineEnding>unix</lineEnding>
+      <includes>
+        <include>symfonion</include>
+      </includes>
+    </fileSet>
+
+    <!--
+      Windows launcher: CRLF line endings, also filtered for ${project.version}.
+    -->
+    <fileSet>
+      <directory>src/main/dist/bin</directory>
+      <outputDirectory>bin</outputDirectory>
+      <fileMode>0755</fileMode>
+      <filtered>true</filtered>
+      <lineEnding>crlf</lineEnding>
+      <includes>
+        <include>symfonion.bat</include>
+      </includes>
+    </fileSet>
+  </fileSets>
+
+  <files>
+    <!--
+      Copy the shaded jar into lib/ with its full versioned name.
+      The launcher scripts reference this exact filename after filtering.
+    -->
+    <file>
+      <source>${project.build.directory}/symfonion-${project.version}-shaded.jar</source>
+      <outputDirectory>lib</outputDirectory>
+      <destName>symfonion-${project.version}.jar</destName>
+    </file>
+  </files>
+</assembly>
