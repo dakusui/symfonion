@@ -29,13 +29,22 @@ Windows is not supported at this time. The distribution does not include a `.bat
 Windows users may run Symfonion under WSL (Windows Subsystem for Linux) by following the Linux instructions above.
 
 # How to run Symfonion #
-By typing a command line below, ```symfonion``` will compile the given JSON file and play it.
+By typing a command line below, ```symfonion``` will compile the given file and play it.
 
 ```
 $ symfonion -p infile
 ```
 
-where "infile" is a ```symfonion``` file and it will look like this.
+where "infile" is a Symfonion file.  The launcher accepts three input formats,
+selected automatically by file extension:
+
+| Extension | Format | Required tools |
+|-----------|--------|----------------|
+| `.json` | JSON (native) | none — passed directly to the Java core |
+| `.yaml` / `.yml` | YAML | [yq](https://github.com/mikefarah/yq) |
+| `.jfpp` / `.ypp` | YAML++ | yq and jq++ |
+
+A JSON Symfonion file looks like this.
 
 ```json
 {
@@ -68,7 +77,9 @@ where "infile" is a ```symfonion``` file and it will look like this.
 
 The syntax of it is described in [Syntax](src/site/asciidoc/SYNTAX.adoc)
 
-For the detail of the command line options, please refer to [Command line manual](src/site/asciidoc/CLI.adoc)
+For the detail of the command line options — including the preprocessing pipeline
+flags (`--skip-yq`, `--skip-jqpp`, `--print-intermediate`, `--dry-run`) — please
+refer to the [Command line manual](src/site/asciidoc/CLI.adoc)
 
 For the updates, best practices, how-tos, examples, and so on, please visit
 [Symfonion Blog](http://symfonion.hatenadiary.jp/) (mainly in Japanese)

@@ -1,0 +1,15 @@
+# Minimal SyMFONION song in YAML format.
+# Converted to JSON by the yq stage before being passed to the Java core.
+parts:
+  test:
+    channel: 0
+
+grooves: {}
+notemaps: {}
+
+sequence:
+  - beats: "4/4"
+    parts:
+      - name: test
+        body: "C;D;E;F"
+        length: 4

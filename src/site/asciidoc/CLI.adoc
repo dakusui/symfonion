@@ -13,19 +13,138 @@
     symfonion -r|--route {midioutport}={midiinport} [-O{midioutport}={regex}] [-I{midiinport}={regex}]
 ----
 
+=== Preprocessing flags (consumed by the launcher; not forwarded to Java)
+
+----
+    symfonion [--skip-yq] [--skip-jqpp] [--print-intermediate] [--dry-run] <subcommand> ...
+----
+
 == Description
 
-SyMFONION is a music macro language processor whose syntax is based on JSON. It provides a way to describe music works in a structured and object oriented way.
+SyMFONION is a music macro language processor whose native input format is JSON.
+The launcher script wraps the Java core with a multi-stage preprocessing
+pipeline so that YAML and YAML++ source files can be used as first-class
+authoring formats.
 
-When invoked without specifying any output files, it simply plays the input file(s).
+=== Preprocessing pipeline
 
-This page documents the command-line arguments for the SyMFONION processor.
+Before invoking the Java core, the launcher runs the input file through up to
+four stages:
 
-If you do not specify any arguments and GUI is available in your environment,
-a file chooser will be shownand let you choose a symfonion file to be played.
-SyMFONION will behave as if it is given as a parameter.
+[cols="1,2,3", options="header"]
+|===
+| Stage | Tool | Purpose
+
+| 1 — Input
+| (built-in)
+| Locate the input file in the argument list.
+
+| 2 — yq
+| https://github.com/mikefarah/yq[yq]
+| Normalise YAML (or JSON) input to canonical JSON.
+
+| 3 — jq++
+| jq++
+| Expand YAML++ macros to final JSON.
+
+| 4 — Main
+| Java
+| Invoke the SyMFONION Java core on the processed file.
+|===
+
+Stage defaults are derived from the input file's extension:
+
+[cols="2,1,1", options="header"]
+|===
+| Extension | yq stage | jq++ stage
+
+| `.json`
+| disabled
+| disabled
+
+| `.yaml` / `.yml`
+| enabled
+| disabled
+
+| `.jfpp` / `.ypp`
+| enabled
+| enabled
+|===
+
+Plain `.json` files are passed directly to the Java core — the same behaviour
+as earlier releases — so existing workflows are fully backward-compatible.
+
+=== Authoring in YAML
+
+YAML is a superset of JSON, so any existing `.json` symfonion file is also valid
+YAML.  Rename the file to `.yaml` (or `.yml`) to opt in to the yq stage:
+
+.Console
+----
+user@host:~/work $ symfonion -q mysong.yaml
+----
+
+The launcher converts the YAML file to JSON with `yq`, then passes the result
+to the Java core.  The file on disk is never modified; the intermediate JSON
+lives only in a temporary directory that is cleaned up automatically.
+
+=== Authoring in YAML++ (.jfpp / .ypp)
+
+YAML++ files are YAML documents that can use jq++ macro definitions and
+`$include` directives from the SyMFONION prelude library.  Give the file a
+`.jfpp` or `.ypp` extension to enable both the yq and jq++ stages:
+
+.Console
+----
+user@host:~/work $ symfonion -q mysong.jfpp
+----
+
+The `JF_PATH` environment variable controls where the launcher looks for
+prelude files.  See the *JF_PATH precedence* section below.
 
 == Options
+
+=== --skip-yq
+Disable the yq normalisation stage even when the input file extension would
+normally enable it.  Useful if you have pre-converted YAML to JSON yourself,
+or if yq is not installed and you know the file is already valid JSON.
+
+----
+user@host:~/work $ symfonion --skip-yq -q mysong.yaml
+----
+
+=== --skip-jqpp
+Disable the jq++ expansion stage even when the input file extension would
+normally enable it.  Useful for inspecting the post-yq intermediate JSON
+before macro expansion.
+
+----
+user@host:~/work $ symfonion --skip-jqpp -q mysong.jfpp
+----
+
+=== --print-intermediate
+Print the JSON output of each completed preprocessing stage to standard error.
+Useful for debugging YAML or YAML++ authoring issues.
+
+----
+user@host:~/work $ symfonion --print-intermediate -q mysong.yaml
+=== [yq stage output] ===
+{ ... }
+----
+
+=== --dry-run
+Run all enabled preprocessing stages but stop before invoking the SyMFONION
+Java core.  Implies `--print-intermediate`.  Useful for validating that the
+pipeline produces correct JSON without attempting to play or compile.
+
+----
+user@host:~/work $ symfonion --dry-run -q mysong.jfpp
+=== [yq stage output] ===
+{ ... }
+=== [jq++ stage output] ===
+{ ... }
+----
+
 === -V or --version
 Prints the version and the license of this command.
 
@@ -47,9 +166,9 @@ The example command line below compiles the input file 'example2.js' and output 
 ----
 user@host:~/work $ symfonion -c example2.js -o test.mid
 Now compiling...
-bar:<0> 
+bar:<0>
     part:<test>[**.|*.|]
-bar:<1> 
+bar:<1>
     part:<test>[**.|*.|]
 Compilation finished.
 user@host:~/work $
@@ -71,11 +190,35 @@ If defined,  a '.' followed by a port name will be inserted before the last '.' 
 If this option is not given, this command behave as if a filename 'a.midi' is given.
 
 === -O {midioutport}={regex}
-This option is used with -p (play) and -r (route) option and assigns the MIDI device to the MIDI-out port name. 
-Port name is defined by "port" attribute in "parts" section or by -r option. 
+This option is used with -p (play) and -r (route) option and assigns the MIDI device to the MIDI-out port name.
+Port name is defined by "port" attribute in "parts" section or by -r option.
 
 === -I {midiinport}={regex}
 This option is used with -r (route) option and assigns the MIDI device to the MIDI-in port name. MIDI-in port name is defined by -r option.
+
+== JF_PATH precedence
+
+The launcher builds the `JF_PATH` environment variable that jq++ uses to
+locate prelude library files.  The search path is assembled in this order
+(highest priority first):
+
+1. `$SYMFONION_PATH` — paths you set in the environment before running symfonion.
+2. `.symfonion/prelude` in the current working directory — project-local overrides.
+3. `$SYMFONION_HOME/share/symfonion/prelude` — the built-in prelude shipped with
+   this release.
+
+== Dependencies
+
+The preprocessing stages require external tools that are not bundled with
+SyMFONION:
+
+* *yq* (stages for `.yaml`, `.yml`, `.jfpp`, `.ypp` files) — install from
+  https://github.com/mikefarah/yq
+* *jq++* (stages for `.jfpp`, `.ypp` files) — install from the jq++ project
+
+If a required tool is not found on `PATH`, the launcher prints a friendly error
+message explaining which tool is missing and which flag (`--skip-yq` or
+`--skip-jqpp`) can be used to bypass that stage.
 
 == Reporting bugs
 Issue tracker: https://github.com/dakusui/symfonion/issues

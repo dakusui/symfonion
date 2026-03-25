@@ -1,0 +1,19 @@
+# Minimal SyMFONION song in YAML++ format (.jfpp).
+# Processed by the yq stage (YAML → JSON) and then the jq++ stage
+# (YAML++ macro expansion) before being passed to the Java core.
+#
+# This file uses plain YAML syntax; a real YAML++ file would include
+# jq++ macro definitions and $include directives from the prelude library.
+parts:
+  test:
+    channel: 0
+
+grooves: {}
+notemaps: {}
+
+sequence:
+  - beats: "4/4"
+    parts:
+      - name: test
+        body: "C;D;E;F"
+        length: 4

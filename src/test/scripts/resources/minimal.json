@@ -1,0 +1,19 @@
+{
+  "parts": {
+    "test": {"channel": 0}
+  },
+  "grooves": {},
+  "notemaps": {},
+  "sequence": [
+    {
+      "beats": "4/4",
+      "parts": [
+        {
+          "name": "test",
+          "body": "C;D;E;F",
+          "length": 4
+        }
+      ]
+    }
+  ]
+}
