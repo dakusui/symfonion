@@ -6,7 +6,29 @@
 #   2. Build JF_PATH so that jq++ can resolve built-in YAML++ files shipped
 #      with SyMFONION (the "prelude" standard-library layer), while still
 #      honouring user- and project-supplied overrides.
-#   3. Launch the SyMFONION Java core with all arguments forwarded.
+#   3. Orchestrate a multi-stage preprocessing pipeline before invoking the
+#      SyMFONION Java core:
+#
+#        Stage 1 (input)   — locate the input file in the argument list
+#        Stage 2 (yq)      — normalize YAML or JSON input to canonical JSON
+#                            (enabled by default for .yaml/.yml/.jfpp/.ypp)
+#        Stage 3 (jq++)    — expand YAML++ macros to final JSON
+#                            (enabled by default for .jfpp/.ypp)
+#        Stage 4 (main)    — invoke the SyMFONION Java core on the processed input
+#
+# Pipeline stage defaults (derived from input file extension):
+#
+#   Extension         yq stage   jq++ stage
+#   .json             disabled   disabled     (backward-compatible path)
+#   .yaml / .yml      enabled    disabled
+#   .jfpp / .ypp      enabled    enabled
+#
+# Flags consumed by this launcher (NOT forwarded to Java):
+#   --skip-yq            disable the yq normalization stage
+#   --skip-jqpp          disable the jq++ expansion stage
+#   --print-intermediate print JSON output after each enabled stage to stderr
+#   --dry-run            run preprocessing stages only; skip Symfonion invocation
+#                        (implies --print-intermediate)
 #
 # JF_PATH precedence (highest → lowest):
 #   1. User-specified paths  — $SYMFONION_PATH set before invoking symfonion
@@ -41,18 +63,258 @@ function _build_jf_path() {
   printf '%s' "${_path}"
 }
 
+# Determine which pipeline stages to enable based on the input file extension.
+# Echoes two space-separated booleans: "<yq_enabled> <jqpp_enabled>".
+function _detect_stages_from_extension() {
+  local _file="${1}"
+  local _ext="${_file##*.}"
+  local _ext_lc
+  _ext_lc="$(printf '%s' "${_ext}" | tr '[:upper:]' '[:lower:]')"
+
+  case "${_ext_lc}" in
+    yaml|yml)
+      # Plain YAML: normalise to JSON with yq; no YAML++ expansion needed.
+      printf 'true false'
+      ;;
+    jfpp|ypp)
+      # YAML++ source: normalise with yq, then expand macros with jq++.
+      printf 'true true'
+      ;;
+    *)
+      # JSON or unrecognised extension: pass directly to Java for backward
+      # compatibility.  Users can explicitly trigger stages with future flags.
+      printf 'false false'
+      ;;
+  esac
+}
+
+# Verify that a required external tool is on PATH.
+# Prints a friendly error message and exits if the tool is absent.
+function _require_tool() {
+  local _tool="${1}"
+  local _skip_flag="${2}"
+  if ! command -v "${_tool}" > /dev/null 2>&1; then
+    printf "symfonion: error: '%s' is required for this pipeline stage but was not found on PATH.\n" \
+      "${_tool}" >&2
+    printf "  Install '%s' and make sure it is on your PATH,\n" "${_tool}" >&2
+    printf "  or pass '%s' to skip this stage.\n" "${_skip_flag}" >&2
+    exit 1
+  fi
+}
+
+# Stage 2 — yq: convert YAML (or JSON) input to canonical JSON.
+function _run_stage_yq() {
+  local _input="${1}"
+  local _output="${2}"
+  _require_tool "yq" "--skip-yq"
+  yq --output-format=json '.' "${_input}" > "${_output}"
+}
+
+# Stage 3 — jq++: expand YAML++ macros to final JSON.
+function _run_stage_jqpp() {
+  local _input="${1}"
+  local _output="${2}"
+  _require_tool "jq++" "--skip-jqpp"
+  jq++ '.' "${_input}" > "${_output}"
+}
+
+# Locate the input file in the Symfonion argument list.
+# Echoes the file path, or nothing if the args contain no file-taking subcommand.
+function _find_input_file() {
+  local _next_is_file=false
+  local _arg
+  for _arg in "${@}"; do
+    if [[ "${_next_is_file}" == true ]]; then
+      printf '%s' "${_arg}"
+      return 0
+    fi
+    case "${_arg}" in
+      -q|--play-song|-x|--compile-song|-p|--play|-c|--compile)
+        _next_is_file=true
+        ;;
+    esac
+  done
+}
+
+# Rebuild the argument list, replacing the input file path with a new path.
+# Outputs NUL-delimited tokens so the caller can reconstruct an array safely
+# (handles paths containing spaces or special characters).
+function _replace_input_file() {
+  local _old_file="${1}"
+  local _new_file="${2}"
+  shift 2
+  local _next_is_file=false
+  local _arg
+  for _arg in "${@}"; do
+    if [[ "${_next_is_file}" == true ]]; then
+      printf '%s\0' "${_new_file}"
+      _next_is_file=false
+      continue
+    fi
+    case "${_arg}" in
+      -q|--play-song|-x|--compile-song|-p|--play|-c|--compile)
+        _next_is_file=true
+        printf '%s\0' "${_arg}"
+        ;;
+      *)
+        printf '%s\0' "${_arg}"
+        ;;
+    esac
+  done
+}
+
 function main() {
   local _scriptdir
   _scriptdir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
   local _symfonion_home
   _symfonion_home="$(realpath "${_scriptdir}/..")"
 
+  # -----------------------------------------------------------------------
+  # Stage control flags.
+  # Empty string = "auto" (resolved from file extension after arg parsing).
+  # "true" / "false"  = explicitly set by a launcher flag.
+  # -----------------------------------------------------------------------
+  local _stage_yq_enabled=""    # --skip-yq sets this to "false"
+  local _stage_jqpp_enabled=""  # --skip-jqpp sets this to "false"
+  local _stage_main_enabled="true"
+  local _print_intermediate="false"
+
+  # -----------------------------------------------------------------------
+  # Parse launcher-owned flags; accumulate the remainder for Java.
+  # -----------------------------------------------------------------------
+  local -a _java_args=()
+  while [[ ${#} -gt 0 ]]; do
+    case "${1}" in
+      --skip-yq)
+        _stage_yq_enabled="false"
+        shift
+        ;;
+      --skip-jqpp)
+        _stage_jqpp_enabled="false"
+        shift
+        ;;
+      --print-intermediate)
+        _print_intermediate="true"
+        shift
+        ;;
+      --dry-run)
+        _stage_main_enabled="false"
+        _print_intermediate="true"
+        shift
+        ;;
+      *)
+        _java_args+=("${1}")
+        shift
+        ;;
+    esac
+  done
+
+  # -----------------------------------------------------------------------
+  # JF_PATH: needed by jq++ to resolve the built-in YAML++ prelude library.
+  # -----------------------------------------------------------------------
   export JF_PATH
   JF_PATH="$(_build_jf_path "${_symfonion_home}")"
 
-  # ${project.version} is substituted by Maven resource filtering at assembly time
-  # (see <filtered>true</filtered> in src/assembly/bin.xml).
-  exec java -jar "${_symfonion_home}/lib/symfonion-${project.version}.jar" "${@}"
+  # -----------------------------------------------------------------------
+  # Stage 1 — Input: locate the input file in the Java argument list.
+  # -----------------------------------------------------------------------
+  local _input_file
+  _input_file="$(_find_input_file "${_java_args[@]+"${_java_args[@]}"}")"
+
+  # No input file identified (e.g. --list, --version): skip preprocessing.
+  if [[ -z "${_input_file}" ]]; then
+    if [[ "${_stage_main_enabled}" == "true" ]]; then
+      # ${project.version} is substituted by Maven resource filtering at
+      # assembly time (see <filtered>true</filtered> in src/assembly/bin.xml).
+      exec java -jar "${_symfonion_home}/lib/symfonion-${project.version}.jar" \
+        "${_java_args[@]+"${_java_args[@]}"}"
+    fi
+    return 0
+  fi
+
+  # -----------------------------------------------------------------------
+  # Format detection: fill in any "auto" stage settings from file extension.
+  # User-supplied --skip-* flags (already "false") take priority.
+  # -----------------------------------------------------------------------
+  if [[ -z "${_stage_yq_enabled}" || -z "${_stage_jqpp_enabled}" ]]; then
+    local _detected
+    _detected="$(_detect_stages_from_extension "${_input_file}")"
+    local _detected_yq _detected_jqpp
+    read -r _detected_yq _detected_jqpp <<< "${_detected}"
+    [[ -n "${_stage_yq_enabled}"   ]] || _stage_yq_enabled="${_detected_yq}"
+    [[ -n "${_stage_jqpp_enabled}" ]] || _stage_jqpp_enabled="${_detected_jqpp}"
+  fi
+
+  # -----------------------------------------------------------------------
+  # Preprocessing pipeline (stages 2 and 3).
+  # Each enabled stage reads _current_file and writes to a temp file,
+  # then advances _current_file to that output.
+  # -----------------------------------------------------------------------
+  local _tmpdir
+  _tmpdir="$(mktemp -d)"
+  # EXIT trap cleans up temp files in the normal return path.
+  # When exec is used below, we clean up explicitly first (exec replaces
+  # this process, so the trap would not otherwise fire).
+  trap 'rm -rf "${_tmpdir}"' EXIT
+
+  local _current_file="${_input_file}"
+
+  # Stage 2 — yq
+  if [[ "${_stage_yq_enabled}" == "true" ]]; then
+    local _yq_out="${_tmpdir}/stage_yq.json"
+    _run_stage_yq "${_current_file}" "${_yq_out}"
+    _current_file="${_yq_out}"
+    if [[ "${_print_intermediate}" == "true" ]]; then
+      printf '=== [yq stage output] ===\n' >&2
+      cat "${_current_file}" >&2
+      printf '\n' >&2
+    fi
+  fi
+
+  # Stage 3 — jq++
+  if [[ "${_stage_jqpp_enabled}" == "true" ]]; then
+    local _jqpp_out="${_tmpdir}/stage_jqpp.json"
+    _run_stage_jqpp "${_current_file}" "${_jqpp_out}"
+    _current_file="${_jqpp_out}"
+    if [[ "${_print_intermediate}" == "true" ]]; then
+      printf '=== [jq++ stage output] ===\n' >&2
+      cat "${_current_file}" >&2
+      printf '\n' >&2
+    fi
+  fi
+
+  # -----------------------------------------------------------------------
+  # Stage 4 — Main: invoke the SyMFONION Java core.
+  # -----------------------------------------------------------------------
+  if [[ "${_stage_main_enabled}" != "true" ]]; then
+    # Clean up explicitly: returning from main() puts _tmpdir out of scope,
+    # so the EXIT trap cannot reference it under set -u.
+    rm -rf "${_tmpdir}"
+    trap - EXIT
+    return 0
+  fi
+
+  # Substitute the original input path with the preprocessed temp file in the
+  # Java argument list, if any preprocessing was performed.
+  local -a _final_args
+  if [[ "${_current_file}" != "${_input_file}" ]]; then
+    _final_args=()
+    local _a
+    while IFS= read -r -d '' _a; do
+      _final_args+=("${_a}")
+    done < <(_replace_input_file "${_input_file}" "${_current_file}" \
+                "${_java_args[@]+"${_java_args[@]}"}")
+  else
+    _final_args=("${_java_args[@]+"${_java_args[@]}"}")
+  fi
+
+  # Clean up temp dir before exec (exec replaces this process, bypassing EXIT trap).
+  rm -rf "${_tmpdir}"
+  trap - EXIT
+
+  # ${project.version} is substituted by Maven resource filtering at assembly time.
+  exec java -jar "${_symfonion_home}/lib/symfonion-${project.version}.jar" \
+    "${_final_args[@]+"${_final_args[@]}"}"
 }
 
 # --- entry point ---
