@@ -28,6 +28,29 @@ $ symfonion
 Windows is not supported at this time. The distribution does not include a `.bat` launcher.
 Windows users may run Symfonion under WSL (Windows Subsystem for Linux) by following the Linux instructions above.
 
+# Building from Source
+
+## Prerequisites
+
+Install the following on Ubuntu/Debian before building:
+
+```bash
+sudo apt install maven ruby-rubygems openjdk-21-jdk
+```
+
+After installing OpenJDK 21, make it the default JVM:
+
+```bash
+sudo update-alternatives --config java
+# Choose the entry for openjdk-21 from the list
+```
+
+## Build
+
+```bash
+mvn -B package
+```
+
 # How to run Symfonion #
 By typing a command line below, ```symfonion``` will compile the given JSON file and play it.
 
