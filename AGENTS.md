@@ -11,6 +11,16 @@ This file provides guidance for AI agents working on the **symfonion** codebase 
 
 ## Build & Test
 
+### Prerequisites (Ubuntu/Debian)
+
+```bash
+sudo apt install maven ruby-rubygems openjdk-21-jdk
+# Then set OpenJDK 21 as default:
+sudo update-alternatives --config java   # choose openjdk-21 from the list
+```
+
+### Commands
+
 ```bash
 # Compile and run all tests
 mvn -B package
