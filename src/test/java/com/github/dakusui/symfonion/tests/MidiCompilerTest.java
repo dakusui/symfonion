@@ -15,13 +15,19 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import com.google.gson.JsonObject;
+import javax.sound.midi.MidiEvent;
+import javax.sound.midi.Sequence;
 import javax.sound.midi.Track;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 import static com.github.dakusui.symfonion.testutils.SymfonionTestCase.createNegativeTestCase;
 import static com.github.dakusui.symfonion.testutils.SymfonionTestCase.createPositiveTestCase;
+import static com.github.dakusui.symfonion.testutils.SymfonionTestUtils.compileJsonObject;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static com.github.dakusui.symfonion.testutils.json.SymfonionJsonTestUtils.sixteenBeatsGrooveFlat;
 import static com.github.dakusui.testutils.json.JsonTestUtils.*;
 import static com.github.dakusui.testutils.midi.Controls.VOLUME;
@@ -259,6 +265,41 @@ public class MidiCompilerTest extends TestBase {
                 toStreamBy(midiMessageStream(isNoteOff())).checkCount(isEqualTo(2L))))
                         );
 
+  }
+
+  /**
+   * Verifies pickup notation: notes before `|` in a body string play in the tail
+   * of the preceding bar. With a 4/4 bar (384 ticks) and an E8 pickup (48 ticks),
+   * the pickup NoteOn must land at tick 336 = 384 - 48.
+   */
+  @org.junit.jupiter.api.Test
+  void pickupNotation_noteOnAtCorrectTick() throws Exception {
+    JsonObject song = object(
+        $("settings", object()),
+        $("parts", object($("piano", object($("channel", json(0)), $("port", json("port1")))))),
+        $("sequence", array(
+            merge(object($("beats", json("4/4"))),
+                  object($("parts", array(merge(object($("name", json("piano"))),
+                                               object($("body", json("r4;r4;r4;r4")))))))),
+            merge(object($("beats", json("4/4"))),
+                  object($("parts", array(merge(object($("name", json("piano"))),
+                                               object($("body", json("E8|E4;D4;C4;r4")))))))))));;
+
+    Map<String, Sequence> result = compileJsonObject(song);
+    Track track = result.get("port1").getTracks()[0];
+
+    long pickupTick = -1;
+    for (int i = 0; i < track.size(); i++) {
+      MidiEvent ev = track.get(i);
+      byte[] msg = ev.getMessage().getMessage();
+      boolean isNoteOn = (msg[0] & 0xf0) == 0x90;
+      boolean isE = msg[1] == 64; // E3 = MIDI key 64
+      if (isNoteOn && isE) {
+        pickupTick = ev.getTick();
+        break;
+      }
+    }
+    assertEquals(336L, pickupTick, "Pickup E8 note-on should land at tick 336 (last 1/8 of the preceding 4/4 bar)");
   }
 
   public static List<SymfonionTestCase> negativeTestCases() {
