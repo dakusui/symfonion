@@ -258,6 +258,38 @@ For example, strings below are valid for this attribute.
                           // You can concatenate strokes by using semi colons.
 ----
     
+==== Pickup notation (anacrusis)
+
+The `|` character in a body string marks a *barline*: notes written **before** `|` are *pickup notes* (also called an *anacrusis* in classical music theory) and play in the tail of the **preceding bar**, overlaid on top of its existing content.
+Notes written **after** `|` are the main body of the current bar.
+
+[source, json]
+----
+{ "beats": "4/4", "parts": [{"name": "piano", "body": "r4;r4;r4;r4"}] },
+{ "beats": "4/4", "parts": [{"name": "piano", "body": "E8|E4;D4;C4;r4"}] }
+----
+
+In this example the `E8` pickup plays in the last 1/8 of the preceding 4/4 bar, and `E4;D4;C4;r4` fills the current bar.
+This is more readable than spelling the pickup out explicitly in the previous bar:
+
+[source, json]
+----
+{ "beats": "4/4", "parts": [{"name": "piano", "body": "r2;r4;r8;E8"}] },
+{ "beats": "4/4", "parts": [{"name": "piano", "body": "E4;D4;C4;r4"}] }
+----
+
+Consecutive bars with pickup notation chain naturally — each bar's pickup overlays the tail of the bar that precedes it:
+
+[source, json]
+----
+{ "beats": "4/4", "parts": [{"name": "piano", "body": "r4;r4;r4;r4"}] },
+{ "beats": "4/4", "parts": [{"name": "piano", "body": "E8|E4;D4;C4;r4"}] },
+{ "beats": "4/4", "parts": [{"name": "piano", "body": "E8|E4;D4;C4;r4"}] }
+----
+
+NOTE: Pickup notes require a preceding bar in the sequence.
+If a pickup appears in the very first bar of the sequence it will be placed before tick 0 and may not play.
+
 ==== Non-note messages
 
 Some of non-note messages, for example 'volume', can have arrays as their values.
