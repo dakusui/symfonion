@@ -142,15 +142,164 @@ public class Play implements Subcommand {
     }
   }
 
+  // --- Measure marker tick extraction ---
+
+  static long[] extractMeasureMarkerTicks(Map<String, Sequence> sequences) {
+    if (sequences.isEmpty()) return new long[0];
+    Track[] tracks = sequences.values().iterator().next().getTracks();
+    if (tracks.length == 0) return new long[0];
+    Track markerTrack = tracks[tracks.length - 1];
+    List<Long> ticks = new ArrayList<>();
+    for (int i = 0; i < markerTrack.size(); i++) {
+      MidiEvent event = markerTrack.get(i);
+      if (event.getMessage() instanceof MetaMessage mm && mm.getType() == 0x06) {
+        ticks.add(event.getTick());
+      }
+    }
+    return ticks.stream().mapToLong(Long::longValue).sorted().toArray();
+  }
+
+  static long findNextTick(long[] ticks, long current) {
+    for (long tick : ticks) {
+      if (tick > current) return tick;
+    }
+    return current;
+  }
+
+  static long findPrevTick(long[] ticks, long current) {
+    long prev = 0;
+    for (long tick : ticks) {
+      if (tick >= current) break;
+      prev = tick;
+    }
+    return prev;
+  }
+
+  static void seekToTick(Collection<Sequencer> sequencers, long tick) {
+    boolean wasRunning = sequencers.stream().anyMatch(Sequencer::isRunning);
+    for (Sequencer seq : sequencers) seq.stop();
+    for (Sequencer seq : sequencers) seq.setTickPosition(tick);
+    if (wasRunning) {
+      for (Sequencer seq : sequencers) seq.start();
+    }
+  }
+
+  // --- Terminal raw mode ---
+
+  private static String setRawTerminalMode() {
+    if (System.console() == null) return null;
+    try {
+      Process save = new ProcessBuilder("sh", "-c", "stty -g </dev/tty")
+          .redirectErrorStream(true)
+          .start();
+      String saved = new String(save.getInputStream().readAllBytes(), StandardCharsets.UTF_8).trim();
+      save.waitFor();
+      new ProcessBuilder("sh", "-c", "stty cbreak -echo </dev/tty")
+          .redirectErrorStream(true)
+          .start()
+          .waitFor();
+      return saved;
+    } catch (Exception e) {
+      return null;
+    }
+  }
+
+  private static void restoreTerminalMode(String savedSettings) {
+    if (savedSettings == null || savedSettings.isEmpty()) return;
+    try {
+      new ProcessBuilder("sh", "-c", "stty " + savedSettings + " </dev/tty")
+          .redirectErrorStream(true)
+          .start()
+          .waitFor();
+    } catch (Exception ignored) {
+    }
+  }
+
+  // --- Keyboard controller ---
+
+  private static final class KeyboardController implements Runnable {
+    private final Collection<Sequencer> sequencers;
+    private final long[]                measureTicks;
+
+    KeyboardController(Collection<Sequencer> sequencers, long[] measureTicks) {
+      this.sequencers   = sequencers;
+      this.measureTicks = measureTicks;
+    }
+
+    @Override
+    public void run() {
+      try {
+        while (!Thread.currentThread().isInterrupted()) {
+          if (System.in.available() == 0) {
+            Thread.sleep(20);
+            continue;
+          }
+          int b = System.in.read();
+          if (b != 0x1B) continue;
+          // Wait up to 50 ms for the rest of the escape sequence
+          long deadline = System.currentTimeMillis() + 50;
+          while (System.in.available() < 2 && System.currentTimeMillis() < deadline) {
+            Thread.sleep(5);
+          }
+          if (System.in.available() < 2) continue;
+          int b2 = System.in.read();
+          int b3 = System.in.read();
+          if (b2 != '[') continue;
+          switch (b3) {
+            case 'C' -> onRight();
+            case 'D' -> onLeft();
+            case 'A' -> onUp();
+            case 'B' -> onDown();
+          }
+        }
+      } catch (IOException | InterruptedException e) {
+        Thread.currentThread().interrupt();
+      }
+    }
+
+    private long currentTick() {
+      return sequencers.iterator().next().getTickPosition();
+    }
+
+    private void onRight() {
+      seekToTick(sequencers, findNextTick(measureTicks, currentTick()));
+    }
+
+    private void onLeft() {
+      seekToTick(sequencers, findPrevTick(measureTicks, currentTick()));
+    }
+
+    private void onUp() {
+      for (Sequencer seq : sequencers) {
+        if (!seq.isRunning()) seq.start();
+      }
+    }
+
+    private void onDown() {
+      for (Sequencer seq : sequencers) {
+        if (seq.isRunning()) seq.stop();
+      }
+    }
+  }
+
+  // --- Main playback entry point ---
+
   static synchronized void play(PrintStream ps, Map<String, MidiDevice> midiOutDevices, Map<String, Sequence> sequences) throws SymfonionException {
-    List<String>           portNames = new LinkedList<>(sequences.keySet());
+    List<String>           portNames   = new LinkedList<>(sequences.keySet());
+    long[]                 markerTicks = extractMeasureMarkerTicks(sequences);
+    String                 savedTty    = setRawTerminalMode();
     Map<String, Sequencer> sequencers;
     try {
       sequencers = prepareSequencers(portNames, midiOutDevices, sequences, ps);
+      Thread kbThread = new Thread(new KeyboardController(sequencers.values(), markerTicks));
+      kbThread.setDaemon(true);
       try {
         startSequencers(portNames, sequencers);
+        kbThread.start();
         Play.class.wait();
       } finally {
+        kbThread.interrupt();
+        restoreTerminalMode(savedTty);
         System.out.println("Finished playing.");
         cleanUpSequencers(portNames, midiOutDevices, sequencers);
       }
