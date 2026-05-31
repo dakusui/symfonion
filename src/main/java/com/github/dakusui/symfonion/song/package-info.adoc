@@ -5,13 +5,23 @@ A song is structured as follows in **JSON**:
 [source,JSON]
 ----
 {
-  "$include": [ "includedFile" ],
-  "$settings": { "<deviceProfileName>": "..." },
-  "$noteMaps": { "<noteMapName>": { "...": "..." }},
-  "$parts": { "<partName>": { "...": "..." } },
-  "$patterns": { "<patternName>": {"...": "..." }},
-  "$grooves": { "<grooveName>": ["..."] },
-  "$sequence": { "<partName>": { "...": "..." } }
+  "include": [ "includedFile" ],
+  "settings": { "mididevice": "<deviceProfileName>" },
+  "notemaps": { "<noteMapName>": { "...": "..." }},
+  "parts": { "<partName>": { "...": "..." } },
+  "grooves": { "<grooveName>": ["..."] },
+  "sequence": [
+    {
+      "beats": "<barLength>",
+      "parts": [
+        {
+          "name": "<partName>",
+          "body": "<notes>",
+          "length": "<noteLength>"
+        }
+      ]
+    }
+  ]
 }
 ----
 
@@ -23,7 +33,6 @@ direction BT
 
   Context "1" <--* "1" CompatSong: logiasContext
   Part    "*" <--* "1" CompatSong: parts[partName]
-  Pattern "*" <--* "1" CompatSong: patterns[patternName]
   Groove  "*" <--* "1" CompatSong: grooves[grooveName]
   Bar     "*" <--* "1" CompatSong: bars
 ----
@@ -37,19 +46,10 @@ direction BT
     PartMeasure "*" <--* "1" Pattern: body
     PartMeasureParameters "1" <--* "1" PartMeasure: defaultValues
     NoteMap "1" <--* "1" PartMeasureParameters
-    List~Pattern~ <|-- PatternSequence
-    Pattern "*" <--* "1" List~Pattern~
-    PatternSequence "*" <--* "1" PatternSequencePile
-    PatternSequencePile "*" <-- "1" Bar: patternSequencePiles[partName]
-    PatternSequencePile
     Groove "1" <--* "1" Bar
-    Pattern "*" <--* "1" Bar: patterns[patternName]
+    Pattern "*" <--* "1" Bar: inlinePatterns[partName]
     NoteMap "*" <--* "1" Bar: noteMaps[noteMapName]
-    class List~Pattern~
     class Pattern
-    class PatternSequence
-    class PatternSequencePile["List~PatternSequence~"] {
-    }
     class Bar {
         -List~String~ labels
         +Fraction beats()

@@ -2,19 +2,47 @@
   "sequence": [
     {
       "beats": "8/8",
-      "parts": {
-        "test": [
-          "test1"
-        ]
-      }
+      "parts": [
+        {
+          "name": "test",
+          "body": [
+            {
+              "notes": "C",
+              "length": "2",
+              "pan": 127,
+              "program": 2
+            },
+            {
+              "notes": "C",
+              "length": "2",
+              "pan": 0
+            }
+          ],
+          "length": "8"
+        }
+      ]
     },
     {
       "beats": "8/8",
-      "parts": {
-        "test": [
-          "test1"
-        ]
-      }
+      "parts": [
+        {
+          "name": "test",
+          "body": [
+            {
+              "notes": "C",
+              "length": "2",
+              "pan": 127,
+              "program": 2
+            },
+            {
+              "notes": "C",
+              "length": "2",
+              "pan": 0
+            }
+          ],
+          "length": "8"
+        }
+      ]
     }
   ]
 }
