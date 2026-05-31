@@ -76,28 +76,7 @@ Version pins (`yq_version`, `jqplusplus_version`) live at the top of both launch
 
 ## Directory Layout
 
-```
-symfonion-VERSION/           ← SYMFONION_HOME
-  bin/
-    symfonion                ← CLI launcher (bash); only file shipped in bin/
-  lib/
-    symfonion-VERSION.jar    ← Java core (shipped)
-    yq                       ← YAML→JSON converter  (bootstrapped on first run)
-    jqplusplus               ← jq++ binary          (bootstrapped on first run)
-    jq++                     ← symlink → jqplusplus (created by jqplusplus itself)
-  share/
-    symfonion/
-      prelude/               ← built-in jq++ standard library (shipped, may be empty)
-```
-
-Optional, project-local (alongside the user's song files):
-
-```
-.symfonion/
-  prelude/                   ← project-local jq++ library; higher priority than built-in
-```
-
-`JF_PATH` precedence: `$SYMFONION_PATH` → `.symfonion/prelude` → `share/symfonion/prelude`.
+See [`src/site/asciidoc/INSTALLATION.adoc`](src/site/asciidoc/INSTALLATION.adoc) for the full layout, first-run bootstrap details, and `JF_PATH` precedence.
 
 ## Launcher & Preprocessing Pipeline
 
