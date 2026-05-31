@@ -320,6 +320,7 @@ public class Play implements Subcommand {
         }
         synchronized (Play.class) {
           for (Sequencer seq : sequencerMap.values()) seq.stop();
+          long resumeTick = sequencerMap.values().iterator().next().getTickPosition();
           try {
             for (Map.Entry<String, Sequencer> entry : sequencerMap.entrySet())
               entry.getValue().setSequence(newSeqs.get(entry.getKey()));
@@ -331,7 +332,7 @@ public class Play implements Subcommand {
           playingSequencers.addAll(sequencerMap.values());
           ticksRef.set(extractMeasureMarkerTicks(newSeqs));
           for (Sequencer seq : sequencerMap.values()) {
-            seq.setTickPosition(0);
+            seq.setTickPosition(resumeTick);
             seq.start();
           }
           ps.println("[recompiled OK]");
