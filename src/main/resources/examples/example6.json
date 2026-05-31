@@ -1,11 +1,54 @@
 {
-  "include": [
-    "example6-sequences.json"
-  ],
   "settings": {},
   "parts": {
     "test": {
       "channel": 0
     }
-  }
+  },
+  "sequence": [
+    {
+      "beats": "8/8",
+      "parts": [
+        {
+          "name": "test",
+          "body": [
+            {
+              "notes": "C",
+              "length": "2",
+              "pan": 127,
+              "program": 2
+            },
+            {
+              "notes": "C",
+              "length": "2",
+              "pan": 0
+            }
+          ],
+          "length": "8"
+        }
+      ]
+    },
+    {
+      "beats": "8/8",
+      "parts": [
+        {
+          "name": "test",
+          "body": [
+            {
+              "notes": "C",
+              "length": "2",
+              "pan": 127,
+              "program": 2
+            },
+            {
+              "notes": "C",
+              "length": "2",
+              "pan": 0
+            }
+          ],
+          "length": "8"
+        }
+      ]
+    }
+  ]
 }
