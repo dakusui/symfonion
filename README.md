@@ -52,13 +52,53 @@ mvn -B package
 ```
 
 # How to run Symfonion #
-By typing a command line below, ```symfonion``` will compile the given JSON file and play it.
+
+Symfonion accepts **YAML** (recommended) or JSON input files.
+The launcher transparently converts `.yaml` / `.yml` files through `yq` and `jq++` before processing.
+Because YAML is a superset of JSON, all existing `.json` files continue to work unchanged.
 
 ```
-$ symfonion -p infile
+$ symfonion -p infile.yaml
 ```
 
-where "infile" is a ```symfonion``` file and it will look like this.
+A symfonion file in YAML (W.A. Mozart, K.311):
+
+```yaml
+parts:
+  pianor:
+    channel: 0
+
+sequence:
+  - parts:
+      - name: pianor
+        body: "r4;B;A;G#;A"
+        length: 16
+    beats: "2/4"
+  - parts:
+      - name: pianor
+        body: "C>8;r8;D>;C>;B;C>;E>8;r8;F>;E>;D#>;E>"
+        length: 16
+    beats: "4/4"
+  - parts:
+      - name: pianor
+        body: "B>;A>;G#>;A>;B>;A>;G#>;A>;C>>4;A>8;C>>8"
+        length: 16
+    beats: "4/4"
+  - parts:
+      - name: pianor
+        body: "B>;F#A>;EG>;F#A>;B>;F#A>;EG>;F#A>"
+        length: 8
+        gate: 0.3
+    beats: "4/4"
+  - parts:
+      - name: pianor
+        body: "B>;F#A;EG>;D#F#>;E4;r4"
+        length: 8
+        gate: 0.3
+    beats: "4/4"
+```
+
+The equivalent JSON form (also accepted):
 
 ```json
 {
