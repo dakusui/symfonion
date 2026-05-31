@@ -9,13 +9,18 @@ The archive unpacks to a versioned, self-contained directory:
 ----
 symfonion-VERSION/
   bin/
-    symfonion                 ← CLI launcher (bash script)
+    symfonion                    ← CLI launcher (bash script)
   lib/
-    symfonion-VERSION.jar     ← Java core
+    symfonion-VERSION.jar        ← Java core
+    symfonion/                   ← companion tools (populated on first run; see below)
   share/
     symfonion/
-      prelude/                ← built-in jq++ standard library
+      prelude/                   ← built-in jq++ standard library
 ----
+
+The companion tools are kept under `lib/symfonion/` rather than directly in `lib/`
+so that installing into a shared prefix (e.g. `~/.local` or `/usr/local`) does not
+conflict with other software that places files in that `lib/` directory.
 
 Add `symfonion-VERSION/bin/` to your `PATH` and you are done.
 
@@ -29,11 +34,12 @@ for `jqplusplus`, the https://go.dev/dl/[Go toolchain] on your `PATH`.
 ----
 symfonion-VERSION/
   lib/
-    yq                        ← YAML→JSON converter
+    symfonion/
+      yq                      ← YAML→JSON converter
                                 downloaded from github.com/mikefarah/yq releases
-    jqplusplus                ← jq++ binary
+      jqplusplus              ← jq++ binary
                                 installed via: go install github.com/dakusui/jqplusplus/...
-    jq++                      ← symlink → jqplusplus
+      jq++                    ← symlink → jqplusplus
                                 created by jqplusplus on its first invocation
 ----
 

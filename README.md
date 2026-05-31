@@ -32,14 +32,15 @@ symfonion-VERSION/
       prelude/                  ← built-in jq++ standard library
 ```
 
-On the **first invocation** the launcher downloads and installs two companion tools into `lib/`:
+On the **first invocation** the launcher downloads and installs two companion tools into `lib/symfonion/` (namespaced to avoid conflicts when installing into a shared prefix such as `~/.local`):
 
 ```
 symfonion-VERSION/
   lib/
-    yq                          ← YAML→JSON converter  (downloaded from GitHub releases)
-    jqplusplus                  ← jq++ binary          (installed via go install; requires Go)
-    jq++                        ← symlink → jqplusplus (created by jqplusplus itself)
+    symfonion/
+      yq                        ← YAML→JSON converter  (downloaded from GitHub releases)
+      jqplusplus                ← jq++ binary          (installed via go install; requires Go)
+      jq++                      ← symlink → jqplusplus (created by jqplusplus itself)
 ```
 
 You can also place project-local jq++ library files in `.symfonion/prelude/` alongside your song files; the launcher adds that directory to `JF_PATH` automatically (higher priority than the built-in prelude).

@@ -4,7 +4,9 @@
 # Responsibilities:
 #   1. Locate SYMFONION_HOME relative to this script.
 #   2. On first use, install companion tools (yq, jqplusplus / jq++) under
-#      SYMFONION_HOME/lib/. Subsequent invocations skip this step.
+#      SYMFONION_HOME/lib/symfonion/. Using a sub-directory avoids conflicts
+#      when symfonion is unpacked into a shared prefix (e.g. ~/.local) whose
+#      lib/ already contains other tools. Subsequent invocations skip installation.
 #   3. Build JF_PATH so that jq++ can resolve built-in YAML++ files shipped
 #      with SyMFONION (the "prelude" standard-library layer), while still
 #      honouring user- and project-supplied overrides.
@@ -117,27 +119,27 @@ function main() {
   local _symfonion_home
   _symfonion_home="$(realpath "${_scriptdir}/..")"
   local _lib="${_symfonion_home}/lib"
+  local _tools="${_lib}/symfonion"
 
   export JF_PATH
   JF_PATH="$(_build_jf_path "${_symfonion_home}")"
 
-  _ensure_deps "${_lib}"
+  _ensure_deps "${_tools}"
 
   # Preprocess .yaml / .yml arguments: convert YAML → JSON via yq, then
   # resolve jq++ directives ($extends, $includes, etc.) via jq++.
   local -a _args=()
-  local _arg _tmp
+  local _arg _yq_tmp _tmp
   for _arg in "${@}"; do
     if [[ "${_arg}" =~ \.(yaml|yml)$ ]] && [[ -f "${_arg}" ]]; then
       # Two temp files: yq writes JSON to the first; jq++ reads it by path
       # (passing a file argument avoids the no-args symlink-creation branch
       # that jq++ enters when invoked without positional arguments).
-      local _yq_tmp _tmp
       _yq_tmp="$(mktemp /tmp/symfonion-yq-XXXXXX.json)"
       _tmp="$(mktemp /tmp/symfonion-XXXXXX.json)"
       symfonion_cleanup_files+=("${_yq_tmp}" "${_tmp}")
-      "${_lib}/yq" -o=json "${_arg}" > "${_yq_tmp}"
-      "${_lib}/jq++" "${_yq_tmp}" > "${_tmp}"
+      "${_tools}/yq" -o=json "${_arg}" > "${_yq_tmp}"
+      "${_tools}/jq++" "${_yq_tmp}" > "${_tmp}"
       _args+=("${_tmp}")
     else
       _args+=("${_arg}")
@@ -149,9 +151,9 @@ function main() {
     trap 'rm -f "${symfonion_cleanup_files[@]}"' EXIT
     # ${project.version} is substituted by Maven resource filtering at assembly time
     # (see <filtered>true</filtered> in src/assembly/bin.xml).
-    java -jar "${_symfonion_home}/lib/symfonion-${project.version}.jar" "${_args[@]}"
+    java -jar "${_lib}/symfonion-${project.version}.jar" "${_args[@]}"
   else
-    exec java -jar "${_symfonion_home}/lib/symfonion-${project.version}.jar" "${_args[@]}"
+    exec java -jar "${_lib}/symfonion-${project.version}.jar" "${_args[@]}"
   fi
 }
 

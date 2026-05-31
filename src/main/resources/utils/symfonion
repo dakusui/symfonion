@@ -2,8 +2,10 @@
 # symfonion — CLI launcher for SyMFONION (development / unversioned build)
 #
 # On the first invocation, companion tools (yq, jqplusplus / jq++) are
-# downloaded or built and cached under SYMFONION_HOME/lib/.  Subsequent
-# invocations skip this step.
+# downloaded or built and cached under SYMFONION_HOME/lib/symfonion/.
+# Using a sub-directory avoids conflicts when symfonion is unpacked into a
+# shared prefix (e.g. ~/.local) whose lib/ already contains other tools.
+# Subsequent invocations skip installation.
 #
 # Input pipeline for .yaml / .yml files:
 #   yq -o=json <file>  |  jq++  >  <tmp>.json  →  symfonion JAR
@@ -113,27 +115,27 @@ function main() {
   local _symfonion_home
   _symfonion_home="$(realpath "${_scriptdir}/..")"
   local _lib="${_symfonion_home}/lib"
+  local _tools="${_lib}/symfonion"
 
   export JF_PATH
   JF_PATH="$(_build_jf_path "${_symfonion_home}")"
 
-  _ensure_deps "${_lib}"
+  _ensure_deps "${_tools}"
 
   # Preprocess .yaml / .yml arguments: convert YAML → JSON via yq, then
   # resolve jq++ directives ($extends, $includes, etc.) via jq++.
   local -a _args=()
-  local _arg _tmp
+  local _arg _yq_tmp _tmp
   for _arg in "${@}"; do
     if [[ "${_arg}" =~ \.(yaml|yml)$ ]] && [[ -f "${_arg}" ]]; then
       # Two temp files: yq writes JSON to the first; jq++ reads it by path
       # (passing a file argument avoids the no-args symlink-creation branch
       # that jq++ enters when invoked without positional arguments).
-      local _yq_tmp _tmp
       _yq_tmp="$(mktemp /tmp/symfonion-yq-XXXXXX.json)"
       _tmp="$(mktemp /tmp/symfonion-XXXXXX.json)"
       symfonion_cleanup_files+=("${_yq_tmp}" "${_tmp}")
-      "${_lib}/yq" -o=json "${_arg}" > "${_yq_tmp}"
-      "${_lib}/jq++" "${_yq_tmp}" > "${_tmp}"
+      "${_tools}/yq" -o=json "${_arg}" > "${_yq_tmp}"
+      "${_tools}/jq++" "${_yq_tmp}" > "${_tmp}"
       _args+=("${_tmp}")
     else
       _args+=("${_arg}")
@@ -143,9 +145,9 @@ function main() {
   if [[ ${#symfonion_cleanup_files[@]} -gt 0 ]]; then
     # Cannot use exec: the EXIT trap must fire to remove temp files.
     trap 'rm -f "${symfonion_cleanup_files[@]}"' EXIT
-    java -jar "${_symfonion_home}/lib/symfonion.jar" "${_args[@]}"
+    java -jar "${_lib}/symfonion.jar" "${_args[@]}"
   else
-    exec java -jar "${_symfonion_home}/lib/symfonion.jar" "${_args[@]}"
+    exec java -jar "${_lib}/symfonion.jar" "${_args[@]}"
   fi
 }
 
