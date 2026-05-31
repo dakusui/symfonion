@@ -58,7 +58,7 @@ src/
 - **No dollar-sign prefixes** on JSON/YAML keywords (removed in v3.x).
 - **Java 21** — use modern Java features freely; the CI baseline is JDK 21.
 - Tests use **JUnit 5 (Jupiter)**; keep new tests in `src/test/java/…/symfonion/tests/`.
-- For bash scripts, follow the project's shell conventions (see `.claude/skills/symfonion-bash`).
+- For bash scripts, follow the project's shell conventions (see `.agents/skills/symfonion-bash`).
 
 ## Directory Layout
 
@@ -76,7 +76,14 @@ Version pins (`yq_version`, `jqplusplus_version`) live at the top of both launch
 
 ## Release
 
-Releases are published to Maven Central via Sonatype. Follow the release skill (`.claude/skills/symfonion-release`) rather than running `mvn release:*` manually.
+Releases are published to Maven Central via Sonatype. Follow the release skill (`.agents/skills/symfonion-release`) rather than running `mvn release:*` manually.
+
+## Agent Workflow Files
+
+- Shared reusable workflows live under `.agents/skills/`.
+- `.claude/skills` is a symlink to `.agents/skills` for Claude.
+- `.codex/skills` is a symlink to `.agents/skills` for Codex.
+- Keep workflow guidance in `.agents/skills`; do not duplicate it under tool-specific directories.
 
 ## Useful Entry Points
 
