@@ -1,0 +1,79 @@
+= symfonion — Installation & Directory Layout
+
+== Distribution archive
+
+Download `symfonion-VERSION-bin.zip` from the
+https://github.com/dakusui/symfonion/releases/[releases page] and unzip it.
+The archive unpacks to a versioned, self-contained directory:
+
+----
+symfonion-VERSION/
+  bin/
+    symfonion                 ← CLI launcher (bash script)
+  lib/
+    symfonion-VERSION.jar     ← Java core
+  share/
+    symfonion/
+      prelude/                ← built-in jq++ standard library
+----
+
+Add `symfonion-VERSION/bin/` to your `PATH` and you are done.
+
+== First-run bootstrap
+
+On the first invocation the launcher automatically downloads and installs
+two companion tools into `lib/`.
+No manual setup is required beyond having an internet connection and,
+for `jqplusplus`, the https://go.dev/dl/[Go toolchain] on your `PATH`.
+
+----
+symfonion-VERSION/
+  lib/
+    yq                        ← YAML→JSON converter
+                                downloaded from github.com/mikefarah/yq releases
+    jqplusplus                ← jq++ binary
+                                installed via: go install github.com/dakusui/jqplusplus/...
+    jq++                      ← symlink → jqplusplus
+                                created by jqplusplus on its first invocation
+----
+
+Subsequent invocations detect the cached binaries and skip installation.
+
+== Project-local library path (optional)
+
+Place jq++ library files (YAML++ snippets shared across songs in a project)
+in a `.symfonion/prelude/` directory alongside your song files.
+The launcher adds this directory to `JF_PATH` automatically.
+
+----
+my-project/
+  .symfonion/
+    prelude/                  ← project-local jq++ library
+  song1.yaml
+  song2.yaml
+----
+
+== JF_PATH precedence
+
+`JF_PATH` is the search path used by `jq++` to resolve `$extends` and
+`$includes` references.  The launcher builds it in this order
+(highest priority first):
+
+[cols="1,3"]
+|===
+| Source | Path
+
+| `$SYMFONION_PATH` env var
+| Set this before invoking symfonion to prepend your own library directories.
+
+| `.symfonion/prelude/`
+| Project-local overrides, resolved relative to the current working directory.
+
+| `share/symfonion/prelude/`
+| Built-in standard library shipped with the distribution.
+|===
+
+== See also
+
+* link:CLI.html[Command-line reference]
+* link:SYNTAX.html[Symfonion language syntax]

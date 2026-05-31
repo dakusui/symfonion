@@ -88,6 +88,7 @@ Written by Hiroshi Ukai
 == See also
 
 // suppress inspection "AsciiDocLinkResolve"
+* link:INSTALLATION.html[Installation &amp; directory layout]
 * link:SYNTAX.html[Syntax of SyMFONION]
 * JSON : http://www.json.org/
 * MIDI standard: http://www.midi.org/aboutmidi/ , http://en.wikipedia.org/wiki/MIDI
