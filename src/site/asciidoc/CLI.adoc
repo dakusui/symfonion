@@ -41,6 +41,67 @@ Lists the available MIDI input and output devices.
 Plays the specified file.
 See also '-O' option.
 
+During playback, a progress line is printed to standard output each time a new measure begins.
+
+Given a YAML file like this:
+
+[source, yaml]
+----
+parts:
+  piano:
+    channel: 0
+  bass:
+    channel: 1
+
+sequence:
+  - beats: 4/4
+    labels: [intro]
+    parts:
+      - name: piano
+        body: C4;E4;G4;C>4
+      - name: bass
+        body: C3;r4;r4;r4
+
+  - beats: 4/4
+    labels: [verse]
+    parts:
+      - name: piano
+        body: F4;A4;C>4;r4
+      - name: bass
+        body: F3;r4;r4;r4
+
+  - beats: 4/4
+    labels: [verse]
+    parts:
+      - name: piano
+        body: G4;B4;D>4;r4
+      - name: bass
+        body: G3;r4;r4;r4
+----
+
+Playing it produces:
+
+.Console
+----
+user@host:~/work $ symfonion -p song.yaml
+Start playing on port1(1719820123456)
+[bar   0] {intro} - piano, bass
+[bar   1] {verse} - piano, bass
+[bar   2] {verse} - piano, bass
+Finished playing.
+----
+
+`[bar N]` is the zero-based index of the measure in the `sequence` array of the input file.
+The `{label, ...}` section appears only when the measure has a `labels` field — these strings are defined by the user and are directly searchable in the YAML.
+The part names after ` - ` are the keys from the `parts` section that are active in that measure.
+Measures without `labels` print without the `{...}` section:
+
+----
+[bar   0] - piano, bass
+----
+
+This output makes it easy to correlate what you hear with the corresponding measure in the source file: search for a label name, or count to index `N` in the `sequence` array.
+
 === --compile or -c
 Compiles the specified file to a standard MIDI file.
 The example command line below compiles the input file 'example2.js' and output the compiled midi file to 'test.mid'.

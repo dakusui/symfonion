@@ -31,7 +31,7 @@ public class PlaySong implements Subcommand {
       ps.println();
       Map<String, MidiDevice> midiOutDevices = prepareMidiOutDevices(ps, cli.midiOutRegexPatterns());
       ps.println();
-      play(midiOutDevices, sequences);
+      play(ps, midiOutDevices, sequences);
     }
   }
 }
