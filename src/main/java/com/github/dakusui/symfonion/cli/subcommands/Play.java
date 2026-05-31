@@ -167,9 +167,16 @@ public class Play implements Subcommand {
   }
 
   static long findPrevTick(long[] ticks, long current) {
+    // Step 1: find the start of the bar we are currently in (largest tick <= current).
+    long currentBarStart = 0;
+    for (long tick : ticks) {
+      if (tick > current) break;
+      currentBarStart = tick;
+    }
+    // Step 2: return the tick that starts the bar before the current one.
     long prev = 0;
     for (long tick : ticks) {
-      if (tick >= current) break;
+      if (tick >= currentBarStart) break;
       prev = tick;
     }
     return prev;
