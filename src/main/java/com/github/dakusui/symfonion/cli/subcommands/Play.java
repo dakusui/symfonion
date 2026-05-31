@@ -15,7 +15,9 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
 import static com.github.dakusui.symfonion.cli.subcommands.LogiasUtils.createLogiasContext;
@@ -32,10 +34,14 @@ public class Play implements Subcommand {
 
       CompatSong            song      = symfonion.load(cli.source().getAbsolutePath(), cli.barFilter(), cli.partFilter());
       Map<String, Sequence> sequences = symfonion.compile(song, createLogiasContext());
+      Supplier<Map<String, Sequence>> recompiler = () -> {
+        CompatSong s = symfonion.load(cli.source().getAbsolutePath(), cli.barFilter(), cli.partFilter());
+        return symfonion.compile(s, createLogiasContext());
+      };
       ps.println();
       Map<String, MidiDevice> midiOutDevices = prepareMidiOutDevices(ps, cli.midiOutRegexPatterns());
       ps.println();
-      play(ps, midiOutDevices, sequences);
+      play(ps, midiOutDevices, sequences, recompiler);
     }
   }
 
@@ -59,9 +65,8 @@ public class Play implements Subcommand {
     return devices;
   }
 
-  private static Map<String, Sequencer> prepareSequencers(List<String> portNames, Map<String, MidiDevice> midiOutDevices, Map<String, Sequence> sequences, PrintStream ps) throws MidiUnavailableException, InvalidMidiDataException {
-    Map<String, Sequencer> ret               = new HashMap<>();
-    final List<Sequencer>  playingSequencers = new LinkedList<>();
+  private static Map<String, Sequencer> prepareSequencers(List<String> portNames, Map<String, MidiDevice> midiOutDevices, Map<String, Sequence> sequences, List<Sequencer> playingSequencers, PrintStream ps) throws MidiUnavailableException, InvalidMidiDataException {
+    Map<String, Sequencer> ret = new HashMap<>();
     for (String portName : portNames) {
       MidiDevice      midiOutDevice = midiOutDevices.get(portName);
       Sequence        sequence      = sequences.get(portName);
@@ -225,12 +230,14 @@ public class Play implements Subcommand {
   // --- Keyboard controller ---
 
   private static final class KeyboardController implements Runnable {
-    private final Collection<Sequencer> sequencers;
-    private final long[]                measureTicks;
+    private final Collection<Sequencer>   sequencers;
+    private final AtomicReference<long[]> ticksRef;
+    private final Runnable                onEnter;
 
-    KeyboardController(Collection<Sequencer> sequencers, long[] measureTicks) {
-      this.sequencers   = sequencers;
-      this.measureTicks = measureTicks;
+    KeyboardController(Collection<Sequencer> sequencers, AtomicReference<long[]> ticksRef, Runnable onEnter) {
+      this.sequencers = sequencers;
+      this.ticksRef   = ticksRef;
+      this.onEnter    = onEnter;
     }
 
     @Override
@@ -242,6 +249,7 @@ public class Play implements Subcommand {
             continue;
           }
           int b = System.in.read();
+          if (b == '\r' || b == '\n') { onEnter.run(); continue; }
           if (b != 0x1B) continue;
           // Wait up to 50 ms for the rest of the escape sequence
           long deadline = System.currentTimeMillis() + 50;
@@ -269,11 +277,11 @@ public class Play implements Subcommand {
     }
 
     private void onRight() {
-      seekToTick(sequencers, findNextTick(measureTicks, currentTick()));
+      seekToTick(sequencers, findNextTick(ticksRef.get(), currentTick()));
     }
 
     private void onLeft() {
-      seekToTick(sequencers, findPrevTick(measureTicks, currentTick()));
+      seekToTick(sequencers, findPrevTick(ticksRef.get(), currentTick()));
     }
 
     private void onUp() {
@@ -291,21 +299,48 @@ public class Play implements Subcommand {
 
   // --- Main playback entry point ---
 
-  static synchronized void play(PrintStream ps, Map<String, MidiDevice> midiOutDevices, Map<String, Sequence> sequences) throws SymfonionException {
-    List<String>           portNames   = new LinkedList<>(sequences.keySet());
-    long[]                 markerTicks = extractMeasureMarkerTicks(sequences);
-    String                 savedTty    = setRawTerminalMode();
+  static synchronized void play(PrintStream ps, Map<String, MidiDevice> midiOutDevices, Map<String, Sequence> sequences, Supplier<Map<String, Sequence>> recompiler) throws SymfonionException {
+    List<String> portNames = new LinkedList<>(sequences.keySet());
+    String       savedTty  = setRawTerminalMode();
     // Shutdown hook ensures the terminal is restored even when Ctrl-C sends SIGINT
     // (SIGINT triggers JVM shutdown without running finally blocks).
     Thread restoreHook = new Thread(() -> restoreTerminalMode(savedTty));
     Runtime.getRuntime().addShutdownHook(restoreHook);
-    Map<String, Sequencer> sequencers;
     try {
-      sequencers = prepareSequencers(portNames, midiOutDevices, sequences, ps);
-      Thread kbThread = new Thread(new KeyboardController(sequencers.values(), markerTicks));
+      List<Sequencer>         playingSequencers = new LinkedList<>();
+      AtomicReference<long[]> ticksRef          = new AtomicReference<>(extractMeasureMarkerTicks(sequences));
+      Map<String, Sequencer>  sequencerMap      = prepareSequencers(portNames, midiOutDevices, sequences, playingSequencers, ps);
+      Runnable onEnter = () -> {
+        Map<String, Sequence> newSeqs;
+        try {
+          newSeqs = recompiler.get();
+        } catch (Exception e) {
+          ps.println("[recompile failed] " + e.getMessage());
+          return;
+        }
+        synchronized (Play.class) {
+          for (Sequencer seq : sequencerMap.values()) seq.stop();
+          try {
+            for (Map.Entry<String, Sequencer> entry : sequencerMap.entrySet())
+              entry.getValue().setSequence(newSeqs.get(entry.getKey()));
+          } catch (InvalidMidiDataException e) {
+            ps.println("[recompile failed] " + e.getMessage());
+            return;
+          }
+          playingSequencers.clear();
+          playingSequencers.addAll(sequencerMap.values());
+          ticksRef.set(extractMeasureMarkerTicks(newSeqs));
+          for (Sequencer seq : sequencerMap.values()) {
+            seq.setTickPosition(0);
+            seq.start();
+          }
+          ps.println("[recompiled OK]");
+        }
+      };
+      Thread kbThread = new Thread(new KeyboardController(sequencerMap.values(), ticksRef, onEnter));
       kbThread.setDaemon(true);
       try {
-        startSequencers(portNames, sequencers);
+        startSequencers(portNames, sequencerMap);
         kbThread.start();
         Play.class.wait();
       } finally {
@@ -313,7 +348,7 @@ public class Play implements Subcommand {
         try { Runtime.getRuntime().removeShutdownHook(restoreHook); } catch (IllegalStateException ignored) {}
         restoreTerminalMode(savedTty);
         System.out.println("Finished playing.");
-        cleanUpSequencers(portNames, midiOutDevices, sequencers);
+        cleanUpSequencers(portNames, midiOutDevices, sequencerMap);
       }
     } catch (MidiUnavailableException e) {
       throw deviceException("Midi device was not available.", e);
