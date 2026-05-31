@@ -3,6 +3,7 @@
         <menu name="Documents">
             <item href="SYNTAX.html" name="About symfonion syntax"/>
             <item href="CLI.html" name="About symfonion CLI"/>
+            <item href="INSTALLATION.html" name="Installation &amp; directory layout"/>
         </menu>
         <menu ref="reports" inherit="top"/>
         <menu ref="modules"/>
