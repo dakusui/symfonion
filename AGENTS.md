@@ -60,6 +60,31 @@ src/
 - Tests use **JUnit 5 (Jupiter)**; keep new tests in `src/test/java/…/symfonion/tests/`.
 - For bash scripts, follow the project's shell conventions (see `.claude/skills/symfonion-bash`).
 
+## Directory Layout
+
+```
+symfonion-VERSION/           ← SYMFONION_HOME
+  bin/
+    symfonion                ← CLI launcher (bash); only file shipped in bin/
+  lib/
+    symfonion-VERSION.jar    ← Java core (shipped)
+    yq                       ← YAML→JSON converter  (bootstrapped on first run)
+    jqplusplus               ← jq++ binary          (bootstrapped on first run)
+    jq++                     ← symlink → jqplusplus (created by jqplusplus itself)
+  share/
+    symfonion/
+      prelude/               ← built-in jq++ standard library (shipped, may be empty)
+```
+
+Optional, project-local (alongside the user's song files):
+
+```
+.symfonion/
+  prelude/                   ← project-local jq++ library; higher priority than built-in
+```
+
+`JF_PATH` precedence: `$SYMFONION_PATH` → `.symfonion/prelude` → `share/symfonion/prelude`.
+
 ## Launcher & Preprocessing Pipeline
 
 `bin/symfonion` (and its dev copy `src/main/resources/utils/symfonion`) handles three concerns:

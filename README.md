@@ -17,6 +17,33 @@ Symfonion is a modern music macro language processor.
 3. Add `symfonion-VERSION/bin/` to your `PATH`.
 4. Done.
 
+### Directory layout
+
+The archive unpacks to a self-contained tree:
+
+```
+symfonion-VERSION/
+  bin/
+    symfonion                   ← CLI launcher (bash)
+  lib/
+    symfonion-VERSION.jar       ← Java core
+  share/
+    symfonion/
+      prelude/                  ← built-in jq++ standard library
+```
+
+On the **first invocation** the launcher downloads and installs two companion tools into `lib/`:
+
+```
+symfonion-VERSION/
+  lib/
+    yq                          ← YAML→JSON converter  (downloaded from GitHub releases)
+    jqplusplus                  ← jq++ binary          (installed via go install; requires Go)
+    jq++                        ← symlink → jqplusplus (created by jqplusplus itself)
+```
+
+You can also place project-local jq++ library files in `.symfonion/prelude/` alongside your song files; the launcher adds that directory to `JF_PATH` automatically (higher priority than the built-in prelude).
+
 You will be able to run ```symfonion``` by typing
 
 ```
