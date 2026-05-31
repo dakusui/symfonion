@@ -295,6 +295,10 @@ public class Play implements Subcommand {
     List<String>           portNames   = new LinkedList<>(sequences.keySet());
     long[]                 markerTicks = extractMeasureMarkerTicks(sequences);
     String                 savedTty    = setRawTerminalMode();
+    // Shutdown hook ensures the terminal is restored even when Ctrl-C sends SIGINT
+    // (SIGINT triggers JVM shutdown without running finally blocks).
+    Thread restoreHook = new Thread(() -> restoreTerminalMode(savedTty));
+    Runtime.getRuntime().addShutdownHook(restoreHook);
     Map<String, Sequencer> sequencers;
     try {
       sequencers = prepareSequencers(portNames, midiOutDevices, sequences, ps);
@@ -306,6 +310,7 @@ public class Play implements Subcommand {
         Play.class.wait();
       } finally {
         kbThread.interrupt();
+        try { Runtime.getRuntime().removeShutdownHook(restoreHook); } catch (IllegalStateException ignored) {}
         restoreTerminalMode(savedTty);
         System.out.println("Finished playing.");
         cleanUpSequencers(portNames, midiOutDevices, sequencers);
