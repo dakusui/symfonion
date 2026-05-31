@@ -74,6 +74,16 @@ See [`src/site/asciidoc/INSTALLATION.adoc`](src/site/asciidoc/INSTALLATION.adoc)
 
 Version pins (`yq_version`, `jqplusplus_version`) live at the top of both launcher files and should be bumped together at release time.
 
+## Launcher & Preprocessing Pipeline
+
+`bin/symfonion` (and its dev copy `src/main/resources/utils/symfonion`) handles three concerns:
+
+1. **Dependency bootstrap** — on first use, downloads `yq` and installs `jqplusplus` (via `go install`) into `$SYMFONION_HOME/lib/`. Presence of `lib/jq++` (the symlink created by jqplusplus) signals that deps are ready.
+2. **YAML preprocessing** — `.yaml`/`.yml` args are piped through `yq -o=json | jq++` and written to a temp file; the temp path replaces the original arg.
+3. **JF_PATH setup** — builds the search path for `jq++` library files (prelude), respecting `SYMFONION_PATH` → `.symfonion/prelude` → built-in prelude.
+
+Version pins (`yq_version`, `jqplusplus_version`) live at the top of both launcher files and should be bumped together at release time.
+
 ## Release
 
 Releases are published to Maven Central via Sonatype. Follow the release skill (`.agents/skills/symfonion-release`) rather than running `mvn release:*` manually.
