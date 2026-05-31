@@ -1,0 +1,3646 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <link rel="stylesheet" type="text/css" href="../style.css">
+</head>
+<body>
+
+
+<h1>JsonSummarizer.java</h1>
+
+<table class="src">
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_1'/>
+1
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_1'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>package com.github.dakusui.symfonion.compat.json;</span></pre></td></tr>
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_2'/>
+2
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_2'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_3'/>
+3
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_3'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>import com.github.dakusui.valid8j_cliche.core.Transform;</span></pre></td></tr>
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_4'/>
+4
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_4'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>import com.github.dakusui.valid8j_cliche.json.JsonObjectTo;</span></pre></td></tr>
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_5'/>
+5
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_5'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>import com.github.valid8j.fluent.Expectations;</span></pre></td></tr>
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_6'/>
+6
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_6'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>import com.google.gson.JsonArray;</span></pre></td></tr>
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_7'/>
+7
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_7'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>import com.google.gson.JsonElement;</span></pre></td></tr>
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_8'/>
+8
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_8'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>import com.google.gson.JsonObject;</span></pre></td></tr>
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_9'/>
+9
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_9'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>import com.google.gson.JsonPrimitive;</span></pre></td></tr>
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_10'/>
+10
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_10'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_11'/>
+11
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_11'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>import java.util.List;</span></pre></td></tr>
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_12'/>
+12
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_12'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>import java.util.Objects;</span></pre></td></tr>
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_13'/>
+13
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_13'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>import java.util.function.Predicate;</span></pre></td></tr>
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_14'/>
+14
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_14'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_15'/>
+15
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_15'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>import static com.github.valid8j.classic.Assertions.that;</span></pre></td></tr>
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_16'/>
+16
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_16'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>import static com.github.valid8j.fluent.Expectations.statement;</span></pre></td></tr>
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_17'/>
+17
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_17'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>import static com.github.valid8j.pcond.forms.Predicates.*;</span></pre></td></tr>
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_18'/>
+18
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_18'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>import static com.github.valid8j.pcond.forms.Printables.predicate;</span></pre></td></tr>
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_19'/>
+19
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_19'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_20'/>
+20
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_20'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>public class JsonSummarizer {</span></pre></td></tr>
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_21'/>
+21
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_21'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>  public static JsonElement summaryObject(JsonObject root, List&#60;Object&#62; pathToParent, Object focus) {</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_22'/>
+22
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_22'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>    JsonElement previousElement = parentElement(focus, CompatJsonUtils.asJsonElement(root, pathToParent.toArray()));</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_23'/>
+23
+</td>
+<td class='survived'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_23'>1</a>
+<span>
+1. summaryObject : negated conditional &rarr; SURVIVED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='survived'>    JsonElement ret = focus instanceof String ? new JsonObject() : new JsonArray();</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_24'/>
+24
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_24'>3</a>
+<span>
+1. summaryObject : negated conditional &rarr; KILLED<br/>
+2. summaryObject : changed conditional boundary &rarr; KILLED<br/>
+3. summaryObject : Replaced integer subtraction with addition &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>    for (int i = pathToParent.size() - 1; i &#62;= 0; i--) {</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_25'/>
+25
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_25'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>      Object currentKey = pathToParent.get(i);</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_26'/>
+26
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_26'>1</a>
+<span>
+1. summaryObject : negated conditional &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>      if (currentKey instanceof String) {</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_27'/>
+27
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_27'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>        ret = new JsonObject();</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_28'/>
+28
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_28'>1</a>
+<span>
+1. summaryObject : removed call to com/google/gson/JsonObject::add &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>        ((JsonObject) ret).add((String) currentKey, previousElement);</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_29'/>
+29
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_29'>1</a>
+<span>
+1. summaryObject : negated conditional &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>      } else if (currentKey instanceof Integer) {</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_30'/>
+30
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_30'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>        ret = new JsonArray();</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_31'/>
+31
+</td>
+<td class='survived'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_31'>1</a>
+<span>
+1. summaryObject : removed call to com/google/gson/JsonArray::add &rarr; SURVIVED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='survived'>        ((JsonArray) ret).add(previousElement);</span></pre></td></tr>
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_32'/>
+32
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_32'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>      } else</span></pre></td></tr>
+
+<tr>
+<td class='uncovered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_33'/>
+33
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_33'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='uncovered'><pre><span  class=''>        assert false;</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_34'/>
+34
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_34'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>      previousElement = ret;</span></pre></td></tr>
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_35'/>
+35
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_35'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>    }</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_36'/>
+36
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_36'>1</a>
+<span>
+1. summaryObject : replaced return value with null for com/github/dakusui/symfonion/compat/json/JsonSummarizer::summaryObject &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>    return ret;</span></pre></td></tr>
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_37'/>
+37
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_37'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>  }</span></pre></td></tr>
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_38'/>
+38
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_38'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_39'/>
+39
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_39'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>  public static JsonElement collapseForObjectValue(JsonElement element) {</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_40'/>
+40
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_40'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>    JsonElement ret = collapseJsonElement(element);</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_41'/>
+41
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_41'>2</a>
+<span>
+1. collapseForObjectValue : replaced return value with null for com/github/dakusui/symfonion/compat/json/JsonSummarizer::collapseForObjectValue &rarr; KILLED<br/>
+2. collapseForObjectValue : negated conditional &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>    if (ret != null) return ret;</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_42'/>
+42
+</td>
+<td class='survived'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_42'>1</a>
+<span>
+1. collapseForObjectValue : replaced return value with null for com/github/dakusui/symfonion/compat/json/JsonSummarizer::collapseForObjectValue &rarr; SURVIVED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='survived'>    return new JsonPrimitive(&#34;...&#34;);</span></pre></td></tr>
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_43'/>
+43
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_43'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>  }</span></pre></td></tr>
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_44'/>
+44
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_44'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_45'/>
+45
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_45'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>  private static JsonElement collapseJsonElement(JsonElement element) {</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_46'/>
+46
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_46'>1</a>
+<span>
+1. collapseJsonElement : negated conditional &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>    if (element.isJsonArray()) {</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_47'/>
+47
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_47'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>      JsonArray ret = new JsonArray();</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_48'/>
+48
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_48'>1</a>
+<span>
+1. collapseJsonElement : negated conditional &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>      if (!((JsonArray) element).isEmpty())</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_49'/>
+49
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_49'>1</a>
+<span>
+1. collapseJsonElement : removed call to com/google/gson/JsonArray::add &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>        ret.add(&#34;...&#34;);</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_50'/>
+50
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_50'>1</a>
+<span>
+1. collapseJsonElement : replaced return value with null for com/github/dakusui/symfonion/compat/json/JsonSummarizer::collapseJsonElement &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>      return ret;</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_51'/>
+51
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_51'>1</a>
+<span>
+1. collapseJsonElement : negated conditional &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>    } else if (element.isJsonObject()) {</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_52'/>
+52
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_52'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>      JsonObject ret = new JsonObject();</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_53'/>
+53
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_53'>1</a>
+<span>
+1. collapseJsonElement : negated conditional &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>      if (!((JsonObject) element).keySet().isEmpty())</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_54'/>
+54
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_54'>1</a>
+<span>
+1. collapseJsonElement : removed call to com/google/gson/JsonObject::add &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>        ret.add(&#34;...&#34;, new JsonPrimitive(&#34;...&#34;));</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_55'/>
+55
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_55'>1</a>
+<span>
+1. collapseJsonElement : replaced return value with null for com/github/dakusui/symfonion/compat/json/JsonSummarizer::collapseJsonElement &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>      return ret;</span></pre></td></tr>
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_56'/>
+56
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_56'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>    }</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_57'/>
+57
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_57'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>    return null;</span></pre></td></tr>
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_58'/>
+58
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_58'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>  }</span></pre></td></tr>
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_59'/>
+59
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_59'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_60'/>
+60
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_60'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>  public static JsonElement collapseForArrayElement(JsonElement element) {</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_61'/>
+61
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_61'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>    JsonElement ret = collapseJsonElement(element);</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_62'/>
+62
+</td>
+<td class='survived'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_62'>2</a>
+<span>
+1. collapseForArrayElement : replaced return value with null for com/github/dakusui/symfonion/compat/json/JsonSummarizer::collapseForArrayElement &rarr; SURVIVED<br/>
+2. collapseForArrayElement : negated conditional &rarr; SURVIVED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='survived'>    if (ret != null) return ret;</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_63'/>
+63
+</td>
+<td class='survived'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_63'>1</a>
+<span>
+1. collapseForArrayElement : replaced return value with null for com/github/dakusui/symfonion/compat/json/JsonSummarizer::collapseForArrayElement &rarr; SURVIVED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='survived'>    return element;</span></pre></td></tr>
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_64'/>
+64
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_64'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>  }</span></pre></td></tr>
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_65'/>
+65
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_65'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_66'/>
+66
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_66'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>  /**</span></pre></td></tr>
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_67'/>
+67
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_67'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>   * &#60;pre&#62;</span></pre></td></tr>
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_68'/>
+68
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_68'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>   *</span></pre></td></tr>
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_69'/>
+69
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_69'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>   * &#60;/pre&#62;</span></pre></td></tr>
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_70'/>
+70
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_70'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>   *</span></pre></td></tr>
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_71'/>
+71
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_71'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>   * @param object input JSON object.</span></pre></td></tr>
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_72'/>
+72
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_72'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>   * @return A summarized JSON object.</span></pre></td></tr>
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_73'/>
+73
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_73'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>   */</span></pre></td></tr>
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_74'/>
+74
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_74'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>  public static JsonObject focusedObject(JsonObject object) {</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_75'/>
+75
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_75'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>    JsonObject ret = new JsonObject();</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_76'/>
+76
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_76'>2</a>
+<span>
+1. lambda$focusedObject$0 : removed call to com/google/gson/JsonObject::add &rarr; KILLED<br/>
+2. focusedObject : removed call to java/util/Set::forEach &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>    object.keySet().forEach(k -&#62; ret.add(k, collapseForObjectValue(object.get(k))));</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_77'/>
+77
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_77'>1</a>
+<span>
+1. focusedObject : replaced return value with null for com/github/dakusui/symfonion/compat/json/JsonSummarizer::focusedObject &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>    return ret;</span></pre></td></tr>
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_78'/>
+78
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_78'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>  }</span></pre></td></tr>
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_79'/>
+79
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_79'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_80'/>
+80
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_80'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>  public static JsonElement parentElement(Object focus, JsonElement parent) {</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_81'/>
+81
+</td>
+<td class='survived'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_81'>2</a>
+<span>
+1. lambda$parentElement$1 : replaced boolean return with true for com/github/dakusui/symfonion/compat/json/JsonSummarizer::lambda$parentElement$1 &rarr; SURVIVED<br/>
+2. lambda$parentElement$1 : replaced boolean return with false for com/github/dakusui/symfonion/compat/json/JsonSummarizer::lambda$parentElement$1 &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='survived'>    Predicate&#60;Object&#62; focusIsInstanceOfString = predicate(&#34;focusIsInstanceOfString&#34;, v -&#62; focus instanceof String);</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_82'/>
+82
+</td>
+<td class='survived'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_82'>2</a>
+<span>
+1. lambda$parentElement$2 : replaced boolean return with true for com/github/dakusui/symfonion/compat/json/JsonSummarizer::lambda$parentElement$2 &rarr; SURVIVED<br/>
+2. lambda$parentElement$2 : replaced boolean return with false for com/github/dakusui/symfonion/compat/json/JsonSummarizer::lambda$parentElement$2 &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='survived'>    Predicate&#60;Object&#62; focusIsInstanceOfInteger = predicate(&#34;focusIsInstanceOfInteger&#34;, v -&#62; focus instanceof Integer);</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_83'/>
+83
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_83'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>    assert Expectations.all(</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_84'/>
+84
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_84'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>        statement(focus, isNotNull()),</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_85'/>
+85
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_85'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>        statement(parent, allOf(isNotNull(), or(</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_86'/>
+86
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_86'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>            callp(&#34;isJsonObject&#34;).and(focusIsInstanceOfString),</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_87'/>
+87
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_87'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>            callp(&#34;isJsonArray&#34;).and(focusIsInstanceOfInteger)))));</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_88'/>
+88
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_88'>1</a>
+<span>
+1. parentElement : negated conditional &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>    if (parent.isJsonObject())</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_89'/>
+89
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_89'>1</a>
+<span>
+1. parentElement : replaced return value with null for com/github/dakusui/symfonion/compat/json/JsonSummarizer::parentElement &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>      return parentObject((String) focus, (JsonObject) parent);</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_90'/>
+90
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_90'>1</a>
+<span>
+1. parentElement : negated conditional &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>    if (parent.isJsonArray())</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_91'/>
+91
+</td>
+<td class='survived'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_91'>1</a>
+<span>
+1. parentElement : replaced return value with null for com/github/dakusui/symfonion/compat/json/JsonSummarizer::parentElement &rarr; SURVIVED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='survived'>      return parentArray((Integer) focus, (JsonArray) parent);</span></pre></td></tr>
+
+<tr>
+<td class='uncovered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_92'/>
+92
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_92'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='uncovered'><pre><span  class=''>    throw new RuntimeException();</span></pre></td></tr>
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_93'/>
+93
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_93'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>  }</span></pre></td></tr>
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_94'/>
+94
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_94'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_95'/>
+95
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_95'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>  public static JsonObject parentObject(String focusedChildKey, JsonObject object) {</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_96'/>
+96
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_96'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>    assert Expectations.all(</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_97'/>
+97
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_97'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>        statement(focusedChildKey, isNotNull()),</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_98'/>
+98
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_98'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>        statement(object, allOf(</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_99'/>
+99
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_99'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>            isNotNull(),</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_100'/>
+100
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_100'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>            Transform.$(JsonObjectTo.keyList()).check(contains(focusedChildKey)))));</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_101'/>
+101
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_101'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>    JsonObject ret = new JsonObject();</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_102'/>
+102
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_102'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>    object</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_103'/>
+103
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_103'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>        .keySet()</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_104'/>
+104
+</td>
+<td class='survived'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_104'>3</a>
+<span>
+1. lambda$parentObject$3 : negated conditional &rarr; SURVIVED<br/>
+2. lambda$parentObject$3 : removed call to com/google/gson/JsonObject::add &rarr; KILLED<br/>
+3. parentObject : removed call to java/util/Set::forEach &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='survived'>        .forEach(k -&#62; ret.add(k, Objects.equals(k, focusedChildKey) ?</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_105'/>
+105
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_105'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>            focusedElement(object.get(k)) :</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_106'/>
+106
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_106'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>            collapseForObjectValue(object.get(k))));</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_107'/>
+107
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_107'>1</a>
+<span>
+1. parentObject : replaced return value with null for com/github/dakusui/symfonion/compat/json/JsonSummarizer::parentObject &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>    return ret;</span></pre></td></tr>
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_108'/>
+108
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_108'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>  }</span></pre></td></tr>
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_109'/>
+109
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_109'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_110'/>
+110
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_110'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>  public static JsonArray focusedArray(JsonArray array) {</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_111'/>
+111
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_111'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>    JsonArray ret = new JsonArray();</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_112'/>
+112
+</td>
+<td class='survived'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_112'>2</a>
+<span>
+1. focusedArray : removed call to com/google/gson/JsonArray::forEach &rarr; SURVIVED<br/>
+2. lambda$focusedArray$4 : removed call to com/google/gson/JsonArray::add &rarr; SURVIVED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='survived'>    array.forEach(each -&#62; ret.add(collapseForArrayElement(each)));</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_113'/>
+113
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_113'>1</a>
+<span>
+1. focusedArray : replaced return value with null for com/github/dakusui/symfonion/compat/json/JsonSummarizer::focusedArray &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>    return ret;</span></pre></td></tr>
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_114'/>
+114
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_114'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>  }</span></pre></td></tr>
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_115'/>
+115
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_115'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_116'/>
+116
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_116'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>  public static JsonArray parentArray(int focusedChildIndex, JsonArray array) {</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_117'/>
+117
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_117'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>    assert Expectations.all(</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_118'/>
+118
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_118'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>        statement(array, isNotNull()),</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_119'/>
+119
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_119'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>        statement(focusedChildIndex, greaterThanOrEqualTo(0).and(lessThan(array.size()))));</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_120'/>
+120
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_120'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>    JsonArray ret = new JsonArray();</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_121'/>
+121
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_121'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>    JsonElement focusedChild = array.get(focusedChildIndex);</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_122'/>
+122
+</td>
+<td class='survived'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_122'>3</a>
+<span>
+1. lambda$parentArray$5 : negated conditional &rarr; SURVIVED<br/>
+2. parentArray : removed call to com/google/gson/JsonArray::forEach &rarr; SURVIVED<br/>
+3. lambda$parentArray$5 : removed call to com/google/gson/JsonArray::add &rarr; SURVIVED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='survived'>    array.forEach(i -&#62; ret.add(Objects.equals(i, focusedChild) ?</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_123'/>
+123
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_123'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>        focusedElement(i) :</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_124'/>
+124
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_124'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>        collapseForArrayElement(i)));</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_125'/>
+125
+</td>
+<td class='survived'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_125'>1</a>
+<span>
+1. parentArray : replaced return value with null for com/github/dakusui/symfonion/compat/json/JsonSummarizer::parentArray &rarr; SURVIVED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='survived'>    return ret;</span></pre></td></tr>
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_126'/>
+126
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_126'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>  }</span></pre></td></tr>
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_127'/>
+127
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_127'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_128'/>
+128
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_128'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>  public static JsonElement focusedElement(JsonElement element) {</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_129'/>
+129
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_129'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>    assert that(element, isNotNull());</span></pre></td></tr>
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_130'/>
+130
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_130'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>    JsonElement ret;</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_131'/>
+131
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_131'>1</a>
+<span>
+1. focusedElement : negated conditional &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>    if (element.isJsonObject()) {</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_132'/>
+132
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_132'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>      ret = focusedObject((JsonObject) element);</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_133'/>
+133
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_133'>1</a>
+<span>
+1. focusedElement : negated conditional &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>    } else if (element.isJsonArray()) {</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_134'/>
+134
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_134'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>      ret = focusedArray((JsonArray) element);</span></pre></td></tr>
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_135'/>
+135
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_135'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>    } else {</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_136'/>
+136
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_136'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>      ret = element;</span></pre></td></tr>
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_137'/>
+137
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_137'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>    }</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_138'/>
+138
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_138'>1</a>
+<span>
+1. focusedElement : replaced return value with null for com/github/dakusui/symfonion/compat/json/JsonSummarizer::focusedElement &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>    return ret;</span></pre></td></tr>
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_139'/>
+139
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_139'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>  }</span></pre></td></tr>
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_140'/>
+140
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_140'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_141'/>
+141
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_141'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>  static JsonPrimitive compactJsonPrimitive(JsonPrimitive primitive, int headLength, int tailLength) {</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_142'/>
+142
+</td>
+<td class='survived'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_142'>1</a>
+<span>
+1. compactJsonPrimitive : negated conditional &rarr; SURVIVED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='survived'>    if (primitive.isString()) {</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_143'/>
+143
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_143'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>      String dots = &#34;...&#34;;</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_144'/>
+144
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_144'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>      String s = primitive.getAsString();</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_145'/>
+145
+</td>
+<td class='survived'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_145'>4</a>
+<span>
+1. compactJsonPrimitive : changed conditional boundary &rarr; SURVIVED<br/>
+2. compactJsonPrimitive : negated conditional &rarr; KILLED<br/>
+3. compactJsonPrimitive : Replaced integer addition with subtraction &rarr; KILLED<br/>
+4. compactJsonPrimitive : Replaced integer addition with subtraction &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='survived'>      if (headLength + dots.length() + tailLength &#62;= s.length())</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_146'/>
+146
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_146'>1</a>
+<span>
+1. compactJsonPrimitive : replaced return value with null for com/github/dakusui/symfonion/compat/json/JsonSummarizer::compactJsonPrimitive &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>        return primitive;</span></pre></td></tr>
+
+<tr>
+<td class='uncovered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_147'/>
+147
+</td>
+<td class='survived'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_147'>2</a>
+<span>
+1. compactJsonPrimitive : Replaced integer subtraction with addition &rarr; NO_COVERAGE<br/>
+2. compactJsonPrimitive : replaced return value with null for com/github/dakusui/symfonion/compat/json/JsonSummarizer::compactJsonPrimitive &rarr; NO_COVERAGE<br/>
+
+</span>
+</span>
+</td>
+<td class='uncovered'><pre><span  class='survived'>      return new JsonPrimitive(s.substring(0, headLength) + dots + s.substring(s.length() - tailLength));</span></pre></td></tr>
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_148'/>
+148
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_148'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>    }</span></pre></td></tr>
+
+<tr>
+<td class='uncovered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_149'/>
+149
+</td>
+<td class='survived'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_149'>1</a>
+<span>
+1. compactJsonPrimitive : replaced return value with null for com/github/dakusui/symfonion/compat/json/JsonSummarizer::compactJsonPrimitive &rarr; NO_COVERAGE<br/>
+
+</span>
+</span>
+</td>
+<td class='uncovered'><pre><span  class='survived'>    return primitive;</span></pre></td></tr>
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_150'/>
+150
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_150'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>  }</span></pre></td></tr>
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_151'/>
+151
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_151'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_152'/>
+152
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_152'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>  static JsonArray compactJsonArray(JsonArray array, int headLength, int tailLength) {</span></pre></td></tr>
+
+<tr>
+<td class='uncovered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_153'/>
+153
+</td>
+<td class='survived'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_153'>4</a>
+<span>
+1. compactJsonArray : Replaced integer addition with subtraction &rarr; NO_COVERAGE<br/>
+2. compactJsonArray : changed conditional boundary &rarr; NO_COVERAGE<br/>
+3. compactJsonArray : Replaced integer addition with subtraction &rarr; NO_COVERAGE<br/>
+4. compactJsonArray : negated conditional &rarr; NO_COVERAGE<br/>
+
+</span>
+</span>
+</td>
+<td class='uncovered'><pre><span  class='survived'>    if (headLength + 1 + tailLength &#62;= array.size())</span></pre></td></tr>
+
+<tr>
+<td class='uncovered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_154'/>
+154
+</td>
+<td class='survived'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_154'>1</a>
+<span>
+1. compactJsonArray : replaced return value with null for com/github/dakusui/symfonion/compat/json/JsonSummarizer::compactJsonArray &rarr; NO_COVERAGE<br/>
+
+</span>
+</span>
+</td>
+<td class='uncovered'><pre><span  class='survived'>      return array;</span></pre></td></tr>
+
+<tr>
+<td class='uncovered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_155'/>
+155
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_155'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='uncovered'><pre><span  class=''>    JsonArray ret = new JsonArray();</span></pre></td></tr>
+
+<tr>
+<td class='uncovered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_156'/>
+156
+</td>
+<td class='survived'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_156'>2</a>
+<span>
+1. compactJsonArray : changed conditional boundary &rarr; NO_COVERAGE<br/>
+2. compactJsonArray : negated conditional &rarr; NO_COVERAGE<br/>
+
+</span>
+</span>
+</td>
+<td class='uncovered'><pre><span  class='survived'>    for (int i = 0; i &#60; headLength; i++)</span></pre></td></tr>
+
+<tr>
+<td class='uncovered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_157'/>
+157
+</td>
+<td class='survived'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_157'>1</a>
+<span>
+1. compactJsonArray : removed call to com/google/gson/JsonArray::add &rarr; NO_COVERAGE<br/>
+
+</span>
+</span>
+</td>
+<td class='uncovered'><pre><span  class='survived'>      ret.add(array.get(i));</span></pre></td></tr>
+
+<tr>
+<td class='uncovered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_158'/>
+158
+</td>
+<td class='survived'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_158'>1</a>
+<span>
+1. compactJsonArray : removed call to com/google/gson/JsonArray::add &rarr; NO_COVERAGE<br/>
+
+</span>
+</span>
+</td>
+<td class='uncovered'><pre><span  class='survived'>    ret.add(&#34;...&#34;);</span></pre></td></tr>
+
+<tr>
+<td class='uncovered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_159'/>
+159
+</td>
+<td class='survived'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_159'>3</a>
+<span>
+1. compactJsonArray : changed conditional boundary &rarr; NO_COVERAGE<br/>
+2. compactJsonArray : Replaced integer subtraction with addition &rarr; NO_COVERAGE<br/>
+3. compactJsonArray : negated conditional &rarr; NO_COVERAGE<br/>
+
+</span>
+</span>
+</td>
+<td class='uncovered'><pre><span  class='survived'>    for (int i = array.size() - tailLength; i &#60; array.size(); i++)</span></pre></td></tr>
+
+<tr>
+<td class='uncovered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_160'/>
+160
+</td>
+<td class='survived'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_160'>1</a>
+<span>
+1. compactJsonArray : removed call to com/google/gson/JsonArray::add &rarr; NO_COVERAGE<br/>
+
+</span>
+</span>
+</td>
+<td class='uncovered'><pre><span  class='survived'>      ret.add(array.get(i));</span></pre></td></tr>
+
+<tr>
+<td class='uncovered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_161'/>
+161
+</td>
+<td class='survived'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_161'>1</a>
+<span>
+1. compactJsonArray : replaced return value with null for com/github/dakusui/symfonion/compat/json/JsonSummarizer::compactJsonArray &rarr; NO_COVERAGE<br/>
+
+</span>
+</span>
+</td>
+<td class='uncovered'><pre><span  class='survived'>    return ret;</span></pre></td></tr>
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_162'/>
+162
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_162'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>  }</span></pre></td></tr>
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_163'/>
+163
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_163'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_164'/>
+164
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_164'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>  static JsonObject compactJsonObject(JsonObject object, int headLength, int tailLength) {</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_165'/>
+165
+</td>
+<td class='survived'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_165'>4</a>
+<span>
+1. compactJsonObject : changed conditional boundary &rarr; SURVIVED<br/>
+2. compactJsonObject : Replaced integer addition with subtraction &rarr; SURVIVED<br/>
+3. compactJsonObject : Replaced integer addition with subtraction &rarr; KILLED<br/>
+4. compactJsonObject : negated conditional &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='survived'>    if (headLength + 1 + tailLength &#62;= object.size())</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_166'/>
+166
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_166'>1</a>
+<span>
+1. compactJsonObject : replaced return value with null for com/github/dakusui/symfonion/compat/json/JsonSummarizer::compactJsonObject &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>      return object;</span></pre></td></tr>
+
+<tr>
+<td class='uncovered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_167'/>
+167
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_167'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='uncovered'><pre><span  class=''>    JsonObject ret = new JsonObject();</span></pre></td></tr>
+
+<tr>
+<td class='uncovered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_168'/>
+168
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_168'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='uncovered'><pre><span  class=''>    List&#60;String&#62; keys = object.keySet().stream().sorted().toList();</span></pre></td></tr>
+
+<tr>
+<td class='uncovered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_169'/>
+169
+</td>
+<td class='survived'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_169'>2</a>
+<span>
+1. compactJsonObject : negated conditional &rarr; NO_COVERAGE<br/>
+2. compactJsonObject : changed conditional boundary &rarr; NO_COVERAGE<br/>
+
+</span>
+</span>
+</td>
+<td class='uncovered'><pre><span  class='survived'>    for (int i = 0; i &#60; headLength; i++)</span></pre></td></tr>
+
+<tr>
+<td class='uncovered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_170'/>
+170
+</td>
+<td class='survived'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_170'>1</a>
+<span>
+1. compactJsonObject : removed call to com/google/gson/JsonObject::add &rarr; NO_COVERAGE<br/>
+
+</span>
+</span>
+</td>
+<td class='uncovered'><pre><span  class='survived'>      ret.add(keys.get(i), object.get(keys.get(i)));</span></pre></td></tr>
+
+<tr>
+<td class='uncovered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_171'/>
+171
+</td>
+<td class='survived'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_171'>1</a>
+<span>
+1. compactJsonObject : removed call to com/google/gson/JsonObject::add &rarr; NO_COVERAGE<br/>
+
+</span>
+</span>
+</td>
+<td class='uncovered'><pre><span  class='survived'>    ret.add(keys.get(headLength) + &#34;...&#34;, new JsonPrimitive(&#34;...&#34;));</span></pre></td></tr>
+
+<tr>
+<td class='uncovered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_172'/>
+172
+</td>
+<td class='survived'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_172'>3</a>
+<span>
+1. compactJsonObject : Replaced integer subtraction with addition &rarr; NO_COVERAGE<br/>
+2. compactJsonObject : changed conditional boundary &rarr; NO_COVERAGE<br/>
+3. compactJsonObject : negated conditional &rarr; NO_COVERAGE<br/>
+
+</span>
+</span>
+</td>
+<td class='uncovered'><pre><span  class='survived'>    for (int i = keys.size() - tailLength; i &#60; keys.size(); i++)</span></pre></td></tr>
+
+<tr>
+<td class='uncovered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_173'/>
+173
+</td>
+<td class='survived'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_173'>1</a>
+<span>
+1. compactJsonObject : removed call to com/google/gson/JsonObject::add &rarr; NO_COVERAGE<br/>
+
+</span>
+</span>
+</td>
+<td class='uncovered'><pre><span  class='survived'>      ret.add(keys.get(i), object.get(keys.get(i)));</span></pre></td></tr>
+
+<tr>
+<td class='uncovered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_174'/>
+174
+</td>
+<td class='survived'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_174'>1</a>
+<span>
+1. compactJsonObject : replaced return value with null for com/github/dakusui/symfonion/compat/json/JsonSummarizer::compactJsonObject &rarr; NO_COVERAGE<br/>
+
+</span>
+</span>
+</td>
+<td class='uncovered'><pre><span  class='survived'>    return ret;</span></pre></td></tr>
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_175'/>
+175
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_175'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>  }</span></pre></td></tr>
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_176'/>
+176
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_176'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_177'/>
+177
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_177'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>  static JsonElement compactJsonElement(JsonElement element, int headLength, int tailLength) {</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_178'/>
+178
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_178'>1</a>
+<span>
+1. compactJsonElement : negated conditional &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>    if (element.isJsonArray())</span></pre></td></tr>
+
+<tr>
+<td class='uncovered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_179'/>
+179
+</td>
+<td class='survived'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_179'>1</a>
+<span>
+1. compactJsonElement : replaced return value with null for com/github/dakusui/symfonion/compat/json/JsonSummarizer::compactJsonElement &rarr; NO_COVERAGE<br/>
+
+</span>
+</span>
+</td>
+<td class='uncovered'><pre><span  class='survived'>      return compactJsonArray((JsonArray) element, headLength, tailLength);</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_180'/>
+180
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_180'>1</a>
+<span>
+1. compactJsonElement : negated conditional &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>    if (element.isJsonObject())</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_181'/>
+181
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_181'>1</a>
+<span>
+1. compactJsonElement : replaced return value with null for com/github/dakusui/symfonion/compat/json/JsonSummarizer::compactJsonElement &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>      return compactJsonObject((JsonObject) element, headLength, tailLength);</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_182'/>
+182
+</td>
+<td class='survived'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_182'>1</a>
+<span>
+1. compactJsonElement : negated conditional &rarr; SURVIVED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='survived'>    if (element.isJsonPrimitive())</span></pre></td></tr>
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_183'/>
+183
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_183'>1</a>
+<span>
+1. compactJsonElement : replaced return value with null for com/github/dakusui/symfonion/compat/json/JsonSummarizer::compactJsonElement &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>      return compactJsonPrimitive((JsonPrimitive) element, headLength, tailLength);</span></pre></td></tr>
+
+<tr>
+<td class='uncovered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_184'/>
+184
+</td>
+<td class='survived'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_184'>1</a>
+<span>
+1. compactJsonElement : replaced return value with null for com/github/dakusui/symfonion/compat/json/JsonSummarizer::compactJsonElement &rarr; NO_COVERAGE<br/>
+
+</span>
+</span>
+</td>
+<td class='uncovered'><pre><span  class='survived'>    return element;</span></pre></td></tr>
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_185'/>
+185
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_185'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>  }</span></pre></td></tr>
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@13389582_186'/>
+186
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@13389582_186'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>}</span></pre></td></tr>
+
+
+
+<tr><td></td><td></td><td><h2>Mutations</h2></td></tr>
+
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@13389582_23'>23</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@13389582_23'/> 
+
+<p class='SURVIVED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>summaryObject<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; SURVIVED</span>
+<a title="Click to view covering tests" class="view-covered-by-tests" onClick="document.getElementById('MutationIdentifier-[location=Location-[clazz=com.github.dakusui.symfonion.compat.json.JsonSummarizer,-method=summaryObject,-methodDesc=(Lcom/google/gson/JsonObject;Ljava/util/List;Ljava/lang/Object;)Lcom/google/gson/JsonElement;],-indexes=[14],-mutator=org.pitest.mutationtest.engine.gregor.mutators.NegateConditionalsMutator]').style.display=(document.getElementById('MutationIdentifier-[location=Location-[clazz=com.github.dakusui.symfonion.compat.json.JsonSummarizer,-method=summaryObject,-methodDesc=(Lcom/google/gson/JsonObject;Ljava/util/List;Ljava/lang/Object;)Lcom/google/gson/JsonElement;],-indexes=[14],-mutator=org.pitest.mutationtest.engine.gregor.mutators.NegateConditionalsMutator]').style.display == 'block')?'none':'block';">Covering tests</a>
+<div class="covered-tests" id="MutationIdentifier-[location=Location-[clazz=com.github.dakusui.symfonion.compat.json.JsonSummarizer,-method=summaryObject,-methodDesc=(Lcom/google/gson/JsonObject;Ljava/util/List;Ljava/lang/Object;)Lcom/google/gson/JsonElement;],-indexes=[14],-mutator=org.pitest.mutationtest.engine.gregor.mutators.NegateConditionalsMutator]" style="display:none;">Covered by tests:
+<ul>
+<li>com.github.dakusui.symfonion.tests.json.JsonSummarizerTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.json.JsonSummarizerTest]/[method:whenCreateSummaryJsonObjectFromPaths_thenSummaryCreated()]</li> <li>com.github.dakusui.symfonion.tests.json.JsonSummarizerTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.json.JsonSummarizerTest]/[method:whenSummaryArray_thenItLooksNice()]</li> <li>com.github.dakusui.symfonion.tests.json.JsonSummarizerTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.json.JsonSummarizerTest]/[method:whenSummaryObject_thenItLooksNice()]</li> <li>com.github.dakusui.symfonion.tests.InvalidDataErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.InvalidDataErrorTest]/[method:illegalFraction()]</li> <li>com.github.dakusui.symfonion.tests.ReferenceErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.ReferenceErrorTest]/[method:missingNoteMap()]</li> <li>com.github.dakusui.symfonion.tests.InvalidDataErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.InvalidDataErrorTest]/[method:illegalNoteLength_02()]</li> <li>com.github.dakusui.symfonion.tests.ReferenceErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.ReferenceErrorTest]/[method:missingNote()]</li> <li>com.github.dakusui.symfonion.tests.ReferenceErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.ReferenceErrorTest]/[method:missingGroove()]</li> <li>com.github.dakusui.symfonion.tests.InvalidDataErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.InvalidDataErrorTest]/[method:illegalNoteLength_03()]</li> <li>com.github.dakusui.symfonion.tests.InvalidDataErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.InvalidDataErrorTest]/[method:illegalNoteLength_01()]</li> <li>com.github.dakusui.symfonion.tests.ReferenceErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.ReferenceErrorTest]/[method:missingPart()]</li> 
+</ul>
+</div></div> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@13389582_24'>24</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@13389582_24'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>summaryObject<br/><b>Killed by : </b>com.github.dakusui.symfonion.tests.json.JsonSummarizerTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.json.JsonSummarizerTest]/[method:whenSummaryArray_thenItLooksNice()]</span></span> negated conditional &rarr; KILLED</span>
+</div> <p class='KILLED'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>summaryObject<br/><b>Killed by : </b>com.github.dakusui.symfonion.tests.json.JsonSummarizerTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.json.JsonSummarizerTest]/[method:whenSummaryArray_thenItLooksNice()]</span></span> changed conditional boundary &rarr; KILLED</span>
+</div> <p class='KILLED'><span class='pop'>3.<span><b>3</b><br/><b>Location : </b>summaryObject<br/><b>Killed by : </b>com.github.dakusui.symfonion.tests.json.JsonSummarizerTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.json.JsonSummarizerTest]/[method:whenCreateSummaryJsonObjectFromPaths_thenSummaryCreated()]</span></span> Replaced integer subtraction with addition &rarr; KILLED</span>
+</div> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@13389582_26'>26</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@13389582_26'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>summaryObject<br/><b>Killed by : </b>com.github.dakusui.symfonion.tests.json.JsonSummarizerTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.json.JsonSummarizerTest]/[method:whenCreateSummaryJsonObjectFromPaths_thenSummaryCreated()]</span></span> negated conditional &rarr; KILLED</span>
+</div> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@13389582_28'>28</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@13389582_28'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>summaryObject<br/><b>Killed by : </b>com.github.dakusui.symfonion.tests.json.JsonSummarizerTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.json.JsonSummarizerTest]/[method:whenSummaryArray_thenItLooksNice()]</span></span> removed call to com/google/gson/JsonObject::add &rarr; KILLED</span>
+</div> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@13389582_29'>29</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@13389582_29'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>summaryObject<br/><b>Killed by : </b>com.github.dakusui.symfonion.tests.InvalidDataErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.InvalidDataErrorTest]/[method:illegalFraction()]</span></span> negated conditional &rarr; KILLED</span>
+</div> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@13389582_31'>31</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@13389582_31'/> 
+
+<p class='SURVIVED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>summaryObject<br/><b>Killed by : </b>none</span></span> removed call to com/google/gson/JsonArray::add &rarr; SURVIVED</span>
+<a title="Click to view covering tests" class="view-covered-by-tests" onClick="document.getElementById('MutationIdentifier-[location=Location-[clazz=com.github.dakusui.symfonion.compat.json.JsonSummarizer,-method=summaryObject,-methodDesc=(Lcom/google/gson/JsonObject;Ljava/util/List;Ljava/lang/Object;)Lcom/google/gson/JsonElement;],-indexes=[81],-mutator=org.pitest.mutationtest.engine.gregor.mutators.VoidMethodCallMutator]').style.display=(document.getElementById('MutationIdentifier-[location=Location-[clazz=com.github.dakusui.symfonion.compat.json.JsonSummarizer,-method=summaryObject,-methodDesc=(Lcom/google/gson/JsonObject;Ljava/util/List;Ljava/lang/Object;)Lcom/google/gson/JsonElement;],-indexes=[81],-mutator=org.pitest.mutationtest.engine.gregor.mutators.VoidMethodCallMutator]').style.display == 'block')?'none':'block';">Covering tests</a>
+<div class="covered-tests" id="MutationIdentifier-[location=Location-[clazz=com.github.dakusui.symfonion.compat.json.JsonSummarizer,-method=summaryObject,-methodDesc=(Lcom/google/gson/JsonObject;Ljava/util/List;Ljava/lang/Object;)Lcom/google/gson/JsonElement;],-indexes=[81],-mutator=org.pitest.mutationtest.engine.gregor.mutators.VoidMethodCallMutator]" style="display:none;">Covered by tests:
+<ul>
+<li>com.github.dakusui.symfonion.tests.InvalidDataErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.InvalidDataErrorTest]/[method:illegalFraction()]</li> <li>com.github.dakusui.symfonion.tests.ReferenceErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.ReferenceErrorTest]/[method:missingNoteMap()]</li> <li>com.github.dakusui.symfonion.tests.InvalidDataErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.InvalidDataErrorTest]/[method:illegalNoteLength_02()]</li> <li>com.github.dakusui.symfonion.tests.ReferenceErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.ReferenceErrorTest]/[method:missingNote()]</li> <li>com.github.dakusui.symfonion.tests.ReferenceErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.ReferenceErrorTest]/[method:missingGroove()]</li> <li>com.github.dakusui.symfonion.tests.InvalidDataErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.InvalidDataErrorTest]/[method:illegalNoteLength_03()]</li> <li>com.github.dakusui.symfonion.tests.InvalidDataErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.InvalidDataErrorTest]/[method:illegalNoteLength_01()]</li> <li>com.github.dakusui.symfonion.tests.ReferenceErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.ReferenceErrorTest]/[method:missingPart()]</li> 
+</ul>
+</div></div> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@13389582_36'>36</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@13389582_36'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>summaryObject<br/><b>Killed by : </b>com.github.dakusui.symfonion.tests.json.JsonSummarizerTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.json.JsonSummarizerTest]/[method:whenCreateSummaryJsonObjectFromPaths_thenSummaryCreated()]</span></span> replaced return value with null for com/github/dakusui/symfonion/compat/json/JsonSummarizer::summaryObject &rarr; KILLED</span>
+</div> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@13389582_41'>41</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@13389582_41'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>collapseForObjectValue<br/><b>Killed by : </b>com.github.dakusui.symfonion.tests.InvalidJsonErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.InvalidJsonErrorTest]/[method:missingSection_sequence()]</span></span> replaced return value with null for com/github/dakusui/symfonion/compat/json/JsonSummarizer::collapseForObjectValue &rarr; KILLED</span>
+</div> <p class='KILLED'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>collapseForObjectValue<br/><b>Killed by : </b>com.github.dakusui.symfonion.tests.InvalidJsonErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.InvalidJsonErrorTest]/[method:missingSection_groove()]</span></span> negated conditional &rarr; KILLED</span>
+</div> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@13389582_42'>42</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@13389582_42'/> 
+
+<p class='SURVIVED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>collapseForObjectValue<br/><b>Killed by : </b>none</span></span> replaced return value with null for com/github/dakusui/symfonion/compat/json/JsonSummarizer::collapseForObjectValue &rarr; SURVIVED</span>
+<a title="Click to view covering tests" class="view-covered-by-tests" onClick="document.getElementById('MutationIdentifier-[location=Location-[clazz=com.github.dakusui.symfonion.compat.json.JsonSummarizer,-method=collapseForObjectValue,-methodDesc=(Lcom/google/gson/JsonElement;)Lcom/google/gson/JsonElement;],-indexes=[19],-mutator=org.pitest.mutationtest.engine.gregor.mutators.returns.NullReturnValsMutator]').style.display=(document.getElementById('MutationIdentifier-[location=Location-[clazz=com.github.dakusui.symfonion.compat.json.JsonSummarizer,-method=collapseForObjectValue,-methodDesc=(Lcom/google/gson/JsonElement;)Lcom/google/gson/JsonElement;],-indexes=[19],-mutator=org.pitest.mutationtest.engine.gregor.mutators.returns.NullReturnValsMutator]').style.display == 'block')?'none':'block';">Covering tests</a>
+<div class="covered-tests" id="MutationIdentifier-[location=Location-[clazz=com.github.dakusui.symfonion.compat.json.JsonSummarizer,-method=collapseForObjectValue,-methodDesc=(Lcom/google/gson/JsonElement;)Lcom/google/gson/JsonElement;],-indexes=[19],-mutator=org.pitest.mutationtest.engine.gregor.mutators.returns.NullReturnValsMutator]" style="display:none;">Covered by tests:
+<ul>
+<li>com.github.dakusui.symfonion.tests.json.CompatJsonUtilsTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.json.CompatJsonUtilsTest]/[method:givenConflictingTwoSingleEntryObjects_whenMerge_thenExceptionThrown()]</li> <li>com.github.dakusui.symfonion.tests.json.JsonUtilTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.json.JsonUtilTest]/[method:obj_E02()]</li> <li>com.github.dakusui.symfonion.tests.json.JsonSummarizerTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.json.JsonSummarizerTest]/[method:whenSummaryArray_thenItLooksNice()]</li> <li>com.github.dakusui.symfonion.tests.json.JsonSummarizerTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.json.JsonSummarizerTest]/[method:whenSummaryObject_thenItLooksNice()]</li> <li>com.github.dakusui.symfonion.tests.InvalidDataErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.InvalidDataErrorTest]/[method:illegalFraction()]</li> <li>com.github.dakusui.symfonion.tests.ReferenceErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.ReferenceErrorTest]/[method:missingNoteMap()]</li> <li>com.github.dakusui.symfonion.tests.InvalidDataErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.InvalidDataErrorTest]/[method:illegalNoteLength_02()]</li> <li>com.github.dakusui.symfonion.tests.ReferenceErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.ReferenceErrorTest]/[method:missingGroove()]</li> <li>com.github.dakusui.symfonion.tests.InvalidDataErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.InvalidDataErrorTest]/[method:illegalNoteLength_03()]</li> <li>com.github.dakusui.symfonion.tests.InvalidDataErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.InvalidDataErrorTest]/[method:illegalNoteLength_01()]</li> <li>com.github.dakusui.symfonion.tests.ReferenceErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.ReferenceErrorTest]/[method:missingPart()]</li> 
+</ul>
+</div></div> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@13389582_46'>46</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@13389582_46'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>collapseJsonElement<br/><b>Killed by : </b>com.github.dakusui.symfonion.tests.json.CompatJsonUtilsTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.json.CompatJsonUtilsTest]/[method:givenConflictingTwoSingleEntryObjects_whenMerge_thenExceptionThrown()]</span></span> negated conditional &rarr; KILLED</span>
+</div> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@13389582_48'>48</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@13389582_48'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>collapseJsonElement<br/><b>Killed by : </b>com.github.dakusui.symfonion.tests.InvalidJsonErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.InvalidJsonErrorTest]/[method:missingSection_groove()]</span></span> negated conditional &rarr; KILLED</span>
+</div> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@13389582_49'>49</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@13389582_49'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>collapseJsonElement<br/><b>Killed by : </b>com.github.dakusui.symfonion.tests.InvalidJsonErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.InvalidJsonErrorTest]/[method:missingSection_groove()]</span></span> removed call to com/google/gson/JsonArray::add &rarr; KILLED</span>
+</div> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@13389582_50'>50</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@13389582_50'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>collapseJsonElement<br/><b>Killed by : </b>com.github.dakusui.symfonion.tests.InvalidJsonErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.InvalidJsonErrorTest]/[method:missingSection_groove()]</span></span> replaced return value with null for com/github/dakusui/symfonion/compat/json/JsonSummarizer::collapseJsonElement &rarr; KILLED</span>
+</div> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@13389582_51'>51</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@13389582_51'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>collapseJsonElement<br/><b>Killed by : </b>com.github.dakusui.symfonion.tests.json.CompatJsonUtilsTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.json.CompatJsonUtilsTest]/[method:givenConflictingTwoSingleEntryObjects_whenMerge_thenExceptionThrown()]</span></span> negated conditional &rarr; KILLED</span>
+</div> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@13389582_53'>53</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@13389582_53'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>collapseJsonElement<br/><b>Killed by : </b>com.github.dakusui.symfonion.tests.InvalidJsonErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.InvalidJsonErrorTest]/[method:missingSection_sequence()]</span></span> negated conditional &rarr; KILLED</span>
+</div> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@13389582_54'>54</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@13389582_54'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>collapseJsonElement<br/><b>Killed by : </b>com.github.dakusui.symfonion.tests.InvalidJsonErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.InvalidJsonErrorTest]/[method:missingSection_sequence()]</span></span> removed call to com/google/gson/JsonObject::add &rarr; KILLED</span>
+</div> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@13389582_55'>55</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@13389582_55'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>collapseJsonElement<br/><b>Killed by : </b>com.github.dakusui.symfonion.tests.InvalidJsonErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.InvalidJsonErrorTest]/[method:missingSection_sequence()]</span></span> replaced return value with null for com/github/dakusui/symfonion/compat/json/JsonSummarizer::collapseJsonElement &rarr; KILLED</span>
+</div> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@13389582_62'>62</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@13389582_62'/> 
+
+<p class='SURVIVED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>collapseForArrayElement<br/><b>Killed by : </b>none</span></span> replaced return value with null for com/github/dakusui/symfonion/compat/json/JsonSummarizer::collapseForArrayElement &rarr; SURVIVED</span>
+<a title="Click to view covering tests" class="view-covered-by-tests" onClick="document.getElementById('MutationIdentifier-[location=Location-[clazz=com.github.dakusui.symfonion.compat.json.JsonSummarizer,-method=collapseForArrayElement,-methodDesc=(Lcom/google/gson/JsonElement;)Lcom/google/gson/JsonElement;],-indexes=[11],-mutator=org.pitest.mutationtest.engine.gregor.mutators.returns.NullReturnValsMutator]').style.display=(document.getElementById('MutationIdentifier-[location=Location-[clazz=com.github.dakusui.symfonion.compat.json.JsonSummarizer,-method=collapseForArrayElement,-methodDesc=(Lcom/google/gson/JsonElement;)Lcom/google/gson/JsonElement;],-indexes=[11],-mutator=org.pitest.mutationtest.engine.gregor.mutators.returns.NullReturnValsMutator]').style.display == 'block')?'none':'block';">Covering tests</a>
+<div class="covered-tests" id="MutationIdentifier-[location=Location-[clazz=com.github.dakusui.symfonion.compat.json.JsonSummarizer,-method=collapseForArrayElement,-methodDesc=(Lcom/google/gson/JsonElement;)Lcom/google/gson/JsonElement;],-indexes=[11],-mutator=org.pitest.mutationtest.engine.gregor.mutators.returns.NullReturnValsMutator]" style="display:none;">Covered by tests:
+<ul>
+<li>com.github.dakusui.symfonion.tests.json.JsonUtilTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.json.JsonUtilTest]/[method:obj_E01d()]</li> <li>com.github.dakusui.symfonion.tests.json.JsonSummarizerTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.json.JsonSummarizerTest]/[method:whenCreateSummaryJsonObjectFromPaths_thenSummaryCreated()]</li> <li>com.github.dakusui.symfonion.tests.json.JsonSummarizerTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.json.JsonSummarizerTest]/[method:whenSummaryArray_thenItLooksNice()]</li> 
+</ul>
+</div></div> <p class='SURVIVED'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>collapseForArrayElement<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; SURVIVED</span>
+<a title="Click to view covering tests" class="view-covered-by-tests" onClick="document.getElementById('MutationIdentifier-[location=Location-[clazz=com.github.dakusui.symfonion.compat.json.JsonSummarizer,-method=collapseForArrayElement,-methodDesc=(Lcom/google/gson/JsonElement;)Lcom/google/gson/JsonElement;],-indexes=[9],-mutator=org.pitest.mutationtest.engine.gregor.mutators.NegateConditionalsMutator]').style.display=(document.getElementById('MutationIdentifier-[location=Location-[clazz=com.github.dakusui.symfonion.compat.json.JsonSummarizer,-method=collapseForArrayElement,-methodDesc=(Lcom/google/gson/JsonElement;)Lcom/google/gson/JsonElement;],-indexes=[9],-mutator=org.pitest.mutationtest.engine.gregor.mutators.NegateConditionalsMutator]').style.display == 'block')?'none':'block';">Covering tests</a>
+<div class="covered-tests" id="MutationIdentifier-[location=Location-[clazz=com.github.dakusui.symfonion.compat.json.JsonSummarizer,-method=collapseForArrayElement,-methodDesc=(Lcom/google/gson/JsonElement;)Lcom/google/gson/JsonElement;],-indexes=[9],-mutator=org.pitest.mutationtest.engine.gregor.mutators.NegateConditionalsMutator]" style="display:none;">Covered by tests:
+<ul>
+<li>com.github.dakusui.symfonion.tests.json.JsonUtilTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.json.JsonUtilTest]/[method:obj_E01d()]</li> <li>com.github.dakusui.symfonion.tests.json.JsonSummarizerTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.json.JsonSummarizerTest]/[method:whenCreateSummaryJsonObjectFromPaths_thenSummaryCreated()]</li> <li>com.github.dakusui.symfonion.tests.json.JsonSummarizerTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.json.JsonSummarizerTest]/[method:whenSummaryArray_thenItLooksNice()]</li> <li>com.github.dakusui.symfonion.tests.ReferenceErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.ReferenceErrorTest]/[method:missingNote()]</li> 
+</ul>
+</div></div> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@13389582_63'>63</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@13389582_63'/> 
+
+<p class='SURVIVED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>collapseForArrayElement<br/><b>Killed by : </b>none</span></span> replaced return value with null for com/github/dakusui/symfonion/compat/json/JsonSummarizer::collapseForArrayElement &rarr; SURVIVED</span>
+<a title="Click to view covering tests" class="view-covered-by-tests" onClick="document.getElementById('MutationIdentifier-[location=Location-[clazz=com.github.dakusui.symfonion.compat.json.JsonSummarizer,-method=collapseForArrayElement,-methodDesc=(Lcom/google/gson/JsonElement;)Lcom/google/gson/JsonElement;],-indexes=[16],-mutator=org.pitest.mutationtest.engine.gregor.mutators.returns.NullReturnValsMutator]').style.display=(document.getElementById('MutationIdentifier-[location=Location-[clazz=com.github.dakusui.symfonion.compat.json.JsonSummarizer,-method=collapseForArrayElement,-methodDesc=(Lcom/google/gson/JsonElement;)Lcom/google/gson/JsonElement;],-indexes=[16],-mutator=org.pitest.mutationtest.engine.gregor.mutators.returns.NullReturnValsMutator]').style.display == 'block')?'none':'block';">Covering tests</a>
+<div class="covered-tests" id="MutationIdentifier-[location=Location-[clazz=com.github.dakusui.symfonion.compat.json.JsonSummarizer,-method=collapseForArrayElement,-methodDesc=(Lcom/google/gson/JsonElement;)Lcom/google/gson/JsonElement;],-indexes=[16],-mutator=org.pitest.mutationtest.engine.gregor.mutators.returns.NullReturnValsMutator]" style="display:none;">Covered by tests:
+<ul>
+<li>com.github.dakusui.symfonion.tests.json.JsonUtilTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.json.JsonUtilTest]/[method:obj_E01d()]</li> <li>com.github.dakusui.symfonion.tests.json.JsonSummarizerTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.json.JsonSummarizerTest]/[method:whenCreateSummaryJsonObjectFromPaths_thenSummaryCreated()]</li> <li>com.github.dakusui.symfonion.tests.json.JsonSummarizerTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.json.JsonSummarizerTest]/[method:whenSummaryArray_thenItLooksNice()]</li> <li>com.github.dakusui.symfonion.tests.ReferenceErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.ReferenceErrorTest]/[method:missingNote()]</li> 
+</ul>
+</div></div> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@13389582_76'>76</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@13389582_76'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>lambda$focusedObject$0<br/><b>Killed by : </b>com.github.dakusui.symfonion.tests.InvalidJsonErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.InvalidJsonErrorTest]/[method:missingSection_sequence()]</span></span> removed call to com/google/gson/JsonObject::add &rarr; KILLED</span>
+</div> <p class='KILLED'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>focusedObject<br/><b>Killed by : </b>com.github.dakusui.symfonion.tests.InvalidJsonErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.InvalidJsonErrorTest]/[method:missingSection_sequence()]</span></span> removed call to java/util/Set::forEach &rarr; KILLED</span>
+</div> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@13389582_77'>77</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@13389582_77'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>focusedObject<br/><b>Killed by : </b>com.github.dakusui.symfonion.tests.json.JsonSummarizerTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.json.JsonSummarizerTest]/[method:whenSummaryObject_thenItLooksNice()]</span></span> replaced return value with null for com/github/dakusui/symfonion/compat/json/JsonSummarizer::focusedObject &rarr; KILLED</span>
+</div> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@13389582_81'>81</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@13389582_81'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>lambda$parentElement$1<br/><b>Killed by : </b>com.github.dakusui.symfonion.tests.json.JsonSummarizerTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.json.JsonSummarizerTest]/[method:whenCreateSummaryJsonObjectFromPaths_thenSummaryCreated()]</span></span> replaced boolean return with false for com/github/dakusui/symfonion/compat/json/JsonSummarizer::lambda$parentElement$1 &rarr; KILLED</span>
+</div> <p class='SURVIVED'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>lambda$parentElement$1<br/><b>Killed by : </b>none</span></span> replaced boolean return with true for com/github/dakusui/symfonion/compat/json/JsonSummarizer::lambda$parentElement$1 &rarr; SURVIVED</span>
+<a title="Click to view covering tests" class="view-covered-by-tests" onClick="document.getElementById('MutationIdentifier-[location=Location-[clazz=com.github.dakusui.symfonion.compat.json.JsonSummarizer,-method=lambda$parentElement$1,-methodDesc=(Ljava/lang/Object;Ljava/lang/Object;)Z],-indexes=[5],-mutator=org.pitest.mutationtest.engine.gregor.mutators.returns.BooleanTrueReturnValsMutator]').style.display=(document.getElementById('MutationIdentifier-[location=Location-[clazz=com.github.dakusui.symfonion.compat.json.JsonSummarizer,-method=lambda$parentElement$1,-methodDesc=(Ljava/lang/Object;Ljava/lang/Object;)Z],-indexes=[5],-mutator=org.pitest.mutationtest.engine.gregor.mutators.returns.BooleanTrueReturnValsMutator]').style.display == 'block')?'none':'block';">Covering tests</a>
+<div class="covered-tests" id="MutationIdentifier-[location=Location-[clazz=com.github.dakusui.symfonion.compat.json.JsonSummarizer,-method=lambda$parentElement$1,-methodDesc=(Ljava/lang/Object;Ljava/lang/Object;)Z],-indexes=[5],-mutator=org.pitest.mutationtest.engine.gregor.mutators.returns.BooleanTrueReturnValsMutator]" style="display:none;">Covered by tests:
+<ul>
+<li>com.github.dakusui.symfonion.tests.json.JsonSummarizerTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.json.JsonSummarizerTest]/[method:whenCreateSummaryJsonObjectFromPaths_thenSummaryCreated()]</li> <li>com.github.dakusui.symfonion.tests.json.JsonSummarizerTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.json.JsonSummarizerTest]/[method:whenSummaryArray_thenItLooksNice()]</li> <li>com.github.dakusui.symfonion.tests.json.JsonSummarizerTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.json.JsonSummarizerTest]/[method:whenSummaryObject_thenItLooksNice()]</li> <li>com.github.dakusui.symfonion.tests.InvalidDataErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.InvalidDataErrorTest]/[method:illegalFraction()]</li> <li>com.github.dakusui.symfonion.tests.ReferenceErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.ReferenceErrorTest]/[method:missingNoteMap()]</li> <li>com.github.dakusui.symfonion.tests.InvalidDataErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.InvalidDataErrorTest]/[method:illegalNoteLength_02()]</li> <li>com.github.dakusui.symfonion.tests.ReferenceErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.ReferenceErrorTest]/[method:missingGroove()]</li> <li>com.github.dakusui.symfonion.tests.InvalidDataErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.InvalidDataErrorTest]/[method:illegalNoteLength_03()]</li> <li>com.github.dakusui.symfonion.tests.InvalidDataErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.InvalidDataErrorTest]/[method:illegalNoteLength_01()]</li> 
+</ul>
+</div></div> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@13389582_82'>82</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@13389582_82'/> 
+
+<p class='SURVIVED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>lambda$parentElement$2<br/><b>Killed by : </b>none</span></span> replaced boolean return with true for com/github/dakusui/symfonion/compat/json/JsonSummarizer::lambda$parentElement$2 &rarr; SURVIVED</span>
+<a title="Click to view covering tests" class="view-covered-by-tests" onClick="document.getElementById('MutationIdentifier-[location=Location-[clazz=com.github.dakusui.symfonion.compat.json.JsonSummarizer,-method=lambda$parentElement$2,-methodDesc=(Ljava/lang/Object;Ljava/lang/Object;)Z],-indexes=[5],-mutator=org.pitest.mutationtest.engine.gregor.mutators.returns.BooleanTrueReturnValsMutator]').style.display=(document.getElementById('MutationIdentifier-[location=Location-[clazz=com.github.dakusui.symfonion.compat.json.JsonSummarizer,-method=lambda$parentElement$2,-methodDesc=(Ljava/lang/Object;Ljava/lang/Object;)Z],-indexes=[5],-mutator=org.pitest.mutationtest.engine.gregor.mutators.returns.BooleanTrueReturnValsMutator]').style.display == 'block')?'none':'block';">Covering tests</a>
+<div class="covered-tests" id="MutationIdentifier-[location=Location-[clazz=com.github.dakusui.symfonion.compat.json.JsonSummarizer,-method=lambda$parentElement$2,-methodDesc=(Ljava/lang/Object;Ljava/lang/Object;)Z],-indexes=[5],-mutator=org.pitest.mutationtest.engine.gregor.mutators.returns.BooleanTrueReturnValsMutator]" style="display:none;">Covered by tests:
+<ul>
+<li>com.github.dakusui.symfonion.tests.ReferenceErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.ReferenceErrorTest]/[method:missingNote()]</li> <li>com.github.dakusui.symfonion.tests.ReferenceErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.ReferenceErrorTest]/[method:missingPart()]</li> 
+</ul>
+</div></div> <p class='KILLED'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>lambda$parentElement$2<br/><b>Killed by : </b>com.github.dakusui.symfonion.tests.ReferenceErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.ReferenceErrorTest]/[method:missingNote()]</span></span> replaced boolean return with false for com/github/dakusui/symfonion/compat/json/JsonSummarizer::lambda$parentElement$2 &rarr; KILLED</span>
+</div> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@13389582_88'>88</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@13389582_88'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>parentElement<br/><b>Killed by : </b>com.github.dakusui.symfonion.tests.json.JsonSummarizerTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.json.JsonSummarizerTest]/[method:whenCreateSummaryJsonObjectFromPaths_thenSummaryCreated()]</span></span> negated conditional &rarr; KILLED</span>
+</div> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@13389582_89'>89</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@13389582_89'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>parentElement<br/><b>Killed by : </b>com.github.dakusui.symfonion.tests.json.JsonSummarizerTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.json.JsonSummarizerTest]/[method:whenSummaryArray_thenItLooksNice()]</span></span> replaced return value with null for com/github/dakusui/symfonion/compat/json/JsonSummarizer::parentElement &rarr; KILLED</span>
+</div> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@13389582_90'>90</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@13389582_90'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>parentElement<br/><b>Killed by : </b>com.github.dakusui.symfonion.tests.ReferenceErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.ReferenceErrorTest]/[method:missingNote()]</span></span> negated conditional &rarr; KILLED</span>
+</div> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@13389582_91'>91</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@13389582_91'/> 
+
+<p class='SURVIVED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>parentElement<br/><b>Killed by : </b>none</span></span> replaced return value with null for com/github/dakusui/symfonion/compat/json/JsonSummarizer::parentElement &rarr; SURVIVED</span>
+<a title="Click to view covering tests" class="view-covered-by-tests" onClick="document.getElementById('MutationIdentifier-[location=Location-[clazz=com.github.dakusui.symfonion.compat.json.JsonSummarizer,-method=parentElement,-methodDesc=(Ljava/lang/Object;Lcom/google/gson/JsonElement;)Lcom/google/gson/JsonElement;],-indexes=[109],-mutator=org.pitest.mutationtest.engine.gregor.mutators.returns.NullReturnValsMutator]').style.display=(document.getElementById('MutationIdentifier-[location=Location-[clazz=com.github.dakusui.symfonion.compat.json.JsonSummarizer,-method=parentElement,-methodDesc=(Ljava/lang/Object;Lcom/google/gson/JsonElement;)Lcom/google/gson/JsonElement;],-indexes=[109],-mutator=org.pitest.mutationtest.engine.gregor.mutators.returns.NullReturnValsMutator]').style.display == 'block')?'none':'block';">Covering tests</a>
+<div class="covered-tests" id="MutationIdentifier-[location=Location-[clazz=com.github.dakusui.symfonion.compat.json.JsonSummarizer,-method=parentElement,-methodDesc=(Ljava/lang/Object;Lcom/google/gson/JsonElement;)Lcom/google/gson/JsonElement;],-indexes=[109],-mutator=org.pitest.mutationtest.engine.gregor.mutators.returns.NullReturnValsMutator]" style="display:none;">Covered by tests:
+<ul>
+<li>com.github.dakusui.symfonion.tests.ReferenceErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.ReferenceErrorTest]/[method:missingNote()]</li> <li>com.github.dakusui.symfonion.tests.ReferenceErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.ReferenceErrorTest]/[method:missingPart()]</li> 
+</ul>
+</div></div> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@13389582_104'>104</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@13389582_104'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>lambda$parentObject$3<br/><b>Killed by : </b>com.github.dakusui.symfonion.tests.json.JsonSummarizerTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.json.JsonSummarizerTest]/[method:whenSummaryArray_thenItLooksNice()]</span></span> removed call to com/google/gson/JsonObject::add &rarr; KILLED</span>
+</div> <p class='SURVIVED'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>lambda$parentObject$3<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; SURVIVED</span>
+<a title="Click to view covering tests" class="view-covered-by-tests" onClick="document.getElementById('MutationIdentifier-[location=Location-[clazz=com.github.dakusui.symfonion.compat.json.JsonSummarizer,-method=lambda$parentObject$3,-methodDesc=(Lcom/google/gson/JsonObject;Ljava/lang/String;Lcom/google/gson/JsonObject;Ljava/lang/String;)V],-indexes=[8],-mutator=org.pitest.mutationtest.engine.gregor.mutators.NegateConditionalsMutator]').style.display=(document.getElementById('MutationIdentifier-[location=Location-[clazz=com.github.dakusui.symfonion.compat.json.JsonSummarizer,-method=lambda$parentObject$3,-methodDesc=(Lcom/google/gson/JsonObject;Ljava/lang/String;Lcom/google/gson/JsonObject;Ljava/lang/String;)V],-indexes=[8],-mutator=org.pitest.mutationtest.engine.gregor.mutators.NegateConditionalsMutator]').style.display == 'block')?'none':'block';">Covering tests</a>
+<div class="covered-tests" id="MutationIdentifier-[location=Location-[clazz=com.github.dakusui.symfonion.compat.json.JsonSummarizer,-method=lambda$parentObject$3,-methodDesc=(Lcom/google/gson/JsonObject;Ljava/lang/String;Lcom/google/gson/JsonObject;Ljava/lang/String;)V],-indexes=[8],-mutator=org.pitest.mutationtest.engine.gregor.mutators.NegateConditionalsMutator]" style="display:none;">Covered by tests:
+<ul>
+<li>com.github.dakusui.symfonion.tests.json.JsonSummarizerTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.json.JsonSummarizerTest]/[method:whenCreateSummaryJsonObjectFromPaths_thenSummaryCreated()]</li> <li>com.github.dakusui.symfonion.tests.json.JsonSummarizerTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.json.JsonSummarizerTest]/[method:whenSummaryArray_thenItLooksNice()]</li> <li>com.github.dakusui.symfonion.tests.json.JsonSummarizerTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.json.JsonSummarizerTest]/[method:whenSummaryObject_thenItLooksNice()]</li> <li>com.github.dakusui.symfonion.tests.InvalidDataErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.InvalidDataErrorTest]/[method:illegalFraction()]</li> <li>com.github.dakusui.symfonion.tests.ReferenceErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.ReferenceErrorTest]/[method:missingNoteMap()]</li> <li>com.github.dakusui.symfonion.tests.InvalidDataErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.InvalidDataErrorTest]/[method:illegalNoteLength_02()]</li> <li>com.github.dakusui.symfonion.tests.ReferenceErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.ReferenceErrorTest]/[method:missingGroove()]</li> <li>com.github.dakusui.symfonion.tests.InvalidDataErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.InvalidDataErrorTest]/[method:illegalNoteLength_03()]</li> <li>com.github.dakusui.symfonion.tests.InvalidDataErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.InvalidDataErrorTest]/[method:illegalNoteLength_01()]</li> 
+</ul>
+</div></div> <p class='KILLED'><span class='pop'>3.<span><b>3</b><br/><b>Location : </b>parentObject<br/><b>Killed by : </b>com.github.dakusui.symfonion.tests.json.JsonSummarizerTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.json.JsonSummarizerTest]/[method:whenSummaryArray_thenItLooksNice()]</span></span> removed call to java/util/Set::forEach &rarr; KILLED</span>
+</div> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@13389582_107'>107</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@13389582_107'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>parentObject<br/><b>Killed by : </b>com.github.dakusui.symfonion.tests.json.JsonSummarizerTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.json.JsonSummarizerTest]/[method:whenSummaryArray_thenItLooksNice()]</span></span> replaced return value with null for com/github/dakusui/symfonion/compat/json/JsonSummarizer::parentObject &rarr; KILLED</span>
+</div> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@13389582_112'>112</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@13389582_112'/> 
+
+<p class='SURVIVED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>focusedArray<br/><b>Killed by : </b>none</span></span> removed call to com/google/gson/JsonArray::forEach &rarr; SURVIVED</span>
+<a title="Click to view covering tests" class="view-covered-by-tests" onClick="document.getElementById('MutationIdentifier-[location=Location-[clazz=com.github.dakusui.symfonion.compat.json.JsonSummarizer,-method=focusedArray,-methodDesc=(Lcom/google/gson/JsonArray;)Lcom/google/gson/JsonArray;],-indexes=[12],-mutator=org.pitest.mutationtest.engine.gregor.mutators.VoidMethodCallMutator]').style.display=(document.getElementById('MutationIdentifier-[location=Location-[clazz=com.github.dakusui.symfonion.compat.json.JsonSummarizer,-method=focusedArray,-methodDesc=(Lcom/google/gson/JsonArray;)Lcom/google/gson/JsonArray;],-indexes=[12],-mutator=org.pitest.mutationtest.engine.gregor.mutators.VoidMethodCallMutator]').style.display == 'block')?'none':'block';">Covering tests</a>
+<div class="covered-tests" id="MutationIdentifier-[location=Location-[clazz=com.github.dakusui.symfonion.compat.json.JsonSummarizer,-method=focusedArray,-methodDesc=(Lcom/google/gson/JsonArray;)Lcom/google/gson/JsonArray;],-indexes=[12],-mutator=org.pitest.mutationtest.engine.gregor.mutators.VoidMethodCallMutator]" style="display:none;">Covered by tests:
+<ul>
+<li>com.github.dakusui.symfonion.tests.json.JsonUtilTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.json.JsonUtilTest]/[method:obj_E01d()]</li> <li>com.github.dakusui.symfonion.tests.json.JsonSummarizerTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.json.JsonSummarizerTest]/[method:whenCreateSummaryJsonObjectFromPaths_thenSummaryCreated()]</li> <li>com.github.dakusui.symfonion.tests.json.JsonSummarizerTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.json.JsonSummarizerTest]/[method:whenSummaryArray_thenItLooksNice()]</li> 
+</ul>
+</div></div> <p class='SURVIVED'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>lambda$focusedArray$4<br/><b>Killed by : </b>none</span></span> removed call to com/google/gson/JsonArray::add &rarr; SURVIVED</span>
+<a title="Click to view covering tests" class="view-covered-by-tests" onClick="document.getElementById('MutationIdentifier-[location=Location-[clazz=com.github.dakusui.symfonion.compat.json.JsonSummarizer,-method=lambda$focusedArray$4,-methodDesc=(Lcom/google/gson/JsonArray;Lcom/google/gson/JsonElement;)V],-indexes=[6],-mutator=org.pitest.mutationtest.engine.gregor.mutators.VoidMethodCallMutator]').style.display=(document.getElementById('MutationIdentifier-[location=Location-[clazz=com.github.dakusui.symfonion.compat.json.JsonSummarizer,-method=lambda$focusedArray$4,-methodDesc=(Lcom/google/gson/JsonArray;Lcom/google/gson/JsonElement;)V],-indexes=[6],-mutator=org.pitest.mutationtest.engine.gregor.mutators.VoidMethodCallMutator]').style.display == 'block')?'none':'block';">Covering tests</a>
+<div class="covered-tests" id="MutationIdentifier-[location=Location-[clazz=com.github.dakusui.symfonion.compat.json.JsonSummarizer,-method=lambda$focusedArray$4,-methodDesc=(Lcom/google/gson/JsonArray;Lcom/google/gson/JsonElement;)V],-indexes=[6],-mutator=org.pitest.mutationtest.engine.gregor.mutators.VoidMethodCallMutator]" style="display:none;">Covered by tests:
+<ul>
+<li>com.github.dakusui.symfonion.tests.json.JsonUtilTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.json.JsonUtilTest]/[method:obj_E01d()]</li> <li>com.github.dakusui.symfonion.tests.json.JsonSummarizerTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.json.JsonSummarizerTest]/[method:whenCreateSummaryJsonObjectFromPaths_thenSummaryCreated()]</li> <li>com.github.dakusui.symfonion.tests.json.JsonSummarizerTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.json.JsonSummarizerTest]/[method:whenSummaryArray_thenItLooksNice()]</li> 
+</ul>
+</div></div> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@13389582_113'>113</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@13389582_113'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>focusedArray<br/><b>Killed by : </b>com.github.dakusui.symfonion.tests.json.JsonSummarizerTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.json.JsonSummarizerTest]/[method:whenSummaryArray_thenItLooksNice()]</span></span> replaced return value with null for com/github/dakusui/symfonion/compat/json/JsonSummarizer::focusedArray &rarr; KILLED</span>
+</div> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@13389582_122'>122</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@13389582_122'/> 
+
+<p class='SURVIVED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>lambda$parentArray$5<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; SURVIVED</span>
+<a title="Click to view covering tests" class="view-covered-by-tests" onClick="document.getElementById('MutationIdentifier-[location=Location-[clazz=com.github.dakusui.symfonion.compat.json.JsonSummarizer,-method=lambda$parentArray$5,-methodDesc=(Lcom/google/gson/JsonArray;Lcom/google/gson/JsonElement;Lcom/google/gson/JsonElement;)V],-indexes=[7],-mutator=org.pitest.mutationtest.engine.gregor.mutators.NegateConditionalsMutator]').style.display=(document.getElementById('MutationIdentifier-[location=Location-[clazz=com.github.dakusui.symfonion.compat.json.JsonSummarizer,-method=lambda$parentArray$5,-methodDesc=(Lcom/google/gson/JsonArray;Lcom/google/gson/JsonElement;Lcom/google/gson/JsonElement;)V],-indexes=[7],-mutator=org.pitest.mutationtest.engine.gregor.mutators.NegateConditionalsMutator]').style.display == 'block')?'none':'block';">Covering tests</a>
+<div class="covered-tests" id="MutationIdentifier-[location=Location-[clazz=com.github.dakusui.symfonion.compat.json.JsonSummarizer,-method=lambda$parentArray$5,-methodDesc=(Lcom/google/gson/JsonArray;Lcom/google/gson/JsonElement;Lcom/google/gson/JsonElement;)V],-indexes=[7],-mutator=org.pitest.mutationtest.engine.gregor.mutators.NegateConditionalsMutator]" style="display:none;">Covered by tests:
+<ul>
+<li>com.github.dakusui.symfonion.tests.ReferenceErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.ReferenceErrorTest]/[method:missingNote()]</li> <li>com.github.dakusui.symfonion.tests.ReferenceErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.ReferenceErrorTest]/[method:missingPart()]</li> 
+</ul>
+</div></div> <p class='SURVIVED'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>parentArray<br/><b>Killed by : </b>none</span></span> removed call to com/google/gson/JsonArray::forEach &rarr; SURVIVED</span>
+<a title="Click to view covering tests" class="view-covered-by-tests" onClick="document.getElementById('MutationIdentifier-[location=Location-[clazz=com.github.dakusui.symfonion.compat.json.JsonSummarizer,-method=parentArray,-methodDesc=(ILcom/google/gson/JsonArray;)Lcom/google/gson/JsonArray;],-indexes=[57],-mutator=org.pitest.mutationtest.engine.gregor.mutators.VoidMethodCallMutator]').style.display=(document.getElementById('MutationIdentifier-[location=Location-[clazz=com.github.dakusui.symfonion.compat.json.JsonSummarizer,-method=parentArray,-methodDesc=(ILcom/google/gson/JsonArray;)Lcom/google/gson/JsonArray;],-indexes=[57],-mutator=org.pitest.mutationtest.engine.gregor.mutators.VoidMethodCallMutator]').style.display == 'block')?'none':'block';">Covering tests</a>
+<div class="covered-tests" id="MutationIdentifier-[location=Location-[clazz=com.github.dakusui.symfonion.compat.json.JsonSummarizer,-method=parentArray,-methodDesc=(ILcom/google/gson/JsonArray;)Lcom/google/gson/JsonArray;],-indexes=[57],-mutator=org.pitest.mutationtest.engine.gregor.mutators.VoidMethodCallMutator]" style="display:none;">Covered by tests:
+<ul>
+<li>com.github.dakusui.symfonion.tests.ReferenceErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.ReferenceErrorTest]/[method:missingNote()]</li> <li>com.github.dakusui.symfonion.tests.ReferenceErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.ReferenceErrorTest]/[method:missingPart()]</li> 
+</ul>
+</div></div> <p class='SURVIVED'><span class='pop'>3.<span><b>3</b><br/><b>Location : </b>lambda$parentArray$5<br/><b>Killed by : </b>none</span></span> removed call to com/google/gson/JsonArray::add &rarr; SURVIVED</span>
+<a title="Click to view covering tests" class="view-covered-by-tests" onClick="document.getElementById('MutationIdentifier-[location=Location-[clazz=com.github.dakusui.symfonion.compat.json.JsonSummarizer,-method=lambda$parentArray$5,-methodDesc=(Lcom/google/gson/JsonArray;Lcom/google/gson/JsonElement;Lcom/google/gson/JsonElement;)V],-indexes=[21],-mutator=org.pitest.mutationtest.engine.gregor.mutators.VoidMethodCallMutator]').style.display=(document.getElementById('MutationIdentifier-[location=Location-[clazz=com.github.dakusui.symfonion.compat.json.JsonSummarizer,-method=lambda$parentArray$5,-methodDesc=(Lcom/google/gson/JsonArray;Lcom/google/gson/JsonElement;Lcom/google/gson/JsonElement;)V],-indexes=[21],-mutator=org.pitest.mutationtest.engine.gregor.mutators.VoidMethodCallMutator]').style.display == 'block')?'none':'block';">Covering tests</a>
+<div class="covered-tests" id="MutationIdentifier-[location=Location-[clazz=com.github.dakusui.symfonion.compat.json.JsonSummarizer,-method=lambda$parentArray$5,-methodDesc=(Lcom/google/gson/JsonArray;Lcom/google/gson/JsonElement;Lcom/google/gson/JsonElement;)V],-indexes=[21],-mutator=org.pitest.mutationtest.engine.gregor.mutators.VoidMethodCallMutator]" style="display:none;">Covered by tests:
+<ul>
+<li>com.github.dakusui.symfonion.tests.ReferenceErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.ReferenceErrorTest]/[method:missingNote()]</li> <li>com.github.dakusui.symfonion.tests.ReferenceErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.ReferenceErrorTest]/[method:missingPart()]</li> 
+</ul>
+</div></div> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@13389582_125'>125</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@13389582_125'/> 
+
+<p class='SURVIVED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>parentArray<br/><b>Killed by : </b>none</span></span> replaced return value with null for com/github/dakusui/symfonion/compat/json/JsonSummarizer::parentArray &rarr; SURVIVED</span>
+<a title="Click to view covering tests" class="view-covered-by-tests" onClick="document.getElementById('MutationIdentifier-[location=Location-[clazz=com.github.dakusui.symfonion.compat.json.JsonSummarizer,-method=parentArray,-methodDesc=(ILcom/google/gson/JsonArray;)Lcom/google/gson/JsonArray;],-indexes=[61],-mutator=org.pitest.mutationtest.engine.gregor.mutators.returns.NullReturnValsMutator]').style.display=(document.getElementById('MutationIdentifier-[location=Location-[clazz=com.github.dakusui.symfonion.compat.json.JsonSummarizer,-method=parentArray,-methodDesc=(ILcom/google/gson/JsonArray;)Lcom/google/gson/JsonArray;],-indexes=[61],-mutator=org.pitest.mutationtest.engine.gregor.mutators.returns.NullReturnValsMutator]').style.display == 'block')?'none':'block';">Covering tests</a>
+<div class="covered-tests" id="MutationIdentifier-[location=Location-[clazz=com.github.dakusui.symfonion.compat.json.JsonSummarizer,-method=parentArray,-methodDesc=(ILcom/google/gson/JsonArray;)Lcom/google/gson/JsonArray;],-indexes=[61],-mutator=org.pitest.mutationtest.engine.gregor.mutators.returns.NullReturnValsMutator]" style="display:none;">Covered by tests:
+<ul>
+<li>com.github.dakusui.symfonion.tests.ReferenceErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.ReferenceErrorTest]/[method:missingNote()]</li> <li>com.github.dakusui.symfonion.tests.ReferenceErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.ReferenceErrorTest]/[method:missingPart()]</li> 
+</ul>
+</div></div> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@13389582_131'>131</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@13389582_131'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>focusedElement<br/><b>Killed by : </b>com.github.dakusui.symfonion.tests.json.JsonUtilTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.json.JsonUtilTest]/[method:obj_E01d()]</span></span> negated conditional &rarr; KILLED</span>
+</div> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@13389582_133'>133</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@13389582_133'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>focusedElement<br/><b>Killed by : </b>com.github.dakusui.symfonion.tests.InvalidDataErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.InvalidDataErrorTest]/[method:illegalFraction()]</span></span> negated conditional &rarr; KILLED</span>
+</div> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@13389582_138'>138</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@13389582_138'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>focusedElement<br/><b>Killed by : </b>com.github.dakusui.symfonion.tests.json.JsonSummarizerTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.json.JsonSummarizerTest]/[method:whenSummaryArray_thenItLooksNice()]</span></span> replaced return value with null for com/github/dakusui/symfonion/compat/json/JsonSummarizer::focusedElement &rarr; KILLED</span>
+</div> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@13389582_142'>142</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@13389582_142'/> 
+
+<p class='SURVIVED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>compactJsonPrimitive<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; SURVIVED</span>
+<a title="Click to view covering tests" class="view-covered-by-tests" onClick="document.getElementById('MutationIdentifier-[location=Location-[clazz=com.github.dakusui.symfonion.compat.json.JsonSummarizer,-method=compactJsonPrimitive,-methodDesc=(Lcom/google/gson/JsonPrimitive;II)Lcom/google/gson/JsonPrimitive;],-indexes=[5],-mutator=org.pitest.mutationtest.engine.gregor.mutators.NegateConditionalsMutator]').style.display=(document.getElementById('MutationIdentifier-[location=Location-[clazz=com.github.dakusui.symfonion.compat.json.JsonSummarizer,-method=compactJsonPrimitive,-methodDesc=(Lcom/google/gson/JsonPrimitive;II)Lcom/google/gson/JsonPrimitive;],-indexes=[5],-mutator=org.pitest.mutationtest.engine.gregor.mutators.NegateConditionalsMutator]').style.display == 'block')?'none':'block';">Covering tests</a>
+<div class="covered-tests" id="MutationIdentifier-[location=Location-[clazz=com.github.dakusui.symfonion.compat.json.JsonSummarizer,-method=compactJsonPrimitive,-methodDesc=(Lcom/google/gson/JsonPrimitive;II)Lcom/google/gson/JsonPrimitive;],-indexes=[5],-mutator=org.pitest.mutationtest.engine.gregor.mutators.NegateConditionalsMutator]" style="display:none;">Covered by tests:
+<ul>
+<li>com.github.dakusui.symfonion.tests.InvalidDataErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.InvalidDataErrorTest]/[method:illegalFraction()]</li> <li>com.github.dakusui.symfonion.tests.InvalidDataErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.InvalidDataErrorTest]/[method:illegalNoteLength_02()]</li> <li>com.github.dakusui.symfonion.tests.InvalidDataErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.InvalidDataErrorTest]/[method:illegalNoteLength_03()]</li> <li>com.github.dakusui.symfonion.tests.InvalidDataErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.InvalidDataErrorTest]/[method:illegalNoteLength_01()]</li> 
+</ul>
+</div></div> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@13389582_145'>145</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@13389582_145'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>compactJsonPrimitive<br/><b>Killed by : </b>com.github.dakusui.symfonion.tests.InvalidDataErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.InvalidDataErrorTest]/[method:illegalFraction()]</span></span> negated conditional &rarr; KILLED</span>
+</div> <p class='KILLED'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>compactJsonPrimitive<br/><b>Killed by : </b>com.github.dakusui.symfonion.tests.InvalidDataErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.InvalidDataErrorTest]/[method:illegalFraction()]</span></span> Replaced integer addition with subtraction &rarr; KILLED</span>
+</div> <p class='SURVIVED'><span class='pop'>3.<span><b>3</b><br/><b>Location : </b>compactJsonPrimitive<br/><b>Killed by : </b>none</span></span> changed conditional boundary &rarr; SURVIVED</span>
+<a title="Click to view covering tests" class="view-covered-by-tests" onClick="document.getElementById('MutationIdentifier-[location=Location-[clazz=com.github.dakusui.symfonion.compat.json.JsonSummarizer,-method=compactJsonPrimitive,-methodDesc=(Lcom/google/gson/JsonPrimitive;II)Lcom/google/gson/JsonPrimitive;],-indexes=[25],-mutator=org.pitest.mutationtest.engine.gregor.mutators.ConditionalsBoundaryMutator]').style.display=(document.getElementById('MutationIdentifier-[location=Location-[clazz=com.github.dakusui.symfonion.compat.json.JsonSummarizer,-method=compactJsonPrimitive,-methodDesc=(Lcom/google/gson/JsonPrimitive;II)Lcom/google/gson/JsonPrimitive;],-indexes=[25],-mutator=org.pitest.mutationtest.engine.gregor.mutators.ConditionalsBoundaryMutator]').style.display == 'block')?'none':'block';">Covering tests</a>
+<div class="covered-tests" id="MutationIdentifier-[location=Location-[clazz=com.github.dakusui.symfonion.compat.json.JsonSummarizer,-method=compactJsonPrimitive,-methodDesc=(Lcom/google/gson/JsonPrimitive;II)Lcom/google/gson/JsonPrimitive;],-indexes=[25],-mutator=org.pitest.mutationtest.engine.gregor.mutators.ConditionalsBoundaryMutator]" style="display:none;">Covered by tests:
+<ul>
+<li>com.github.dakusui.symfonion.tests.InvalidDataErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.InvalidDataErrorTest]/[method:illegalFraction()]</li> <li>com.github.dakusui.symfonion.tests.InvalidDataErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.InvalidDataErrorTest]/[method:illegalNoteLength_02()]</li> <li>com.github.dakusui.symfonion.tests.InvalidDataErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.InvalidDataErrorTest]/[method:illegalNoteLength_03()]</li> <li>com.github.dakusui.symfonion.tests.InvalidDataErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.InvalidDataErrorTest]/[method:illegalNoteLength_01()]</li> 
+</ul>
+</div></div> <p class='KILLED'><span class='pop'>4.<span><b>4</b><br/><b>Location : </b>compactJsonPrimitive<br/><b>Killed by : </b>com.github.dakusui.symfonion.tests.InvalidDataErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.InvalidDataErrorTest]/[method:illegalFraction()]</span></span> Replaced integer addition with subtraction &rarr; KILLED</span>
+</div> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@13389582_146'>146</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@13389582_146'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>compactJsonPrimitive<br/><b>Killed by : </b>com.github.dakusui.symfonion.tests.InvalidDataErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.InvalidDataErrorTest]/[method:illegalFraction()]</span></span> replaced return value with null for com/github/dakusui/symfonion/compat/json/JsonSummarizer::compactJsonPrimitive &rarr; KILLED</span>
+</div> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@13389582_147'>147</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@13389582_147'/> 
+
+<p class='NO_COVERAGE'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>compactJsonPrimitive<br/><b>Killed by : </b>none</span></span> Replaced integer subtraction with addition &rarr; NO_COVERAGE</span>
+</div> <p class='NO_COVERAGE'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>compactJsonPrimitive<br/><b>Killed by : </b>none</span></span> replaced return value with null for com/github/dakusui/symfonion/compat/json/JsonSummarizer::compactJsonPrimitive &rarr; NO_COVERAGE</span>
+</div> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@13389582_149'>149</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@13389582_149'/> 
+
+<p class='NO_COVERAGE'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>compactJsonPrimitive<br/><b>Killed by : </b>none</span></span> replaced return value with null for com/github/dakusui/symfonion/compat/json/JsonSummarizer::compactJsonPrimitive &rarr; NO_COVERAGE</span>
+</div> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@13389582_153'>153</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@13389582_153'/> 
+
+<p class='NO_COVERAGE'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>compactJsonArray<br/><b>Killed by : </b>none</span></span> Replaced integer addition with subtraction &rarr; NO_COVERAGE</span>
+</div> <p class='NO_COVERAGE'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>compactJsonArray<br/><b>Killed by : </b>none</span></span> changed conditional boundary &rarr; NO_COVERAGE</span>
+</div> <p class='NO_COVERAGE'><span class='pop'>3.<span><b>3</b><br/><b>Location : </b>compactJsonArray<br/><b>Killed by : </b>none</span></span> Replaced integer addition with subtraction &rarr; NO_COVERAGE</span>
+</div> <p class='NO_COVERAGE'><span class='pop'>4.<span><b>4</b><br/><b>Location : </b>compactJsonArray<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; NO_COVERAGE</span>
+</div> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@13389582_154'>154</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@13389582_154'/> 
+
+<p class='NO_COVERAGE'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>compactJsonArray<br/><b>Killed by : </b>none</span></span> replaced return value with null for com/github/dakusui/symfonion/compat/json/JsonSummarizer::compactJsonArray &rarr; NO_COVERAGE</span>
+</div> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@13389582_156'>156</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@13389582_156'/> 
+
+<p class='NO_COVERAGE'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>compactJsonArray<br/><b>Killed by : </b>none</span></span> changed conditional boundary &rarr; NO_COVERAGE</span>
+</div> <p class='NO_COVERAGE'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>compactJsonArray<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; NO_COVERAGE</span>
+</div> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@13389582_157'>157</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@13389582_157'/> 
+
+<p class='NO_COVERAGE'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>compactJsonArray<br/><b>Killed by : </b>none</span></span> removed call to com/google/gson/JsonArray::add &rarr; NO_COVERAGE</span>
+</div> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@13389582_158'>158</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@13389582_158'/> 
+
+<p class='NO_COVERAGE'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>compactJsonArray<br/><b>Killed by : </b>none</span></span> removed call to com/google/gson/JsonArray::add &rarr; NO_COVERAGE</span>
+</div> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@13389582_159'>159</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@13389582_159'/> 
+
+<p class='NO_COVERAGE'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>compactJsonArray<br/><b>Killed by : </b>none</span></span> changed conditional boundary &rarr; NO_COVERAGE</span>
+</div> <p class='NO_COVERAGE'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>compactJsonArray<br/><b>Killed by : </b>none</span></span> Replaced integer subtraction with addition &rarr; NO_COVERAGE</span>
+</div> <p class='NO_COVERAGE'><span class='pop'>3.<span><b>3</b><br/><b>Location : </b>compactJsonArray<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; NO_COVERAGE</span>
+</div> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@13389582_160'>160</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@13389582_160'/> 
+
+<p class='NO_COVERAGE'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>compactJsonArray<br/><b>Killed by : </b>none</span></span> removed call to com/google/gson/JsonArray::add &rarr; NO_COVERAGE</span>
+</div> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@13389582_161'>161</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@13389582_161'/> 
+
+<p class='NO_COVERAGE'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>compactJsonArray<br/><b>Killed by : </b>none</span></span> replaced return value with null for com/github/dakusui/symfonion/compat/json/JsonSummarizer::compactJsonArray &rarr; NO_COVERAGE</span>
+</div> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@13389582_165'>165</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@13389582_165'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>compactJsonObject<br/><b>Killed by : </b>com.github.dakusui.symfonion.tests.InvalidJsonErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.InvalidJsonErrorTest]/[method:missingSection_sequence()]</span></span> Replaced integer addition with subtraction &rarr; KILLED</span>
+</div> <p class='SURVIVED'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>compactJsonObject<br/><b>Killed by : </b>none</span></span> changed conditional boundary &rarr; SURVIVED</span>
+<a title="Click to view covering tests" class="view-covered-by-tests" onClick="document.getElementById('MutationIdentifier-[location=Location-[clazz=com.github.dakusui.symfonion.compat.json.JsonSummarizer,-method=compactJsonObject,-methodDesc=(Lcom/google/gson/JsonObject;II)Lcom/google/gson/JsonObject;],-indexes=[10],-mutator=org.pitest.mutationtest.engine.gregor.mutators.ConditionalsBoundaryMutator]').style.display=(document.getElementById('MutationIdentifier-[location=Location-[clazz=com.github.dakusui.symfonion.compat.json.JsonSummarizer,-method=compactJsonObject,-methodDesc=(Lcom/google/gson/JsonObject;II)Lcom/google/gson/JsonObject;],-indexes=[10],-mutator=org.pitest.mutationtest.engine.gregor.mutators.ConditionalsBoundaryMutator]').style.display == 'block')?'none':'block';">Covering tests</a>
+<div class="covered-tests" id="MutationIdentifier-[location=Location-[clazz=com.github.dakusui.symfonion.compat.json.JsonSummarizer,-method=compactJsonObject,-methodDesc=(Lcom/google/gson/JsonObject;II)Lcom/google/gson/JsonObject;],-indexes=[10],-mutator=org.pitest.mutationtest.engine.gregor.mutators.ConditionalsBoundaryMutator]" style="display:none;">Covered by tests:
+<ul>
+<li>com.github.dakusui.symfonion.tests.InvalidJsonErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.InvalidJsonErrorTest]/[method:invalid_01()]</li> <li>com.github.dakusui.symfonion.tests.InvalidJsonErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.InvalidJsonErrorTest]/[method:missingSection_sequence()]</li> <li>com.github.dakusui.symfonion.tests.InvalidJsonErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.InvalidJsonErrorTest]/[method:missingSection_groove()]</li> 
+</ul>
+</div></div> <p class='KILLED'><span class='pop'>3.<span><b>3</b><br/><b>Location : </b>compactJsonObject<br/><b>Killed by : </b>com.github.dakusui.symfonion.tests.InvalidJsonErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.InvalidJsonErrorTest]/[method:invalid_01()]</span></span> negated conditional &rarr; KILLED</span>
+</div> <p class='SURVIVED'><span class='pop'>4.<span><b>4</b><br/><b>Location : </b>compactJsonObject<br/><b>Killed by : </b>none</span></span> Replaced integer addition with subtraction &rarr; SURVIVED</span>
+<a title="Click to view covering tests" class="view-covered-by-tests" onClick="document.getElementById('MutationIdentifier-[location=Location-[clazz=com.github.dakusui.symfonion.compat.json.JsonSummarizer,-method=compactJsonObject,-methodDesc=(Lcom/google/gson/JsonObject;II)Lcom/google/gson/JsonObject;],-indexes=[5],-mutator=org.pitest.mutationtest.engine.gregor.mutators.MathMutator]').style.display=(document.getElementById('MutationIdentifier-[location=Location-[clazz=com.github.dakusui.symfonion.compat.json.JsonSummarizer,-method=compactJsonObject,-methodDesc=(Lcom/google/gson/JsonObject;II)Lcom/google/gson/JsonObject;],-indexes=[5],-mutator=org.pitest.mutationtest.engine.gregor.mutators.MathMutator]').style.display == 'block')?'none':'block';">Covering tests</a>
+<div class="covered-tests" id="MutationIdentifier-[location=Location-[clazz=com.github.dakusui.symfonion.compat.json.JsonSummarizer,-method=compactJsonObject,-methodDesc=(Lcom/google/gson/JsonObject;II)Lcom/google/gson/JsonObject;],-indexes=[5],-mutator=org.pitest.mutationtest.engine.gregor.mutators.MathMutator]" style="display:none;">Covered by tests:
+<ul>
+<li>com.github.dakusui.symfonion.tests.InvalidJsonErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.InvalidJsonErrorTest]/[method:invalid_01()]</li> <li>com.github.dakusui.symfonion.tests.InvalidJsonErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.InvalidJsonErrorTest]/[method:missingSection_sequence()]</li> <li>com.github.dakusui.symfonion.tests.InvalidJsonErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.InvalidJsonErrorTest]/[method:missingSection_groove()]</li> 
+</ul>
+</div></div> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@13389582_166'>166</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@13389582_166'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>compactJsonObject<br/><b>Killed by : </b>com.github.dakusui.symfonion.tests.InvalidJsonErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.InvalidJsonErrorTest]/[method:invalid_01()]</span></span> replaced return value with null for com/github/dakusui/symfonion/compat/json/JsonSummarizer::compactJsonObject &rarr; KILLED</span>
+</div> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@13389582_169'>169</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@13389582_169'/> 
+
+<p class='NO_COVERAGE'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>compactJsonObject<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; NO_COVERAGE</span>
+</div> <p class='NO_COVERAGE'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>compactJsonObject<br/><b>Killed by : </b>none</span></span> changed conditional boundary &rarr; NO_COVERAGE</span>
+</div> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@13389582_170'>170</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@13389582_170'/> 
+
+<p class='NO_COVERAGE'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>compactJsonObject<br/><b>Killed by : </b>none</span></span> removed call to com/google/gson/JsonObject::add &rarr; NO_COVERAGE</span>
+</div> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@13389582_171'>171</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@13389582_171'/> 
+
+<p class='NO_COVERAGE'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>compactJsonObject<br/><b>Killed by : </b>none</span></span> removed call to com/google/gson/JsonObject::add &rarr; NO_COVERAGE</span>
+</div> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@13389582_172'>172</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@13389582_172'/> 
+
+<p class='NO_COVERAGE'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>compactJsonObject<br/><b>Killed by : </b>none</span></span> Replaced integer subtraction with addition &rarr; NO_COVERAGE</span>
+</div> <p class='NO_COVERAGE'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>compactJsonObject<br/><b>Killed by : </b>none</span></span> changed conditional boundary &rarr; NO_COVERAGE</span>
+</div> <p class='NO_COVERAGE'><span class='pop'>3.<span><b>3</b><br/><b>Location : </b>compactJsonObject<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; NO_COVERAGE</span>
+</div> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@13389582_173'>173</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@13389582_173'/> 
+
+<p class='NO_COVERAGE'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>compactJsonObject<br/><b>Killed by : </b>none</span></span> removed call to com/google/gson/JsonObject::add &rarr; NO_COVERAGE</span>
+</div> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@13389582_174'>174</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@13389582_174'/> 
+
+<p class='NO_COVERAGE'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>compactJsonObject<br/><b>Killed by : </b>none</span></span> replaced return value with null for com/github/dakusui/symfonion/compat/json/JsonSummarizer::compactJsonObject &rarr; NO_COVERAGE</span>
+</div> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@13389582_178'>178</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@13389582_178'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>compactJsonElement<br/><b>Killed by : </b>com.github.dakusui.symfonion.tests.InvalidJsonErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.InvalidJsonErrorTest]/[method:invalid_01()]</span></span> negated conditional &rarr; KILLED</span>
+</div> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@13389582_179'>179</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@13389582_179'/> 
+
+<p class='NO_COVERAGE'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>compactJsonElement<br/><b>Killed by : </b>none</span></span> replaced return value with null for com/github/dakusui/symfonion/compat/json/JsonSummarizer::compactJsonElement &rarr; NO_COVERAGE</span>
+</div> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@13389582_180'>180</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@13389582_180'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>compactJsonElement<br/><b>Killed by : </b>com.github.dakusui.symfonion.tests.InvalidDataErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.InvalidDataErrorTest]/[method:illegalFraction()]</span></span> negated conditional &rarr; KILLED</span>
+</div> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@13389582_181'>181</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@13389582_181'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>compactJsonElement<br/><b>Killed by : </b>com.github.dakusui.symfonion.tests.InvalidJsonErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.InvalidJsonErrorTest]/[method:invalid_01()]</span></span> replaced return value with null for com/github/dakusui/symfonion/compat/json/JsonSummarizer::compactJsonElement &rarr; KILLED</span>
+</div> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@13389582_182'>182</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@13389582_182'/> 
+
+<p class='SURVIVED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>compactJsonElement<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; SURVIVED</span>
+<a title="Click to view covering tests" class="view-covered-by-tests" onClick="document.getElementById('MutationIdentifier-[location=Location-[clazz=com.github.dakusui.symfonion.compat.json.JsonSummarizer,-method=compactJsonElement,-methodDesc=(Lcom/google/gson/JsonElement;II)Lcom/google/gson/JsonElement;],-indexes=[33],-mutator=org.pitest.mutationtest.engine.gregor.mutators.NegateConditionalsMutator]').style.display=(document.getElementById('MutationIdentifier-[location=Location-[clazz=com.github.dakusui.symfonion.compat.json.JsonSummarizer,-method=compactJsonElement,-methodDesc=(Lcom/google/gson/JsonElement;II)Lcom/google/gson/JsonElement;],-indexes=[33],-mutator=org.pitest.mutationtest.engine.gregor.mutators.NegateConditionalsMutator]').style.display == 'block')?'none':'block';">Covering tests</a>
+<div class="covered-tests" id="MutationIdentifier-[location=Location-[clazz=com.github.dakusui.symfonion.compat.json.JsonSummarizer,-method=compactJsonElement,-methodDesc=(Lcom/google/gson/JsonElement;II)Lcom/google/gson/JsonElement;],-indexes=[33],-mutator=org.pitest.mutationtest.engine.gregor.mutators.NegateConditionalsMutator]" style="display:none;">Covered by tests:
+<ul>
+<li>com.github.dakusui.symfonion.tests.InvalidDataErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.InvalidDataErrorTest]/[method:illegalFraction()]</li> <li>com.github.dakusui.symfonion.tests.InvalidDataErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.InvalidDataErrorTest]/[method:illegalNoteLength_02()]</li> <li>com.github.dakusui.symfonion.tests.InvalidDataErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.InvalidDataErrorTest]/[method:illegalNoteLength_03()]</li> <li>com.github.dakusui.symfonion.tests.InvalidDataErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.InvalidDataErrorTest]/[method:illegalNoteLength_01()]</li> 
+</ul>
+</div></div> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@13389582_183'>183</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@13389582_183'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>compactJsonElement<br/><b>Killed by : </b>com.github.dakusui.symfonion.tests.InvalidDataErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.InvalidDataErrorTest]/[method:illegalFraction()]</span></span> replaced return value with null for com/github/dakusui/symfonion/compat/json/JsonSummarizer::compactJsonElement &rarr; KILLED</span>
+</div> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@13389582_184'>184</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@13389582_184'/> 
+
+<p class='NO_COVERAGE'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>compactJsonElement<br/><b>Killed by : </b>none</span></span> replaced return value with null for com/github/dakusui/symfonion/compat/json/JsonSummarizer::compactJsonElement &rarr; NO_COVERAGE</span>
+</div> 
+</td>
+</tr>
+
+</table>
+
+
+<h2>Active mutators</h2>
+<ul>
+<li class='mutator'>CONDITIONALS_BOUNDARY</li>
+<li class='mutator'>EMPTY_RETURNS</li>
+<li class='mutator'>FALSE_RETURNS</li>
+<li class='mutator'>INCREMENTS</li>
+<li class='mutator'>INVERT_NEGS</li>
+<li class='mutator'>MATH</li>
+<li class='mutator'>NEGATE_CONDITIONALS</li>
+<li class='mutator'>NULL_RETURNS</li>
+<li class='mutator'>PRIMITIVE_RETURNS</li>
+<li class='mutator'>TRUE_RETURNS</li>
+<li class='mutator'>VOID_METHOD_CALLS</li>
+
+</ul>
+
+<h2>Tests examined</h2>
+<ul>
+<li>com.github.dakusui.symfonion.tests.json.JsonUtilTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.json.JsonUtilTest]/[method:obj_E02()] (1 ms)</li><li>com.github.dakusui.symfonion.tests.json.JsonSummarizerTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.json.JsonSummarizerTest]/[method:whenSummaryArray_thenItLooksNice()] (0 ms)</li><li>com.github.dakusui.symfonion.tests.json.JsonSummarizerTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.json.JsonSummarizerTest]/[method:whenSummaryObject_thenItLooksNice()] (2 ms)</li><li>com.github.dakusui.symfonion.tests.InvalidJsonErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.InvalidJsonErrorTest]/[method:missingSection_sequence()] (5 ms)</li><li>com.github.dakusui.symfonion.tests.InvalidJsonErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.InvalidJsonErrorTest]/[method:missingSection_groove()] (3 ms)</li><li>com.github.dakusui.symfonion.tests.InvalidDataErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.InvalidDataErrorTest]/[method:illegalFraction()] (6 ms)</li><li>com.github.dakusui.symfonion.tests.ReferenceErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.ReferenceErrorTest]/[method:missingNoteMap()] (4 ms)</li><li>com.github.dakusui.symfonion.tests.InvalidDataErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.InvalidDataErrorTest]/[method:illegalNoteLength_02()] (16 ms)</li><li>com.github.dakusui.symfonion.tests.ReferenceErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.ReferenceErrorTest]/[method:missingGroove()] (11 ms)</li><li>com.github.dakusui.symfonion.tests.InvalidJsonErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.InvalidJsonErrorTest]/[method:missingSection_parts()] (34 ms)</li><li>com.github.dakusui.symfonion.tests.ReferenceErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.ReferenceErrorTest]/[method:missingPart()] (57 ms)</li><li>com.github.dakusui.symfonion.tests.json.JsonUtilTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.json.JsonUtilTest]/[method:obj_E01d()] (1 ms)</li><li>com.github.dakusui.symfonion.tests.json.JsonSummarizerTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.json.JsonSummarizerTest]/[method:whenCreateSummaryJsonObjectFromPaths_thenSummaryCreated()] (0 ms)</li><li>com.github.dakusui.symfonion.tests.InvalidDataErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.InvalidDataErrorTest]/[method:illegalNoteLength_03()] (27 ms)</li><li>com.github.dakusui.symfonion.tests.InvalidDataErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.InvalidDataErrorTest]/[method:illegalNoteLength_01()] (73 ms)</li><li>com.github.dakusui.symfonion.tests.ReferenceErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.ReferenceErrorTest]/[method:missingNote()] (11 ms)</li><li>com.github.dakusui.symfonion.tests.json.CompatJsonUtilsTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.json.CompatJsonUtilsTest]/[method:givenConflictingTwoSingleEntryObjects_whenMerge_thenExceptionThrown()] (0 ms)</li><li>com.github.dakusui.symfonion.tests.MidiCompilerTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.MidiCompilerTest]/[test-template:exercise(com.github.dakusui.symfonion.testutils.SymfonionTestCase)]/[test-template-invocation:#14] (0 ms)</li><li>com.github.dakusui.symfonion.tests.InvalidJsonErrorTest.[engine:junit-jupiter]/[class:com.github.dakusui.symfonion.tests.InvalidJsonErrorTest]/[method:invalid_01()] (3 ms)</li>
+</ul>
+
+<br/>
+
+Report generated by <a href='https://pitest.org'>PIT</a> 1.19.1
+
+</body>
+</html>

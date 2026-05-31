@@ -1,0 +1,13 @@
+com.github.dakusui.exception
+com.github.dakusui.symfonion.cli
+com.github.dakusui.symfonion.cli.subcommands
+com.github.dakusui.symfonion.compat.exceptions
+com.github.dakusui.symfonion.compat.json
+com.github.dakusui.symfonion.core
+com.github.dakusui.symfonion.exception
+com.github.dakusui.symfonion.song
+com.github.dakusui.symfonion.utils
+com.github.dakusui.symfonion.utils.midi
+com.github.dakusui.valid8j_cliche
+com.github.dakusui.valid8j_cliche.core
+com.github.dakusui.valid8j_cliche.json
