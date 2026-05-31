@@ -6,7 +6,30 @@
 
 "symfonion" is a JSON-based music macro language, which enables you to describe a piece of music as easily as 8-bit days' MML but in a much more structured way.
 
-Here is an example piece of music written in symfonion.
+NOTE: **YAML is the recommended input format.** The `symfonion` launcher transparently converts `.yaml` / `.yml` files to JSON before passing them to the processor. Because YAML is a strict superset of JSON, every JSON example in this document is also valid YAML and can be written in YAML style instead. The YAML form is generally more readable: it requires no quotes around most strings, allows comments (`#`), and avoids the syntactic noise of JSON. Where it helps, this document shows both forms side by side.
+
+Here is an example piece of music written in symfonion. First in **YAML** (recommended), then the equivalent **JSON**:
+
+[source, yaml]
+----
+parts:
+  testviolin:
+    channel: 0
+
+sequence:
+  - beats: "8/8"
+    parts:
+      - name: testviolin
+        body: "C2;C2"
+        length: "8"
+  - beats: "8/8"
+    parts:
+      - name: testviolin
+        body: "C2;C2"
+        length: "8"
+----
+
+The equivalent JSON form (also accepted):
 
 [source, json]
 ----

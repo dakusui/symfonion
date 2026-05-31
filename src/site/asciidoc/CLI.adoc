@@ -17,6 +17,8 @@
 
 SyMFONION is a music macro language processor whose syntax is based on JSON. It provides a way to describe music works in a structured and object oriented way.
 
+NOTE: **YAML is the recommended input format.** The `symfonion` launcher transparently converts `.yaml` / `.yml` files to JSON and runs them through `jq++` before passing them to the processor. Because YAML is a strict superset of JSON, every JSON example in this documentation and in link:SYNTAX.html[the Syntax reference] is also valid YAML. You can write symfonion files as plain JSON, YAML, or YAML with `jq++` inheritance directives (`$extends`, `$includes`) — the launcher handles all three.
+
 When invoked without specifying any output files, it simply plays the input file(s).
 
 This page documents the command-line arguments for the SyMFONION processor.
@@ -86,6 +88,7 @@ Written by Hiroshi Ukai
 == See also
 
 // suppress inspection "AsciiDocLinkResolve"
+* link:INSTALLATION.html[Installation &amp; directory layout]
 * link:SYNTAX.html[Syntax of SyMFONION]
 * JSON : http://www.json.org/
 * MIDI standard: http://www.midi.org/aboutmidi/ , http://en.wikipedia.org/wiki/MIDI

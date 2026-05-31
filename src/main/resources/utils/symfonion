@@ -1,12 +1,32 @@
 #!/usr/bin/env bash
 # symfonion — CLI launcher for SyMFONION (development / unversioned build)
 #
+# On the first invocation, companion tools (yq, jqplusplus / jq++) are
+# downloaded or built and cached under SYMFONION_HOME/lib/symfonion/.
+# Using a sub-directory avoids conflicts when symfonion is unpacked into a
+# shared prefix (e.g. ~/.local) whose lib/ already contains other tools.
+# Subsequent invocations skip installation.
+#
+# Input pipeline for .yaml / .yml files:
+#   yq -o=json <file>  |  jq++  >  <tmp>.json  →  symfonion JAR
+# Plain .json files are passed directly to the JAR.
+#
 # JF_PATH precedence (highest → lowest):
 #   1. User-specified paths  — $SYMFONION_PATH set before invoking symfonion
 #   2. Project-local paths   — .symfonion/prelude in the current working directory
 #   3. Built-in prelude      — $SYMFONION_HOME/share/symfonion/prelude
 
 set -eu -o pipefail -o errtrace
+
+# Version pins for companion tools installed on first use.
+# Bump these when releasing a new symfonion version.
+yq_version="4.44.3"
+jqplusplus_version="latest"
+
+# Temp files created during YAML preprocessing; populated inside main,
+# referenced from the EXIT trap (must be global — local vars are out of
+# scope by the time the EXIT trap fires).
+symfonion_cleanup_files=()
 
 # --- definitions ---
 
@@ -34,16 +54,101 @@ function _build_jf_path() {
   printf '%s' "${_path}"
 }
 
+function _detect_platform() {
+  local _os _arch
+  case "$(uname -s)" in
+    Linux)  _os="linux"  ;;
+    Darwin) _os="darwin" ;;
+    *)
+      printf 'symfonion: unsupported OS: %s\n' "$(uname -s)" >&2
+      return 1
+      ;;
+  esac
+  case "$(uname -m)" in
+    x86_64)        _arch="amd64" ;;
+    arm64|aarch64) _arch="arm64" ;;
+    *)
+      printf 'symfonion: unsupported architecture: %s\n' "$(uname -m)" >&2
+      return 1
+      ;;
+  esac
+  printf '%s_%s' "${_os}" "${_arch}"
+}
+
+function _install_yq() {
+  local _dest="${1}"
+  local _platform
+  _platform="$(_detect_platform)"
+  printf 'symfonion: installing yq %s for %s ...\n' "${yq_version}" "${_platform}" >&2
+  curl -fsSL \
+    "https://github.com/mikefarah/yq/releases/download/v${yq_version}/yq_${_platform}" \
+    -o "${_dest}"
+  chmod +x "${_dest}"
+  printf 'symfonion: yq installed at %s\n' "${_dest}" >&2
+}
+
+function _install_jqplusplus() {
+  local _lib="${1}"
+  printf 'symfonion: installing jqplusplus (%s) ...\n' "${jqplusplus_version}" >&2
+  command -v go >/dev/null 2>&1 || {
+    printf 'symfonion: error: jqplusplus requires the Go toolchain.\n' >&2
+    printf '  Install Go from https://go.dev/dl/ then re-run symfonion.\n' >&2
+    return 1
+  }
+  go install "github.com/dakusui/jqplusplus/cmd/jqplusplus@${jqplusplus_version}"
+  cp "$(go env GOPATH)/bin/jqplusplus" "${_lib}/jqplusplus"
+  chmod +x "${_lib}/jqplusplus"
+  # Invoking jqplusplus with no arguments creates the jq++ symlink next to it.
+  "${_lib}/jqplusplus"
+  printf 'symfonion: jqplusplus installed at %s\n' "${_lib}/jq++" >&2
+}
+
+function _ensure_deps() {
+  local _lib="${1}"
+  [[ -x "${_lib}/yq" ]]   || _install_yq "${_lib}/yq"
+  [[ -x "${_lib}/jq++" ]] || _install_jqplusplus "${_lib}"
+}
+
 function main() {
   local _scriptdir
   _scriptdir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
   local _symfonion_home
   _symfonion_home="$(realpath "${_scriptdir}/..")"
+  local _lib="${_symfonion_home}/lib"
+  local _tools="${_lib}/symfonion"
 
   export JF_PATH
   JF_PATH="$(_build_jf_path "${_symfonion_home}")"
 
-  exec java -jar "${_symfonion_home}/lib/symfonion.jar" "${@}"
+  _ensure_deps "${_tools}"
+
+  # Preprocess .yaml / .yml arguments: convert YAML → JSON via yq, then
+  # resolve jq++ directives ($extends, $includes, etc.) via jq++.
+  local -a _args=()
+  local _arg _yq_tmp _tmp
+  for _arg in "${@}"; do
+    if [[ "${_arg}" =~ \.(yaml|yml)$ ]] && [[ -f "${_arg}" ]]; then
+      # Two temp files: yq writes JSON to the first; jq++ reads it by path
+      # (passing a file argument avoids the no-args symlink-creation branch
+      # that jq++ enters when invoked without positional arguments).
+      _yq_tmp="$(mktemp /tmp/symfonion-yq-XXXXXX.json)"
+      _tmp="$(mktemp /tmp/symfonion-XXXXXX.json)"
+      symfonion_cleanup_files+=("${_yq_tmp}" "${_tmp}")
+      "${_tools}/yq" -o=json "${_arg}" > "${_yq_tmp}"
+      "${_tools}/jq++" "${_yq_tmp}" > "${_tmp}"
+      _args+=("${_tmp}")
+    else
+      _args+=("${_arg}")
+    fi
+  done
+
+  if [[ ${#symfonion_cleanup_files[@]} -gt 0 ]]; then
+    # Cannot use exec: the EXIT trap must fire to remove temp files.
+    trap 'rm -f "${symfonion_cleanup_files[@]}"' EXIT
+    java -jar "${_lib}/symfonion.jar" "${_args[@]}"
+  else
+    exec java -jar "${_lib}/symfonion.jar" "${_args[@]}"
+  fi
 }
 
 # --- entry point ---

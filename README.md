@@ -17,6 +17,34 @@ Symfonion is a modern music macro language processor.
 3. Add `symfonion-VERSION/bin/` to your `PATH`.
 4. Done.
 
+### Directory layout
+
+The archive unpacks to a self-contained tree:
+
+```
+symfonion-VERSION/
+  bin/
+    symfonion                   ← CLI launcher (bash)
+  lib/
+    symfonion-VERSION.jar       ← Java core
+  share/
+    symfonion/
+      prelude/                  ← built-in jq++ standard library
+```
+
+On the **first invocation** the launcher downloads and installs two companion tools into `lib/symfonion/` (namespaced to avoid conflicts when installing into a shared prefix such as `~/.local`):
+
+```
+symfonion-VERSION/
+  lib/
+    symfonion/
+      yq                        ← YAML→JSON converter  (downloaded from GitHub releases)
+      jqplusplus                ← jq++ binary          (installed via go install; requires Go)
+      jq++                      ← symlink → jqplusplus (created by jqplusplus itself)
+```
+
+You can also place project-local jq++ library files in `.symfonion/prelude/` alongside your song files; the launcher adds that directory to `JF_PATH` automatically (higher priority than the built-in prelude).
+
 You will be able to run ```symfonion``` by typing
 
 ```
@@ -52,13 +80,53 @@ mvn -B package
 ```
 
 # How to run Symfonion #
-By typing a command line below, ```symfonion``` will compile the given JSON file and play it.
+
+Symfonion accepts **YAML** (recommended) or JSON input files.
+The launcher transparently converts `.yaml` / `.yml` files through `yq` and `jq++` before processing.
+Because YAML is a superset of JSON, all existing `.json` files continue to work unchanged.
 
 ```
-$ symfonion -p infile
+$ symfonion -p infile.yaml
 ```
 
-where "infile" is a ```symfonion``` file and it will look like this.
+A symfonion file in YAML (W.A. Mozart, K.311):
+
+```yaml
+parts:
+  pianor:
+    channel: 0
+
+sequence:
+  - parts:
+      - name: pianor
+        body: "r4;B;A;G#;A"
+        length: 16
+    beats: "2/4"
+  - parts:
+      - name: pianor
+        body: "C>8;r8;D>;C>;B;C>;E>8;r8;F>;E>;D#>;E>"
+        length: 16
+    beats: "4/4"
+  - parts:
+      - name: pianor
+        body: "B>;A>;G#>;A>;B>;A>;G#>;A>;C>>4;A>8;C>>8"
+        length: 16
+    beats: "4/4"
+  - parts:
+      - name: pianor
+        body: "B>;F#A>;EG>;F#A>;B>;F#A>;EG>;F#A>"
+        length: 8
+        gate: 0.3
+    beats: "4/4"
+  - parts:
+      - name: pianor
+        body: "B>;F#A;EG>;D#F#>;E4;r4"
+        length: 8
+        gate: 0.3
+    beats: "4/4"
+```
+
+The equivalent JSON form (also accepted):
 
 ```json
 {
