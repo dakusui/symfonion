@@ -13,6 +13,7 @@ import javax.sound.midi.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.function.Function;
 import java.util.regex.Pattern;
@@ -34,7 +35,7 @@ public class Play implements Subcommand {
       ps.println();
       Map<String, MidiDevice> midiOutDevices = prepareMidiOutDevices(ps, cli.midiOutRegexPatterns());
       ps.println();
-      play(midiOutDevices, sequences);
+      play(ps, midiOutDevices, sequences);
     }
   }
 
@@ -58,13 +59,13 @@ public class Play implements Subcommand {
     return devices;
   }
 
-  private static Map<String, Sequencer> prepareSequencers(List<String> portNames, Map<String, MidiDevice> midiOutDevices, Map<String, Sequence> sequences) throws MidiUnavailableException, InvalidMidiDataException {
+  private static Map<String, Sequencer> prepareSequencers(List<String> portNames, Map<String, MidiDevice> midiOutDevices, Map<String, Sequence> sequences, PrintStream ps) throws MidiUnavailableException, InvalidMidiDataException {
     Map<String, Sequencer> ret               = new HashMap<>();
     final List<Sequencer>  playingSequencers = new LinkedList<>();
     for (String portName : portNames) {
       MidiDevice      midiOutDevice = midiOutDevices.get(portName);
       Sequence        sequence      = sequences.get(portName);
-      final Sequencer sequencer     = prepareSequencer(midiOutDevice, sequence, seq -> createMetaEventListener(playingSequencers, seq));
+      final Sequencer sequencer     = prepareSequencer(midiOutDevice, sequence, seq -> createMetaEventListener(playingSequencers, seq, ps));
       playingSequencers.add(sequencer);
       ret.put(portName, sequencer);
     }
@@ -94,13 +95,15 @@ public class Play implements Subcommand {
     sequencer.getTransmitter().setReceiver(dev.getReceiver());
   }
 
-  private static MetaEventListener createMetaEventListener(List<Sequencer> playingSequencers, Sequencer sequencer) {
+  private static MetaEventListener createMetaEventListener(List<Sequencer> playingSequencers, Sequencer sequencer, PrintStream ps) {
     return new MetaEventListener() {
       final Sequencer seq = sequencer;
 
       @Override
       public void meta(MetaMessage meta) {
-        if (meta.getType() == 0x2f) {
+        if (meta.getType() == 0x06) {
+          ps.println(new String(meta.getData(), StandardCharsets.UTF_8));
+        } else if (meta.getType() == 0x2f) {
           synchronized (Play.class) {
             try {
               Thread.sleep(1000);
@@ -139,11 +142,11 @@ public class Play implements Subcommand {
     }
   }
 
-  static synchronized void play(Map<String, MidiDevice> midiOutDevices, Map<String, Sequence> sequences) throws SymfonionException {
+  static synchronized void play(PrintStream ps, Map<String, MidiDevice> midiOutDevices, Map<String, Sequence> sequences) throws SymfonionException {
     List<String>           portNames = new LinkedList<>(sequences.keySet());
     Map<String, Sequencer> sequencers;
     try {
-      sequencers = prepareSequencers(portNames, midiOutDevices, sequences);
+      sequencers = prepareSequencers(portNames, midiOutDevices, sequences, ps);
       try {
         startSequencers(portNames, sequencers);
         Play.class.wait();

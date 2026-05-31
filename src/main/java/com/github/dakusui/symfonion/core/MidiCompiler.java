@@ -14,6 +14,7 @@ import com.google.gson.JsonArray;
 import javax.sound.midi.*;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -58,6 +59,8 @@ public class MidiCompiler {
       tracks.put(partName, sequence.createTrack());
     }
 
+    Track markerTrack = ret.isEmpty() ? null : ret.values().iterator().next().createTrack();
+
     ////
     // position is the offset of a bar from the beginning of the sequence.
     // Giving the sequencer a grace period to initialize its internal state.
@@ -67,6 +70,18 @@ public class MidiCompiler {
     for (Measure measure : song.measures()) {
       try (var ignored = exceptionContext(entry(JSON_ELEMENT_ROOT, value))) {
         barStarted(measureId);
+        if (markerTrack != null) {
+          try {
+            String labelPart = measure.labels().isEmpty()
+                ? ""
+                : " {" + String.join(", ", measure.labels()) + "}";
+            String partsPart = String.join(", ", measure.activePartNames());
+            markerTrack.add(createMeasureMarkerEvent(
+                String.format("[bar %3d]%s - %s", measureId, labelPart, partsPart),
+                barPositionInTicks));
+          } catch (InvalidMidiDataException ignored2) {
+          }
+        }
         Groove groove = measure.groove();
         for (String partName : measure.activePartNames()) {
           var         track       = getTrack(partName, tracks);
@@ -139,6 +154,8 @@ public class MidiCompiler {
       tracks.put(partName, sequence.createTrack());
     }
 
+    Track markerTrack = ret.isEmpty() ? null : ret.values().iterator().next().createTrack();
+
     ////
     // position is the offset of a bar from the beginning of the sequence.
     // Giving the sequencer a grace period to initialize its internal state.
@@ -148,6 +165,18 @@ public class MidiCompiler {
     for (Bar bar : song.bars()) {
       try (var ignored = exceptionContext(entry(JSON_ELEMENT_ROOT, value))) {
         barStarted(barid);
+        if (markerTrack != null) {
+          try {
+            String labelPart = bar.labels().isEmpty()
+                ? ""
+                : " {" + String.join(", ", bar.labels()) + "}";
+            String partsPart = String.join(", ", bar.partNames());
+            markerTrack.add(createMeasureMarkerEvent(
+                String.format("[bar %3d]%s - %s", barid, labelPart, partsPart),
+                barPositionInTicks));
+          } catch (InvalidMidiDataException ignored2) {
+          }
+        }
         Groove groove = bar.groove();
         for (String partName : bar.partNames()) {
           partStarted(partName);
@@ -316,6 +345,13 @@ public class MidiCompiler {
     byte[]      data = Utils.getIntBytes(mpqn);
     mm.setMessage(0x51, data, data.length);
     return new MidiEvent(mm, lTick);
+  }
+
+  public MidiEvent createMeasureMarkerEvent(String text, long tick) throws InvalidMidiDataException {
+    MetaMessage mm   = new MetaMessage();
+    byte[]      data = text.getBytes(StandardCharsets.UTF_8);
+    mm.setMessage(0x06, data, data.length);
+    return new MidiEvent(mm, tick);
   }
 
   public void noteProcessed() {

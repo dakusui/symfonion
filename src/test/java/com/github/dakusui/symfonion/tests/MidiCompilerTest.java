@@ -94,7 +94,7 @@ public class MidiCompilerTest extends TestBase {
                     FromList.<String>toElementAt(0).isEqualTo("port1")),
                 Transform.$(FromSong.toSequence("port1")).allOf(
                     Transform.$(trackList()).allOf(
-                        FromList.toSize().isEqualTo(1),
+                        FromList.toSize().isEqualTo(2),
                         FromList.<Track>toElementAt(0).allOf(
                             Transform.$(size()).isEqualTo(1),
                             Transform.$(midiEventAt(0)).isNotNull(),
@@ -119,7 +119,7 @@ public class MidiCompilerTest extends TestBase {
                     FromList.<String>toElementAt(0).isEqualTo("port1")),
                 Transform.$(FromSong.toSequence("port1")).allOf(
                     Transform.$(trackList()).allOf(
-                        FromList.toSize().isEqualTo(1),
+                        FromList.toSize().isEqualTo(2),
                         FromList.<Track>toElementAt(0).allOf(
                             Transform.$(size()).isEqualTo(6),
                             Transform.$(midiEventAt(0)).isNotNull(),
@@ -145,7 +145,7 @@ public class MidiCompilerTest extends TestBase {
                     FromList.<String>toElementAt(0).isEqualTo("port1")),
                 Transform.$(FromSong.toSequence("port1")).allOf(
                     toListBy(trackList()).allOf(
-                        FromList.toSize().isEqualTo(1),
+                        FromList.toSize().isEqualTo(2),
                         FromList.<Track>toElementAt(0).allOf(
                             Transform.$(size()).isEqualTo(33),
                             Transform.$(midiEventAt(0)).isNotNull(),
@@ -162,7 +162,7 @@ public class MidiCompilerTest extends TestBase {
                     FromList.toSize().isEqualTo(1),
                     FromList.<String>toElementAt(0).isEqualTo("port1")),
                 Transform.$(FromSong.toSequence("port1").andThen(trackList())).allOf(
-                    FromList.toSize().isEqualTo(1),
+                    FromList.toSize().isEqualTo(2),
                     FromList.<Track>toElementAt(0).allOf(
                         Transform.$(size()).isEqualTo(33),
                         Transform.$(midiEventAt(0)).isNotNull(),
@@ -177,7 +177,7 @@ public class MidiCompilerTest extends TestBase {
                     FromList.toSize().isEqualTo(1),
                     FromList.<String>toElementAt(0).isEqualTo("port1")),
                 Transform.$(FromSong.toSequence("port1").andThen(trackList())).allOf(
-                    FromList.toSize().isEqualTo(1),
+                    FromList.toSize().isEqualTo(2),
                     FromList.<Track>toElementAt(0).allOf(
                         Transform.$(size()).isEqualTo(33),
                         Transform.$(midiEventAt(0)).isNotNull(),
@@ -192,7 +192,7 @@ public class MidiCompilerTest extends TestBase {
                     FromList.toSize().isEqualTo(1),
                     FromList.<String>toElementAt(0).isEqualTo("port1")),
                 Transform.$(FromSong.toSequence("port1").andThen(trackList())).allOf(
-                    FromList.toSize().isEqualTo(1),
+                    FromList.toSize().isEqualTo(2),
                     FromList.<Track>toElementAt(0).allOf(
                         Transform.$(size()).isEqualTo(4),
                         Transform.$(midiEventAt(0)).isNotNull(),
