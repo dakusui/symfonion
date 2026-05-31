@@ -400,7 +400,7 @@
                             </goals>
                             <configuration>
                                 <backend>html5</backend>
-                                <outputDirectory>target/site</outputDirectory>
+                                <outputDirectory>${project.build.directory}/site/en</outputDirectory>
                                 <attributes>
                                     <imagesdir>.</imagesdir>
                                     <toc>left</toc>
