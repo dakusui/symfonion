@@ -14,6 +14,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
@@ -34,10 +36,30 @@ public class Play implements Subcommand {
 
       CompatSong            song      = symfonion.load(cli.source().getAbsolutePath(), cli.barFilter(), cli.partFilter());
       Map<String, Sequence> sequences = symfonion.compile(song, createLogiasContext());
-      Supplier<Map<String, Sequence>> recompiler = () -> {
-        CompatSong s = symfonion.load(cli.source().getAbsolutePath(), cli.barFilter(), cli.partFilter());
-        return symfonion.compile(s, createLogiasContext());
-      };
+      String originalYaml = System.getProperty("symfonion.source.original");
+      String toolsDir     = System.getProperty("symfonion.tools");
+      Supplier<Map<String, Sequence>> recompiler;
+      if (originalYaml != null && toolsDir != null) {
+        final String yaml = originalYaml, tools = toolsDir;
+        recompiler = () -> {
+          try {
+            Path jsonTmp = convertYamlToJson(yaml, tools);
+            try {
+              CompatSong s = symfonion.load(jsonTmp.toString(), cli.barFilter(), cli.partFilter());
+              return symfonion.compile(s, createLogiasContext());
+            } finally {
+              Files.deleteIfExists(jsonTmp);
+            }
+          } catch (IOException | InterruptedException e) {
+            throw new RuntimeException(e.getMessage(), e);
+          }
+        };
+      } else {
+        recompiler = () -> {
+          CompatSong s = symfonion.load(cli.source().getAbsolutePath(), cli.barFilter(), cli.partFilter());
+          return symfonion.compile(s, createLogiasContext());
+        };
+      }
       ps.println();
       Map<String, MidiDevice> midiOutDevices = prepareMidiOutDevices(ps, cli.midiOutRegexPatterns());
       ps.println();
@@ -145,6 +167,24 @@ public class Play implements Subcommand {
         sequencer.close();
       }
     }
+  }
+
+  // --- YAML preprocessing pipeline (mirrors the launcher's yq | jq++ steps) ---
+
+  static Path convertYamlToJson(String originalYaml, String tools) throws IOException, InterruptedException {
+    Path yqTmp = Files.createTempFile("symfonion-yq-", ".json");
+    Path jqTmp = Files.createTempFile("symfonion-", ".json");
+    try {
+      int yqExit = new ProcessBuilder(tools + "/yq", "-o=json", originalYaml)
+          .redirectOutput(yqTmp.toFile()).redirectErrorStream(true).start().waitFor();
+      if (yqExit != 0) throw new IOException("yq exited with code " + yqExit);
+      int jqExit = new ProcessBuilder(tools + "/jq++", yqTmp.toString())
+          .redirectOutput(jqTmp.toFile()).redirectErrorStream(true).start().waitFor();
+      if (jqExit != 0) throw new IOException("jq++ exited with code " + jqExit);
+    } finally {
+      Files.deleteIfExists(yqTmp);
+    }
+    return jqTmp;
   }
 
   // --- Measure marker tick extraction ---

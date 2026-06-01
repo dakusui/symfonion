@@ -11,6 +11,8 @@ import javax.sound.midi.Sequence;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -29,10 +31,30 @@ public class PlaySong implements Subcommand {
 
       Song                  song      = symfonion.loadSong(cli.source().getAbsolutePath(), cli.measureFilter(), cli.partFilter());
       Map<String, Sequence> sequences = symfonion.compileSong(song, createLogiasContext());
-      Supplier<Map<String, Sequence>> recompiler = () -> {
-        Song s = symfonion.loadSong(cli.source().getAbsolutePath(), cli.measureFilter(), cli.partFilter());
-        return symfonion.compileSong(s, createLogiasContext());
-      };
+      String originalYaml = System.getProperty("symfonion.source.original");
+      String toolsDir     = System.getProperty("symfonion.tools");
+      Supplier<Map<String, Sequence>> recompiler;
+      if (originalYaml != null && toolsDir != null) {
+        final String yaml = originalYaml, tools = toolsDir;
+        recompiler = () -> {
+          try {
+            Path jsonTmp = Play.convertYamlToJson(yaml, tools);
+            try {
+              Song s = symfonion.loadSong(jsonTmp.toString(), cli.measureFilter(), cli.partFilter());
+              return symfonion.compileSong(s, createLogiasContext());
+            } finally {
+              Files.deleteIfExists(jsonTmp);
+            }
+          } catch (IOException | InterruptedException e) {
+            throw new RuntimeException(e.getMessage(), e);
+          }
+        };
+      } else {
+        recompiler = () -> {
+          Song s = symfonion.loadSong(cli.source().getAbsolutePath(), cli.measureFilter(), cli.partFilter());
+          return symfonion.compileSong(s, createLogiasContext());
+        };
+      }
       ps.println();
       Map<String, MidiDevice> midiOutDevices = prepareMidiOutDevices(ps, cli.midiOutRegexPatterns());
       ps.println();

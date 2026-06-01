@@ -130,6 +130,7 @@ function main() {
   # resolve jq++ directives ($extends, $includes, etc.) via jq++.
   local -a _args=()
   local _arg _yq_tmp _tmp
+  local _original_yaml=""
   for _arg in "${@}"; do
     if [[ "${_arg}" =~ \.(yaml|yml)$ ]] && [[ -f "${_arg}" ]]; then
       # Two temp files: yq writes JSON to the first; jq++ reads it by path
@@ -141,6 +142,9 @@ function main() {
       "${_tools}/yq" -o=json "${_arg}" > "${_yq_tmp}"
       "${_tools}/jq++" "${_yq_tmp}" > "${_tmp}"
       _args+=("${_tmp}")
+      # Record the first original YAML path so the Java process can re-run the
+      # conversion pipeline when the user triggers a hotfix recompile (Enter key).
+      [[ -z "${_original_yaml}" ]] && _original_yaml="$(realpath "${_arg}")"
     else
       _args+=("${_arg}")
     fi
@@ -151,7 +155,10 @@ function main() {
     trap 'rm -f "${symfonion_cleanup_files[@]}"' EXIT
     # ${project.version} is substituted by Maven resource filtering at assembly time
     # (see <filtered>true</filtered> in src/assembly/bin.xml).
-    java -jar "${_lib}/symfonion-${project.version}.jar" "${_args[@]}"
+    java \
+      -Dsymfonion.source.original="${_original_yaml}" \
+      -Dsymfonion.tools="${_tools}" \
+      -jar "${_lib}/symfonion-${project.version}.jar" "${_args[@]}"
   else
     exec java -jar "${_lib}/symfonion-${project.version}.jar" "${_args[@]}"
   fi
