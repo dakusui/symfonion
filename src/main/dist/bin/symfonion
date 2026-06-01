@@ -109,13 +109,14 @@ function _install_jqplusplus() {
 
 function _ensure_deps() {
   local _lib="${1}"
+  mkdir -p "${_lib}"
   [[ -x "${_lib}/yq" ]]   || _install_yq "${_lib}/yq"
   [[ -x "${_lib}/jq++" ]] || _install_jqplusplus "${_lib}"
 }
 
 function main() {
   local _scriptdir
-  _scriptdir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+  _scriptdir="$(cd "$(dirname "$(realpath "${BASH_SOURCE[0]}")")" && pwd)"
   local _symfonion_home
   _symfonion_home="$(realpath "${_scriptdir}/..")"
   local _lib="${_symfonion_home}/lib"
