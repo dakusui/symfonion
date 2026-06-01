@@ -189,6 +189,17 @@ And percussion (`percussion`) is like below
 
 Each token is a note (see <<_notes>>) and the semicolons separate successive strokes. This is the most concise way to write melodies and is the recommended style.
 
+Whitespace (spaces, tabs, and newlines) around semicolons is ignored, so the following multi-line YAML form is equivalent and can be useful for long patterns:
+
+[source, yaml]
+----
+body: |
+  C;
+  E;
+  G;
+  C>
+----
+
 Alternatively, `body` can be a **JSON array of stroke objects**, which is useful when individual strokes need different parameters (different lengths, MIDI control messages, etc.):
 
 [source, json]

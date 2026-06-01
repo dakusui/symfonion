@@ -219,7 +219,7 @@ public class PartMeasure {
     List<Stroke> noteSets        = new LinkedList<>();
     Fraction     currentPosition = ZERO;
     Fraction     pickUpLength    = ZERO;
-    for (String stroke : strokes.splitWithDelimiters("[;\\|]", 0)) {
+    for (String stroke : strokes.replaceAll("\\s+", "").splitWithDelimiters("[;\\|]", 0)) {
       if (";".equals(stroke)) continue;
       if ("|".equals(stroke)) {
         pickUpLength    = currentPosition;

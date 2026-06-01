@@ -302,6 +302,32 @@ public class MidiCompilerTest extends TestBase {
     assertEquals(336L, pickupTick, "Pickup E8 note-on should land at tick 336 (last 1/8 of the preceding 4/4 bar)");
   }
 
+  /**
+   * Verifies that whitespace (spaces, tabs, newlines) around semicolons in a body
+   * string is ignored. The multi-line form must produce the same notes as the
+   * equivalent compact single-line form.
+   */
+  @org.junit.jupiter.api.Test
+  void bodyWithWhitespaceAroundSemicolons_producesCorrectNoteCount() throws Exception {
+    JsonObject song = object(
+        $("settings", object()),
+        $("parts", object($("piano", object($("channel", json(0)), $("port", json("port1")))))),
+        $("sequence", array(
+            merge(object($("beats", json("4/4"))),
+                  object($("parts", array(merge(object($("name", json("piano"))),
+                                               object($("body", json("C4;\n  E4;\n  G4")))))))))));
+
+    Map<String, Sequence> result = compileJsonObject(song);
+    Track track = result.get("port1").getTracks()[0];
+
+    long noteOnCount = 0;
+    for (int i = 0; i < track.size(); i++) {
+      byte[] msg = track.get(i).getMessage().getMessage();
+      if ((msg[0] & 0xf0) == 0x90 && msg[2] != 0) noteOnCount++;
+    }
+    assertEquals(3L, noteOnCount, "body with whitespace around semicolons should produce 3 note-on events");
+  }
+
   public static List<SymfonionTestCase> negativeTestCases() {
     return List.of(
         createNegativeTestCase(
