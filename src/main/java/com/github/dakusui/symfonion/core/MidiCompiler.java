@@ -30,6 +30,7 @@ import static com.github.dakusui.symfonion.compat.exceptions.ExceptionContext.en
 public class MidiCompiler {
 
   private final Context logiasContext;
+  private final boolean progressEnabled;
 
   /**
    * Creates an object of this class.
@@ -39,11 +40,16 @@ public class MidiCompiler {
    * @see Context
    */
   public MidiCompiler(Context logiasContext) {
-    this.logiasContext = (logiasContext);
+    this(logiasContext, true);
+  }
+
+  public MidiCompiler(Context logiasContext, boolean progressEnabled) {
+    this.logiasContext     = logiasContext;
+    this.progressEnabled   = progressEnabled;
   }
 
   public Map<String, Sequence> compile(Song song) throws InvalidMidiDataException {
-    System.err.println("Now compiling...");
+    compilationStarted();
     int                   resolution = 384;
     Map<String, Sequence> ret        = new HashMap<>();
     Map<String, Track>    tracks;
@@ -114,9 +120,7 @@ public class MidiCompiler {
         barPositionInTicks += (long) (measure.beats().doubleValue() * resolution);
       }
     }
-    System.err.
-
-        println("Compilation finished.");
+    compilationFinished();
     return ret;
   }
 
@@ -138,7 +142,7 @@ public class MidiCompiler {
    * @throws SymfonionException       Undefined part name is referenced by a bar.
    */
   public Map<String, Sequence> compile(CompatSong song) throws InvalidMidiDataException, SymfonionException {
-    System.err.println("Now compiling...");
+    compilationStarted();
     int                   resolution = 384;
     Map<String, Sequence> ret        = new HashMap<>();
     Map<String, Track>    tracks;
@@ -221,7 +225,7 @@ public class MidiCompiler {
         barPositionInTicks += (long) (bar.beats().doubleValue() * resolution);
       }
     }
-    System.err.println("Compilation finished.");
+    compilationFinished();
     return ret;
   }
 
@@ -355,26 +359,32 @@ public class MidiCompiler {
   }
 
   public void noteProcessed() {
+    if (!progressEnabled) return;
     System.out.print(".");
   }
 
   public void controlEventProcessed() {
+    if (!progressEnabled) return;
     System.out.print("*");
   }
 
   public void sysexEventProcessed() {
+    if (!progressEnabled) return;
     System.out.print("X");
   }
 
   public void barStarted(int barid) {
+    if (!progressEnabled) return;
     System.out.println("bar[" + barid + "]");
   }
 
   public void patternStarted() {
+    if (!progressEnabled) return;
     System.out.print("[");
   }
 
   public void patternEnded() {
+    if (!progressEnabled) return;
     System.out.print("]");
   }
 
@@ -382,22 +392,37 @@ public class MidiCompiler {
   }
 
   public void partStarted(String partName) {
+    if (!progressEnabled) return;
     System.out.print("    " + partName + ":");
   }
 
   public void partMeasureEnded() {
+    if (!progressEnabled) return;
     System.out.print("|");
   }
 
   public void partEnded() {
+    if (!progressEnabled) return;
     System.out.println();
   }
 
   public void aborted() {
+    if (!progressEnabled) return;
     System.out.println("aborted.");
   }
 
   public void noteSetProcessed() {
+    if (!progressEnabled) return;
     System.out.print(";");
+  }
+
+  private void compilationStarted() {
+    if (!progressEnabled) return;
+    System.err.println("Now compiling...");
+  }
+
+  private void compilationFinished() {
+    if (!progressEnabled) return;
+    System.err.println("Compilation finished.");
   }
 }
