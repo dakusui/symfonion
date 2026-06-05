@@ -102,7 +102,12 @@ public class Symfonion {
    */
   @Deprecated
   public Map<String, Sequence> compile(CompatSong song, Context logiasContext) {
-    MidiCompiler          compiler = new MidiCompiler(loadMidiDeviceProfile(song.rootJsonObject(), logiasContext));
+    return compile(song, logiasContext, true);
+  }
+
+  @Deprecated
+  public Map<String, Sequence> compile(CompatSong song, Context logiasContext, boolean progressEnabled) {
+    MidiCompiler          compiler = new MidiCompiler(loadMidiDeviceProfile(song.rootJsonObject(), logiasContext), progressEnabled);
     Map<String, Sequence> ret;
     try {
       ret = compiler.compile(song);
@@ -120,7 +125,11 @@ public class Symfonion {
    * @return A map from part name to a MIDI sequence object.
    */
   public Map<String, Sequence> compileSong(Song song, Context logiasContext) {
-    MidiCompiler          compiler = new MidiCompiler(loadMidiDeviceProfile(song.rootJsonObject(), logiasContext));
+    return compileSong(song, logiasContext, true);
+  }
+
+  public Map<String, Sequence> compileSong(Song song, Context logiasContext, boolean progressEnabled) {
+    MidiCompiler          compiler = new MidiCompiler(loadMidiDeviceProfile(song.rootJsonObject(), logiasContext), progressEnabled);
     Map<String, Sequence> ret;
     try {
       ret = compiler.compile(song);

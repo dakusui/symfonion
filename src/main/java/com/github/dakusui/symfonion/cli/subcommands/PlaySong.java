@@ -41,7 +41,7 @@ public class PlaySong implements Subcommand {
             Path jsonTmp = Play.convertYamlToJson(yaml, tools);
             try {
               Song s = symfonion.loadSong(jsonTmp.toString(), cli.measureFilter(), cli.partFilter());
-              return symfonion.compileSong(s, createLogiasContext());
+              return symfonion.compileSong(s, createLogiasContext(), false);
             } finally {
               Files.deleteIfExists(jsonTmp);
             }
@@ -52,7 +52,7 @@ public class PlaySong implements Subcommand {
       } else {
         recompiler = () -> {
           Song s = symfonion.loadSong(cli.source().getAbsolutePath(), cli.measureFilter(), cli.partFilter());
-          return symfonion.compileSong(s, createLogiasContext());
+          return symfonion.compileSong(s, createLogiasContext(), false);
         };
       }
       ps.println();
